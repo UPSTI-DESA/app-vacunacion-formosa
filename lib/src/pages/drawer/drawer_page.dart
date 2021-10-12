@@ -179,7 +179,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
           ),
           // SizedBox(height: MediaQuery.of(context).size.height * 0.25),
           Padding(
-            padding: const EdgeInsets.only(bottom: 15.0),
+            padding: const EdgeInsets.only(bottom: 14.0),
             child: FadeInImage(
               placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
               image: const AssetImage(
