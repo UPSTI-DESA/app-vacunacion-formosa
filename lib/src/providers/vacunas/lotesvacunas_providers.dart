@@ -10,7 +10,7 @@ class _LotesVacunaProviders {
     final resp = await http.get(url);
     if (resp.statusCode == 200) {
       final decodedData = json.decode(resp.body);
-      final lotes = new Lotes.fromJsonList(decodedData['lotes_vacunas']);
+      final lotes = Lotes.fromJsonList(decodedData['lotes_vacunas']);
       return lotes.items;
     }
     throw '';
@@ -31,4 +31,4 @@ class _LotesVacunaProviders {
   }
 }
 
-final lotesVacunaProvider = new _LotesVacunaProviders();
+final lotesVacunaProvider = _LotesVacunaProviders();

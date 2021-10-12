@@ -14,7 +14,7 @@ class VacunadorPage extends StatefulWidget {
   static const String nombreRuta = 'VacunadorEstablecimiento';
   final List<Usuarios?> infoCargador;
 
-  const VacunadorPage({required this.infoCargador});
+  const VacunadorPage({Key? key, required this.infoCargador}) : super(key: key);
 
   @override
   _VacunadorPageState createState() => _VacunadorPageState();
@@ -54,14 +54,14 @@ class _VacunadorPageState extends State<VacunadorPage> {
             backgroundColor: SisVacuColor.verdefuerte,
             title: FadeInLeftBig(
               from: 50,
-              child: Text(
+              child: const Text(
                 'Sistema de Vacunación',
                 style: TextStyle(fontWeight: FontWeight.w300),
                 textAlign: TextAlign.center,
               ),
             ),
           ),
-          // drawer: BodyDrawer(),
+          drawer: const BodyDrawer(),
           floatingActionButton: FloatingActionButton(
             mini: true,
             child: Icon(FontAwesomeIcons.exclamation,
@@ -112,12 +112,12 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                 widthThickness: 1.5,
                                 title: 'Equipo de Trabajo',
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10.0,
                               ),
                               Row(
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Efector: ',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
@@ -135,12 +135,12 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 20.0,
                               ),
                               Row(
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Registrador: ',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
@@ -158,12 +158,12 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 20.0,
                               ),
                               Row(
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Vacunador: ',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
@@ -181,7 +181,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                                 child: Text(
                                                   vacunadorService.vacunador!
                                                       .sysdesa06_nombre!,
-                                                  style: TextStyle(),
+                                                  style: const TextStyle(),
                                                 ),
                                               ),
                                             )
@@ -203,7 +203,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 20.0,
                               ),
                             ],
@@ -211,11 +211,11 @@ class _VacunadorPageState extends State<VacunadorPage> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     FadeIn(
-                        duration: Duration(milliseconds: 800),
+                        duration: const Duration(milliseconds: 800),
                         child: StreamBuilder(
                             stream: vacunadorService.vacunadorStream,
                             builder: (BuildContext context,
@@ -252,41 +252,36 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                               widthThickness: 1.5,
                                               title: 'Mismo Vacunador',
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 10.0,
                                             ),
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text('Si'),
-                                                  Switch(
-                                                      activeColor:
-                                                          Colors.orange,
-                                                      inactiveTrackColor:
-                                                          Colors.purple,
-                                                      inactiveThumbColor:
-                                                          Colors.purple,
-                                                      value: mismoVacunador!,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          mismoVacunador =
-                                                              value;
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const Text('Si'),
+                                                Switch(
+                                                    activeColor: Colors.orange,
+                                                    inactiveTrackColor:
+                                                        Colors.purple,
+                                                    inactiveThumbColor:
+                                                        Colors.purple,
+                                                    value: mismoVacunador!,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        mismoVacunador = value;
 
-                                                          mismoVacunador!
-                                                              ? stringVacunador =
-                                                                  'Si'
-                                                              : stringVacunador =
-                                                                  'No';
-                                                        });
-                                                        print(stringVacunador);
-                                                      }),
-                                                  Text('No'),
-                                                ],
-                                              ),
+                                                        mismoVacunador!
+                                                            ? stringVacunador =
+                                                                'Si'
+                                                            : stringVacunador =
+                                                                'No';
+                                                      });
+                                                    }),
+                                                const Text('No'),
+                                              ],
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               height: 10.0,
                                             ),
                                           ],
@@ -294,20 +289,20 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                       ),
                                     );
                             })),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     mismoVacunador == false
                         ? Container()
                         : FadeIn(
-                            duration: Duration(milliseconds: 800),
+                            duration: const Duration(milliseconds: 800),
                             child: _infoVacunador(context)),
                     //Fin de Ocultar
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                     ElasticIn(
-                      duration: Duration(milliseconds: 800),
+                      duration: const Duration(milliseconds: 800),
                       child: ColorTextButton(
                         'Siguiente',
                         color: SisVacuColor.verdefuerte,
@@ -324,20 +319,20 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                       sysdesa06_nro_documento:
                                           registradorService
                                               .registrador!.flxcore03_dni)),
-                                  // Navigator.pushAndRemoveUntil(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             BusquedaBeneficiario()),
-                                  //     (Route<dynamic> route) => false),
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const BusquedaBeneficiario()),
+                                      (Route<dynamic> route) => false),
                                 };
                         },
                         anchoValor: 220,
-                        iconoBoton: Icon(Icons.add_sharp),
+                        iconoBoton: const Icon(Icons.add_sharp),
                         iconoBool: false,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20.0,
                     ),
                   ],
@@ -376,7 +371,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.width * 0.05),
-                      Text(
+                      const Text(
                         "Registre al vacunador escaneando el D.N.I.",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16.0),
@@ -384,7 +379,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.width * 0.05),
-                      EscanerDni(
+                      const EscanerDni(
                         'Vacunador',
                         'Escanear',
                         'Escanee el D.N.I. del Vacunador',
@@ -392,7 +387,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.width * 0.05),
-                      Text(
+                      const Text(
                         "Si el Vacunador NO tiene su D.N.I., ingréselo Manualmente",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16.0),
@@ -401,15 +396,15 @@ class _VacunadorPageState extends State<VacunadorPage> {
                       SizedBox(
                           height: MediaQuery.of(context).size.width * 0.05),
                       Column(children: [
-                        Container(
+                        SizedBox(
                           width: size.width * 0.8,
                           child: TextField(
                             controller: controladorDni,
                             keyboardType: TextInputType.number,
                             maxLength: 8,
-                            style: TextStyle(color: Colors.blue),
+                            style: const TextStyle(color: Colors.blue),
                             textCapitalization: TextCapitalization.sentences,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               icon: Icon(Icons.people),
                               enabledBorder: InputBorder.none,
                               border: InputBorder.none,
@@ -419,7 +414,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                           ),
                         ),
                         ColorTextButton('Verificar',
-                            iconoBoton: Icon(
+                            iconoBoton: const Icon(
                               Icons.fingerprint,
                               color: Colors.black,
                             ),
@@ -429,7 +424,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                 verificarEscencialText(controladorDni.text),
                             anchoValor: 180.0)
                       ]),
-                      SizedBox(
+                      const SizedBox(
                         height: 5.0,
                       ),
                     ],
@@ -444,7 +439,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
     if (vacunadorService.existeVacunador) {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => BusquedaBeneficiario()),
+          MaterialPageRoute(builder: (context) => const BusquedaBeneficiario()),
           (Route<dynamic> route) => false);
     } else {
       showDialog(

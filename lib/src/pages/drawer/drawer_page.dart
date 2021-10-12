@@ -13,7 +13,8 @@ import 'package:url_launcher/url_launcher.dart';
 class BodyDrawer extends StatefulWidget {
   final List<Vacunador>? infoVacunador;
 
-  const BodyDrawer({this.infoVacunador});
+  const BodyDrawer({Key? key, this.infoVacunador}) : super(key: key);
+
   @override
   _BodyDrawerState createState() => _BodyDrawerState();
 }
@@ -22,11 +23,11 @@ class _BodyDrawerState extends State<BodyDrawer> {
   DateTime fecha = DateTime.now();
   DateFormat? dateFormat;
 
-  GlobalKey<ScaffoldState> _scafoldKey = new GlobalKey();
+  final GlobalKey<ScaffoldState> _scafoldKey = GlobalKey();
 
   @override
   void initState() {
-    dateFormat = new DateFormat.EEEE('es');
+    dateFormat = DateFormat.EEEE('es');
 
     super.initState();
   }
@@ -38,7 +39,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
       child: Column(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 gradient: LinearGradient(
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
@@ -89,10 +90,9 @@ class _BodyDrawerState extends State<BodyDrawer> {
           SizedBox(
             height: MediaQuery.of(context).size.width * 0.02,
           ),
-          Container(
-              child: Expanded(
+          Expanded(
             child: ListView(
-              padding: EdgeInsets.only(top: 0.0),
+              padding: const EdgeInsets.only(top: 0.0),
               children: [
                 ListTile(
                     leading: Icon(
@@ -100,7 +100,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                       color: Colors.cyan[600],
                       size: MediaQuery.of(context).size.width / 15.0,
                     ),
-                    title: Text(
+                    title: const Text(
                       'Editar equipo de trabajo',
                       style: TextStyle(
                         fontWeight: FontWeight.w300,
@@ -114,7 +114,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                           context,
                           MaterialPageRoute(
                               // ignore: missing_required_param
-                              builder: (context) => VacunadorPage(
+                              builder: (context) => const VacunadorPage(
                                     infoCargador: [],
                                   )));
                     }),
@@ -124,7 +124,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                     color: Colors.cyan[600],
                     size: MediaQuery.of(context).size.width / 15.0,
                   ),
-                  title: Text(
+                  title: const Text(
                     'Sobre Nosotros',
                     style: TextStyle(
                       fontWeight: FontWeight.w300,
@@ -134,7 +134,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => SobreNosotrosPage())),
+                          builder: (context) => const SobreNosotrosPage())),
                 ),
                 ListTile(
                     leading: Icon(
@@ -142,7 +142,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                       color: Colors.cyan[600],
                       size: MediaQuery.of(context).size.width / 15.0,
                     ),
-                    title: Text(
+                    title: const Text(
                       'Descargar PDF',
                       style: TextStyle(
                         fontWeight: FontWeight.w300,
@@ -158,7 +158,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                       color: SisVacuColor.primaryRed,
                       size: MediaQuery.of(context).size.width / 15.0,
                     ),
-                    title: Text(
+                    title: const Text(
                       'Cerrar Sesión',
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
@@ -171,18 +171,18 @@ class _BodyDrawerState extends State<BodyDrawer> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LoginBody(),
+                            builder: (context) => const LoginBody(),
                           ));
                     }),
               ],
             ),
-          )),
+          ),
           // SizedBox(height: MediaQuery.of(context).size.height * 0.25),
           Padding(
-            padding: EdgeInsets.only(bottom: 15.0),
+            padding: const EdgeInsets.only(bottom: 15.0),
             child: FadeInImage(
-              placeholder: AssetImage('assets/img/fondo/noimage.jpg'),
-              image: AssetImage(
+              placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+              image: const AssetImage(
                 'assets/img/fondo/logo_polo_upsti_azul.png',
               ),
               // fit: BoxFit.fill,
@@ -195,13 +195,13 @@ class _BodyDrawerState extends State<BodyDrawer> {
   }
 
   containerFoto(context) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.height * 0.12,
       height: MediaQuery.of(context).size.height * 0.12,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Container(
+          SizedBox(
             width: MediaQuery.of(context).size.height * 0.1,
             height: MediaQuery.of(context).size.height * 0.1,
             child: ClipRRect(

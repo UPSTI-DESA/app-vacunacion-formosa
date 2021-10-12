@@ -4,24 +4,23 @@ import 'package:sistema_vacunacion/src/models/usuarios/usuariovacunador_models.d
 class _VacunadorService {
   Vacunador? _vacunador;
 
-  // ignore: close_sinks
-  StreamController<Vacunador?> _vacunadorStreamController =
-      new StreamController<Vacunador?>.broadcast();
+  final StreamController<Vacunador?> _vacunadorStreamController =
+      StreamController<Vacunador?>.broadcast();
 
-  Vacunador? get vacunador => this._vacunador;
+  Vacunador? get vacunador => _vacunador;
 
-  bool get existeVacunador => (this._vacunador != null) ? true : false;
+  bool get existeVacunador => (_vacunador != null) ? true : false;
 
   Stream<Vacunador?> get vacunadorStream => _vacunadorStreamController.stream;
 
   void cargarVacunador(Vacunador? vacunador) {
-    this._vacunador = vacunador;
-    this._vacunadorStreamController.add(vacunador);
+    _vacunador = vacunador;
+    _vacunadorStreamController.add(vacunador);
   }
 
   dispose() {
-    this._vacunadorStreamController.close();
+    _vacunadorStreamController.close();
   }
 }
 
-final vacunadorService = new _VacunadorService();
+final vacunadorService = _VacunadorService();

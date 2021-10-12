@@ -5,23 +5,23 @@ class _VacunasService {
   InfoVacunas? _vacunas;
 
   // ignore: close_sinks
-  StreamController<InfoVacunas> _vacunasStreamController =
-      new StreamController<InfoVacunas>.broadcast();
+  final StreamController<InfoVacunas> _vacunasStreamController =
+      StreamController<InfoVacunas>.broadcast();
 
-  InfoVacunas? get vacunas => this._vacunas;
+  InfoVacunas? get vacunas => _vacunas;
 
-  bool get existeVacunas => (this._vacunas != null) ? true : false;
+  bool get existeVacunas => (_vacunas != null) ? true : false;
 
   Stream<InfoVacunas> get vacunasStream => _vacunasStreamController.stream;
 
   void cargarVacunador(InfoVacunas vacunador) {
-    this._vacunas = vacunador;
-    this._vacunasStreamController.add(vacunador);
+    _vacunas = vacunador;
+    _vacunasStreamController.add(vacunador);
   }
 
   dispose() {
-    this._vacunasStreamController.close();
+    _vacunasStreamController.close();
   }
 }
 
-final vacunasService = new _VacunasService();
+final vacunasService = _VacunasService();

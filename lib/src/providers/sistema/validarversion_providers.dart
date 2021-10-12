@@ -9,7 +9,7 @@ class _ValidacionVersion {
     final resp = await http.get(url);
     final decodedData = json.decode(resp.body);
 
-    final version = new Version.fromJsonList(decodedData['versiones']);
+    final version = Version.fromJsonList(decodedData['versiones']);
 
     return version.items;
   }
@@ -48,4 +48,4 @@ class _ValidacionVersion {
   }
 }
 
-final validacionVersionProvider = new _ValidacionVersion();
+final validacionVersionProvider = _ValidacionVersion();

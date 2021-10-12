@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SobreNosotrosPage extends StatelessWidget {
+  const SobreNosotrosPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final estiloTexto = TextStyle(
+    const estiloTexto = TextStyle(
       letterSpacing: 2.0,
       fontWeight: FontWeight.w300,
       fontSize: 20,
@@ -12,7 +14,7 @@ class SobreNosotrosPage extends StatelessWidget {
     );
     return Scaffold(
         body: Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
@@ -24,12 +26,12 @@ class SobreNosotrosPage extends StatelessWidget {
           child: Container(
         width: size.width * 0.85,
         height: size.height * 0.50,
-        margin: EdgeInsets.symmetric(vertical: 30.0),
-        padding: EdgeInsets.symmetric(vertical: 50.0),
+        margin: const EdgeInsets.symmetric(vertical: 30.0),
+        padding: const EdgeInsets.symmetric(vertical: 50.0),
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8.0),
-            boxShadow: <BoxShadow>[
+            boxShadow: const <BoxShadow>[
               BoxShadow(
                   color: Colors.black26,
                   blurRadius: 3.0,
@@ -38,44 +40,44 @@ class SobreNosotrosPage extends StatelessWidget {
             ]),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 40.0,
             ),
-            Text(
+            const Text(
               "Versión: 2.0.0",
               style: TextStyle(
                   fontSize: 20, color: Colors.black, letterSpacing: 2.0),
             ),
-            SizedBox(
+            const SizedBox(
               height: 40.0,
             ),
-            Text(
+            const Text(
               "Desarrollado Por: ",
 
               // textAlign: TextAlign.start,
               style: estiloTexto,
             ),
-            SizedBox(
+            const SizedBox(
               height: 40.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 FadeInImage(
-                  placeholder: AssetImage('assets/img/fondo/noimage.jpg'),
-                  image: AssetImage('assets/img/fondo/logopolo.png'),
+                  placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+                  image: const AssetImage('assets/img/fondo/logopolo.png'),
                   fit: BoxFit.cover,
                   height: size.height * 0.12,
                 ),
                 FadeInImage(
-                  placeholder: AssetImage('assets/img/fondo/noimage.jpg'),
-                  image: AssetImage('assets/img/fondo/logoupsti.png'),
+                  placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+                  image: const AssetImage('assets/img/fondo/logoupsti.png'),
                   fit: BoxFit.cover,
                   height: size.height * 0.05,
                 ),
                 FadeInImage(
-                  placeholder: AssetImage('assets/img/fondo/noimage.jpg'),
-                  image: AssetImage('assets/img/fondo/sisVacunacion.png'),
+                  placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+                  image: const AssetImage('assets/img/fondo/sisVacunacion.png'),
                   fit: BoxFit.cover,
                   height: size.height * 0.10,
                 ),

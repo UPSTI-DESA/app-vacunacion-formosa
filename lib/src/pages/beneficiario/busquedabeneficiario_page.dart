@@ -12,7 +12,7 @@ import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 import '../pages.dart';
 
 class BusquedaBeneficiario extends StatefulWidget {
-  BusquedaBeneficiario({Key? key}) : super(key: key);
+  const BusquedaBeneficiario({Key? key}) : super(key: key);
   static const String nombreRuta = 'BusquedaBeneficiario';
   @override
   _BusquedaBeneficiarioState createState() => _BusquedaBeneficiarioState();
@@ -44,13 +44,13 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     // _incrementoVacunados();
 
     return Scaffold(
-      drawer: BodyDrawer(),
+      drawer: const BodyDrawer(),
       appBar: AppBar(
         backgroundColor: SisVacuColor.verdefuerte,
         centerTitle: true,
         title: FadeInRightBig(
           from: 50,
-          child: Text(
+          child: const Text(
             'Sistema de Vacunación',
             style: TextStyle(fontWeight: FontWeight.w300),
             textAlign: TextAlign.center,
@@ -65,10 +65,10 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
           Stack(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: 30.0),
+                padding: const EdgeInsets.only(left: 30.0),
                 child: FloatingActionButton(
                     heroTag: 'boton1',
-                    child: Icon(FontAwesomeIcons.syringe),
+                    child: const Icon(FontAwesomeIcons.syringe),
                     mini: true,
                     onPressed: () async {
                       showDialog(
@@ -99,14 +99,15 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                   //     notificacionesDosisService.existeDosis ? true : false,
                   from: 10,
                   infinite: true,
-                  duration: Duration(milliseconds: 2000),
+                  duration: const Duration(milliseconds: 2000),
                   child: Container(
                     child: StreamBuilder(
                       stream: cantidadVacunasService.cantidadvacunadosStream,
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         } else {
                           return Text(
                             cantidadVacunasService
@@ -122,7 +123,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                     alignment: Alignment.center,
                     width: 20,
                     height: 20,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: Colors.redAccent, shape: BoxShape.circle),
                   ),
                 ),
@@ -157,270 +158,254 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
       ),
 
       body: BackgroundHeader(
-        child: Container(
-          child: Stack(
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    modo
-                        ? Container()
-                        : FadeInLeft(
-                            duration: Duration(milliseconds: duracionAnimacion),
-                            delay: Duration(milliseconds: duracionDelay),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  left:
-                                      MediaQuery.of(context).size.width * 0.02),
-                              child: Container(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.05),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    color: SisVacuColor.white),
-                                child: Container(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      TitulosContainerPage(
-                                        colorTitle: SisVacuColor.black,
-                                        sizeTitle: 18.0,
-                                        widthThickness: 1.5,
-                                        title: 'Modo Escaner',
-                                      ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05),
-                                      Text(
-                                          'Escanee el código  de barras del D.N.I. del beneficiario',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14.0),
-                                          textAlign: TextAlign.center),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05),
-                                      EscanerDni(
-                                        'Beneficiario',
-                                        'Escanee',
-                                        "textoAyuda",
-                                        anchoValor: 180,
-                                      )
-                                    ],
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  modo
+                      ? Container()
+                      : FadeInLeft(
+                          duration: Duration(milliseconds: duracionAnimacion),
+                          delay: Duration(milliseconds: duracionDelay),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                right: MediaQuery.of(context).size.width * 0.02,
+                                left: MediaQuery.of(context).size.width * 0.02),
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * 0.05),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  color: SisVacuColor.white),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  TitulosContainerPage(
+                                    colorTitle: SisVacuColor.black,
+                                    sizeTitle: 18.0,
+                                    widthThickness: 1.5,
+                                    title: 'Modo Escaner',
                                   ),
-                                ),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                  const Text(
+                                      'Escanee el código  de barras del D.N.I. del beneficiario',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14.0),
+                                      textAlign: TextAlign.center),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                  const EscanerDni(
+                                    'Beneficiario',
+                                    'Escanee',
+                                    "textoAyuda",
+                                    anchoValor: 180,
+                                  )
+                                ],
                               ),
                             ),
                           ),
-                    modo
-                        ? FadeInRight(
-                            duration: Duration(milliseconds: duracionAnimacion),
-                            delay: Duration(milliseconds: duracionDelay),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  left:
-                                      MediaQuery.of(context).size.width * 0.02),
-                              child: Container(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.05),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    color: SisVacuColor.white),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    TitulosContainerPage(
-                                      colorTitle: SisVacuColor.black,
-                                      sizeTitle: 18.0,
-                                      widthThickness: 1.5,
-                                      title: 'Modo Ingreso Manual',
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    Text(
-                                        'Ingrese el número de D.N.I. del beneficiario y seleccione el sexo',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14.0),
-                                        textAlign: TextAlign.center),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10, right: 10),
-                                      child: TextField(
-                                        controller: dniController,
-                                        keyboardType: TextInputType.number,
-                                        maxLength: 8,
-                                        style: TextStyle(color: Colors.blue),
-                                        textCapitalization:
-                                            TextCapitalization.sentences,
-                                        decoration: InputDecoration(
-                                          icon: Icon(Icons.fingerprint),
-                                          enabledBorder: InputBorder.none,
-                                          border: InputBorder.none,
-                                          labelText: 'Ingrese el DNI',
-                                        ),
-                                        onChanged: (valor) {
-                                          setState(() {
-                                            dniBeneficiario = valor;
-                                          });
-                                          print(dniBeneficiario);
-                                        },
+                        ),
+                  modo
+                      ? FadeInRight(
+                          duration: Duration(milliseconds: duracionAnimacion),
+                          delay: Duration(milliseconds: duracionDelay),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                right: MediaQuery.of(context).size.width * 0.02,
+                                left: MediaQuery.of(context).size.width * 0.02),
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * 0.05),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  color: SisVacuColor.white),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  TitulosContainerPage(
+                                    colorTitle: SisVacuColor.black,
+                                    sizeTitle: 18.0,
+                                    widthThickness: 1.5,
+                                    title: 'Modo Ingreso Manual',
+                                  ),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                  const Text(
+                                      'Ingrese el número de D.N.I. del beneficiario y seleccione el sexo',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14.0),
+                                      textAlign: TextAlign.center),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10, right: 10),
+                                    child: TextField(
+                                      controller: dniController,
+                                      keyboardType: TextInputType.number,
+                                      maxLength: 8,
+                                      style:
+                                          const TextStyle(color: Colors.blue),
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
+                                      decoration: const InputDecoration(
+                                        icon: Icon(Icons.fingerprint),
+                                        enabledBorder: InputBorder.none,
+                                        border: InputBorder.none,
+                                        labelText: 'Ingrese el DNI',
                                       ),
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    Container(
-                                      child: Text('Seleccione el Sexo',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16.0),
-                                          textAlign: TextAlign.center),
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text('Femenino'),
-                                        Switch(
-                                            activeColor: Colors.blue,
-                                            inactiveTrackColor: Colors.pink,
-                                            inactiveThumbColor: Colors.pink,
-                                            value: genero,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                genero = value;
-                                                genero
-                                                    ? sexoBeneficiario = 'M'
-                                                    : sexoBeneficiario = 'F';
-                                              });
-                                              print(sexoBeneficiario);
-                                            }),
-                                        Text('Masculino'),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    ColorTextButton(
-                                      'Verificar',
-                                      color: SisVacuColor.verdefuerte,
-                                      onPressed: () {
-                                        dniBeneficiario != '' &&
-                                                dniBeneficiario!.length >= 7 &&
-                                                dniBeneficiario != null
-                                            ? showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: Center(
-                                                        child: Text(
-                                                            "Verificar Datos")),
-                                                    content: Text(
-                                                        "D.N.I.: $dniBeneficiario , Sexo: $sexoBeneficiario"),
-                                                    actions: [
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            obtenerDatosBeneficiario(
-                                                                context,
-                                                                dniBeneficiario,
-                                                                sexoBeneficiario);
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            setState(() {
-                                                              loading = true;
-                                                            });
-
-                                                            retornarLoading(
-                                                                context,
-                                                                'Espere por favor');
-                                                          },
-                                                          child:
-                                                              Icon(Icons.send))
-                                                    ],
-                                                  );
-                                                })
-                                            : showDialog(
-                                                context: context,
-                                                builder: (BuildContext
-                                                        context) =>
-                                                    DialogoAlerta(
-                                                      envioFuncion2: false,
-                                                      envioFuncion1: false,
-                                                      tituloAlerta:
-                                                          'Hubo un Error',
-                                                      descripcionAlerta:
-                                                          'Ingrese el D.N.I. y seleccione el sexo.',
-                                                      textoBotonAlerta: 'Listo',
-                                                      color: Colors.red,
-                                                      icon: Icon(
-                                                        Icons.error,
-                                                        size: 40.0,
-                                                        color: Colors.grey[50],
-                                                      ),
-                                                    ));
+                                      onChanged: (valor) {
+                                        setState(() {
+                                          dniBeneficiario = valor;
+                                        });
                                       },
-                                      anchoValor: 180,
-                                      iconoBoton: Icon(Icons.add_sharp),
-                                      iconoBool: false,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                  const Text('Seleccione el Sexo',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text('Femenino'),
+                                      Switch(
+                                          activeColor: Colors.blue,
+                                          inactiveTrackColor: Colors.pink,
+                                          inactiveThumbColor: Colors.pink,
+                                          value: genero,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              genero = value;
+                                              genero
+                                                  ? sexoBeneficiario = 'M'
+                                                  : sexoBeneficiario = 'F';
+                                            });
+                                          }),
+                                      const Text('Masculino'),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                  ColorTextButton(
+                                    'Verificar',
+                                    color: SisVacuColor.verdefuerte,
+                                    onPressed: () {
+                                      dniBeneficiario != '' &&
+                                              dniBeneficiario!.length >= 7 &&
+                                              dniBeneficiario != null
+                                          ? showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Center(
+                                                      child: Text(
+                                                          "Verificar Datos")),
+                                                  content: Text(
+                                                      "D.N.I.: $dniBeneficiario , Sexo: $sexoBeneficiario"),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          obtenerDatosBeneficiario(
+                                                              context,
+                                                              dniBeneficiario,
+                                                              sexoBeneficiario);
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          setState(() {
+                                                            loading = true;
+                                                          });
+
+                                                          retornarLoading(
+                                                              context,
+                                                              'Espere por favor');
+                                                        },
+                                                        child: const Icon(
+                                                            Icons.send))
+                                                  ],
+                                                );
+                                              })
+                                          : showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) =>
+                                                  DialogoAlerta(
+                                                    envioFuncion2: false,
+                                                    envioFuncion1: false,
+                                                    tituloAlerta:
+                                                        'Hubo un Error',
+                                                    descripcionAlerta:
+                                                        'Ingrese el D.N.I. y seleccione el sexo.',
+                                                    textoBotonAlerta: 'Listo',
+                                                    color: Colors.red,
+                                                    icon: Icon(
+                                                      Icons.error,
+                                                      size: 40.0,
+                                                      color: Colors.grey[50],
+                                                    ),
+                                                  ));
+                                    },
+                                    anchoValor: 180,
+                                    iconoBoton: const Icon(Icons.add_sharp),
+                                    iconoBool: false,
+                                  ),
+                                ],
                               ),
                             ),
-                          )
-                        : Container(),
-                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Modo Escaner'),
-                        Switch(
-                            activeColor: Colors.orange,
-                            inactiveTrackColor: Colors.purple,
-                            inactiveThumbColor: Colors.purple,
-                            value: modo,
-                            onChanged: (value) {
-                              setState(() {
-                                modo = value;
-                                dniBeneficiario = '';
-                                dniController!.text = '';
-                              });
-                            }),
-                        Text('Modo Manual'),
-                      ],
-                    ),
-                  ],
-                ),
+                          ),
+                        )
+                      : Container(),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Modo Escaner'),
+                      Switch(
+                          activeColor: Colors.orange,
+                          inactiveTrackColor: Colors.purple,
+                          inactiveThumbColor: Colors.purple,
+                          value: modo,
+                          onChanged: (value) {
+                            setState(() {
+                              modo = value;
+                              dniBeneficiario = '';
+                              dniController!.text = '';
+                            });
+                          }),
+                      const Text('Modo Manual'),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -453,7 +438,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => BusquedaBeneficiario()),
+                            builder: (context) => const BusquedaBeneficiario()),
                         (Route<dynamic> route) => false);
                   },
                   tituloAlerta: 'Hubo un Error',
@@ -494,7 +479,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                   title: Text(
                     mensaje,
                   ),
-                  content: LinearProgressIndicator());
+                  content: const LinearProgressIndicator());
             })
         : Container();
   }

@@ -12,7 +12,7 @@ class _ConfiguracionVacunaProviders {
     if (resp.statusCode == 200) {
       final decodedData = json.decode(resp.body);
       final vacunador =
-          new ConfiVacuna.fromJsonList(decodedData['configuraciones']);
+          ConfiVacuna.fromJsonList(decodedData['configuraciones']);
       return vacunador.items;
     }
     throw '';
@@ -36,4 +36,4 @@ class _ConfiguracionVacunaProviders {
   }
 }
 
-final configuracionVacunaProvider = new _ConfiguracionVacunaProviders();
+final configuracionVacunaProvider = _ConfiguracionVacunaProviders();

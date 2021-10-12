@@ -5,25 +5,24 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 class _InsertRegistroService {
   InsertRegistros? _registro;
 
-  // ignore: close_sinks
-  StreamController<InsertRegistros> _registroStreamController =
-      new StreamController<InsertRegistros>.broadcast();
+  final StreamController<InsertRegistros> _registroStreamController =
+      StreamController<InsertRegistros>.broadcast();
 
-  InsertRegistros? get registro => this._registro;
+  InsertRegistros? get registro => _registro;
 
-  bool get existeRegistro => (this._registro != null) ? true : false;
+  bool get existeRegistro => (_registro != null) ? true : false;
 
   Stream<InsertRegistros> get registroStream =>
       _registroStreamController.stream;
 
   void cargarRegistro(InsertRegistros registro) {
-    this._registro = registro;
-    this._registroStreamController.add(registro);
+    _registro = registro;
+    _registroStreamController.add(registro);
   }
 
   dispose() {
-    this._registroStreamController.close();
+    _registroStreamController.close();
   }
 }
 
-final insertRegistroService = new _InsertRegistroService();
+final insertRegistroService = _InsertRegistroService();

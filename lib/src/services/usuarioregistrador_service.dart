@@ -5,7 +5,6 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 class _RegistradorService {
   Usuarios? _registrador;
 
-  // ignore: close_sinks
   final StreamController<Usuarios?> _registradorStreamController =
       StreamController<Usuarios?>.broadcast();
 

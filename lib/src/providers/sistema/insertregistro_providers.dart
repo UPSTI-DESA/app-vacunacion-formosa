@@ -25,7 +25,7 @@ class _InsertRegistro {
     final resp = await http.post(uri);
     if (resp.statusCode == 200) {
       final decodedData = json.decode(resp.body);
-      final mensaje = new MensajeServidor.fromJsonList(decodedData['mensajes']);
+      final mensaje = MensajeServidor.fromJsonList(decodedData['mensajes']);
       return mensaje.items;
     }
     throw '';

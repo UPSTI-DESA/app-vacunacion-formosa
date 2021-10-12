@@ -24,12 +24,12 @@ class SisVacuTheme {
   ThemeData get theme => ThemeData(
         brightness: brightness,
         primaryColor: verdefuerte,
-        bannerTheme: MaterialBannerThemeData(),
+        bannerTheme: const MaterialBannerThemeData(),
         floatingActionButtonTheme:
             FloatingActionButtonThemeData(backgroundColor: verdefuerte),
         accentColor: verdefuerte,
         accentColorBrightness: brightness,
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           bodyText1: TextStyle(),
           bodyText2: TextStyle(),
           subtitle1: TextStyle(),
@@ -52,7 +52,7 @@ class SisVacuTheme {
         ),
         backgroundColor: white,
         scaffoldBackgroundColor: verdeclaro,
-        pageTransitionsTheme: PageTransitionsTheme(builders: const {
+        pageTransitionsTheme: const PageTransitionsTheme(builders: {
           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
         }),

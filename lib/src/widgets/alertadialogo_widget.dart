@@ -15,6 +15,7 @@ class DialogoAlerta extends StatelessWidget {
   final bool envioFuncion2;
 
   const DialogoAlerta({
+    Key? key,
     required this.tituloAlerta,
     required this.descripcionAlerta,
     required this.textoBotonAlerta,
@@ -26,7 +27,7 @@ class DialogoAlerta extends StatelessWidget {
     this.funcion2,
     required this.envioFuncion2,
     this.textoBotonAlerta2,
-  });
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -40,8 +41,8 @@ class DialogoAlerta extends StatelessWidget {
   }
 
   contenidoDialogo(BuildContext context) {
-    const double padding = 16.0;
-    const double avatarRadius = 40.0;
+    double padding = 16.0;
+    double avatarRadius = 40.0;
     return Stack(children: <Widget>[
       Container(
           padding: EdgeInsets.only(
@@ -50,33 +51,33 @@ class DialogoAlerta extends StatelessWidget {
             right: padding,
           ),
           margin: EdgeInsets.only(top: avatarRadius),
-          decoration: new BoxDecoration(
+          decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(padding),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 10.0,
-                  offset: const Offset(0.0, 10.0),
+                  offset: Offset(0.0, 10.0),
                 )
               ]),
           child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
             Text(
-              this.tituloAlerta!,
-              style: TextStyle(
+              tituloAlerta!,
+              style: const TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(descripcionAlerta!,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 16.0,
                 )),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -108,7 +109,9 @@ class DialogoAlerta extends StatelessWidget {
           right: padding,
           child: CircleAvatar(
             child: Pulse(
-                infinite: true, duration: Duration(seconds: 2), child: icon),
+                infinite: true,
+                duration: const Duration(seconds: 2),
+                child: icon),
             backgroundColor: color,
             radius: avatarRadius,
           ))

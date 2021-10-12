@@ -5,23 +5,23 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 class _CantidadVacunadosService {
   CantidadVacunados? cantidadVacunadosState;
 
-  StreamController<CantidadVacunados> _cantidadVacunadosStateStreamController =
+  final StreamController<CantidadVacunados>
+      _cantidadVacunadosStateStreamController =
       StreamController<CantidadVacunados>.broadcast();
 
-  CantidadVacunados? get getCantidadVacunadosState =>
-      this.cantidadVacunadosState;
+  CantidadVacunados? get getCantidadVacunadosState => cantidadVacunadosState;
 
   Stream<CantidadVacunados> get cantidadVacunadosStateStream =>
       _cantidadVacunadosStateStreamController.stream;
 
   void cargarEnviroment(CantidadVacunados enviroment) {
-    this.cantidadVacunadosState = enviroment;
+    cantidadVacunadosState = enviroment;
 
-    this._cantidadVacunadosStateStreamController.add(enviroment);
+    _cantidadVacunadosStateStreamController.add(enviroment);
   }
 
   dispose() {
-    this._cantidadVacunadosStateStreamController.close();
+    _cantidadVacunadosStateStreamController.close();
   }
 }
 

@@ -10,7 +10,7 @@ class _NotificacionesProviders {
     final resp = await http.get(url);
     if (resp.statusCode == 200) {
       final decodedData = json.decode(resp.body);
-      final notificaciones = new NotificacionesDosis.fromJsonList(
+      final notificaciones = NotificacionesDosis.fromJsonList(
           decodedData['aplicaciones_beneficiario']);
       return notificaciones.items;
     }
@@ -30,4 +30,4 @@ class _NotificacionesProviders {
   }
 }
 
-final notificacionesProvider = new _NotificacionesProviders();
+final notificacionesProvider = _NotificacionesProviders();

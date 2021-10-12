@@ -80,6 +80,6 @@ class Lotes {
   }
 
   String userAsString() {
-    return '${this.sysdesa18_lote}';
+    return '$sysdesa18_lote';
   }
 }

@@ -47,10 +47,11 @@ class MyApp extends StatelessWidget {
         VacunadorPage.nombreRuta: (BuildContext context) => const VacunadorPage(
               infoCargador: [],
             ),
-        BusquedaBeneficiario.nombreRuta: (context) => BusquedaBeneficiario(),
+        BusquedaBeneficiario.nombreRuta: (context) =>
+            const BusquedaBeneficiario(),
 
-        VacunasPage.nombreRuta: (BuildContext context) => VacunasPage(
-              vacunas: const [],
+        VacunasPage.nombreRuta: (BuildContext context) => const VacunasPage(
+              vacunas: [],
             ),
       },
     );

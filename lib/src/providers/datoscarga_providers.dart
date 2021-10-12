@@ -29,4 +29,4 @@ class DatosdeCarga {
   String versionApp = '';
 }
 
-final datosdecargaprovider = new DatosdeCarga();
+final datosdecargaprovider = DatosdeCarga();

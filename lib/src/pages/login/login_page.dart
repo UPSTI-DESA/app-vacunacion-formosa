@@ -118,7 +118,7 @@ class _LoginBodyState extends State<LoginBody> {
         children: <Widget>[
           Bounce(
             from: 80,
-            delay: Duration(milliseconds: 600),
+            delay: const Duration(milliseconds: 600),
             child: Container(
               padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
               decoration: BoxDecoration(
@@ -128,7 +128,7 @@ class _LoginBodyState extends State<LoginBody> {
                 children: <Widget>[
                   FadeInDown(
                     from: 40,
-                    delay: Duration(milliseconds: 1400),
+                    delay: const Duration(milliseconds: 1400),
                     child: Icon(FontAwesomeIcons.hospital,
                         color: SisVacuColor.verdefuerte,
                         size: MediaQuery.of(context).size.height * 0.12),
@@ -136,7 +136,7 @@ class _LoginBodyState extends State<LoginBody> {
                   SizedBox(height: MediaQuery.of(context).size.width * 0.08),
                   FadeInRight(
                     from: 40,
-                    delay: Duration(milliseconds: 1100),
+                    delay: const Duration(milliseconds: 1100),
                     child: Text(
                       'Registro de Vacunación',
                       style: TextStyle(
@@ -148,7 +148,7 @@ class _LoginBodyState extends State<LoginBody> {
                   SizedBox(height: MediaQuery.of(context).size.width * 0.02),
                   FadeInLeft(
                     from: 40,
-                    delay: Duration(milliseconds: 1100),
+                    delay: const Duration(milliseconds: 1100),
                     child: Text(
                       'Escanee su D.N.I. para continuar',
                       style: TextStyle(
@@ -159,7 +159,7 @@ class _LoginBodyState extends State<LoginBody> {
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   ElasticIn(
-                    delay: Duration(milliseconds: 1500),
+                    delay: const Duration(milliseconds: 1500),
                     child: EscanerDni(
                       'Registrador',
                       'Escanear',
@@ -172,12 +172,12 @@ class _LoginBodyState extends State<LoginBody> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.0),
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
             child: Column(
               children: [
                 FadeInLeft(
                   from: 40,
-                  delay: Duration(milliseconds: 1100),
+                  delay: const Duration(milliseconds: 1100),
                   child: Text(
                     'Para uso interno, del ministerio de desarrollo humano',
                     textAlign: TextAlign.center,
@@ -187,17 +187,6 @@ class _LoginBodyState extends State<LoginBody> {
                         letterSpacing: 2.0),
                   ),
                 ),
-                // FadeInLeft(
-                //   from: 40,
-                //   delay: Duration(milliseconds: 1100),
-                //   child: Text(
-                //     'Para uso interno, del ministerio de desarrollo humano',
-                //     style: TextStyle(
-                //         fontSize: MediaQuery.of(context).size.height * 0.018,
-                //         fontWeight: FontWeight.w600,
-                //         letterSpacing: 2.0),
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -205,10 +194,11 @@ class _LoginBodyState extends State<LoginBody> {
             alignment: Alignment.bottomCenter,
             child: BounceInUp(
               from: 30,
-              delay: Duration(milliseconds: 800),
+              delay: const Duration(milliseconds: 800),
               child: FadeInImage(
-                placeholder: AssetImage('assets/img/fondo/noimage.jpg'),
-                image: AssetImage('assets/img/fondo/AZUL_TODOS_UNIDOS.png'),
+                placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+                image:
+                    const AssetImage('assets/img/fondo/AZUL_TODOS_UNIDOS.png'),
                 fit: BoxFit.cover,
                 height: MediaQuery.of(context).size.height * 0.065,
                 // width: MediaQuery.of(context).size.height / 1,
@@ -225,11 +215,11 @@ class _LoginBodyState extends State<LoginBody> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Informacion Importante'),
+            title: const Text('Informacion Importante'),
             content: Text(mensaje),
             actions: <Widget>[
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: _launchURL,
               )
             ],

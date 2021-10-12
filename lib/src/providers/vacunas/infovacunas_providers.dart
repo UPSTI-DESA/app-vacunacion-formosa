@@ -12,7 +12,7 @@ class _InfoVacunasProviders {
     if (resp.statusCode == 200) {
       final decodedData = json.decode(resp.body);
       final informacion =
-          new InfoVacunas.fromJsonList(decodedData['vacunas_configuradas']);
+          InfoVacunas.fromJsonList(decodedData['vacunas_configuradas']);
       return informacion.items;
     }
     throw '';
@@ -24,7 +24,7 @@ class _InfoVacunasProviders {
     if (resp.statusCode == 200) {
       final decodedData = json.decode(resp.body);
       final vacunas =
-          new InfoVacunas.fromJsonList(decodedData['vacunas_configuradas']);
+          InfoVacunas.fromJsonList(decodedData['vacunas_configuradas']);
       return vacunas.items;
     }
     throw '';
@@ -52,4 +52,4 @@ class _InfoVacunasProviders {
   }
 }
 
-final infoVacunasProviers = new _InfoVacunasProviders();
+final infoVacunasProviers = _InfoVacunasProviders();

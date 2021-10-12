@@ -14,9 +14,10 @@ import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class VacunasPage extends StatefulWidget {
   final List<InfoVacunas>? vacunas;
-  VacunasPage({
+  const VacunasPage({
+    Key? key,
     required this.vacunas,
-  });
+  }) : super(key: key);
   static const String nombreRuta = 'VacunasPage';
   @override
   _VacunasPageState createState() => _VacunasPageState();
@@ -60,7 +61,7 @@ class _VacunasPageState extends State<VacunasPage> {
               ? Stack(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: 30.0),
+                      padding: const EdgeInsets.only(left: 30.0),
                       child: FloatingActionButton(
                           heroTag: 'boton1',
                           child: Icon(FontAwesomeIcons.exclamation,
@@ -110,7 +111,7 @@ class _VacunasPageState extends State<VacunasPage> {
                             : false,
                         from: 10,
                         infinite: true,
-                        duration: Duration(milliseconds: 2000),
+                        duration: const Duration(milliseconds: 2000),
                         child: Container(
                           child: Text(
                             '1',
@@ -121,7 +122,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           alignment: Alignment.center,
                           width: 15,
                           height: 15,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               color: Colors.redAccent, shape: BoxShape.circle),
                         ),
                       ),
@@ -131,7 +132,7 @@ class _VacunasPageState extends State<VacunasPage> {
               : Container(),
           FloatingActionButton(
             heroTag: 'boton2',
-            child: Icon(Icons.info_outline),
+            child: const Icon(Icons.info_outline),
             mini: true,
             onPressed: () {
               showDialog(
@@ -159,7 +160,7 @@ class _VacunasPageState extends State<VacunasPage> {
         centerTitle: true,
         title: FadeInLeftBig(
           from: 50,
-          child: Text(
+          child: const Text(
             'Sistema de Vacunación',
             style: TextStyle(fontWeight: FontWeight.w300),
             textAlign: TextAlign.center,
@@ -168,539 +169,378 @@ class _VacunasPageState extends State<VacunasPage> {
       ),
       body: BackgroundHeader(
         child: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: [
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                Padding(
-                  padding: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.width * 0.02,
-                      left: MediaQuery.of(context).size.width * 0.02),
-                  child: Container(
-                    padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width * 0.05),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        color: SisVacuColor.white),
-                    child: Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+              Padding(
+                padding: EdgeInsets.only(
+                    right: MediaQuery.of(context).size.width * 0.02,
+                    left: MediaQuery.of(context).size.width * 0.02),
+                child: Container(
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: SisVacuColor.white),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TitulosContainerPage(
+                        colorTitle: SisVacuColor.black,
+                        sizeTitle: 18.0,
+                        widthThickness: 1.5,
+                        title: 'Datos Beneficiario',
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.width * 0.05),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TitulosContainerPage(
-                            colorTitle: SisVacuColor.black,
-                            sizeTitle: 18.0,
-                            widthThickness: 1.5,
-                            title: 'Datos Beneficiario',
-                          ),
                           SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.05),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                              width: MediaQuery.of(context).size.height * 0.14,
+                              height: MediaQuery.of(context).size.height * 0.14,
+                              child: beneficiarioService
+                                          .beneficiario!.foto_beneficiario !=
+                                      ''
+                                  ? Image.memory(fotoBeneficiario!)
+                                  : Image.asset(
+                                      'assets/img/fondo/noimage.jpg')),
+                          Column(
                             children: [
-                              Container(
-                                  width:
-                                      MediaQuery.of(context).size.height * 0.14,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.14,
-                                  child: beneficiarioService.beneficiario!
-                                              .foto_beneficiario !=
-                                          ''
-                                      ? Image.memory(fotoBeneficiario!)
-                                      : Image.asset(
-                                          'assets/img/fondo/noimage.jpg')),
-                              Column(
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text('Nombre: ',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16.0),
-                                          textAlign: TextAlign.center),
-                                      Text(
-                                          beneficiarioService
-                                              .beneficiario!.sysdesa10_nombre!,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16.0),
-                                          textAlign: TextAlign.center),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.02),
-                                  Row(
-                                    children: [
-                                      Text('Apellido: ',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16.0),
-                                          textAlign: TextAlign.center),
-                                      Text(
-                                          beneficiarioService.beneficiario!
-                                              .sysdesa10_apellido!,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16.0),
-                                          textAlign: TextAlign.center),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.02),
-                                  Row(
-                                    children: [
-                                      Text('D.N.I.: ',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16.0),
-                                          textAlign: TextAlign.center),
-                                      Text(
-                                          beneficiarioService
-                                              .beneficiario!.sysdesa10_dni!,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16.0),
-                                          textAlign: TextAlign.center),
-                                    ],
-                                  ),
+                                  const Text('Nombre: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
+                                  Text(
+                                      beneficiarioService
+                                          .beneficiario!.sysdesa10_nombre!,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
+                                ],
+                              ),
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.02),
+                              Row(
+                                children: [
+                                  const Text('Apellido: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
+                                  Text(
+                                      beneficiarioService
+                                          .beneficiario!.sysdesa10_apellido!,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
+                                ],
+                              ),
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.02),
+                              Row(
+                                children: [
+                                  const Text('D.N.I.: ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
+                                  Text(
+                                      beneficiarioService
+                                          .beneficiario!.sysdesa10_dni!,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
                                 ],
                               ),
                             ],
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                StreamBuilder(
-                  stream: tutorService.tutorStream,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    return snapshot.hasData
-                        ? Padding(
-                            padding: EdgeInsets.only(
-                                right: MediaQuery.of(context).size.width * 0.02,
-                                left: MediaQuery.of(context).size.width * 0.02),
-                            child: Container(
-                              padding: EdgeInsets.all(
-                                  MediaQuery.of(context).size.width * 0.05),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  color: SisVacuColor.white),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  TitulosContainerPage(
-                                    colorTitle: SisVacuColor.black,
-                                    sizeTitle: 18.0,
-                                    widthThickness: 1.5,
-                                    title: 'Datos del Tutor',
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.14,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.14,
-                                          child: tutorService
-                                                      .tutor!.fotoTutor !=
-                                                  null
-                                              ? tutorService.tutor!.fotoTutor!
-                                                      .isNotEmpty
-                                                  ? Image.memory(tutorService
-                                                      .tutor!.fotoTutor!)
-                                                  : Image.asset(
-                                                      'assets/img/fondo/noimage.jpg')
-                                              : Image.asset(
-                                                  'assets/img/fondo/noimage.jpg')),
-                                      Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Text('Nombre: ',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center),
-                                              Text(
-                                                  tutorService.tutor!
-                                                      .sysdesa10_nombre_tutor!,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.02),
-                                          Row(
-                                            children: [
-                                              Text('Apellido: ',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center),
-                                              Text(
-                                                  tutorService.tutor!
-                                                      .sysdesa10_apellido_tutor!,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.02),
-                                          Row(
-                                            children: [
-                                              Text('D.N.I.: ',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center),
-                                              Text(
-                                                  tutorService.tutor!
-                                                      .sysdesa10_dni_tutor!,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 16.0),
-                                                  textAlign: TextAlign.center),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : verificarEdad(context);
-                  },
-                ),
-                //CUANDO EL TUTORSERVICE TENGA DATOS
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                Padding(
-                  padding: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.width * 0.02,
-                      left: MediaQuery.of(context).size.width * 0.02),
-                  child: Container(
-                    padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width * 0.05),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        color: SisVacuColor.white),
-                    child: Column(
-                      children: [
-                        TitulosContainerPage(
-                          colorTitle: SisVacuColor.black,
-                          sizeTitle: 18.0,
-                          widthThickness: 1.5,
-                          title: 'Seleccione una Vacuna',
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        GestureDetector(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+              ),
+              SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+              StreamBuilder(
+                stream: tutorService.tutorStream,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  return snapshot.hasData
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width * 0.02,
+                              left: MediaQuery.of(context).size.width * 0.02),
+                          child: Container(
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * 0.05),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: SisVacuColor.white),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                Text(
-                                  _selectVacunas == null
-                                      ? 'Seleccione una Vacuna'
-                                      : _selectVacunas!.sysvacu04_nombre!,
-                                  style: TextStyle(
-                                    fontSize: getValueForScreenType(
-                                        context: context,
-                                        mobile: 15,
-                                        tablet: 20),
-                                    fontWeight: FontWeight.w400,
-                                  ),
+                                TitulosContainerPage(
+                                  colorTitle: SisVacuColor.black,
+                                  sizeTitle: 18.0,
+                                  widthThickness: 1.5,
+                                  title: 'Datos del Tutor',
                                 ),
-                                SizedBox(width: 5),
-                                Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: SisVacuColor.black,
-                                ),
-                              ],
-                            ),
-                            onTap: () {
-                              (widget.vacunas == null)
-                                  ? Center(
-                                      child: Text('Hubo un problema'),
-                                    )
-                                  : Picker(
-                                      title: Text(
-                                        'Vacunas',
-                                      ),
-                                      itemExtent: 45,
-                                      cancelText: "Cancelar",
-                                      confirmText: 'Confirmar',
-                                      adapter: PickerDataAdapter<InfoVacunas>(
-                                        data: widget.vacunas!
-                                            .map(
-                                                (iv) => PickerItem<InfoVacunas>(
-                                                      text: Center(
-                                                          child: Text(iv
-                                                              .sysvacu04_nombre!)),
-                                                      value: iv,
-                                                    ))
-                                            .toList(),
-                                      ),
-                                      squeeze: 1,
-                                      height: size.height * .2,
-                                      onConfirm:
-                                          (Picker picker, List value) async {
-                                        PickerDataAdapter<InfoVacunas>
-                                            pickerAdapter = picker.adapter
-                                                as PickerDataAdapter<
-                                                    InfoVacunas>;
-                                        listaConfiguraciones!.clear();
-                                        listaLotes!.clear();
-                                        setState(() {
-                                          _selectLote = null;
-                                          _selectConfigVacuna = null;
-                                          _selectVacunas = pickerAdapter
-                                              .data[value.first].value;
-                                        });
-                                        final tempLista =
-                                            await configuracionVacunaProvider
-                                                .validarConfiguraciones(
-                                                    _selectVacunas!
-                                                        .id_sysvacu04);
-                                        tempLista[0].codigo_mensaje == "0"
-                                            ? showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return DialogoAlerta(
-                                                      envioFuncion2: false,
-                                                      envioFuncion1: false,
-                                                      tituloAlerta: 'ATENCIÓN!',
-                                                      descripcionAlerta:
-                                                          tempLista[0].mensaje,
-                                                      textoBotonAlerta: 'Listo',
-                                                      icon: Icon(
-                                                        Icons.error_outline,
-                                                        size: 40,
-                                                      ),
-                                                      color: Colors.red);
-                                                })
-                                            : setState(() {
-                                                listaConfiguraciones =
-                                                    tempLista;
-                                              });
-                                      }).showModal(context);
-                            }),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                listaConfiguraciones!.length != 0
-                    ? Padding(
-                        padding: EdgeInsets.only(
-                            right: MediaQuery.of(context).size.width * 0.02,
-                            left: MediaQuery.of(context).size.width * 0.02),
-                        child: Container(
-                          padding: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * 0.05),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                              color: SisVacuColor.white),
-                          child: Column(
-                            children: [
-                              TitulosContainerPage(
-                                colorTitle: SisVacuColor.black,
-                                sizeTitle: 18.0,
-                                widthThickness: 1.5,
-                                title: 'Seleccione una Condición',
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              GestureDetector(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                SizedBox(
+                                    height: MediaQuery.of(context).size.width *
+                                        0.05),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.height *
+                                                0.14,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.14,
+                                        child: tutorService.tutor!.fotoTutor !=
+                                                null
+                                            ? tutorService.tutor!.fotoTutor!
+                                                    .isNotEmpty
+                                                ? Image.memory(tutorService
+                                                    .tutor!.fotoTutor!)
+                                                : Image.asset(
+                                                    'assets/img/fondo/noimage.jpg')
+                                            : Image.asset(
+                                                'assets/img/fondo/noimage.jpg')),
+                                    Column(
                                       children: [
-                                        Text(
-                                          _selectConfigVacuna == null
-                                              ? 'Seleccione una Condición'
-                                              : _selectConfigVacuna!
-                                                      .sysvacu01_descripcion! +
-                                                  '-' +
-                                                  _selectConfigVacuna!
-                                                      .sysvacu02_descripcion! +
-                                                  '-' +
-                                                  _selectConfigVacuna!
-                                                      .sysvacu05_nombre!,
-                                          style: TextStyle(
-                                            fontSize: getValueForScreenType(
-                                                context: context,
-                                                mobile: 15,
-                                                tablet: 20),
-                                            fontWeight: FontWeight.w400,
-                                          ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            const Text('Nombre: ',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 16.0),
+                                                textAlign: TextAlign.center),
+                                            Text(
+                                                tutorService.tutor!
+                                                    .sysdesa10_nombre_tutor!,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 16.0),
+                                                textAlign: TextAlign.center),
+                                          ],
                                         ),
-                                        SizedBox(width: 5),
-                                        Icon(
-                                          Icons.keyboard_arrow_down,
-                                          color: SisVacuColor.black,
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.02),
+                                        Row(
+                                          children: [
+                                            const Text('Apellido: ',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 16.0),
+                                                textAlign: TextAlign.center),
+                                            Text(
+                                                tutorService.tutor!
+                                                    .sysdesa10_apellido_tutor!,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 16.0),
+                                                textAlign: TextAlign.center),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.02),
+                                        Row(
+                                          children: [
+                                            const Text('D.N.I.: ',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 16.0),
+                                                textAlign: TextAlign.center),
+                                            Text(
+                                                tutorService.tutor!
+                                                    .sysdesa10_dni_tutor!,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 16.0),
+                                                textAlign: TextAlign.center),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  onTap: () {
-                                    (listaConfiguraciones == null)
-                                        ? Center(
-                                            child: Text('Hubo un problema'),
-                                          )
-                                        : Picker(
-                                            title: Text(
-                                              'Condiciones',
-                                            ),
-                                            itemExtent: 90,
-                                            cancelText: "Cancelar",
-                                            confirmText: 'Confirmar',
-                                            adapter:
-                                                PickerDataAdapter<ConfiVacuna>(
-                                              data: listaConfiguraciones!
-                                                  .map((iv) =>
-                                                      PickerItem<ConfiVacuna>(
-                                                        text: Center(
-                                                            child: Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  10.0),
-                                                          child: Text(iv
-                                                                  .sysvacu05_nombre! +
-                                                              '-' +
-                                                              iv.sysvacu01_descripcion! +
-                                                              '-' +
-                                                              iv.sysvacu02_descripcion!),
-                                                        )),
-                                                        value: iv,
-                                                      ))
-                                                  .toList(),
-                                            ),
-                                            squeeze: 1,
-                                            height: size.height * .2,
-                                            onConfirm: (Picker picker,
-                                                List value) async {
-                                              PickerDataAdapter<ConfiVacuna>
-                                                  pickerAdapter = picker.adapter
-                                                      as PickerDataAdapter<
-                                                          ConfiVacuna>;
-                                              listaLotes!.clear();
-                                              setState(() {
-                                                _selectLote = null;
-                                                _selectConfigVacuna =
-                                                    pickerAdapter
-                                                        .data[value.first]
-                                                        .value!;
-                                              });
-                                              final tempLista =
-                                                  await lotesVacunaProvider
-                                                      .validarLotes(
-                                                          _selectVacunas!
-                                                              .id_sysvacu04!);
-                                              tempLista[0].codigo_mensaje == "0"
-                                                  ? showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return DialogoAlerta(
-                                                            envioFuncion2:
-                                                                false,
-                                                            envioFuncion1:
-                                                                false,
-                                                            tituloAlerta:
-                                                                'ATENCIÓN!',
-                                                            descripcionAlerta:
-                                                                tempLista[0]
-                                                                    .mensaje,
-                                                            textoBotonAlerta:
-                                                                'Listo',
-                                                            icon: Icon(
-                                                              Icons
-                                                                  .error_outline,
-                                                              size: 40,
-                                                            ),
-                                                            color: Colors.red);
-                                                      })
-                                                  : setState(() {
-                                                      listaLotes = tempLista;
-                                                    });
-                                            }).showModal(context);
-                                  }),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : verificarEdad(context);
+                },
+              ),
+              //CUANDO EL TUTORSERVICE TENGA DATOS
+              SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+              Padding(
+                padding: EdgeInsets.only(
+                    right: MediaQuery.of(context).size.width * 0.02,
+                    left: MediaQuery.of(context).size.width * 0.02),
+                child: Container(
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: SisVacuColor.white),
+                  child: Column(
+                    children: [
+                      TitulosContainerPage(
+                        colorTitle: SisVacuColor.black,
+                        sizeTitle: 18.0,
+                        widthThickness: 1.5,
+                        title: 'Seleccione una Vacuna',
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      GestureDetector(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _selectVacunas == null
+                                    ? 'Seleccione una Vacuna'
+                                    : _selectVacunas!.sysvacu04_nombre!,
+                                style: TextStyle(
+                                  fontSize: getValueForScreenType(
+                                      context: context, mobile: 15, tablet: 20),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                color: SisVacuColor.black,
+                              ),
                             ],
                           ),
-                        ),
-                      )
-                    : Container(),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                listaLotes!.length != 0
-                    ? Padding(
-                        padding: EdgeInsets.only(
-                            right: MediaQuery.of(context).size.width * 0.02,
-                            left: MediaQuery.of(context).size.width * 0.02),
-                        child: Container(
-                          padding: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * 0.05),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                              color: SisVacuColor.white),
-                          child: Column(
-                            children: [
-                              TitulosContainerPage(
-                                colorTitle: SisVacuColor.black,
-                                sizeTitle: 18.0,
-                                widthThickness: 1.5,
-                                title: 'Seleccione un Lote',
-                              ),
-                              SizedBox(
-                                height: 15,
-                              ),
-                              GestureDetector(
+                          onTap: () {
+                            (widget.vacunas == null)
+                                ? const Center(
+                                    child: Text('Hubo un problema'),
+                                  )
+                                : Picker(
+                                    title: const Text(
+                                      'Vacunas',
+                                    ),
+                                    itemExtent: 45,
+                                    cancelText: "Cancelar",
+                                    confirmText: 'Confirmar',
+                                    adapter: PickerDataAdapter<InfoVacunas>(
+                                      data: widget.vacunas!
+                                          .map((iv) => PickerItem<InfoVacunas>(
+                                                text: Center(
+                                                    child: Text(
+                                                        iv.sysvacu04_nombre!)),
+                                                value: iv,
+                                              ))
+                                          .toList(),
+                                    ),
+                                    squeeze: 1,
+                                    height: size.height * .2,
+                                    onConfirm:
+                                        (Picker picker, List value) async {
+                                      PickerDataAdapter<InfoVacunas>
+                                          pickerAdapter = picker.adapter
+                                              as PickerDataAdapter<InfoVacunas>;
+                                      listaConfiguraciones!.clear();
+                                      listaLotes!.clear();
+                                      setState(() {
+                                        _selectLote = null;
+                                        _selectConfigVacuna = null;
+                                        _selectVacunas = pickerAdapter
+                                            .data[value.first].value;
+                                      });
+                                      final tempLista =
+                                          await configuracionVacunaProvider
+                                              .validarConfiguraciones(
+                                                  _selectVacunas!.id_sysvacu04);
+                                      tempLista[0].codigo_mensaje == "0"
+                                          ? showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return DialogoAlerta(
+                                                    envioFuncion2: false,
+                                                    envioFuncion1: false,
+                                                    tituloAlerta: 'ATENCIÓN!',
+                                                    descripcionAlerta:
+                                                        tempLista[0].mensaje,
+                                                    textoBotonAlerta: 'Listo',
+                                                    icon: const Icon(
+                                                      Icons.error_outline,
+                                                      size: 40,
+                                                    ),
+                                                    color: Colors.red);
+                                              })
+                                          : setState(() {
+                                              listaConfiguraciones = tempLista;
+                                            });
+                                    }).showModal(context);
+                          }),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+              listaConfiguraciones!.isNotEmpty
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.02),
+                      child: Container(
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.05),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: SisVacuColor.white),
+                        child: Column(
+                          children: [
+                            TitulosContainerPage(
+                              colorTitle: SisVacuColor.black,
+                              sizeTitle: 18.0,
+                              widthThickness: 1.5,
+                              title: 'Seleccione una Condición',
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            GestureDetector(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        _selectLote == null
-                                            ? 'Seleccione un Lote'
-                                            : _selectLote!.sysdesa18_lote!,
+                                        _selectConfigVacuna == null
+                                            ? 'Seleccione una Condición'
+                                            : _selectConfigVacuna!
+                                                    .sysvacu01_descripcion! +
+                                                '-' +
+                                                _selectConfigVacuna!
+                                                    .sysvacu02_descripcion! +
+                                                '-' +
+                                                _selectConfigVacuna!
+                                                    .sysvacu05_nombre!,
                                         style: TextStyle(
                                           fontSize: getValueForScreenType(
                                               context: context,
@@ -709,124 +549,69 @@ class _VacunasPageState extends State<VacunasPage> {
                                           fontWeight: FontWeight.w400,
                                         ),
                                       ),
-                                      SizedBox(width: 5),
+                                      const SizedBox(width: 5),
                                       Icon(
                                         Icons.keyboard_arrow_down,
                                         color: SisVacuColor.black,
                                       ),
                                     ],
                                   ),
-                                  onTap: () {
-                                    (listaLotes == null)
-                                        ? Center(
-                                            child: Text('Hubo un problema'),
-                                          )
-                                        : Picker(
-                                            title: Text(
-                                              'Lotes',
-                                            ),
-                                            itemExtent: 40,
-                                            cancelText: "Cancelar",
-                                            confirmText: 'Confirmar',
-                                            adapter: PickerDataAdapter<Lotes>(
-                                              data: listaLotes!
-                                                  .map(
-                                                      (iv) => PickerItem<Lotes>(
-                                                            text: Center(
-                                                                child: Text(iv
-                                                                    .sysdesa18_lote!)),
-                                                            value: iv,
-                                                          ))
-                                                  .toList(),
-                                            ),
-                                            squeeze: 1,
-                                            height: size.height * .2,
-                                            onConfirm:
-                                                (Picker picker, List value) {
-                                              PickerDataAdapter<Lotes>
-                                                  pickerAdapter = picker.adapter
-                                                      as PickerDataAdapter<
-                                                          Lotes>;
-                                              setState(() {
-                                                _selectLote = pickerAdapter
-                                                    .data[value.first].value!;
-                                              });
-                                            }).showModal(context);
-                                  }),
-                            ],
-                          ),
-                        ),
-                      )
-                    : Container(),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                ColorTextButton(
-                  'Registrar Vacunacion',
-                  color: SisVacuColor.verdefuerte,
-                  onPressed: () {
-                    beneficiarioService.beneficiario!.sysdesa10_dni != ''
-                        ? int.parse(beneficiarioService
-                                    .beneficiario!.sysdesa10_edad!) <
-                                18
-                            ? tutorService.existeTutor
-                                ? tutorService.tutor!.sysdesa10_dni_tutor != ''
-                                    ? _selectVacunas != null
-                                        ? _selectConfigVacuna != null
-                                            ? _selectLote != null
-                                                // ignore: unnecessary_statements
-                                                ? {
-                                                    insertRegistroService.cargarRegistro(
-                                                        InsertRegistros(
-                                                            id_flxcore03: registradorService
-                                                                .registrador!
-                                                                .id_flxcore03, //Obligatorio
-                                                            id_sysdesa12: vacunadorService
-                                                                .vacunador!
-                                                                .id_sysdesa12, //Obligatorio
-                                                            id_sysdesa18: _selectLote!
-                                                                .id_sysdesa18, //Obligatorio
-                                                            id_sysofic01: registradorService
-                                                                .registrador!
-                                                                .rela_sysofic01, //Obligatorio
-                                                            id_sysvacu03: _selectConfigVacuna!
-                                                                .id_sysvacu03, //Obligatorio
-                                                            sysdesa10_apellido: beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_apellido, //Obligatorio
-                                                            sysdesa10_cadena_dni: beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_cadena_dni, //Solo con Escaner
-                                                            sysdesa10_dni: beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_dni, //Obligatorio
-                                                            sysdesa10_nombre: beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_nombre, //Obligatorio
-                                                            sysdesa10_nro_tramite:
-                                                                beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_nro_tramite, //Solo con Escaner
-                                                            sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
-                                                            sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
-                                                            //DatosExtras que no se envian, SOlo para vista
-                                                            nombreVacuna: _selectVacunas!.sysvacu04_nombre,
-                                                            nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
-                                                            nombreLote: _selectLote!.sysdesa18_lote,
-                                                            sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
-                                                            vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
-                                                            sysdesa10_apellido_tutor: tutorService.tutor!.sysdesa10_apellido_tutor,
-                                                            sysdesa10_dni_tutor: tutorService.tutor!.sysdesa10_dni_tutor,
-                                                            sysdesa10_nombre_tutor: tutorService.tutor!.sysdesa10_nombre_tutor,
-                                                            sysdesa10_sexo_tutor: tutorService.tutor!.sysdesa10_sexo_tutor)),
-                                                    Navigator.pushAndRemoveUntil(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                ConfirmarDatos()),
-                                                        (Route<dynamic>
-                                                                route) =>
-                                                            false)
-                                                  }
-                                                : showDialog(
+                                ),
+                                onTap: () {
+                                  (listaConfiguraciones == null)
+                                      ? const Center(
+                                          child: Text('Hubo un problema'),
+                                        )
+                                      : Picker(
+                                          title: const Text(
+                                            'Condiciones',
+                                          ),
+                                          itemExtent: 90,
+                                          cancelText: "Cancelar",
+                                          confirmText: 'Confirmar',
+                                          adapter:
+                                              PickerDataAdapter<ConfiVacuna>(
+                                            data: listaConfiguraciones!
+                                                .map((iv) =>
+                                                    PickerItem<ConfiVacuna>(
+                                                      text: Center(
+                                                          child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10.0),
+                                                        child: Text(iv
+                                                                .sysvacu05_nombre! +
+                                                            '-' +
+                                                            iv.sysvacu01_descripcion! +
+                                                            '-' +
+                                                            iv.sysvacu02_descripcion!),
+                                                      )),
+                                                      value: iv,
+                                                    ))
+                                                .toList(),
+                                          ),
+                                          squeeze: 1,
+                                          height: size.height * .2,
+                                          onConfirm: (Picker picker,
+                                              List value) async {
+                                            PickerDataAdapter<ConfiVacuna>
+                                                pickerAdapter = picker.adapter
+                                                    as PickerDataAdapter<
+                                                        ConfiVacuna>;
+                                            listaLotes!.clear();
+                                            setState(() {
+                                              _selectLote = null;
+                                              _selectConfigVacuna =
+                                                  pickerAdapter
+                                                      .data[value.first].value!;
+                                            });
+                                            final tempLista =
+                                                await lotesVacunaProvider
+                                                    .validarLotes(
+                                                        _selectVacunas!
+                                                            .id_sysvacu04!);
+                                            tempLista[0].codigo_mensaje == "0"
+                                                ? showDialog(
                                                     context: context,
                                                     builder:
                                                         (BuildContext context) {
@@ -836,255 +621,437 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           tituloAlerta:
                                                               'ATENCIÓN!',
                                                           descripcionAlerta:
-                                                              'Debe Seleccionar un Lote',
+                                                              tempLista[0]
+                                                                  .mensaje,
                                                           textoBotonAlerta:
                                                               'Listo',
-                                                          icon: Icon(
+                                                          icon: const Icon(
                                                             Icons.error_outline,
                                                             size: 40,
                                                           ),
                                                           color: Colors.red);
                                                     })
-                                            : showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return DialogoAlerta(
-                                                      envioFuncion2: false,
-                                                      envioFuncion1: false,
-                                                      tituloAlerta: 'ATENCIÓN!',
-                                                      descripcionAlerta:
-                                                          'Debe Seleccionar una Configuración',
-                                                      textoBotonAlerta: 'Listo',
-                                                      icon: Icon(
-                                                        Icons.error_outline,
-                                                        size: 40,
-                                                      ),
-                                                      color: Colors.red);
-                                                })
-                                        : showDialog(
+                                                : setState(() {
+                                                    listaLotes = tempLista;
+                                                  });
+                                          }).showModal(context);
+                                }),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Container(),
+              SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+              listaLotes!.isNotEmpty
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.02),
+                      child: Container(
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.05),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: SisVacuColor.white),
+                        child: Column(
+                          children: [
+                            TitulosContainerPage(
+                              colorTitle: SisVacuColor.black,
+                              sizeTitle: 18.0,
+                              widthThickness: 1.5,
+                              title: 'Seleccione un Lote',
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            GestureDetector(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      _selectLote == null
+                                          ? 'Seleccione un Lote'
+                                          : _selectLote!.sysdesa18_lote!,
+                                      style: TextStyle(
+                                        fontSize: getValueForScreenType(
                                             context: context,
-                                            builder: (BuildContext context) {
-                                              return DialogoAlerta(
-                                                  envioFuncion2: false,
-                                                  envioFuncion1: false,
-                                                  tituloAlerta: 'ATENCIÓN!',
-                                                  descripcionAlerta:
-                                                      'Debe Seleccionar una Vacuna',
-                                                  textoBotonAlerta: 'Listo',
-                                                  icon: Icon(
-                                                    Icons.error_outline,
-                                                    size: 40,
-                                                  ),
-                                                  color: Colors.red);
-                                            })
-                                    : showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return DialogoAlerta(
-                                              envioFuncion2: false,
-                                              envioFuncion1: false,
-                                              tituloAlerta: 'ATENCIÓN!',
-                                              descripcionAlerta:
-                                                  'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
-                                              textoBotonAlerta: 'Listo',
-                                              icon: Icon(
-                                                Icons.error_outline,
-                                                size: 40,
-                                              ),
-                                              color: Colors.red);
-                                        })
-                                : showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return DialogoAlerta(
-                                          envioFuncion2: false,
-                                          envioFuncion1: false,
-                                          tituloAlerta: 'ATENCIÓN!',
-                                          descripcionAlerta:
-                                              'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
-                                          textoBotonAlerta: 'Listo',
-                                          icon: Icon(
-                                            Icons.error_outline,
-                                            size: 40,
+                                            mobile: 15,
+                                            tablet: 20),
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: SisVacuColor.black,
+                                    ),
+                                  ],
+                                ),
+                                onTap: () {
+                                  (listaLotes == null)
+                                      ? const Center(
+                                          child: Text('Hubo un problema'),
+                                        )
+                                      : Picker(
+                                          title: const Text(
+                                            'Lotes',
                                           ),
-                                          color: Colors.red);
-                                    })
-                            : _selectVacunas != null
-                                ? _selectConfigVacuna != null
-                                    ? _selectLote != null
-                                        // ignore: unnecessary_statements
-                                        ? {
-                                            insertRegistroService.cargarRegistro(
-                                                InsertRegistros(
-                                                    id_flxcore03: registradorService
-                                                        .registrador!
-                                                        .id_flxcore03, //Obligatorio
-                                                    id_sysdesa12: vacunadorService
-                                                        .vacunador!
-                                                        .id_sysdesa12, //Obligatorio
-                                                    id_sysdesa18: _selectLote!
-                                                        .id_sysdesa18, //Obligatorio
-                                                    id_sysofic01: registradorService
-                                                        .registrador!
-                                                        .rela_sysofic01, //Obligatorio
-                                                    id_sysvacu03: _selectConfigVacuna!
-                                                        .id_sysvacu03, //Obligatorio
-                                                    sysdesa10_apellido: beneficiarioService
-                                                        .beneficiario!
-                                                        .sysdesa10_apellido, //Obligatorio
-                                                    sysdesa10_cadena_dni: beneficiarioService
-                                                        .beneficiario!
-                                                        .sysdesa10_cadena_dni, //Solo con Escaner
-                                                    sysdesa10_dni: beneficiarioService
-                                                        .beneficiario!
-                                                        .sysdesa10_dni, //Obligatorio
-                                                    sysdesa10_nombre: beneficiarioService
-                                                        .beneficiario!
-                                                        .sysdesa10_nombre, //Obligatorio
-                                                    sysdesa10_nro_tramite:
-                                                        beneficiarioService
-                                                            .beneficiario!
-                                                            .sysdesa10_nro_tramite, //Solo con Escaner
-                                                    sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
-                                                    sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
-                                                    //DatosExtras que no se envian, SOlo para vista
-                                                    nombreVacuna: _selectVacunas!.sysvacu04_nombre,
-                                                    nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
-                                                    nombreLote: _selectLote!.sysdesa18_lote,
-                                                    sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
-                                                    vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
-                                                    sysdesa10_apellido_tutor: '',
-                                                    sysdesa10_dni_tutor: '',
-                                                    sysdesa10_nombre_tutor: '',
-                                                    sysdesa10_sexo_tutor: '')),
-                                            Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ConfirmarDatos()),
-                                                (Route<dynamic> route) => false)
-                                          }
-                                        : showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return DialogoAlerta(
-                                                  envioFuncion2: false,
-                                                  envioFuncion1: false,
-                                                  tituloAlerta: 'ATENCIÓN!',
-                                                  descripcionAlerta:
-                                                      'Debe Seleccionar un Lote',
-                                                  textoBotonAlerta: 'Listo',
-                                                  icon: Icon(
-                                                    Icons.error_outline,
-                                                    size: 40,
-                                                  ),
-                                                  color: Colors.red);
-                                            })
-                                    : showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return DialogoAlerta(
-                                              envioFuncion2: false,
-                                              envioFuncion1: false,
-                                              tituloAlerta: 'ATENCIÓN!',
-                                              descripcionAlerta:
-                                                  'Debe Seleccionar una Configuracion',
-                                              textoBotonAlerta: 'Listo',
-                                              icon: Icon(
-                                                Icons.error_outline,
-                                                size: 40,
-                                              ),
-                                              color: Colors.red);
-                                        })
-                                : showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return DialogoAlerta(
-                                          envioFuncion2: false,
-                                          envioFuncion1: false,
-                                          tituloAlerta: 'ATENCIÓN!',
-                                          descripcionAlerta:
-                                              'Debe Seleccionar una Vacuna',
-                                          textoBotonAlerta: 'Listo',
-                                          icon: Icon(
-                                            Icons.error_outline,
-                                            size: 40,
+                                          itemExtent: 40,
+                                          cancelText: "Cancelar",
+                                          confirmText: 'Confirmar',
+                                          adapter: PickerDataAdapter<Lotes>(
+                                            data: listaLotes!
+                                                .map((iv) => PickerItem<Lotes>(
+                                                      text: Center(
+                                                          child: Text(iv
+                                                              .sysdesa18_lote!)),
+                                                      value: iv,
+                                                    ))
+                                                .toList(),
                                           ),
-                                          color: Colors.red);
-                                    })
-                        : showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return DialogoAlerta(
-                                  envioFuncion2: false,
-                                  envioFuncion1: false,
-                                  tituloAlerta: 'ATENCIÓN!',
-                                  descripcionAlerta:
-                                      'Hubo un error con el Beneficiario',
-                                  textoBotonAlerta: 'Listo',
-                                  icon: Icon(
-                                    Icons.error_outline,
-                                    size: 40,
-                                  ),
-                                  color: Colors.red);
-                            });
+                                          squeeze: 1,
+                                          height: size.height * .2,
+                                          onConfirm:
+                                              (Picker picker, List value) {
+                                            PickerDataAdapter<Lotes>
+                                                pickerAdapter = picker.adapter
+                                                    as PickerDataAdapter<Lotes>;
+                                            setState(() {
+                                              _selectLote = pickerAdapter
+                                                  .data[value.first].value!;
+                                            });
+                                          }).showModal(context);
+                                }),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Container(),
+              SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+              ColorTextButton(
+                'Registrar Vacunacion',
+                color: SisVacuColor.verdefuerte,
+                onPressed: () {
+                  beneficiarioService.beneficiario!.sysdesa10_dni != ''
+                      ? int.parse(beneficiarioService
+                                  .beneficiario!.sysdesa10_edad!) <
+                              18
+                          ? tutorService.existeTutor
+                              ? tutorService.tutor!.sysdesa10_dni_tutor != ''
+                                  ? _selectVacunas != null
+                                      ? _selectConfigVacuna != null
+                                          ? _selectLote != null
+                                              // ignore: unnecessary_statements
+                                              ? {
+                                                  insertRegistroService.cargarRegistro(
+                                                      InsertRegistros(
+                                                          id_flxcore03: registradorService
+                                                              .registrador!
+                                                              .id_flxcore03, //Obligatorio
+                                                          id_sysdesa12: vacunadorService
+                                                              .vacunador!
+                                                              .id_sysdesa12, //Obligatorio
+                                                          id_sysdesa18: _selectLote!
+                                                              .id_sysdesa18, //Obligatorio
+                                                          id_sysofic01: registradorService
+                                                              .registrador!
+                                                              .rela_sysofic01, //Obligatorio
+                                                          id_sysvacu03: _selectConfigVacuna!
+                                                              .id_sysvacu03, //Obligatorio
+                                                          sysdesa10_apellido:
+                                                              beneficiarioService
+                                                                  .beneficiario!
+                                                                  .sysdesa10_apellido, //Obligatorio
+                                                          sysdesa10_cadena_dni:
+                                                              beneficiarioService
+                                                                  .beneficiario!
+                                                                  .sysdesa10_cadena_dni, //Solo con Escaner
+                                                          sysdesa10_dni: beneficiarioService
+                                                              .beneficiario!
+                                                              .sysdesa10_dni, //Obligatorio
+                                                          sysdesa10_nombre:
+                                                              beneficiarioService
+                                                                  .beneficiario!
+                                                                  .sysdesa10_nombre, //Obligatorio
+                                                          sysdesa10_nro_tramite: beneficiarioService.beneficiario!.sysdesa10_nro_tramite, //Solo con Escaner
+                                                          sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
+                                                          sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
+                                                          //DatosExtras que no se envian, SOlo para vista
+                                                          nombreVacuna: _selectVacunas!.sysvacu04_nombre,
+                                                          nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
+                                                          nombreLote: _selectLote!.sysdesa18_lote,
+                                                          sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
+                                                          vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
+                                                          sysdesa10_apellido_tutor: tutorService.tutor!.sysdesa10_apellido_tutor,
+                                                          sysdesa10_dni_tutor: tutorService.tutor!.sysdesa10_dni_tutor,
+                                                          sysdesa10_nombre_tutor: tutorService.tutor!.sysdesa10_nombre_tutor,
+                                                          sysdesa10_sexo_tutor: tutorService.tutor!.sysdesa10_sexo_tutor)),
+                                                  Navigator.pushAndRemoveUntil(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const ConfirmarDatos()),
+                                                      (Route<dynamic> route) =>
+                                                          false)
+                                                }
+                                              : showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const DialogoAlerta(
+                                                        envioFuncion2: false,
+                                                        envioFuncion1: false,
+                                                        tituloAlerta:
+                                                            'ATENCIÓN!',
+                                                        descripcionAlerta:
+                                                            'Debe Seleccionar un Lote',
+                                                        textoBotonAlerta:
+                                                            'Listo',
+                                                        icon: Icon(
+                                                          Icons.error_outline,
+                                                          size: 40,
+                                                        ),
+                                                        color: Colors.red);
+                                                  })
+                                          : showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const DialogoAlerta(
+                                                    envioFuncion2: false,
+                                                    envioFuncion1: false,
+                                                    tituloAlerta: 'ATENCIÓN!',
+                                                    descripcionAlerta:
+                                                        'Debe Seleccionar una Configuración',
+                                                    textoBotonAlerta: 'Listo',
+                                                    icon: Icon(
+                                                      Icons.error_outline,
+                                                      size: 40,
+                                                    ),
+                                                    color: Colors.red);
+                                              })
+                                      : showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const DialogoAlerta(
+                                                envioFuncion2: false,
+                                                envioFuncion1: false,
+                                                tituloAlerta: 'ATENCIÓN!',
+                                                descripcionAlerta:
+                                                    'Debe Seleccionar una Vacuna',
+                                                textoBotonAlerta: 'Listo',
+                                                icon: Icon(
+                                                  Icons.error_outline,
+                                                  size: 40,
+                                                ),
+                                                color: Colors.red);
+                                          })
+                                  : showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return const DialogoAlerta(
+                                            envioFuncion2: false,
+                                            envioFuncion1: false,
+                                            tituloAlerta: 'ATENCIÓN!',
+                                            descripcionAlerta:
+                                                'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
+                                            textoBotonAlerta: 'Listo',
+                                            icon: Icon(
+                                              Icons.error_outline,
+                                              size: 40,
+                                            ),
+                                            color: Colors.red);
+                                      })
+                              : showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const DialogoAlerta(
+                                        envioFuncion2: false,
+                                        envioFuncion1: false,
+                                        tituloAlerta: 'ATENCIÓN!',
+                                        descripcionAlerta:
+                                            'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
+                                        textoBotonAlerta: 'Listo',
+                                        icon: Icon(
+                                          Icons.error_outline,
+                                          size: 40,
+                                        ),
+                                        color: Colors.red);
+                                  })
+                          : _selectVacunas != null
+                              ? _selectConfigVacuna != null
+                                  ? _selectLote != null
+                                      // ignore: unnecessary_statements
+                                      ? {
+                                          insertRegistroService.cargarRegistro(
+                                              InsertRegistros(
+                                                  id_flxcore03: registradorService
+                                                      .registrador!
+                                                      .id_flxcore03, //Obligatorio
+                                                  id_sysdesa12: vacunadorService
+                                                      .vacunador!
+                                                      .id_sysdesa12, //Obligatorio
+                                                  id_sysdesa18: _selectLote!
+                                                      .id_sysdesa18, //Obligatorio
+                                                  id_sysofic01: registradorService
+                                                      .registrador!
+                                                      .rela_sysofic01, //Obligatorio
+                                                  id_sysvacu03: _selectConfigVacuna!
+                                                      .id_sysvacu03, //Obligatorio
+                                                  sysdesa10_apellido: beneficiarioService
+                                                      .beneficiario!
+                                                      .sysdesa10_apellido, //Obligatorio
+                                                  sysdesa10_cadena_dni:
+                                                      beneficiarioService
+                                                          .beneficiario!
+                                                          .sysdesa10_cadena_dni, //Solo con Escaner
+                                                  sysdesa10_dni: beneficiarioService
+                                                      .beneficiario!
+                                                      .sysdesa10_dni, //Obligatorio
+                                                  sysdesa10_nombre: beneficiarioService
+                                                      .beneficiario!
+                                                      .sysdesa10_nombre, //Obligatorio
+                                                  sysdesa10_nro_tramite:
+                                                      beneficiarioService
+                                                          .beneficiario!
+                                                          .sysdesa10_nro_tramite, //Solo con Escaner
+                                                  sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
+                                                  sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
+                                                  //DatosExtras que no se envian, SOlo para vista
+                                                  nombreVacuna: _selectVacunas!.sysvacu04_nombre,
+                                                  nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
+                                                  nombreLote: _selectLote!.sysdesa18_lote,
+                                                  sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
+                                                  vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
+                                                  sysdesa10_apellido_tutor: '',
+                                                  sysdesa10_dni_tutor: '',
+                                                  sysdesa10_nombre_tutor: '',
+                                                  sysdesa10_sexo_tutor: '')),
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                     const ConfirmarDatos()),
+                                              (Route<dynamic> route) => false)
+                                        }
+                                      : showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const DialogoAlerta(
+                                                envioFuncion2: false,
+                                                envioFuncion1: false,
+                                                tituloAlerta: 'ATENCIÓN!',
+                                                descripcionAlerta:
+                                                    'Debe Seleccionar un Lote',
+                                                textoBotonAlerta: 'Listo',
+                                                icon: Icon(
+                                                  Icons.error_outline,
+                                                  size: 40,
+                                                ),
+                                                color: Colors.red);
+                                          })
+                                  : showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return const DialogoAlerta(
+                                            envioFuncion2: false,
+                                            envioFuncion1: false,
+                                            tituloAlerta: 'ATENCIÓN!',
+                                            descripcionAlerta:
+                                                'Debe Seleccionar una Configuracion',
+                                            textoBotonAlerta: 'Listo',
+                                            icon: Icon(
+                                              Icons.error_outline,
+                                              size: 40,
+                                            ),
+                                            color: Colors.red);
+                                      })
+                              : showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const DialogoAlerta(
+                                        envioFuncion2: false,
+                                        envioFuncion1: false,
+                                        tituloAlerta: 'ATENCIÓN!',
+                                        descripcionAlerta:
+                                            'Debe Seleccionar una Vacuna',
+                                        textoBotonAlerta: 'Listo',
+                                        icon: Icon(
+                                          Icons.error_outline,
+                                          size: 40,
+                                        ),
+                                        color: Colors.red);
+                                  })
+                      : showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const DialogoAlerta(
+                                envioFuncion2: false,
+                                envioFuncion1: false,
+                                tituloAlerta: 'ATENCIÓN!',
+                                descripcionAlerta:
+                                    'Hubo un error con el Beneficiario',
+                                textoBotonAlerta: 'Listo',
+                                icon: Icon(
+                                  Icons.error_outline,
+                                  size: 40,
+                                ),
+                                color: Colors.red);
+                          });
+                },
+                anchoValor: 400,
+                iconoBool: false,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    right: MediaQuery.of(context).size.width * 0.02,
+                    left: MediaQuery.of(context).size.width * 0.02),
+                child: ColorTextButton(
+                  //ELIMINAR DATOS DE SINGLETONS
+                  'Cancelar Registro',
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => DialogoAlerta(
+                              tituloAlerta: "Atención",
+                              descripcionAlerta:
+                                  '¿Estás seguro que deseas cancelar el registro?',
+                              textoBotonAlerta: 'Aceptar',
+                              textoBotonAlerta2: 'Cancelar',
+                              icon: Icon(
+                                Icons.error,
+                                size: 40,
+                                color: Colors.grey[50],
+                              ),
+                              color: Colors.red,
+                              envioFuncion2: true,
+                              funcion2: () => Navigator.of(context).pop(),
+                              envioFuncion1: true,
+                              funcion1: () {
+                                beneficiarioService
+                                    .cargarBeneficiario(Beneficiario());
+                                notificacionesDosisService
+                                    .cargarRegistro(NotificacionesDosis());
+                                tutorService.cargarTutor(Tutor(
+                                    sysdesa10_apellido_tutor: '',
+                                    sysdesa10_nombre_tutor: '',
+                                    sysdesa10_dni_tutor: '',
+                                    sysdesa10_sexo_tutor: '',
+                                    fotoTutor: noImage));
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                           const BusquedaBeneficiario()),
+                                    (Route<dynamic> route) => false);
+                              },
+                            ));
                   },
+                  color: SisVacuColor.red!.withOpacity(0.8),
                   anchoValor: 400,
                   iconoBool: false,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      right: MediaQuery.of(context).size.width * 0.02,
-                      left: MediaQuery.of(context).size.width * 0.02),
-                  child: ColorTextButton(
-                    //ELIMINAR DATOS DE SINGLETONS
-                    'Cancelar Registro',
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) => DialogoAlerta(
-                                tituloAlerta: "Atención",
-                                descripcionAlerta:
-                                    '¿Estás seguro que deseas cancelar el registro?',
-                                textoBotonAlerta: 'Aceptar',
-                                textoBotonAlerta2: 'Cancelar',
-                                icon: Icon(
-                                  Icons.error,
-                                  size: 40,
-                                  color: Colors.grey[50],
-                                ),
-                                color: Colors.red,
-                                envioFuncion2: true,
-                                funcion2: () => Navigator.of(context).pop(),
-                                envioFuncion1: true,
-                                funcion1: () {
-                                  beneficiarioService
-                                      .cargarBeneficiario(Beneficiario());
-                                  notificacionesDosisService
-                                      .cargarRegistro(NotificacionesDosis());
-                                  tutorService.cargarTutor(Tutor(
-                                      sysdesa10_apellido_tutor: '',
-                                      sysdesa10_nombre_tutor: '',
-                                      sysdesa10_dni_tutor: '',
-                                      sysdesa10_sexo_tutor: '',
-                                      fotoTutor: noImage));
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              BusquedaBeneficiario()),
-                                      (Route<dynamic> route) => false);
-                                },
-                              ));
-                    },
-                    color: SisVacuColor.red!.withOpacity(0.8),
-                    anchoValor: 400,
-                    iconoBool: false,
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
         ),
       ),
@@ -1102,117 +1069,110 @@ class _VacunasPageState extends State<VacunasPage> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
                   color: SisVacuColor.white),
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    TitulosContainerPage(
-                      colorTitle: SisVacuColor.black,
-                      sizeTitle: 18.0,
-                      widthThickness: 1.5,
-                      title: 'Datos del Tutor',
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                    Text(
-                      "Escanee el Dni del Tutor",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16.0),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                    EscanerDni(
-                      'Tutor',
-                      'Escanear',
-                      'Escanee el D.N.I. del Tutor',
-                      anchoValor: 180,
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                    Text(
-                      "Si el Tutor NO tiene su D.N.I., ingréselo Manualmente",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16.0),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                    Column(children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: TextField(
-                          controller: controladorDni,
-                          keyboardType: TextInputType.number,
-                          maxLength: 8,
-                          style: TextStyle(color: Colors.blue),
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: InputDecoration(
-                            icon: Icon(Icons.people),
-                            enabledBorder: InputBorder.none,
-                            border: InputBorder.none,
-                            labelText: 'Ingrese el DNI',
-                          ),
-                          onChanged: (valor) {},
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TitulosContainerPage(
+                    colorTitle: SisVacuColor.black,
+                    sizeTitle: 18.0,
+                    widthThickness: 1.5,
+                    title: 'Datos del Tutor',
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  const Text(
+                    "Escanee el Dni del Tutor",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  const EscanerDni(
+                    'Tutor',
+                    'Escanear',
+                    'Escanee el D.N.I. del Tutor',
+                    anchoValor: 180,
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  const Text(
+                    "Si el Tutor NO tiene su D.N.I., ingréselo Manualmente",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  Column(children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: TextField(
+                        controller: controladorDni,
+                        keyboardType: TextInputType.number,
+                        maxLength: 8,
+                        style: const TextStyle(color: Colors.blue),
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: const InputDecoration(
+                          icon: Icon(Icons.people),
+                          enabledBorder: InputBorder.none,
+                          border: InputBorder.none,
+                          labelText: 'Ingrese el DNI',
                         ),
+                        onChanged: (valor) {},
                       ),
-                      Container(
-                        child: Text('Seleccione el Sexo',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16.0),
-                            textAlign: TextAlign.center),
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.05),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Femenino'),
-                          Switch(
-                              activeColor: Colors.blue,
-                              inactiveTrackColor: Colors.pink,
-                              inactiveThumbColor: Colors.pink,
-                              value: genero!,
-                              onChanged: (value) {
-                                setState(() {
-                                  genero = value;
-                                  genero! ? sexoTutor = 'M' : sexoTutor = 'F';
-                                });
-                                print(sexoTutor);
-                              }),
-                          Text('Masculino'),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      ColorTextButton('Verificar',
-                          iconoBoton: Icon(
-                            Icons.fingerprint,
-                            color: Colors.black,
-                          ),
-                          color: SisVacuColor.verdefuerte,
-                          iconoBool: true, onPressed: () {
-                        controladorDni.text.length >= 7
-                            ? obtenerDatosBeneficiario(
-                                context, controladorDni.text, sexoTutor!)
-                            : showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    DialogoAlerta(
-                                      envioFuncion2: false,
-                                      envioFuncion1: false,
-                                      tituloAlerta: 'Hubo un Error',
-                                      descripcionAlerta:
-                                          'Ingrese el D.N.I. y seleccione el sexo.',
-                                      textoBotonAlerta: 'Listo',
-                                      color: Colors.red,
-                                      icon: Icon(
-                                        Icons.error,
-                                        size: 40.0,
-                                        color: Colors.grey[50],
-                                      ),
-                                    ));
-                      }, anchoValor: 180.0)
-                    ]),
-                  ],
-                ),
+                    ),
+                    const Text('Seleccione el Sexo',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16.0),
+                        textAlign: TextAlign.center),
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Femenino'),
+                        Switch(
+                            activeColor: Colors.blue,
+                            inactiveTrackColor: Colors.pink,
+                            inactiveThumbColor: Colors.pink,
+                            value: genero!,
+                            onChanged: (value) {
+                              setState(() {
+                                genero = value;
+                                genero! ? sexoTutor = 'M' : sexoTutor = 'F';
+                              });
+                            }),
+                        const Text('Masculino'),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                    ColorTextButton('Verificar',
+                        iconoBoton: const Icon(
+                          Icons.fingerprint,
+                          color: Colors.black,
+                        ),
+                        color: SisVacuColor.verdefuerte,
+                        iconoBool: true, onPressed: () {
+                      controladorDni.text.length >= 7
+                          ? obtenerDatosBeneficiario(
+                              context, controladorDni.text, sexoTutor!)
+                          : showDialog(
+                              context: context,
+                              builder: (BuildContext context) => DialogoAlerta(
+                                    envioFuncion2: false,
+                                    envioFuncion1: false,
+                                    tituloAlerta: 'Hubo un Error',
+                                    descripcionAlerta:
+                                        'Ingrese el D.N.I. y seleccione el sexo.',
+                                    textoBotonAlerta: 'Listo',
+                                    color: Colors.red,
+                                    icon: Icon(
+                                      Icons.error,
+                                      size: 40.0,
+                                      color: Colors.grey[50],
+                                    ),
+                                  ));
+                    }, anchoValor: 180.0)
+                  ]),
+                ],
               ),
             ),
           )

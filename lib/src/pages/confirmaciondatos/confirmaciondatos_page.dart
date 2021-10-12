@@ -83,90 +83,85 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                           color: SisVacuColor.white),
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            TitulosContainerPage(
-                              colorTitle: SisVacuColor.black,
-                              sizeTitle: 18.0,
-                              widthThickness: 1.5,
-                              title: 'Datos Beneficiario',
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.05),
-                            Row(
-                              children: [
-                                const Text('Nombre: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16.0),
-                                    textAlign: TextAlign.center),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.sysdesa10_nombre!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16.0),
-                                        textAlign: TextAlign.center),
-                                  ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          TitulosContainerPage(
+                            colorTitle: SisVacuColor.black,
+                            sizeTitle: 18.0,
+                            widthThickness: 1.5,
+                            title: 'Datos Beneficiario',
+                          ),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.width * 0.05),
+                          Row(
+                            children: [
+                              const Text('Nombre: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 16.0),
+                                  textAlign: TextAlign.center),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                      insertRegistroService
+                                          .registro!.sysdesa10_nombre!,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
                                 ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            Row(
-                              children: [
-                                const Text('Apellido: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16.0),
-                                    textAlign: TextAlign.center),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.sysdesa10_apellido!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16.0),
-                                        textAlign: TextAlign.center),
-                                  ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.width * 0.02),
+                          Row(
+                            children: [
+                              const Text('Apellido: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 16.0),
+                                  textAlign: TextAlign.center),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                      insertRegistroService
+                                          .registro!.sysdesa10_apellido!,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
                                 ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            Row(
-                              children: [
-                                const Text('D.N.I.: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16.0),
-                                    textAlign: TextAlign.center),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.sysdesa10_dni!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16.0),
-                                        textAlign: TextAlign.center),
-                                  ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.width * 0.02),
+                          Row(
+                            children: [
+                              const Text('D.N.I.: ',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 16.0),
+                                  textAlign: TextAlign.center),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                      insertRegistroService
+                                          .registro!.sysdesa10_dni!,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16.0),
+                                      textAlign: TextAlign.center),
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -335,7 +330,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                               height: MediaQuery.of(context).size.width * 0.02),
                           Row(
                             children: [
-                              Text('Configuración: ',
+                              const Text('Configuración: ',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16.0),
@@ -346,7 +341,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                   child: Text(
                                       insertRegistroService
                                           .registro!.nombreConfiguracion!,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 16.0),
                                       textAlign: TextAlign.center),
@@ -436,7 +431,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                BusquedaBeneficiario()),
+                                                const BusquedaBeneficiario()),
                                         (Route<dynamic> route) => false);
                                   },
                                 ));
@@ -513,7 +508,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                       //ELIMINAR DATOS DE SINGLETONS
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BusquedaBeneficiario()),
+                          builder: (context) => const BusquedaBeneficiario()),
                       (Route<dynamic> route) => false),
                   tituloAlerta: 'Informacion',
                   descripcionAlerta: mensaje[0].mensaje,

@@ -40,4 +40,4 @@ class _BeneficiarioProviders {
   }
 }
 
-final beneficiarioProviders = new _BeneficiarioProviders();
+final beneficiarioProviders = _BeneficiarioProviders();

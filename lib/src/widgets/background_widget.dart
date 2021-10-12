@@ -30,7 +30,7 @@ class BackgroundHeader extends StatelessWidget {
 
   Widget _buildPhotoBackground(BuildContext context, File? image) {
     return SingleChildScrollView(
-      child: Container(
+      child: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: Center(

@@ -5,27 +5,24 @@ import 'package:sistema_vacunacion/src/models/sistema/notificacionesdosis_models
 class _NotificacionesDosisService {
   NotificacionesDosis? _notiDosis;
 
-  // AnimationController _bounceController;
+  final StreamController<NotificacionesDosis?> _notiDosisStreamController =
+      StreamController<NotificacionesDosis?>.broadcast();
 
-  // ignore: close_sinks
-  StreamController<NotificacionesDosis?> _notiDosisStreamController =
-      new StreamController<NotificacionesDosis?>.broadcast();
+  NotificacionesDosis? get dosis => _notiDosis;
 
-  NotificacionesDosis? get dosis => this._notiDosis;
-
-  bool get existeDosis => (this._notiDosis != null) ? true : false;
+  bool get existeDosis => (_notiDosis != null) ? true : false;
 
   Stream<NotificacionesDosis?> get dosisStream =>
       _notiDosisStreamController.stream;
 
   void cargarRegistro(NotificacionesDosis? dosis) {
-    this._notiDosis = dosis;
-    this._notiDosisStreamController.add(dosis);
+    _notiDosis = dosis;
+    _notiDosisStreamController.add(dosis);
   }
 
   dispose() {
-    this._notiDosisStreamController.close();
+    _notiDosisStreamController.close();
   }
 }
 
-final notificacionesDosisService = new _NotificacionesDosisService();
+final notificacionesDosisService = _NotificacionesDosisService();
