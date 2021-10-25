@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
@@ -14,6 +15,7 @@ import '../pages.dart';
 class BusquedaBeneficiario extends StatefulWidget {
   const BusquedaBeneficiario({Key? key}) : super(key: key);
   static const String nombreRuta = 'BusquedaBeneficiario';
+
   @override
   _BusquedaBeneficiarioState createState() => _BusquedaBeneficiarioState();
 }
@@ -25,6 +27,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
   String? dniBeneficiario;
   String? sexoBeneficiario;
   TextEditingController? dniController;
+
   @override
   void initState() {
     genero = false;
@@ -41,21 +44,55 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
 
     int duracionDelay = 0;
 
-    // _incrementoVacunados();
+    _incrementoVacunados();
 
     return Scaffold(
       drawer: const BodyDrawer(),
       appBar: AppBar(
-        backgroundColor: SisVacuColor.verdefuerte,
         centerTitle: true,
-        title: FadeInRightBig(
+        backgroundColor: SisVacuColor.azulCuaternario,
+        title: FadeInLeftBig(
           from: 50,
-          child: const Text(
+          child: Text(
             'Sistema de Vacunación',
-            style: TextStyle(fontWeight: FontWeight.w300),
+            style: GoogleFonts.nunito(
+              textStyle: TextStyle(
+                  fontWeight: FontWeight.w400, color: SisVacuColor.white),
+            ),
             textAlign: TextAlign.center,
           ),
         ),
+        actions: [
+          Bounce(
+            from: 10,
+            infinite: true,
+            duration: const Duration(milliseconds: 2000),
+            child: Container(
+              child: StreamBuilder(
+                stream: cantidadVacunasService.cantidadvacunadosStream,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return Text(
+                      cantidadVacunasService
+                          .cantidadvacunados!.cantidad_aplicaciones!,
+                      style: TextStyle(
+                          color: SisVacuColor.white,
+                          fontSize: getValueForScreenType(
+                              context: context, mobile: 15)),
+                    );
+                  }
+                },
+              ),
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width * 0.1,
+              height: MediaQuery.of(context).size.height * 0.1,
+              decoration: const BoxDecoration(
+                  color: Colors.redAccent, shape: BoxShape.circle),
+            ),
+          ),
+        ],
       ),
       // drawer: BodyDrawer(),
       floatingActionButton: Row(
@@ -88,71 +125,44 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                   color: SisVacuColor.white,
                                 ),
                               ));
-                      // _incrementoVacunados();
+                      _incrementoVacunados();
                     }),
               ),
-              Positioned(
-                top: 0.0,
-                right: 0.0,
-                child: Bounce(
-                  // animate:
-                  //     notificacionesDosisService.existeDosis ? true : false,
-                  from: 10,
-                  infinite: true,
-                  duration: const Duration(milliseconds: 2000),
-                  child: Container(
-                    child: StreamBuilder(
-                      stream: cantidadVacunasService.cantidadvacunadosStream,
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        } else {
-                          return Text(
-                            cantidadVacunasService
-                                .cantidadvacunados!.cantidad_aplicaciones!,
-                            style: TextStyle(
-                                color: SisVacuColor.white,
-                                fontSize: getValueForScreenType(
-                                    context: context, mobile: 15)),
-                          );
-                        }
-                      },
-                    ),
-                    alignment: Alignment.center,
-                    width: 20,
-                    height: 20,
-                    decoration: const BoxDecoration(
-                        color: Colors.redAccent, shape: BoxShape.circle),
-                  ),
-                ),
-              )
+              // Positioned(
+              //   // top: 0.0,
+              //   right: 2.0,
+              //   child: Bounce(
+              //     from: 10,
+              //     infinite: true,
+              //     duration: const Duration(milliseconds: 2000),
+              //     child: Container(
+              //       child: StreamBuilder(
+              //         stream: cantidadVacunasService.cantidadvacunadosStream,
+              //         builder: (BuildContext context, AsyncSnapshot snapshot) {
+              //           if (snapshot.connectionState ==
+              //               ConnectionState.waiting) {
+              //             return const Center(
+              //                 child: CircularProgressIndicator());
+              //           } else {
+              //             return Text(
+              //               '100',
+              //               style: TextStyle(
+              //                   color: SisVacuColor.white,
+              //                   fontSize: getValueForScreenType(
+              //                       context: context, mobile: 15)),
+              //             );
+              //           }
+              //         },
+              //       ),
+              //       alignment: Alignment.center,
+              //       width: MediaQuery.of(context).size.width * 0.1,
+              //       height: MediaQuery.of(context).size.height * 0.1,
+              //       decoration: const BoxDecoration(
+              //           color: Colors.redAccent, shape: BoxShape.circle),
+              //     ),
+              //   ),
+              // )
             ],
-          ),
-          FloatingActionButton(
-            heroTag: 'boton2',
-            child: Icon(FontAwesomeIcons.exclamation,
-                size: getValueForScreenType(context: context, mobile: 18)),
-            mini: true,
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) => DialogoAlerta(
-                        envioFuncion2: false,
-                        envioFuncion1: false,
-                        tituloAlerta: 'Información',
-                        descripcionAlerta:
-                            'Si el beneficiario posee su dni presione el botón "Escanear", enfoque la cámara al código de barras. Si no posee su D.N.I., tipeelo en el campo manual y seleccione el sexo',
-                        textoBotonAlerta: 'Listo',
-                        color: SisVacuColor.yelow700,
-                        icon: Icon(
-                          Icons.info,
-                          size: 40.0,
-                          color: SisVacuColor.grey,
-                        ),
-                      ));
-            },
           ),
         ],
       ),
@@ -176,30 +186,88 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                 right: MediaQuery.of(context).size.width * 0.02,
                                 left: MediaQuery.of(context).size.width * 0.02),
                             child: Container(
-                              padding: EdgeInsets.all(
-                                  MediaQuery.of(context).size.width * 0.05),
+                              padding: const EdgeInsets.only(
+                                  top: 5.0,
+                                  right: 10.0,
+                                  left: 15.0,
+                                  bottom: 5.0),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
-                                  color: SisVacuColor.white),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                        color: Colors.black.withOpacity(0.08),
+                                        offset: const Offset(0, 5),
+                                        blurRadius: 5)
+                                  ],
+                                  color: Colors.white),
                               child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  TitulosContainerPage(
-                                    colorTitle: SisVacuColor.black,
-                                    sizeTitle: 18.0,
-                                    widthThickness: 1.5,
-                                    title: 'Modo Escaner',
+                                  Row(
+                                    children: [
+                                      FadeInUpBig(
+                                        from: 25,
+                                        child: Text(
+                                          'Modo Escaner',
+                                          style: GoogleFonts.barlow(
+                                              textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 20)),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.4),
+                                      FadeInDownBig(
+                                        from: 25,
+                                        child: IconButton(
+                                          alignment: Alignment.centerRight,
+                                          onPressed: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (BuildContext
+                                                        context) =>
+                                                    DialogoAlerta(
+                                                      envioFuncion2: false,
+                                                      envioFuncion1: false,
+                                                      tituloAlerta:
+                                                          'Información',
+                                                      descripcionAlerta:
+                                                          'Si el beneficiario posee su dni presione el botón "Escanear", enfoque la cámara al código de barras. Si no posee su D.N.I., tipeelo en el campo manual y seleccione el sexo',
+                                                      textoBotonAlerta: 'Listo',
+                                                      color:
+                                                          SisVacuColor.yelow700,
+                                                      icon: Icon(
+                                                        Icons.info,
+                                                        size: 40.0,
+                                                        color:
+                                                            SisVacuColor.grey,
+                                                      ),
+                                                    ));
+                                          },
+                                          icon: Icon(
+                                            FontAwesomeIcons.infoCircle,
+                                            color: SisVacuColor.azulSecundario,
+                                          ),
+                                          iconSize: 25,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   SizedBox(
                                       height:
                                           MediaQuery.of(context).size.width *
                                               0.05),
-                                  const Text(
+                                  Text(
                                       'Escanee el código  de barras del D.N.I. del beneficiario',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 14.0),
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14.0),
+                                      ),
                                       textAlign: TextAlign.center),
                                   SizedBox(
                                       height:
@@ -209,8 +277,12 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                     'Beneficiario',
                                     'Escanee',
                                     "textoAyuda",
-                                    anchoValor: 180,
-                                  )
+                                    anchoValor: 40,
+                                  ),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
                                 ],
                               ),
                             ),
@@ -229,26 +301,42 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                   MediaQuery.of(context).size.width * 0.05),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
-                                  color: SisVacuColor.white),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                        color: Colors.black.withOpacity(0.08),
+                                        offset: const Offset(0, 5),
+                                        blurRadius: 5)
+                                  ],
+                                  color: Colors.white),
                               child: Column(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  TitulosContainerPage(
-                                    colorTitle: SisVacuColor.black,
-                                    sizeTitle: 18.0,
-                                    widthThickness: 1.5,
-                                    title: 'Modo Ingreso Manual',
+                                  Row(
+                                    children: [
+                                      FadeInUpBig(
+                                        from: 25,
+                                        child: Text(
+                                          'Modo ingreso manual',
+                                          style: GoogleFonts.barlow(
+                                              textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 20)),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   SizedBox(
                                       height:
                                           MediaQuery.of(context).size.width *
                                               0.05),
-                                  const Text(
+                                  Text(
                                       'Ingrese el número de D.N.I. del beneficiario y seleccione el sexo',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 14.0),
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14.0),
+                                      ),
                                       textAlign: TextAlign.center),
                                   SizedBox(
                                       height:
@@ -282,10 +370,12 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                       height:
                                           MediaQuery.of(context).size.width *
                                               0.05),
-                                  const Text('Seleccione el Sexo',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.0),
+                                  Text('Seleccione el Sexo',
+                                      style: GoogleFonts.barlow(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16.0),
+                                      ),
                                       textAlign: TextAlign.center),
                                   SizedBox(
                                       height:
@@ -294,7 +384,16 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Text('Femenino'),
+                                      Text(
+                                        'Femenino',
+                                        style: GoogleFonts.nunito(
+                                            color: !genero
+                                                ? Colors.black87
+                                                : Colors.grey[300],
+                                            fontWeight: !genero
+                                                ? FontWeight.w700
+                                                : FontWeight.w100),
+                                      ),
                                       Switch(
                                           activeColor: Colors.blue,
                                           inactiveTrackColor: Colors.pink,
@@ -308,74 +407,89 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                   : sexoBeneficiario = 'F';
                                             });
                                           }),
-                                      const Text('Masculino'),
+                                      Text(
+                                        'Masculino',
+                                        style: GoogleFonts.nunito(
+                                            color: genero
+                                                ? Colors.black87
+                                                : Colors.grey[300],
+                                            fontWeight: genero
+                                                ? FontWeight.w700
+                                                : FontWeight.w100),
+                                      ),
                                     ],
                                   ),
                                   SizedBox(
                                       height:
                                           MediaQuery.of(context).size.width *
                                               0.05),
-                                  ColorTextButton(
-                                    'Verificar',
-                                    color: SisVacuColor.verdefuerte,
-                                    onPressed: () {
-                                      dniBeneficiario != '' &&
-                                              dniBeneficiario!.length >= 7 &&
-                                              dniBeneficiario != null
-                                          ? showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                  title: const Center(
-                                                      child: Text(
-                                                          "Verificar Datos")),
-                                                  content: Text(
-                                                      "D.N.I.: $dniBeneficiario , Sexo: $sexoBeneficiario"),
-                                                  actions: [
-                                                    TextButton(
-                                                        onPressed: () {
-                                                          obtenerDatosBeneficiario(
-                                                              context,
-                                                              dniBeneficiario,
-                                                              sexoBeneficiario);
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                          setState(() {
-                                                            loading = true;
-                                                          });
+                                  BotonCustom(
+                                      text: 'Verificar',
+                                      onPressed: () {
+                                        final dniOk = dniBeneficiario != '' &&
+                                            dniBeneficiario!.length >= 7 &&
+                                            dniBeneficiario != null;
 
-                                                          retornarLoading(
-                                                              context,
-                                                              'Espere por favor');
-                                                        },
-                                                        child: const Icon(
-                                                            Icons.send))
-                                                  ],
-                                                );
-                                              })
-                                          : showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) =>
-                                                  DialogoAlerta(
-                                                    envioFuncion2: false,
-                                                    envioFuncion1: false,
+                                        (dniOk)
+                                            ? showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return DialogoAlerta(
                                                     tituloAlerta:
-                                                        'Hubo un Error',
+                                                        'Verificar Datos',
                                                     descripcionAlerta:
-                                                        'Ingrese el D.N.I. y seleccione el sexo.',
-                                                    textoBotonAlerta: 'Listo',
-                                                    color: Colors.red,
-                                                    icon: Icon(
-                                                      Icons.error,
-                                                      size: 40.0,
-                                                      color: Colors.grey[50],
+                                                        'D.N.I.: $dniBeneficiario , Sexo: $sexoBeneficiario',
+                                                    textoBotonAlerta:
+                                                        'Verificar',
+                                                    textoBotonAlerta2:
+                                                        'Cancelar',
+                                                    funcion1: () {
+                                                      obtenerDatosBeneficiario(
+                                                          context,
+                                                          dniBeneficiario,
+                                                          sexoBeneficiario);
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      setState(() {
+                                                        loading = true;
+                                                      });
+
+                                                      retornarLoading(context,
+                                                          'Espere por favor');
+                                                    },
+                                                    funcion2: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    envioFuncion1: true,
+                                                    envioFuncion2: true,
+                                                    icon: const Icon(
+                                                      FontAwesomeIcons.check,
+                                                      color: Colors.white,
                                                     ),
-                                                  ));
-                                    },
-                                    anchoValor: 180,
-                                    iconoBoton: const Icon(Icons.add_sharp),
-                                    iconoBool: false,
-                                  ),
+                                                    color:
+                                                        SisVacuColor.yelow700,
+                                                  );
+                                                })
+                                            : showDialog(
+                                                context: context,
+                                                builder: (BuildContext
+                                                        context) =>
+                                                    DialogoAlerta(
+                                                      envioFuncion2: false,
+                                                      envioFuncion1: false,
+                                                      tituloAlerta:
+                                                          'Hubo un Error',
+                                                      descripcionAlerta:
+                                                          'Ingrese el D.N.I. y seleccione el sexo.',
+                                                      textoBotonAlerta: 'Listo',
+                                                      color: Colors.red,
+                                                      icon: Icon(
+                                                        Icons.error,
+                                                        size: 40.0,
+                                                        color: Colors.grey[50],
+                                                      ),
+                                                    ));
+                                      })
                                 ],
                               ),
                             ),
@@ -386,7 +500,13 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Modo Escaner'),
+                      Text(
+                        'Modo Escaner',
+                        style: GoogleFonts.nunito(
+                            color: !modo ? Colors.black87 : Colors.grey[300],
+                            fontWeight:
+                                !modo ? FontWeight.w700 : FontWeight.w100),
+                      ),
                       Switch(
                           activeColor: Colors.orange,
                           inactiveTrackColor: Colors.purple,
@@ -399,7 +519,13 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                               dniController!.text = '';
                             });
                           }),
-                      const Text('Modo Manual'),
+                      Text(
+                        'Modo Manual',
+                        style: GoogleFonts.nunito(
+                            color: modo ? Colors.black87 : Colors.grey[300],
+                            fontWeight:
+                                modo ? FontWeight.w700 : FontWeight.w100),
+                      ),
                     ],
                   ),
                 ],
@@ -420,7 +546,6 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     final notificaciones =
         await notificacionesProvider.validarNotificaciones(dni, sexoPersona);
     notificaciones[0].codigo_mensaje == '1'
-        // ignore: unnecessary_statements
         ? {
             notificacionesDosisService.cargarRegistro(notificaciones[0]),
             //Provider.of<ModeloNotificacion>(context, listen: false).numero = 1
@@ -478,16 +603,16 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
               return AlertDialog(
                   title: Text(
                     mensaje,
+                    style: GoogleFonts.nunito(),
                   ),
                   content: const LinearProgressIndicator());
             })
         : Container();
   }
 
-  // _incrementoVacunados() async {
-  //   final cantidadVacunas = await cantidadVacunados.cantidadVacunas();
+  _incrementoVacunados() async {
+    final cantidadVacunas = await cantidadVacunadosProvider.cantidadVacunas();
 
-  //   cantidadVacunasService.cargarCantidadVacunados(cantidadVacunas[0]);
-  //   print(cantidadVacunasService.cantidadvacunados!.cantidad_aplicaciones);
-  // }
+    cantidadVacunasService.cargarCantidadVacunados(cantidadVacunas[0]);
+  }
 }

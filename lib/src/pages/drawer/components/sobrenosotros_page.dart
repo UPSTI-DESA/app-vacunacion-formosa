@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SobreNosotrosPage extends StatelessWidget {
   const SobreNosotrosPage({Key? key}) : super(key: key);
@@ -19,8 +20,9 @@ class SobreNosotrosPage extends StatelessWidget {
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
               colors: <Color>[
-            Color.fromRGBO(189, 233, 227, 1),
-            Color.fromRGBO(118, 214, 203, 1),
+            Color(0xff009CAF),
+            Color(0xff0F8DED),
+            Color(0xff1F7CFB),
           ])),
       child: Center(
           child: Container(
@@ -43,19 +45,22 @@ class SobreNosotrosPage extends StatelessWidget {
             const SizedBox(
               height: 40.0,
             ),
-            const Text(
-              "Versión: 2.0.0",
-              style: TextStyle(
-                  fontSize: 20, color: Colors.black, letterSpacing: 2.0),
-            ),
+            Text("Versión: 2.5.0",
+                style: GoogleFonts.nunito(
+                  textStyle: const TextStyle(
+                      fontSize: 25,
+                      color: Colors.black,
+                      letterSpacing: 2.0,
+                      fontWeight: FontWeight.w600),
+                )),
             const SizedBox(
               height: 40.0,
             ),
-            const Text(
+            Text(
               "Desarrollado Por: ",
 
               // textAlign: TextAlign.start,
-              style: estiloTexto,
+              style: GoogleFonts.nunito(textStyle: estiloTexto),
             ),
             const SizedBox(
               height: 40.0,

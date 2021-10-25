@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sistema_vacunacion/src/config/appsize_config.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
@@ -48,6 +49,7 @@ class _LoginBodyState extends State<LoginBody> {
     validarVersionNueva();
     SizeConfiguracion().init(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       floatingActionButton: enviromentService.envState!.enviroment == 'DEV'
           ? FloatingActionButton.extended(
               heroTag: 'botonDesa',
@@ -72,10 +74,7 @@ class _LoginBodyState extends State<LoginBody> {
               },
             )
           : null,
-      body: Stack(alignment: Alignment.center, children: <Widget>[
-        _fondoBackground(),
-        _loginFormulario(context),
-      ]),
+      body: _loginFormulario(context),
     );
   }
 
@@ -116,59 +115,61 @@ class _LoginBodyState extends State<LoginBody> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Bounce(
-            from: 80,
-            delay: const Duration(milliseconds: 600),
-            child: Container(
-              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: SisVacuColor.white),
-              child: Column(
-                children: <Widget>[
-                  FadeInDown(
-                    from: 40,
-                    delay: const Duration(milliseconds: 1400),
-                    child: Icon(FontAwesomeIcons.hospital,
-                        color: SisVacuColor.verdefuerte,
-                        size: MediaQuery.of(context).size.height * 0.12),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.08),
-                  FadeInRight(
-                    from: 40,
-                    delay: const Duration(milliseconds: 1100),
-                    child: Text(
-                      'Registro de Vacunación',
-                      style: TextStyle(
+          Container(
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Column(
+              children: <Widget>[
+                FadeInDown(
+                  from: 40,
+                  delay: const Duration(milliseconds: 1400),
+                  child: Icon(FontAwesomeIcons.hospital,
+                      color: SisVacuColor.azulSecundario,
+                      size: MediaQuery.of(context).size.height * 0.15),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.08),
+                FadeInRight(
+                  from: 40,
+                  delay: const Duration(milliseconds: 1100),
+                  child: Text(
+                    'Registro de Vacunación',
+                    style: GoogleFonts.barlow(
+                      textStyle: TextStyle(
+                          color: Colors.black87,
                           fontSize: MediaQuery.of(context).size.height * 0.034,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 2.0),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.02),
-                  FadeInLeft(
-                    from: 40,
-                    delay: const Duration(milliseconds: 1100),
-                    child: Text(
-                      'Escanee su D.N.I. para continuar',
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height * 0.022,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 2.0),
-                    ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.02),
+                FadeInLeft(
+                  from: 40,
+                  delay: const Duration(milliseconds: 1100),
+                  child: Text('Escanee su D.N.I. para continuar',
+                      style: GoogleFonts.nunito(
+                        textStyle: TextStyle(
+                            color: Colors.black87,
+                            fontSize:
+                                MediaQuery.of(context).size.height * 0.022,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.0),
+                      )),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                ElasticIn(
+                  delay: const Duration(milliseconds: 1500),
+                  child: EscanerDni(
+                    'Registrador',
+                    'Escanear',
+                    'Escane el dni para verificar su identidad',
+                    iconBool: false,
+                    anchoValor: MediaQuery.of(context).size.width * 0.1,
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  ElasticIn(
-                    delay: const Duration(milliseconds: 1500),
-                    child: EscanerDni(
-                      'Registrador',
-                      'Escanear',
-                      'Escane el dni para verificar su identidad',
-                      anchoValor: MediaQuery.of(context).size.width * 0.7,
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
           Padding(
@@ -179,13 +180,15 @@ class _LoginBodyState extends State<LoginBody> {
                   from: 40,
                   delay: const Duration(milliseconds: 1100),
                   child: Text(
-                    'Para uso interno, del ministerio de desarrollo humano',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * 0.018,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0),
-                  ),
+                      'Para uso interno, del ministerio de desarrollo humano',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.nunito(
+                        textStyle: TextStyle(
+                            fontSize:
+                                MediaQuery.of(context).size.height * 0.018,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.0),
+                      )),
                 ),
               ],
             ),

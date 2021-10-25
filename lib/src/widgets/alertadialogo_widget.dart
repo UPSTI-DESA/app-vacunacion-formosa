@@ -1,5 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sistema_vacunacion/src/config/appcolor_config.dart';
 
 class DialogoAlerta extends StatelessWidget {
   final String? tituloAlerta,
@@ -65,18 +67,20 @@ class DialogoAlerta extends StatelessWidget {
           child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
             Text(
               tituloAlerta!,
-              style: const TextStyle(
+              style: GoogleFonts.barlow(
+                  textStyle: const TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.w600,
-              ),
+              )),
             ),
             const SizedBox(height: 16.0),
             Text(descripcionAlerta!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: GoogleFonts.nunito(
+                    textStyle: const TextStyle(
                   fontWeight: FontWeight.w300,
-                  fontSize: 16.0,
-                )),
+                  fontSize: 18.0,
+                ))),
             const SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -88,7 +92,12 @@ class DialogoAlerta extends StatelessWidget {
                           onPressed: () {
                             funcion2!();
                           },
-                          child: Text(textoBotonAlerta2!),
+                          child: Text(
+                            textoBotonAlerta2!,
+                            style: GoogleFonts.nunito(
+                                fontWeight: FontWeight.w800,
+                                color: SisVacuColor.red),
+                          ),
                         ))
                     : Container(),
                 Align(
@@ -99,7 +108,12 @@ class DialogoAlerta extends StatelessWidget {
                             ? funcion1!()
                             : Navigator.of(context).pop();
                       },
-                      child: Text(textoBotonAlerta!),
+                      child: Text(
+                        textoBotonAlerta!,
+                        style: GoogleFonts.nunito(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ))
               ],
             ),

@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
@@ -56,13 +57,16 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
         },
       ),
       appBar: AppBar(
-        backgroundColor: SisVacuColor.verdefuerte,
         centerTitle: true,
+        backgroundColor: SisVacuColor.azulCuaternario,
         title: FadeInLeftBig(
           from: 50,
-          child: const Text(
+          child: Text(
             'Sistema de Vacunación',
-            style: TextStyle(fontWeight: FontWeight.w300),
+            style: GoogleFonts.nunito(
+              textStyle: const TextStyle(
+                  fontWeight: FontWeight.w400, color: Colors.white),
+            ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -82,7 +86,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                           MediaQuery.of(context).size.width * 0.05),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
-                          color: SisVacuColor.white),
+                          color: Colors.white),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -187,7 +191,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     MediaQuery.of(context).size.width * 0.05),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0),
-                                    color: SisVacuColor.white),
+                                    color: Colors.white),
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
@@ -293,7 +297,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                           MediaQuery.of(context).size.width * 0.05),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
-                          color: SisVacuColor.white),
+                          color: Colors.white),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -377,25 +381,14 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                     ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.02,
-                        left: MediaQuery.of(context).size.width * 0.02),
-                    child: ColorTextButton(
-                      'Registrar Vacunación',
-                      color: SisVacuColor.verdefuerte,
-                      onPressed: () async {
+                  BotonCustom(
+                      text: 'Registrar Vacunación',
+                      onPressed: () {
                         enviarDatos(context);
-                      },
-                      anchoValor: 400,
-                      iconoBool: false,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ColorTextButton(
-                      //ELIMINAR DATOS DE SINGLETONS
-                      'Cancelar Registro',
+                      }),
+                  BotonCustom(
+                      text: 'Cancelar Registro',
+                      color: SisVacuColor.red,
                       onPressed: () {
                         showDialog(
                             context: context,
@@ -435,12 +428,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                         (Route<dynamic> route) => false);
                                   },
                                 ));
-                      },
-                      color: SisVacuColor.red!.withOpacity(0.8),
-                      anchoValor: 400,
-                      iconoBool: false,
-                    ),
-                  )
+                      }),
                 ],
               ),
               habilitarCircular

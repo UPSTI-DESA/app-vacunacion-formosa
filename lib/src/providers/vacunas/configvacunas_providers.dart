@@ -15,7 +15,7 @@ class _ConfiguracionVacunaProviders {
           ConfiVacuna.fromJsonList(decodedData['configuraciones']);
       return vacunador.items;
     }
-    throw '';
+    throw Error();
   }
 
   Future validarConfiguraciones(String? idVacu) async {

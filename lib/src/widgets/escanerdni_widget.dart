@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:sistema_vacunacion/src/config/config.dart';
+
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
@@ -12,13 +12,13 @@ import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'colortextbutton_widget.dart';
-
 class EscanerDni extends StatefulWidget {
   final String textoAyuda;
   final String textoBoton;
   final String tipoEscaneo; //REGISTRADOR / VACUNADOR / BENEFICIARIO
   final double? anchoValor;
+  final double? largoValor;
+  final bool? iconBool;
 
   const EscanerDni(
     this.tipoEscaneo,
@@ -26,6 +26,8 @@ class EscanerDni extends StatefulWidget {
     this.textoAyuda, {
     Key? key,
     this.anchoValor,
+    this.largoValor,
+    this.iconBool,
   }) : super(key: key);
 
   @override
@@ -39,6 +41,7 @@ class _EscanerDniState extends State<EscanerDni> {
   String? nombrePersona;
   String? apellidoPersona;
   String? dniPersona;
+
   String? codigo;
 
   bool loading = false;
@@ -51,19 +54,20 @@ class _EscanerDniState extends State<EscanerDni> {
 
   @override
   Widget build(BuildContext context) {
-    return ColorTextButton(
-      'Escanear',
-      color: SisVacuColor.verdefuerte,
+    return BotonCustom(
+      height: widget.anchoValor ?? 40,
+      width: widget.largoValor ?? double.infinity,
+      borderRadius: 30,
+      iconoBool: widget.iconBool ?? true,
+      iconoBoton: Icon(
+        FontAwesomeIcons.barcode,
+        color: Colors.white,
+        size: MediaQuery.of(context).size.width * 0.06,
+      ),
+      text: 'Escanear',
       onPressed: () async {
         scanBarcodeNormal();
       },
-      iconoBoton: Icon(
-        FontAwesomeIcons.barcode,
-        color: Colors.black,
-        size: MediaQuery.of(context).size.width * 0.06,
-      ),
-      anchoValor: widget.anchoValor,
-      iconoBool: true,
     );
   }
 

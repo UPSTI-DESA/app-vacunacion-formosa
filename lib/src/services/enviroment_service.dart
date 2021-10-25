@@ -5,7 +5,6 @@ import 'package:sistema_vacunacion/src/config/config.dart';
 class _EnviromentService {
   AppConfig? envState;
 
-  // ignore: close_sinks
   final StreamController<AppConfig> _envStateStreamController =
       StreamController<AppConfig>.broadcast();
 

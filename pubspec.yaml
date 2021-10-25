@@ -47,6 +47,8 @@ dependencies:
   flutter_picker:
   flutter_svg:
   font_awesome_flutter:
+  google_fonts: ^2.1.0
+ 
 
 dev_dependencies:
   flutter_test:

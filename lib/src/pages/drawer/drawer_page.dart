@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:intl/intl.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
@@ -44,8 +45,9 @@ class _BodyDrawerState extends State<BodyDrawer> {
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     colors: <Color>[
-                  Color.fromRGBO(189, 233, 227, 1),
-                  Color.fromRGBO(118, 214, 203, 1),
+                  Color(0xff009CAF),
+                  Color(0xff0F8DED),
+                  Color(0xff1F7CFB),
                 ])),
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
@@ -60,25 +62,25 @@ class _BodyDrawerState extends State<BodyDrawer> {
                   SizedBox(
                     height: MediaQuery.of(context).size.width * 0.05,
                   ),
-                  Text(
-                    'Bienvenido',
-                    style: TextStyle(
-                        letterSpacing: 4.0,
-                        color: SisVacuColor.black,
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.w600),
-                  ),
+                  Text('Bienvenido',
+                      style: GoogleFonts.barlow(
+                        textStyle: const TextStyle(
+                            letterSpacing: 4.0,
+                            color: Colors.white,
+                            fontSize: 28.0,
+                            fontWeight: FontWeight.w600),
+                      )),
                   SizedBox(
                     height: MediaQuery.of(context).size.width * 0.036,
                   ),
-                  Text(
-                    registradorService.registrador!.flxcore03_nombre!,
-                    style: TextStyle(
-                        letterSpacing: 1.5,
-                        color: SisVacuColor.black,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w400),
-                  ),
+                  Text(registradorService.registrador!.flxcore03_nombre!,
+                      style: GoogleFonts.nunito(
+                        textStyle: const TextStyle(
+                            letterSpacing: 1.5,
+                            color: Colors.white,
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.w400),
+                      )),
                   SizedBox(
                     height: MediaQuery.of(context).size.width * 0.036,
                   ),
@@ -91,90 +93,93 @@ class _BodyDrawerState extends State<BodyDrawer> {
             height: MediaQuery.of(context).size.width * 0.02,
           ),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.only(top: 0.0),
-              children: [
-                ListTile(
-                    leading: Icon(
-                      FontAwesomeIcons.solidEdit,
-                      color: Colors.cyan[600],
-                      size: MediaQuery.of(context).size.width / 15.0,
-                    ),
-                    title: const Text(
-                      'Editar equipo de trabajo',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 20,
+            child: Container(
+              color: SisVacuColor.white,
+              child: ListView(
+                padding: const EdgeInsets.only(top: 0.0),
+                children: [
+                  ListTile(
+                      leading: Icon(
+                        FontAwesomeIcons.solidEdit,
+                        color: SisVacuColor.azulCuaternario,
+                        size: MediaQuery.of(context).size.width / 20.0,
                       ),
-                    ),
-                    onTap: () {
-                      vacunadorService.cargarVacunador(null);
+                      title: Text('Editar equipo de trabajo',
+                          style: GoogleFonts.nunito(
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 20,
+                            ),
+                          )),
+                      onTap: () {
+                        vacunadorService.cargarVacunador(null);
 
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              // ignore: missing_required_param
-                              builder: (context) => const VacunadorPage(
-                                    infoCargador: [],
-                                  )));
-                    }),
-                ListTile(
-                  leading: Icon(
-                    FontAwesomeIcons.info,
-                    color: Colors.cyan[600],
-                    size: MediaQuery.of(context).size.width / 15.0,
-                  ),
-                  title: const Text(
-                    'Sobre Nosotros',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 20,
-                    ),
-                  ),
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SobreNosotrosPage())),
-                ),
-                ListTile(
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                // ignore: missing_required_param
+                                builder: (context) => const VacunadorPage(
+                                      infoCargador: [],
+                                    )));
+                      }),
+                  ListTile(
                     leading: Icon(
-                      FontAwesomeIcons.solidFilePdf,
-                      color: Colors.cyan[600],
-                      size: MediaQuery.of(context).size.width / 15.0,
+                      FontAwesomeIcons.info,
+                      color: SisVacuColor.azulCuaternario,
+                      size: MediaQuery.of(context).size.width / 20.0,
                     ),
-                    title: const Text(
-                      'Descargar PDF',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 20,
+                    title: Text('Sobre Nosotros',
+                        style: GoogleFonts.nunito(
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 20,
+                          ),
+                        )),
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SobreNosotrosPage())),
+                  ),
+                  ListTile(
+                      leading: Icon(
+                        FontAwesomeIcons.solidFilePdf,
+                        color: SisVacuColor.azulCuaternario,
+                        size: MediaQuery.of(context).size.width / 20.0,
                       ),
-                    ),
-                    onTap: () {
-                      _launchPDF();
-                    }),
-                ListTile(
-                    leading: Icon(
-                      FontAwesomeIcons.powerOff,
-                      color: SisVacuColor.primaryRed,
-                      size: MediaQuery.of(context).size.width / 15.0,
-                    ),
-                    title: const Text(
-                      'Cerrar Sesión',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 20,
+                      title: Text('Descargar PDF',
+                          style: GoogleFonts.nunito(
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 20,
+                            ),
+                          )),
+                      onTap: () {
+                        _launchPDF();
+                      }),
+                  ListTile(
+                      leading: Icon(
+                        FontAwesomeIcons.powerOff,
+                        color: SisVacuColor.red,
+                        size: MediaQuery.of(context).size.width / 20.0,
                       ),
-                    ),
-                    onTap: () {
-                      datosdecargaprovider.nombreVacunador = '';
-                      datosdecargaprovider.dniVacunador = '';
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginBody(),
-                          ));
-                    }),
-              ],
+                      title: Text('Cerrar Sesión',
+                          style: GoogleFonts.nunito(
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 20,
+                            ),
+                          )),
+                      onTap: () {
+                        datosdecargaprovider.nombreVacunador = '';
+                        datosdecargaprovider.dniVacunador = '';
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LoginBody(),
+                            ));
+                      }),
+                ],
+              ),
             ),
           ),
           // SizedBox(height: MediaQuery.of(context).size.height * 0.25),
@@ -195,23 +200,26 @@ class _BodyDrawerState extends State<BodyDrawer> {
   }
 
   containerFoto(context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.height * 0.12,
-      height: MediaQuery.of(context).size.height * 0.12,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.height * 0.1,
-            height: MediaQuery.of(context).size.height * 0.1,
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(6.0),
-                child: Image.asset(
-                  'assets/img/fondo/escudoColor.png',
-                  fit: BoxFit.fill,
-                )),
-          ),
-        ],
+    return CircleAvatar(
+      radius: 60,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.height * 0.12,
+        height: MediaQuery.of(context).size.height * 0.12,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.height * 0.1,
+              height: MediaQuery.of(context).size.height * 0.1,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6.0),
+                  child: Image.asset(
+                    'assets/img/fondo/escudoColor.png',
+                    fit: BoxFit.fill,
+                  )),
+            ),
+          ],
+        ),
       ),
     );
   }
