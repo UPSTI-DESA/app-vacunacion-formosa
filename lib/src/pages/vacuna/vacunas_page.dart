@@ -10,6 +10,7 @@ import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
+import 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
@@ -53,6 +54,7 @@ class _VacunasPageState extends State<VacunasPage>
     sexoTutor = 'F';
     genero = false;
     super.initState();
+    cargarPerfilesService(registradorService.registrador!.id_flxcore03!);
     appBarIcon = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
   }
@@ -591,7 +593,7 @@ class _VacunasPageState extends State<VacunasPage>
                                                 .validarConfiguraciones(
                                                     _selectVacunas!
                                                         .id_sysvacu04);
-                                                        
+
                                         tempLista[0].codigo_mensaje == "0"
                                             ? showDialog(
                                                 context: context,
@@ -1217,11 +1219,15 @@ class _VacunasPageState extends State<VacunasPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  TitulosContainerPage(
-                    colorTitle: SisVacuColor.black,
-                    sizeTitle: 18.0,
-                    widthThickness: 1.5,
-                    title: 'Datos del Tutor',
+                  Row(
+                    children: [
+                      Text(
+                        'Datos Tutor',
+                        style: GoogleFonts.barlow(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 20)),
+                      ),
+                    ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   const Text(
@@ -1235,7 +1241,6 @@ class _VacunasPageState extends State<VacunasPage>
                     'Tutor',
                     'Escanear',
                     'Escanee el D.N.I. del Tutor',
-                    anchoValor: 180,
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   const Text(
@@ -1384,5 +1389,9 @@ class _VacunasPageState extends State<VacunasPage>
               ),
             ));
     return mensajeExit ?? false;
+  }
+
+  cargarPerfilesService(String id) async {
+    await perfilesProviders.obtenerDatosPerfilesVacunacion(id);
   }
 }

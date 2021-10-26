@@ -5,7 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
+import 'package:sistema_vacunacion/src/providers/efectores_providers.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
+import 'package:sistema_vacunacion/src/services/efectores_servide.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
@@ -38,7 +40,9 @@ class _VacunadorPageState extends State<VacunadorPage>
     animacionNombreVacunado = false;
     switchContainer = false;
     stringVacunador = 'No';
+    cargarEfectoresService(registradorService.registrador!.flxcore03_dni!);
     super.initState();
+
     animacionIcono = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
   }
@@ -79,6 +83,40 @@ class _VacunadorPageState extends State<VacunadorPage>
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Equipo de trabajo',
+                            style: GoogleFonts.barlow(
+                                textStyle: const TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 20)),
+                          ),
+                          IconButton(
+                            alignment: Alignment.centerRight,
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      DialogoAlerta(
+                                        envioFuncion2: false,
+                                        envioFuncion1: false,
+                                        tituloAlerta: 'Información Adicional',
+                                        descripcionAlerta:
+                                            'Seleccione el switch si es la misma persona que registra y realiza la vacunación.',
+                                        textoBotonAlerta: 'Listo',
+                                        color: SisVacuColor.azulTerciario,
+                                        icon: Icon(Icons.info,
+                                            size: 40.0, color: Colors.grey[50]),
+                                      ));
+                            },
+                            icon: Icon(
+                              FontAwesomeIcons.infoCircle,
+                              color: SisVacuColor.azulSecundario,
+                            ),
+                            iconSize: 25,
+                          ),
+                        ],
+                      ),
                       const SizedBox(
                         height: 10.0,
                       ),
@@ -102,48 +140,9 @@ class _VacunadorPageState extends State<VacunadorPage>
                                 ]),
                             child: Column(
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Equipo de trabajo',
-                                      style: GoogleFonts.barlow(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 20)),
-                                    ),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.35),
-                                    IconButton(
-                                      alignment: Alignment.centerRight,
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) =>
-                                                DialogoAlerta(
-                                                  envioFuncion2: false,
-                                                  envioFuncion1: false,
-                                                  tituloAlerta:
-                                                      'Información Adicional',
-                                                  descripcionAlerta:
-                                                      'Seleccione el switch si es la misma persona que registra y realiza la vacunación.',
-                                                  textoBotonAlerta: 'Listo',
-                                                  color: SisVacuColor
-                                                      .azulTerciario,
-                                                  icon: Icon(Icons.info,
-                                                      size: 40.0,
-                                                      color: Colors.grey[50]),
-                                                ));
-                                      },
-                                      icon: Icon(
-                                        FontAwesomeIcons.infoCircle,
-                                        color: SisVacuColor.azulSecundario,
-                                      ),
-                                      iconSize: 25,
-                                    ),
-                                  ],
-                                ),
+                                SizedBox(
+                                    height: MediaQuery.of(context).size.width *
+                                        0.05),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment:
@@ -172,22 +171,41 @@ class _VacunadorPageState extends State<VacunadorPage>
                                         showModalBottomSheet(
                                             context: context,
                                             builder: (BuildContext context) {
-                                              return const ListTile(
-                                                title: Text('Efectores'),
-                                              );
+                                              return StreamBuilder(
+                                                  stream: efectoresService
+                                                      .listaEfectoresStream,
+                                                  builder:
+                                                      (BuildContext context,
+                                                          AsyncSnapshot<dynamic>
+                                                              snapshot) {
+                                                    return ListView.builder(
+                                                      itemCount:
+                                                          efectoresService
+                                                              .listaEfectores!
+                                                              .length,
+                                                      itemBuilder:
+                                                          (BuildContext context,
+                                                              int index) {
+                                                        return Text(efectoresService
+                                                            .listaEfectores![
+                                                                index]
+                                                            .sysofic01Descripcion!);
+                                                      },
+                                                    );
+                                                  });
                                             });
                                       },
                                       child: AnimatedIcon(
                                         progress: animacionIcono!,
-                                        icon: AnimatedIcons.ellipsis_search,
-                                        size: 28,
+                                        icon: AnimatedIcons.menu_home,
+                                        size: 20,
                                         color: Colors.grey[700],
                                       ),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(
-                                  height: 5.0,
+                                  height: 10.0,
                                 ),
                                 Row(
                                   children: [
@@ -210,7 +228,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                                   ],
                                 ),
                                 const SizedBox(
-                                  height: 20.0,
+                                  height: 10.0,
                                 ),
                                 Row(
                                   children: [
@@ -593,5 +611,9 @@ class _VacunadorPageState extends State<VacunadorPage>
               ),
             ));
     return mensajeExit ?? false;
+  }
+
+  cargarEfectoresService(String dni) async {
+    efectoresProviders.obtenerDatosEfectores(dni);
   }
 }

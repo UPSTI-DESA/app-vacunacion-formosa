@@ -7,3 +7,4 @@ export 'package:sistema_vacunacion/src/services/notificacionesdosis_service.dart
 export 'package:sistema_vacunacion/src/services/vacunascant_service.dart';
 export 'package:sistema_vacunacion/src/services/vacunadoscant_service.dart';
 export 'package:sistema_vacunacion/src/services/insertregistro_service.dart';
+export 'package:sistema_vacunacion/src/services/perfilesvacunacion_service.dart';
