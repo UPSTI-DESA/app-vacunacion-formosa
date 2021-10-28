@@ -109,7 +109,7 @@ class _LoginBodyState extends State<LoginBody> {
   Widget _loginFormulario(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-          top: MediaQuery.of(context).size.height * 0.28,
+          top: MediaQuery.of(context).size.height * 0.15,
           bottom: MediaQuery.of(context).size.height * 0.02),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -122,12 +122,12 @@ class _LoginBodyState extends State<LoginBody> {
             ),
             child: Column(
               children: <Widget>[
-                FadeInDown(
-                  from: 40,
-                  delay: const Duration(milliseconds: 1400),
-                  child: Icon(FontAwesomeIcons.hospital,
-                      color: SisVacuColor.azulSecundario,
-                      size: MediaQuery.of(context).size.height * 0.15),
+                FadeInImage(
+                  placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+                  image: const AssetImage('assets/img/appSisVAcunacion.png'),
+                  fit: BoxFit.cover,
+                  //height: MediaQuery.of(context).size.height * 0.2,
+                  width: MediaQuery.of(context).size.width * .7,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.08),
                 FadeInRight(
