@@ -35,23 +35,11 @@ PageRouteBuilder _contruirRuta(
             CurvedAnimation(parent: animation, curve: Curves.easeInOut);
 
         switch (animacion) {
-          // case 1:
-          //   return SlideTransition(
-          //     position: Tween<Offset>(begin: Offset(5.0, 1.0), end: Offset.zero)
-          //         .animate(curveAnimation),
-          //     child: child,
-          //   );
           case 2:
             return ScaleTransition(
                 child: child,
                 scale: Tween<double>(begin: 0.0, end: 1.0)
                     .animate(curveAnimation));
-          // case 3:
-          //   return RotationTransition(
-          //     turns:
-          //         Tween<double>(begin: 0.0, end: 1.0).animate(curveAnimation),
-          //     child: child,
-          //   );
           case 4:
             return FadeTransition(
                 child: child,

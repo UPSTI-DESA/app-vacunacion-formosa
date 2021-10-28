@@ -9,36 +9,36 @@ String perfilesVacunacionToJson(PerfilesVacunacion data) =>
 class PerfilesVacunacion {
   List<PerfilesVacunacion> items = [];
   PerfilesVacunacion({
-    this.idSysvacu12,
-    this.sysvacu12Descripcion,
-    this.codigoMensaje,
+    this.id_sysvacu12,
+    this.sysvacu12_descripcion,
+    this.codigo_mensaje,
     this.mensaje,
   });
 
-  String? idSysvacu12;
-  String? sysvacu12Descripcion;
-  String? codigoMensaje;
+  String? id_sysvacu12;
+  String? sysvacu12_descripcion;
+  String? codigo_mensaje;
   String? mensaje;
 
   factory PerfilesVacunacion.fromJson(Map<String, dynamic> json) =>
       PerfilesVacunacion(
-        idSysvacu12: json["id_sysvacu12"],
-        sysvacu12Descripcion: json["sysvacu12_descripcion"],
-        codigoMensaje: json["codigo_mensaje"],
+        id_sysvacu12: json["id_sysvacu12"],
+        sysvacu12_descripcion: json["sysvacu12_descripcion"],
+        codigo_mensaje: json["codigo_mensaje"],
         mensaje: json["mensaje"],
       );
 
   PerfilesVacunacion.fromJsonMap(Map<String, dynamic> json) {
-    idSysvacu12 = json["id_sysvacu12"];
-    sysvacu12Descripcion = json["sysvacu12_descripcion"];
-    codigoMensaje = json["codigo_mensaje"];
+    id_sysvacu12 = json["id_sysvacu12"];
+    sysvacu12_descripcion = json["sysvacu12_descripcion"];
+    codigo_mensaje = json["codigo_mensaje"];
     mensaje = json["mensaje"];
   }
 
   Map<String, dynamic> toJson() => {
-        "id_sysvacu12": idSysvacu12,
-        "sysvacu12_descripcion": sysvacu12Descripcion,
-        "codigo_mensaje": codigoMensaje,
+        "id_sysvacu12": id_sysvacu12,
+        "sysvacu12_descripcion": sysvacu12_descripcion,
+        "codigo_mensaje": codigo_mensaje,
         "mensaje": mensaje,
       };
 

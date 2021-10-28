@@ -42,14 +42,11 @@ class MyApp extends StatelessWidget {
   }
 
   MaterialApp _buildMaterialApp() {
-    // final GlobalKey<NavigatorState> _navigator = GlobalKey<NavigatorState>();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
     return MaterialApp(
-      // onGenerateRoute: getRutas,
-      // darkTheme: SisVacuColor.darktheme.theme,
       debugShowCheckedModeBanner:
           enviromentService.envState!.enviroment == 'DEV' ? true : false,
       initialRoute: LoginBody.nombreRuta,

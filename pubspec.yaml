@@ -48,6 +48,7 @@ dependencies:
   flutter_svg:
   font_awesome_flutter:
   google_fonts: ^2.1.0
+  loading_indicator: ^3.0.2
  
 
 dev_dependencies:

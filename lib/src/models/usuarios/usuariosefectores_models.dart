@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final efectores = efectoresFromJson(jsonString);
-
 import 'dart:convert';
 
 Efectores efectoresFromJson(String str) => Efectores.fromJson(json.decode(str));
