@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
+import 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -276,7 +277,7 @@ class _EscanerDniState extends State<EscanerDni> {
       beneficiarioService.cargarBeneficiario(datosBeneficiario[0]);
     });
     //Recuperamos la lista de Vacunas
-    final listaVacunas = await infoVacunasProviers.validarVacunas();
+
     final notificaciones =
         await notificacionesProvider.validarNotificaciones(dni, sexoPersona);
     notificaciones[0].codigo_mensaje == '1'
@@ -288,10 +289,7 @@ class _EscanerDniState extends State<EscanerDni> {
         : notificacionesDosisService.cargarRegistro(NotificacionesDosis());
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-            builder: (context) => VacunasPage(
-                  vacunas: listaVacunas,
-                )),
+        MaterialPageRoute(builder: (context) => VacunasPage()),
         (Route<dynamic> route) => false);
   }
 

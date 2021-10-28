@@ -110,7 +110,7 @@ class _LoginBodyState extends State<LoginBody> {
     return Padding(
       padding: EdgeInsets.only(
           top: MediaQuery.of(context).size.height * 0.15,
-          bottom: MediaQuery.of(context).size.height * 0.02),
+          bottom: MediaQuery.of(context).size.height * 0.05),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -174,23 +174,18 @@ class _LoginBodyState extends State<LoginBody> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18.0),
-            child: Column(
-              children: [
-                FadeInLeft(
-                  from: 40,
-                  delay: const Duration(milliseconds: 1100),
-                  child: Text(
-                      'Para uso interno, del ministerio de desarrollo humano',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.nunito(
-                        textStyle: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.018,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2.0),
-                      )),
-                ),
-              ],
+            child: FadeInLeft(
+              from: 40,
+              delay: const Duration(milliseconds: 1100),
+              child: Text(
+                  'Para uso interno, del ministerio de desarrollo humano',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.nunito(
+                    textStyle: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * 0.018,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 2.0),
+                  )),
             ),
           ),
           Align(

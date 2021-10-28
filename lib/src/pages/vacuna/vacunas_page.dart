@@ -15,10 +15,8 @@ import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class VacunasPage extends StatefulWidget {
-  final List<InfoVacunas>? vacunas;
   const VacunasPage({
     Key? key,
-    required this.vacunas,
   }) : super(key: key);
   static const String nombreRuta = 'VacunasPage';
   @override
@@ -29,7 +27,9 @@ class _VacunasPageState extends State<VacunasPage>
     with SingleTickerProviderStateMixin {
   AnimationController? appBarIcon;
 
-  InfoVacunas? _selectVacunas;
+  VacunasxPerfil? _selectVacunas;
+  PerfilesVacunacion? _selectPerfil;
+  List<InfoVacunas>? listaVacunas;
   List<ConfiVacuna>? listaConfiguraciones;
   ConfiVacuna? _selectConfigVacuna;
   List<Lotes>? listaLotes;
@@ -49,6 +49,7 @@ class _VacunasPageState extends State<VacunasPage>
     fotoBeneficiario = base64.decode(uribeneficiario.split(',').last);
 
     listaConfiguraciones = [];
+    listaVacunas = [];
     listaLotes = [];
     dniTutor = '';
     sexoTutor = 'F';
@@ -512,7 +513,7 @@ class _VacunasPageState extends State<VacunasPage>
                         Row(
                           children: [
                             Text(
-                              'Seleccione una vacuna',
+                              'Seleccione un Perfil',
                               style: GoogleFonts.barlow(
                                   textStyle: const TextStyle(
                                       fontWeight: FontWeight.w600,
@@ -528,9 +529,9 @@ class _VacunasPageState extends State<VacunasPage>
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                    _selectVacunas == null
+                                    _selectPerfil == null
                                         ? 'Seleccione'
-                                        : _selectVacunas!.sysvacu04_nombre!,
+                                        : _selectPerfil!.sysvacu12_descripcion!,
                                     style: GoogleFonts.nunito(
                                       textStyle: TextStyle(
                                         fontSize: getValueForScreenType(
@@ -542,7 +543,7 @@ class _VacunasPageState extends State<VacunasPage>
                                     )),
                                 const SizedBox(width: 5),
                                 Icon(
-                                  _selectVacunas == null
+                                  _selectPerfil == null
                                       ? Icons.keyboard_arrow_down
                                       : Icons.keyboard_arrow_left,
                                   color: SisVacuColor.black,
@@ -550,49 +551,56 @@ class _VacunasPageState extends State<VacunasPage>
                               ],
                             ),
                             onTap: () {
-                              (widget.vacunas == null)
+                              (!perfilesVacunacionService
+                                      .existelistaPerfilesVacunacion)
                                   ? const Center(
                                       child: Text('Hubo un problema'),
                                     )
                                   : Picker(
                                       title: const Text(
-                                        'Vacunas',
+                                        'Perfiles',
                                       ),
                                       itemExtent: 45,
                                       cancelText: "Cancelar",
                                       confirmText: 'Confirmar',
-                                      adapter: PickerDataAdapter<InfoVacunas>(
-                                        data: widget.vacunas!
-                                            .map(
-                                                (iv) => PickerItem<InfoVacunas>(
-                                                      text: Center(
-                                                          child: Text(iv
-                                                              .sysvacu04_nombre!)),
-                                                      value: iv,
-                                                    ))
+                                      adapter:
+                                          PickerDataAdapter<PerfilesVacunacion>(
+                                        data: perfilesVacunacionService
+                                            .listaPerfilesVacunacion!
+                                            .map((iv) =>
+                                                PickerItem<PerfilesVacunacion>(
+                                                  text: Center(
+                                                      child: Text(iv
+                                                          .sysvacu12_descripcion!)),
+                                                  value: iv,
+                                                ))
                                             .toList(),
                                       ),
                                       squeeze: 1,
                                       height: size.height * .2,
                                       onConfirm:
                                           (Picker picker, List value) async {
-                                        PickerDataAdapter<InfoVacunas>
+                                        PickerDataAdapter<PerfilesVacunacion>
                                             pickerAdapter = picker.adapter
                                                 as PickerDataAdapter<
-                                                    InfoVacunas>;
+                                                    PerfilesVacunacion>;
                                         listaConfiguraciones!.clear();
                                         listaLotes!.clear();
                                         setState(() {
                                           _selectLote = null;
                                           _selectConfigVacuna = null;
-                                          _selectVacunas = pickerAdapter
+                                          _selectPerfil = pickerAdapter
                                               .data[value.first].value;
                                         });
-                                        final tempLista =
-                                            await configuracionVacunaProvider
-                                                .validarConfiguraciones(
-                                                    _selectVacunas!
-                                                        .id_sysvacu04);
+                                        final tempLista = await vacunasxPerfiles
+                                            .obtenerVacunasxPerfilesProviders(
+                                                _selectPerfil!.id_sysvacu12,
+                                                beneficiarioService
+                                                    .beneficiario!
+                                                    .sysdesa10_dni,
+                                                beneficiarioService
+                                                    .beneficiario!
+                                                    .sysdesa10_sexo);
 
                                         tempLista[0].codigo_mensaje == "0"
                                             ? showDialog(
@@ -612,16 +620,173 @@ class _VacunasPageState extends State<VacunasPage>
                                                       ),
                                                       color: Colors.red);
                                                 })
-                                            : setState(() {
-                                                listaConfiguraciones =
-                                                    tempLista;
-                                              });
+                                            : print('Correcto');
                                       }).showModal(context);
                             }),
                       ],
                     ),
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                StreamBuilder(
+                  stream: vacunasxPerfilService.listaVacunasxPerfilesStream,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    return vacunasxPerfilService.listavacunasxPerfil!.isNotEmpty
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                right: MediaQuery.of(context).size.width * 0.02,
+                                left: MediaQuery.of(context).size.width * 0.02),
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * 0.05),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  boxShadow: <BoxShadow>[
+                                    BoxShadow(
+                                        color: Colors.black.withOpacity(0.08),
+                                        offset: const Offset(0, 5),
+                                        blurRadius: 5)
+                                  ],
+                                  color: Colors.white),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Seleccione una vacuna',
+                                        style: GoogleFonts.barlow(
+                                            textStyle: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 20)),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  GestureDetector(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                              _selectVacunas == null
+                                                  ? 'Seleccione'
+                                                  : _selectVacunas!
+                                                      .sysvacu04_nombre!,
+                                              style: GoogleFonts.nunito(
+                                                textStyle: TextStyle(
+                                                  fontSize:
+                                                      getValueForScreenType(
+                                                          context: context,
+                                                          mobile: 15,
+                                                          tablet: 20),
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              )),
+                                          const SizedBox(width: 5),
+                                          Icon(
+                                            _selectVacunas == null
+                                                ? Icons.keyboard_arrow_down
+                                                : Icons.keyboard_arrow_left,
+                                            color: SisVacuColor.black,
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        (vacunasxPerfilService
+                                                .listavacunasxPerfil!.isEmpty)
+                                            ? const Center(
+                                                child: Text('Hubo un problema'),
+                                              )
+                                            : Picker(
+                                                title: const Text(
+                                                  'Vacunas',
+                                                ),
+                                                itemExtent: 45,
+                                                cancelText: "Cancelar",
+                                                confirmText: 'Confirmar',
+                                                adapter: PickerDataAdapter<
+                                                    VacunasxPerfil>(
+                                                  data: vacunasxPerfilService
+                                                      .listavacunasxPerfil!
+                                                      .map((iv) => PickerItem<
+                                                              VacunasxPerfil>(
+                                                            text: Center(
+                                                                child: Text(iv
+                                                                    .sysvacu04_nombre!)),
+                                                            value: iv,
+                                                          ))
+                                                      .toList(),
+                                                ),
+                                                squeeze: 1,
+                                                height: size.height * .2,
+                                                onConfirm: (Picker picker,
+                                                    List value) async {
+                                                  PickerDataAdapter<
+                                                          VacunasxPerfil>
+                                                      pickerAdapter =
+                                                      picker.adapter
+                                                          as PickerDataAdapter<
+                                                              VacunasxPerfil>;
+                                                  listaConfiguraciones!.clear();
+                                                  listaLotes!.clear();
+                                                  setState(() {
+                                                    _selectLote = null;
+                                                    _selectConfigVacuna = null;
+                                                    _selectVacunas =
+                                                        pickerAdapter
+                                                            .data[value.first]
+                                                            .value;
+                                                  });
+                                                  final tempLista =
+                                                      await configuracionVacunaProvider
+                                                          .validarConfiguraciones(
+                                                              _selectVacunas!
+                                                                  .id_sysvacu04);
+
+                                                  tempLista[0].codigo_mensaje ==
+                                                          "0"
+                                                      ? showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return DialogoAlerta(
+                                                                envioFuncion2:
+                                                                    false,
+                                                                envioFuncion1:
+                                                                    false,
+                                                                tituloAlerta:
+                                                                    'ATENCIÓN!',
+                                                                descripcionAlerta:
+                                                                    tempLista[0]
+                                                                        .mensaje,
+                                                                textoBotonAlerta:
+                                                                    'Listo',
+                                                                icon:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .error_outline,
+                                                                  size: 40,
+                                                                ),
+                                                                color:
+                                                                    Colors.red);
+                                                          })
+                                                      : setState(() {
+                                                          listaConfiguraciones =
+                                                              tempLista;
+                                                        });
+                                                }).showModal(context);
+                                      }),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Container();
+                  },
+                ),
+
                 SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                 listaConfiguraciones!.isNotEmpty
                     ? Padding(
