@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_picker/Picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -55,6 +56,7 @@ class _VacunadorPageState extends State<VacunadorPage>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return SafeArea(
         top: false,
         child: WillPopScope(
@@ -168,6 +170,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                                         } else {
                                           animacionIcono!.forward();
                                         }
+
                                         showModalBottomSheet(
                                             context: context,
                                             builder: (BuildContext context) {
@@ -186,10 +189,16 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                       itemBuilder:
                                                           (BuildContext context,
                                                               int index) {
-                                                        return Text(efectoresService
-                                                            .listaEfectores![
-                                                                index]
-                                                            .sysofic01Descripcion!);
+                                                        return ListTile(
+                                                          title: Text(
+                                                            efectoresService
+                                                                .listaEfectores![
+                                                                    index]
+                                                                .sysofic01Descripcion!,
+                                                            style: GoogleFonts
+                                                                .nunito(),
+                                                          ),
+                                                        );
                                                       },
                                                     );
                                                   });

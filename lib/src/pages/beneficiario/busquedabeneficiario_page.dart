@@ -46,492 +46,504 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
 
     _incrementoVacunados();
 
-    return Scaffold(
-      drawer: const BodyDrawer(),
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: SisVacuColor.azulCuaternario,
-        title: FadeInLeftBig(
-          from: 50,
-          child: Text(
-            'Sistema de Vacunación',
-            style: GoogleFonts.nunito(
-              textStyle: TextStyle(
-                  fontWeight: FontWeight.w400, color: SisVacuColor.white),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        actions: [
-          Bounce(
-            from: 10,
-            infinite: true,
-            duration: const Duration(milliseconds: 2000),
-            child: Container(
-              child: StreamBuilder(
-                stream: cantidadVacunasService.cantidadvacunadosStream,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else {
-                    return Text(
-                      cantidadVacunasService
-                          .cantidadvacunados!.cantidad_aplicaciones!,
-                      style: TextStyle(
-                          color: SisVacuColor.white,
-                          fontSize: getValueForScreenType(
-                              context: context, mobile: 15)),
-                    );
-                  }
-                },
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: Scaffold(
+        drawer: const BodyDrawer(),
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: SisVacuColor.azulCuaternario,
+          title: FadeInLeftBig(
+            from: 50,
+            child: Text(
+              'Sistema de Vacunación',
+              style: GoogleFonts.nunito(
+                textStyle: TextStyle(
+                    fontWeight: FontWeight.w400, color: SisVacuColor.white),
               ),
-              alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width * 0.1,
-              height: MediaQuery.of(context).size.height * 0.1,
-              decoration: const BoxDecoration(
-                  color: Colors.redAccent, shape: BoxShape.circle),
+              textAlign: TextAlign.center,
             ),
           ),
-        ],
-      ),
-      // drawer: BodyDrawer(),
-      floatingActionButton: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 30.0),
-                child: FloatingActionButton(
-                    heroTag: 'boton1',
-                    child: const Icon(FontAwesomeIcons.syringe),
-                    mini: true,
-                    onPressed: () async {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) => DialogoAlerta(
-                                envioFuncion2: false,
-                                envioFuncion1: false,
-                                tituloAlerta: 'Información Vacuna',
-                                descripcionAlerta:
-                                    'Muy pronto Historial de vacunados',
-                                textoBotonAlerta: 'Listo',
-                                color: SisVacuColor.orange,
-                                icon: Icon(
-                                  FontAwesomeIcons.info,
-                                  size: getValueForScreenType(
-                                      context: context, mobile: 30),
-                                  color: SisVacuColor.white,
-                                ),
-                              ));
-                      _incrementoVacunados();
-                    }),
-              ),
-              // Positioned(
-              //   // top: 0.0,
-              //   right: 2.0,
-              //   child: Bounce(
-              //     from: 10,
-              //     infinite: true,
-              //     duration: const Duration(milliseconds: 2000),
-              //     child: Container(
-              //       child: StreamBuilder(
-              //         stream: cantidadVacunasService.cantidadvacunadosStream,
-              //         builder: (BuildContext context, AsyncSnapshot snapshot) {
-              //           if (snapshot.connectionState ==
-              //               ConnectionState.waiting) {
-              //             return const Center(
-              //                 child: CircularProgressIndicator());
-              //           } else {
-              //             return Text(
-              //               '100',
-              //               style: TextStyle(
-              //                   color: SisVacuColor.white,
-              //                   fontSize: getValueForScreenType(
-              //                       context: context, mobile: 15)),
-              //             );
-              //           }
-              //         },
-              //       ),
-              //       alignment: Alignment.center,
-              //       width: MediaQuery.of(context).size.width * 0.1,
-              //       height: MediaQuery.of(context).size.height * 0.1,
-              //       decoration: const BoxDecoration(
-              //           color: Colors.redAccent, shape: BoxShape.circle),
-              //     ),
-              //   ),
-              // )
-            ],
-          ),
-        ],
-      ),
-
-      body: BackgroundHeader(
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  modo
-                      ? Container()
-                      : FadeInLeft(
-                          duration: Duration(milliseconds: duracionAnimacion),
-                          delay: Duration(milliseconds: duracionDelay),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                right: MediaQuery.of(context).size.width * 0.02,
-                                left: MediaQuery.of(context).size.width * 0.02),
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                  top: 5.0,
-                                  right: 10.0,
-                                  left: 15.0,
-                                  bottom: 5.0),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                        color: Colors.black.withOpacity(0.08),
-                                        offset: const Offset(0, 5),
-                                        blurRadius: 5)
-                                  ],
-                                  color: Colors.white),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Row(
-                                    children: [
-                                      FadeInUpBig(
-                                        from: 25,
-                                        child: Text(
-                                          'Modo Escaner',
-                                          style: GoogleFonts.barlow(
-                                              textStyle: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 20)),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.4),
-                                      FadeInDownBig(
-                                        from: 25,
-                                        child: IconButton(
-                                          alignment: Alignment.centerRight,
-                                          onPressed: () {
-                                            showDialog(
-                                                context: context,
-                                                builder: (BuildContext
-                                                        context) =>
-                                                    DialogoAlerta(
-                                                      envioFuncion2: false,
-                                                      envioFuncion1: false,
-                                                      tituloAlerta:
-                                                          'Información',
-                                                      descripcionAlerta:
-                                                          'Si el beneficiario posee su dni presione el botón "Escanear", enfoque la cámara al código de barras. Si no posee su D.N.I., tipeelo en el campo manual y seleccione el sexo',
-                                                      textoBotonAlerta: 'Listo',
-                                                      color:
-                                                          SisVacuColor.yelow700,
-                                                      icon: Icon(
-                                                        Icons.info,
-                                                        size: 40.0,
-                                                        color:
-                                                            SisVacuColor.grey,
-                                                      ),
-                                                    ));
-                                          },
-                                          icon: Icon(
-                                            FontAwesomeIcons.infoCircle,
-                                            color: SisVacuColor.azulSecundario,
-                                          ),
-                                          iconSize: 25,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
-                                  Text(
-                                      'Escanee el código  de barras del D.N.I. del beneficiario',
-                                      style: GoogleFonts.nunito(
-                                        textStyle: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14.0),
-                                      ),
-                                      textAlign: TextAlign.center),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
-                                  const EscanerDni(
-                                    'Beneficiario',
-                                    'Escanee',
-                                    "textoAyuda",
-                                    anchoValor: 40,
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                  modo
-                      ? FadeInRight(
-                          duration: Duration(milliseconds: duracionAnimacion),
-                          delay: Duration(milliseconds: duracionDelay),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                right: MediaQuery.of(context).size.width * 0.02,
-                                left: MediaQuery.of(context).size.width * 0.02),
-                            child: Container(
-                              padding: EdgeInsets.all(
-                                  MediaQuery.of(context).size.width * 0.05),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                        color: Colors.black.withOpacity(0.08),
-                                        offset: const Offset(0, 5),
-                                        blurRadius: 5)
-                                  ],
-                                  color: Colors.white),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Row(
-                                    children: [
-                                      FadeInUpBig(
-                                        from: 25,
-                                        child: Text(
-                                          'Modo ingreso manual',
-                                          style: GoogleFonts.barlow(
-                                              textStyle: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 20)),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
-                                  Text(
-                                      'Ingrese el número de D.N.I. del beneficiario y seleccione el sexo',
-                                      style: GoogleFonts.nunito(
-                                        textStyle: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14.0),
-                                      ),
-                                      textAlign: TextAlign.center),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10, right: 10),
-                                    child: TextField(
-                                      controller: dniController,
-                                      keyboardType: TextInputType.number,
-                                      maxLength: 8,
-                                      style:
-                                          const TextStyle(color: Colors.blue),
-                                      textCapitalization:
-                                          TextCapitalization.sentences,
-                                      decoration: const InputDecoration(
-                                        icon: Icon(Icons.fingerprint),
-                                        enabledBorder: InputBorder.none,
-                                        border: InputBorder.none,
-                                        labelText: 'Ingrese el DNI',
-                                      ),
-                                      onChanged: (valor) {
-                                        setState(() {
-                                          dniBeneficiario = valor;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
-                                  Text('Seleccione el Sexo',
-                                      style: GoogleFonts.barlow(
-                                        textStyle: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16.0),
-                                      ),
-                                      textAlign: TextAlign.center),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Femenino',
-                                        style: GoogleFonts.nunito(
-                                            color: !genero
-                                                ? Colors.black87
-                                                : Colors.grey[300],
-                                            fontWeight: !genero
-                                                ? FontWeight.w700
-                                                : FontWeight.w100),
-                                      ),
-                                      Switch(
-                                          activeColor: Colors.blue,
-                                          inactiveTrackColor: Colors.pink,
-                                          inactiveThumbColor: Colors.pink,
-                                          value: genero,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              genero = value;
-                                              genero
-                                                  ? sexoBeneficiario = 'M'
-                                                  : sexoBeneficiario = 'F';
-                                            });
-                                          }),
-                                      Text(
-                                        'Masculino',
-                                        style: GoogleFonts.nunito(
-                                            color: genero
-                                                ? Colors.black87
-                                                : Colors.grey[300],
-                                            fontWeight: genero
-                                                ? FontWeight.w700
-                                                : FontWeight.w100),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
-                                  BotonCustom(
-                                      text: 'Verificar',
-                                      onPressed: () {
-                                        final dniOk = dniBeneficiario != '' &&
-                                            dniBeneficiario!.length >= 7 &&
-                                            dniBeneficiario != null;
-
-                                        (dniOk)
-                                            ? showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return DialogoAlerta(
-                                                    tituloAlerta:
-                                                        'Verificar Datos',
-                                                    descripcionAlerta:
-                                                        'D.N.I.: $dniBeneficiario , Sexo: $sexoBeneficiario',
-                                                    textoBotonAlerta:
-                                                        'Verificar',
-                                                    textoBotonAlerta2:
-                                                        'Cancelar',
-                                                    funcion1: () {
-                                                      obtenerDatosBeneficiario(
-                                                          context,
-                                                          dniBeneficiario,
-                                                          sexoBeneficiario);
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      setState(() {
-                                                        loading = true;
-                                                      });
-
-                                                      retornarLoading(context,
-                                                          'Espere por favor');
-                                                    },
-                                                    funcion2: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    envioFuncion1: true,
-                                                    envioFuncion2: true,
-                                                    icon: const Icon(
-                                                      FontAwesomeIcons.check,
-                                                      color: Colors.white,
-                                                    ),
-                                                    color:
-                                                        SisVacuColor.yelow700,
-                                                  );
-                                                })
-                                            : showDialog(
-                                                context: context,
-                                                builder: (BuildContext
-                                                        context) =>
-                                                    DialogoAlerta(
-                                                      envioFuncion2: false,
-                                                      envioFuncion1: false,
-                                                      tituloAlerta:
-                                                          'Hubo un Error',
-                                                      descripcionAlerta:
-                                                          'Ingrese el D.N.I. y seleccione el sexo.',
-                                                      textoBotonAlerta: 'Listo',
-                                                      color: Colors.red,
-                                                      icon: Icon(
-                                                        Icons.error,
-                                                        size: 40.0,
-                                                        color: Colors.grey[50],
-                                                      ),
-                                                    ));
-                                      })
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Modo Escaner',
-                        style: GoogleFonts.nunito(
-                            color: !modo ? Colors.black87 : Colors.grey[300],
-                            fontWeight:
-                                !modo ? FontWeight.w700 : FontWeight.w100),
-                      ),
-                      Switch(
-                          activeColor: Colors.orange,
-                          inactiveTrackColor: Colors.purple,
-                          inactiveThumbColor: Colors.purple,
-                          value: modo,
-                          onChanged: (value) {
-                            setState(() {
-                              modo = value;
-                              dniBeneficiario = '';
-                              dniController!.text = '';
-                            });
-                          }),
-                      Text(
-                        'Modo Manual',
-                        style: GoogleFonts.nunito(
-                            color: modo ? Colors.black87 : Colors.grey[300],
-                            fontWeight:
-                                modo ? FontWeight.w700 : FontWeight.w100),
-                      ),
-                    ],
-                  ),
-                ],
+          actions: [
+            Bounce(
+              from: 10,
+              infinite: true,
+              duration: const Duration(milliseconds: 2000),
+              child: Container(
+                child: StreamBuilder(
+                  stream: cantidadVacunasService.cantidadvacunadosStream,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return Text(
+                        cantidadVacunasService
+                            .cantidadvacunados!.cantidad_aplicaciones!,
+                        style: TextStyle(
+                            color: SisVacuColor.white,
+                            fontSize: getValueForScreenType(
+                                context: context, mobile: 15)),
+                      );
+                    }
+                  },
+                ),
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width * 0.1,
+                height: MediaQuery.of(context).size.height * 0.1,
+                decoration: const BoxDecoration(
+                    color: Colors.redAccent, shape: BoxShape.circle),
               ),
             ),
           ],
+        ),
+        // drawer: BodyDrawer(),
+        floatingActionButton: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 30.0),
+                  child: FloatingActionButton(
+                      heroTag: 'boton1',
+                      child: const Icon(FontAwesomeIcons.syringe),
+                      mini: true,
+                      onPressed: () async {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => DialogoAlerta(
+                                  envioFuncion2: false,
+                                  envioFuncion1: false,
+                                  tituloAlerta: 'Información Vacuna',
+                                  descripcionAlerta:
+                                      'Muy pronto Historial de vacunados',
+                                  textoBotonAlerta: 'Listo',
+                                  color: SisVacuColor.orange,
+                                  icon: Icon(
+                                    FontAwesomeIcons.info,
+                                    size: getValueForScreenType(
+                                        context: context, mobile: 30),
+                                    color: SisVacuColor.white,
+                                  ),
+                                ));
+                        _incrementoVacunados();
+                      }),
+                ),
+                // Positioned(
+                //   // top: 0.0,
+                //   right: 2.0,
+                //   child: Bounce(
+                //     from: 10,
+                //     infinite: true,
+                //     duration: const Duration(milliseconds: 2000),
+                //     child: Container(
+                //       child: StreamBuilder(
+                //         stream: cantidadVacunasService.cantidadvacunadosStream,
+                //         builder: (BuildContext context, AsyncSnapshot snapshot) {
+                //           if (snapshot.connectionState ==
+                //               ConnectionState.waiting) {
+                //             return const Center(
+                //                 child: CircularProgressIndicator());
+                //           } else {
+                //             return Text(
+                //               '100',
+                //               style: TextStyle(
+                //                   color: SisVacuColor.white,
+                //                   fontSize: getValueForScreenType(
+                //                       context: context, mobile: 15)),
+                //             );
+                //           }
+                //         },
+                //       ),
+                //       alignment: Alignment.center,
+                //       width: MediaQuery.of(context).size.width * 0.1,
+                //       height: MediaQuery.of(context).size.height * 0.1,
+                //       decoration: const BoxDecoration(
+                //           color: Colors.redAccent, shape: BoxShape.circle),
+                //     ),
+                //   ),
+                // )
+              ],
+            ),
+          ],
+        ),
+
+        body: BackgroundHeader(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                    modo
+                        ? Container()
+                        : FadeInLeft(
+                            duration: Duration(milliseconds: duracionAnimacion),
+                            delay: Duration(milliseconds: duracionDelay),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  right:
+                                      MediaQuery.of(context).size.width * 0.02,
+                                  left:
+                                      MediaQuery.of(context).size.width * 0.02),
+                              child: Container(
+                                padding: const EdgeInsets.only(
+                                    top: 5.0,
+                                    right: 10.0,
+                                    left: 15.0,
+                                    bottom: 5.0),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          offset: const Offset(0, 5),
+                                          blurRadius: 5)
+                                    ],
+                                    color: Colors.white),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        FadeInUpBig(
+                                          from: 25,
+                                          child: Text(
+                                            'Modo Escaner',
+                                            style: GoogleFonts.barlow(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 20)),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.4),
+                                        FadeInDownBig(
+                                          from: 25,
+                                          child: IconButton(
+                                            alignment: Alignment.centerRight,
+                                            onPressed: () {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      DialogoAlerta(
+                                                        envioFuncion2: false,
+                                                        envioFuncion1: false,
+                                                        tituloAlerta:
+                                                            'Información',
+                                                        descripcionAlerta:
+                                                            'Si el beneficiario posee su dni presione el botón "Escanear", enfoque la cámara al código de barras. Si no posee su D.N.I., tipeelo en el campo manual y seleccione el sexo',
+                                                        textoBotonAlerta:
+                                                            'Listo',
+                                                        color: SisVacuColor
+                                                            .yelow700,
+                                                        icon: Icon(
+                                                          Icons.info,
+                                                          size: 40.0,
+                                                          color:
+                                                              SisVacuColor.grey,
+                                                        ),
+                                                      ));
+                                            },
+                                            icon: Icon(
+                                              FontAwesomeIcons.infoCircle,
+                                              color:
+                                                  SisVacuColor.azulSecundario,
+                                            ),
+                                            iconSize: 25,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                    Text(
+                                        'Escanee el código  de barras del D.N.I. del beneficiario',
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14.0),
+                                        ),
+                                        textAlign: TextAlign.center),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                    const EscanerDni(
+                                      'Beneficiario',
+                                      'Escanee',
+                                      "textoAyuda",
+                                      anchoValor: 40,
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                    modo
+                        ? FadeInRight(
+                            duration: Duration(milliseconds: duracionAnimacion),
+                            delay: Duration(milliseconds: duracionDelay),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  right:
+                                      MediaQuery.of(context).size.width * 0.02,
+                                  left:
+                                      MediaQuery.of(context).size.width * 0.02),
+                              child: Container(
+                                padding: EdgeInsets.all(
+                                    MediaQuery.of(context).size.width * 0.05),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          offset: const Offset(0, 5),
+                                          blurRadius: 5)
+                                    ],
+                                    color: Colors.white),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        FadeInUpBig(
+                                          from: 25,
+                                          child: Text(
+                                            'Modo ingreso manual',
+                                            style: GoogleFonts.barlow(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 20)),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                    Text(
+                                        'Ingrese el número de D.N.I. del beneficiario y seleccione el sexo',
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14.0),
+                                        ),
+                                        textAlign: TextAlign.center),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10, right: 10),
+                                      child: TextField(
+                                        controller: dniController,
+                                        keyboardType: TextInputType.number,
+                                        maxLength: 8,
+                                        style:
+                                            const TextStyle(color: Colors.blue),
+                                        textCapitalization:
+                                            TextCapitalization.sentences,
+                                        decoration: const InputDecoration(
+                                          icon: Icon(Icons.fingerprint),
+                                          enabledBorder: InputBorder.none,
+                                          border: InputBorder.none,
+                                          labelText: 'Ingrese el DNI',
+                                        ),
+                                        onChanged: (valor) {
+                                          setState(() {
+                                            dniBeneficiario = valor;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                    Text('Seleccione el Sexo',
+                                        style: GoogleFonts.barlow(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
+                                        ),
+                                        textAlign: TextAlign.center),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Femenino',
+                                          style: GoogleFonts.nunito(
+                                              color: !genero
+                                                  ? Colors.black87
+                                                  : Colors.grey[300],
+                                              fontWeight: !genero
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w100),
+                                        ),
+                                        Switch(
+                                            activeColor: Colors.blue,
+                                            inactiveTrackColor: Colors.pink,
+                                            inactiveThumbColor: Colors.pink,
+                                            value: genero,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                genero = value;
+                                                genero
+                                                    ? sexoBeneficiario = 'M'
+                                                    : sexoBeneficiario = 'F';
+                                              });
+                                            }),
+                                        Text(
+                                          'Masculino',
+                                          style: GoogleFonts.nunito(
+                                              color: genero
+                                                  ? Colors.black87
+                                                  : Colors.grey[300],
+                                              fontWeight: genero
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w100),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.05),
+                                    BotonCustom(
+                                        text: 'Verificar',
+                                        onPressed: () {
+                                          final dniOk = dniBeneficiario != '' &&
+                                              dniBeneficiario!.length >= 7 &&
+                                              dniBeneficiario != null;
+
+                                          (dniOk)
+                                              ? showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return DialogoAlerta(
+                                                      tituloAlerta:
+                                                          'Verificar Datos',
+                                                      descripcionAlerta:
+                                                          'D.N.I.: $dniBeneficiario , Sexo: $sexoBeneficiario',
+                                                      textoBotonAlerta:
+                                                          'Verificar',
+                                                      textoBotonAlerta2:
+                                                          'Cancelar',
+                                                      funcion1: () {
+                                                        obtenerDatosBeneficiario(
+                                                            context,
+                                                            dniBeneficiario,
+                                                            sexoBeneficiario);
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        setState(() {
+                                                          loading = true;
+                                                        });
+
+                                                        retornarLoading(context,
+                                                            'Espere por favor');
+                                                      },
+                                                      funcion2: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      envioFuncion1: true,
+                                                      envioFuncion2: true,
+                                                      icon: const Icon(
+                                                        FontAwesomeIcons.check,
+                                                        color: Colors.white,
+                                                      ),
+                                                      color:
+                                                          SisVacuColor.yelow700,
+                                                    );
+                                                  })
+                                              : showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      DialogoAlerta(
+                                                        envioFuncion2: false,
+                                                        envioFuncion1: false,
+                                                        tituloAlerta:
+                                                            'Hubo un Error',
+                                                        descripcionAlerta:
+                                                            'Ingrese el D.N.I. y seleccione el sexo.',
+                                                        textoBotonAlerta:
+                                                            'Listo',
+                                                        color: Colors.red,
+                                                        icon: Icon(
+                                                          Icons.error,
+                                                          size: 40.0,
+                                                          color:
+                                                              Colors.grey[50],
+                                                        ),
+                                                      ));
+                                        })
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Modo Escaner',
+                          style: GoogleFonts.nunito(
+                              color: !modo ? Colors.black87 : Colors.grey[300],
+                              fontWeight:
+                                  !modo ? FontWeight.w700 : FontWeight.w100),
+                        ),
+                        Switch(
+                            activeColor: Colors.orange,
+                            inactiveTrackColor: Colors.purple,
+                            inactiveThumbColor: Colors.purple,
+                            value: modo,
+                            onChanged: (value) {
+                              setState(() {
+                                modo = value;
+                                dniBeneficiario = '';
+                                dniController!.text = '';
+                              });
+                            }),
+                        Text(
+                          'Modo Manual',
+                          style: GoogleFonts.nunito(
+                              color: modo ? Colors.black87 : Colors.grey[300],
+                              fontWeight:
+                                  modo ? FontWeight.w700 : FontWeight.w100),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -608,6 +620,29 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                   content: const LinearProgressIndicator());
             })
         : Container();
+  }
+
+  Future<bool> onWillPop() async {
+    final mensajeExit = await showDialog(
+        context: context,
+        builder: (context) => DialogoAlerta(
+              envioFuncion2: true,
+              envioFuncion1: true,
+              tituloAlerta: 'ATENCIÓN',
+              descripcionAlerta:
+                  'Seguro que desea salir? debera logearse nuevamente',
+              textoBotonAlerta: 'SI',
+              textoBotonAlerta2: 'NO',
+              funcion1: () => Navigator.of(context).pop(true),
+              funcion2: () => Navigator.of(context).pop(false),
+              color: Colors.red,
+              icon: Icon(
+                Icons.new_releases_outlined,
+                size: 40.0,
+                color: Colors.grey[50],
+              ),
+            ));
+    return mensajeExit ?? false;
   }
 
   _incrementoVacunados() async {
