@@ -13,7 +13,7 @@ Route<dynamic> getRutas(RouteSettings settings) {
       return _contruirRuta(settings, const BusquedaBeneficiario(), 4);
 
     case VacunasPage.nombreRuta:
-      return _contruirRuta(settings, const VacunasPage(vacunas: []), 4);
+      return _contruirRuta(settings, const VacunasPage(), 4);
 
     case ConfirmarDatos.nombreRuta:
       return _contruirRuta(settings, const ConfirmarDatos(), 4);

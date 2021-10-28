@@ -6,6 +6,7 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
+import 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/services/vacunadoscant_service.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
@@ -597,13 +598,9 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
       beneficiarioService.cargarBeneficiario(beneficiario);
     });
 
-    final listaVacunas = await infoVacunasProviers.validarVacunas();
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-            builder: (context) => VacunasPage(
-                  vacunas: listaVacunas,
-                )),
+        MaterialPageRoute(builder: (context) => VacunasPage()),
         (Route<dynamic> route) => false);
   }
 

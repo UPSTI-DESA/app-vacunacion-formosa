@@ -5,7 +5,7 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 class _VacunasporPerfiles {
   VacunasxPerfil? _vacunasxperfil;
 
-  List<VacunasxPerfil>? _listavacunasxperfil;
+  List<VacunasxPerfil>? _listavacunasxperfil = [];
 
   final StreamController<VacunasxPerfil?> _vacunasxperfilStreamController =
       StreamController<VacunasxPerfil?>.broadcast();

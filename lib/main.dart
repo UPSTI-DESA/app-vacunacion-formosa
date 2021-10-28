@@ -69,9 +69,7 @@ class MyApp extends StatelessWidget {
         BusquedaBeneficiario.nombreRuta: (context) =>
             const BusquedaBeneficiario(),
 
-        VacunasPage.nombreRuta: (BuildContext context) => const VacunasPage(
-              vacunas: [],
-            ),
+        VacunasPage.nombreRuta: (BuildContext context) => const VacunasPage(),
       },
     );
   }
