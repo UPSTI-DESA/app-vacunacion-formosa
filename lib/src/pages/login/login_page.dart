@@ -122,14 +122,13 @@ class _LoginBodyState extends State<LoginBody> {
             ),
             child: Column(
               children: <Widget>[
-                FadeInImage(
-                  placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+                Image(
                   image: const AssetImage('assets/img/appSisVAcunacion.png'),
                   fit: BoxFit.cover,
                   //height: MediaQuery.of(context).size.height * 0.2,
-                  width: MediaQuery.of(context).size.width * .7,
+                  width: MediaQuery.of(context).size.width * .6,
                 ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.08),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.06),
                 FadeInRight(
                   from: 40,
                   delay: const Duration(milliseconds: 1100),
@@ -173,7 +172,7 @@ class _LoginBodyState extends State<LoginBody> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: FadeInLeft(
               from: 40,
               delay: const Duration(milliseconds: 1100),
@@ -191,10 +190,9 @@ class _LoginBodyState extends State<LoginBody> {
           Align(
             alignment: Alignment.bottomCenter,
             child: BounceInUp(
-              from: 30,
+              from: 20,
               delay: const Duration(milliseconds: 800),
-              child: FadeInImage(
-                placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+              child: Image(
                 image:
                     const AssetImage('assets/img/fondo/AZUL_TODOS_UNIDOS.png'),
                 fit: BoxFit.cover,
