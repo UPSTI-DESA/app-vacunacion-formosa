@@ -278,7 +278,9 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                               CircularProgressIndicator());
                                                     } else {
                                                       return Text(
-                                                        '1000',
+                                                        cantidadVacunasService
+                                                            .cantidadvacunados!
+                                                            .cantidad_aplicaciones!,
                                                         style: TextStyle(
                                                             color: SisVacuColor
                                                                 .white,
