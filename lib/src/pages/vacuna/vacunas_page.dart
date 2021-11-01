@@ -245,98 +245,117 @@ class _VacunasPageState extends State<VacunasPage>
                         ),
                         SizedBox(
                             height: MediaQuery.of(context).size.width * 0.05),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                                width:
-                                    MediaQuery.of(context).size.height * 0.14,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.14,
-                                child: beneficiarioService
-                                            .beneficiario!.foto_beneficiario !=
-                                        ''
-                                    ? Image.memory(fotoBeneficiario!)
-                                    : Image.asset(
-                                        'assets/img/fondo/noimage.jpg')),
-                            Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                    width: MediaQuery.of(context).size.height *
+                                        0.14,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.14,
+                                    child: beneficiarioService.beneficiario!
+                                                .foto_beneficiario !=
+                                            ''
+                                        ? Image.memory(fotoBeneficiario!)
+                                        : Image.asset(
+                                            'assets/img/fondo/noimage.jpg')),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Nombre: ',
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text('Nombre: ',
+                                            style: GoogleFonts.nunito(
+                                              textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16.0),
+                                            ),
+                                            textAlign: TextAlign.center),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .4,
+                                          child: Text(
+                                              beneficiarioService.beneficiario!
+                                                  .sysdesa10_nombre!,
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 16.0),
+                                              ),
+                                              textAlign: TextAlign.center),
                                         ),
-                                        textAlign: TextAlign.center),
-                                    Text(
-                                        beneficiarioService
-                                            .beneficiario!.sysdesa10_nombre!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.02),
+                                    Row(
+                                      children: [
+                                        Text('Apellido: ',
+                                            style: GoogleFonts.nunito(
+                                              textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16.0),
+                                            ),
+                                            textAlign: TextAlign.center),
+                                        Text(
+                                            beneficiarioService.beneficiario!
+                                                .sysdesa10_apellido!,
+                                            style: GoogleFonts.nunito(
+                                              textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16.0),
+                                            ),
+                                            textAlign: TextAlign.center),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.02),
+                                    Row(
+                                      children: [
+                                        Text('D.N.I.: ',
+                                            style: GoogleFonts.nunito(
+                                              textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16.0),
+                                            ),
+                                            textAlign: TextAlign.center),
+                                        Text(
+                                            beneficiarioService
+                                                .beneficiario!.sysdesa10_dni!,
+                                            style: GoogleFonts.nunito(
+                                              textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16.0),
+                                            ),
+                                            textAlign: TextAlign.center),
+                                      ],
+                                    ),
                                   ],
                                 ),
-                                SizedBox(
-                                    height: MediaQuery.of(context).size.width *
-                                        0.02),
-                                Row(
-                                  children: [
-                                    Text('Apellido: ',
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                    Text(
-                                        beneficiarioService
-                                            .beneficiario!.sysdesa10_apellido!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                  ],
-                                ),
-                                SizedBox(
-                                    height: MediaQuery.of(context).size.width *
-                                        0.02),
-                                Row(
-                                  children: [
-                                    Text('D.N.I.: ',
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                    Text(
-                                        beneficiarioService
-                                            .beneficiario!.sysdesa10_dni!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                 StreamBuilder(
                   stream: tutorService.tutorStream,
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -898,7 +917,6 @@ class _VacunasPageState extends State<VacunasPage>
                         : Container();
                   },
                 ),
-
                 SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                 listaConfiguraciones!.isNotEmpty
                     ? Padding(
