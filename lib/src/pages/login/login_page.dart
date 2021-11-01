@@ -7,6 +7,7 @@ import 'package:sistema_vacunacion/src/config/appsize_config.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -50,7 +51,7 @@ class _LoginBodyState extends State<LoginBody> {
     SizeConfiguracion().init(context);
     return Scaffold(
       backgroundColor: Colors.white,
-      floatingActionButton: enviromentService.envState!.enviroment == 'DEV'
+      floatingActionButton: enviromentService.envState!.enviroment == 'PROD'
           ? FloatingActionButton.extended(
               heroTag: 'botonDesa',
               icon: const Icon(Icons.perm_data_setting_sharp),
@@ -74,7 +75,12 @@ class _LoginBodyState extends State<LoginBody> {
               },
             )
           : null,
-      body: _loginFormulario(context),
+      body: Stack(
+        children: [
+          EncabezadoWave(),
+          _loginFormulario(context),
+        ],
+      ),
     );
   }
 
@@ -98,12 +104,6 @@ class _LoginBodyState extends State<LoginBody> {
       mostrarAlertaActualizacion(context, 'Debe Actualizar la Aplicación');
       datosdecargaprovider.versionApp = 'No';
     }
-  }
-
-  Widget _fondoBackground() {
-    return BackgroundComplete(
-      child: Container(),
-    );
   }
 
   Widget _loginFormulario(BuildContext context) {

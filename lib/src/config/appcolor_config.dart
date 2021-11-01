@@ -20,6 +20,7 @@ class SisVacuColor {
   static Color? get azulSecundario => theme.azulSecundario;
   static Color? get azulTerciario => theme.azulTerciario;
   static Color? get azulCuaternario => theme.azulCuaternario;
+  static Color? get azulFormosa => theme.azulFormosa;
   static Color? get yelow700 =>
       theme.yellow700; //Para los dialogos alerta de ATENCIÓN
   static Color? get pink => theme.pink; //Switch

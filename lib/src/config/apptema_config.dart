@@ -17,6 +17,7 @@ class SisVacuTheme {
     azulSecundario: const Color(0xff1F7CFB),
     azulTerciario: const Color(0xff0F8DED),
     azulCuaternario: const Color(0xff009CAF),
+    azulFormosa: const Color(0xff004B8E),
     yellow700: Colors.yellow[700],
     pink: Colors.pink,
     orange: Colors.orange,
@@ -41,6 +42,7 @@ class SisVacuTheme {
     azulSecundario: const Color(0xff1F7CFB),
     azulTerciario: const Color(0xff0F8DED),
     azulCuaternario: const Color(0xff009CAF),
+    azulFormosa: const Color(0xff004B8E),
     yellow700: Colors.yellow[700],
     pink: Colors.pink,
     orange: Colors.orange,
@@ -99,6 +101,7 @@ class SisVacuTheme {
   final Color? azulSecundario;
   final Color? azulTerciario;
   final Color? azulCuaternario;
+  final Color? azulFormosa;
   final Color? yellow700;
   final Color? pink;
   final Color? orange;
@@ -122,6 +125,7 @@ class SisVacuTheme {
     this.azulSecundario,
     this.azulTerciario,
     this.azulCuaternario,
+    this.azulFormosa,
     this.yellow700,
     this.pink,
     this.orange,
