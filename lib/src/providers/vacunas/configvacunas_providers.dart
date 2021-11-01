@@ -11,9 +11,9 @@ class _ConfiguracionVacunaProviders {
     final resp = await http.get(url);
     if (resp.statusCode == 200) {
       final decodedData = json.decode(resp.body);
-      final vacunador =
+      final configuracionVacunas =
           ConfiVacuna.fromJsonList(decodedData['configuraciones']);
-      return vacunador.items;
+      return configuracionVacunas.items;
     }
     throw Error();
   }
@@ -32,7 +32,11 @@ class _ConfiguracionVacunaProviders {
         });
 
     final List<ConfiVacuna> resp = await procesarRespuestaDos(url);
-    return resp;
+    if (resp.isNotEmpty) {
+      return resp;
+    } else {
+      return 0;
+    }
   }
 }
 

@@ -40,6 +40,12 @@ class _VacunasporPerfiles {
     _listavacunasxperfilStreamController.add(listavacunasxPerfil);
   }
 
+  void eliminarListaVacunasxPerfil() {
+    List<VacunasxPerfil> vacio = [];
+    _listavacunasxperfil = vacio;
+    _listavacunasxperfilStreamController.add(vacio);
+  }
+
   dispose() {
     _vacunasxperfilStreamController.close();
     _listavacunasxperfilStreamController.close();
