@@ -551,117 +551,140 @@ class _VacunasPageState extends State<VacunasPage>
                             height: 15,
                           ),
                           // ignore: sized_box_for_whitespace
-                          StreamBuilder(
-                            stream: perfilesVacunacionService
-                                .listaPerfilesVacunacionStream,
+                          FutureBuilder(
+                            future: Future.delayed(
+                                const Duration(milliseconds: 800)),
                             builder: (BuildContext context,
                                 AsyncSnapshot<dynamic> snapshot) {
-                              return perfilesVacunacionService
-                                      .listaPerfilesVacunacion!.isNotEmpty
-                                  ? Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .9,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .1,
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemExtent: 90,
-                                        itemCount: perfilesVacunacionService
-                                            .listaPerfilesVacunacion!.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 4.0),
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                listaConfiguraciones!.clear();
-                                                listaLotes!.clear();
-                                                setState(() {
-                                                  _selectLote = null;
-                                                  _selectConfigVacuna = null;
-                                                  _selectPerfil =
+                              return snapshot.connectionState ==
+                                      ConnectionState.waiting
+                                  ? const CircularProgressIndicator()
+                                  : StreamBuilder(
+                                      stream: perfilesVacunacionService
+                                          .listaPerfilesVacunacionStream,
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<dynamic> snapshot) {
+                                        return perfilesVacunacionService
+                                                .listaPerfilesVacunacion!
+                                                .isNotEmpty
+                                            ? Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .9,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    .1,
+                                                child: ListView.builder(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemExtent: 90,
+                                                  itemCount:
                                                       perfilesVacunacionService
-                                                              .listaPerfilesVacunacion![
-                                                          index];
-                                                });
-                                                final tempLista =
-                                                    await vacunasxPerfiles
-                                                        .obtenerVacunasxPerfilesProviders(
-                                                            _selectPerfil!
-                                                                .id_sysvacu12,
-                                                            beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_dni,
-                                                            beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_sexo);
-                                                tempLista != null
-                                                    ? tempLista[0]
-                                                                .codigo_mensaje ==
-                                                            "0"
-                                                        ? showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return DialogoAlerta(
-                                                                  envioFuncion2:
-                                                                      false,
-                                                                  envioFuncion1:
-                                                                      false,
-                                                                  tituloAlerta:
-                                                                      'ATENCIÓN!',
-                                                                  descripcionAlerta:
-                                                                      tempLista[
-                                                                              0]
-                                                                          .mensaje,
-                                                                  textoBotonAlerta:
-                                                                      'Listo',
-                                                                  icon:
-                                                                      const Icon(
-                                                                    Icons
-                                                                        .error_outline,
-                                                                    size: 40,
-                                                                  ),
-                                                                  color: Colors
-                                                                      .red);
-                                                            })
-                                                        : Container()
-                                                    : Container();
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    color: _selectPerfil ==
-                                                            perfilesVacunacionService
-                                                                    .listaPerfilesVacunacion![
-                                                                index]
-                                                        ? SisVacuColor.red!
-                                                            .withOpacity(.5)
-                                                        : SisVacuColor
-                                                            .azulCuaternario!
-                                                            .withOpacity(.5),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15)),
-                                                //height: MediaQuery.of(context).size.height * .2,
-                                                child: Center(
-                                                  child: Text(
-                                                    perfilesVacunacionService
-                                                        .listaPerfilesVacunacion![
-                                                            index]
-                                                        .sysvacu12_descripcion!,
-                                                    textAlign: TextAlign.center,
-                                                  ),
+                                                          .listaPerfilesVacunacion!
+                                                          .length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 4.0),
+                                                      child: GestureDetector(
+                                                        onTap: () async {
+                                                          listaConfiguraciones!
+                                                              .clear();
+                                                          listaLotes!.clear();
+                                                          setState(() {
+                                                            _selectLote = null;
+                                                            _selectConfigVacuna =
+                                                                null;
+                                                            _selectPerfil =
+                                                                perfilesVacunacionService
+                                                                        .listaPerfilesVacunacion![
+                                                                    index];
+                                                          });
+                                                          final tempLista = await vacunasxPerfiles.obtenerVacunasxPerfilesProviders(
+                                                              _selectPerfil!
+                                                                  .id_sysvacu12,
+                                                              beneficiarioService
+                                                                  .beneficiario!
+                                                                  .sysdesa10_dni,
+                                                              beneficiarioService
+                                                                  .beneficiario!
+                                                                  .sysdesa10_sexo);
+                                                          tempLista != null
+                                                              ? tempLista[0]
+                                                                          .codigo_mensaje ==
+                                                                      "0"
+                                                                  ? showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return DialogoAlerta(
+                                                                            envioFuncion2:
+                                                                                false,
+                                                                            envioFuncion1:
+                                                                                false,
+                                                                            tituloAlerta:
+                                                                                'ATENCIÓN!',
+                                                                            descripcionAlerta: tempLista[0]
+                                                                                .mensaje,
+                                                                            textoBotonAlerta:
+                                                                                'Listo',
+                                                                            icon:
+                                                                                const Icon(
+                                                                              Icons.error_outline,
+                                                                              size: 40,
+                                                                            ),
+                                                                            color:
+                                                                                Colors.red);
+                                                                      })
+                                                                  : Container()
+                                                              : Container();
+                                                        },
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                              color: _selectPerfil ==
+                                                                      perfilesVacunacionService
+                                                                              .listaPerfilesVacunacion![
+                                                                          index]
+                                                                  ? SisVacuColor
+                                                                      .red!
+                                                                      .withOpacity(
+                                                                          .5)
+                                                                  : SisVacuColor
+                                                                      .azulCuaternario!
+                                                                      .withOpacity(
+                                                                          .5),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          15)),
+                                                          //height: MediaQuery.of(context).size.height * .2,
+                                                          child: Center(
+                                                            child: Text(
+                                                              perfilesVacunacionService
+                                                                  .listaPerfilesVacunacion![
+                                                                      index]
+                                                                  .sysvacu12_descripcion!,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
                                                 ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  : const CircularProgressIndicator();
+                                              )
+                                            : const CircularProgressIndicator();
+                                      },
+                                    );
                             },
                           )
                           //PIcker de Perfiles de Vacunacion
