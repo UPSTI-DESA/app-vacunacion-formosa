@@ -9,14 +9,14 @@ class EncabezadoWave extends StatelessWidget {
     return Stack(
       children: [
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.65,
+          height: MediaQuery.of(context).size.height * 0.40,
           width: MediaQuery.of(context).size.width,
           child: CustomPaint(
             painter: _EncabezadoWavePainter(),
           ),
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.60,
+          height: MediaQuery.of(context).size.height * 0.35,
           width: MediaQuery.of(context).size.width,
           child: CustomPaint(
             painter: _EncabezadoWavePainter(),
@@ -30,7 +30,7 @@ class EncabezadoWave extends StatelessWidget {
         //   ),
         // ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.55,
+          height: MediaQuery.of(context).size.height * 0.30,
           width: MediaQuery.of(context).size.width,
           child: CustomPaint(
             painter: _EncabezadoWavePainter(),
@@ -48,7 +48,7 @@ class _EncabezadoWavePainter extends CustomPainter {
 
     //Propiedades
     lapiz.color = SisVacuColor.azulTerciario!
-        .withOpacity(0.3); //Color.fromRGBO(19, 44, 74, 1);
+        .withOpacity(0.35); //Color.fromRGBO(19, 44, 74, 1);
     lapiz.style = PaintingStyle.fill;
     lapiz.strokeWidth = 0.5;
 
@@ -133,7 +133,7 @@ class EncabezadoCircular extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.70,
+      height: MediaQuery.of(context).size.height * 0.6,
       width: MediaQuery.of(context).size.width,
       child: CustomPaint(
         painter: _EncabezadoCircularPainter(),

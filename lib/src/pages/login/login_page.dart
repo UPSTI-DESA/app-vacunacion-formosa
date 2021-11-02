@@ -51,7 +51,7 @@ class _LoginBodyState extends State<LoginBody> {
     SizeConfiguracion().init(context);
     return Scaffold(
       backgroundColor: Colors.white,
-      floatingActionButton: enviromentService.envState!.enviroment == 'PROD'
+      floatingActionButton: enviromentService.envState!.enviroment == 'DEV'
           ? FloatingActionButton.extended(
               heroTag: 'botonDesa',
               icon: const Icon(Icons.perm_data_setting_sharp),
@@ -77,7 +77,7 @@ class _LoginBodyState extends State<LoginBody> {
           : null,
       body: Stack(
         children: [
-          EncabezadoWave(),
+          const EncabezadoWave(),
           _loginFormulario(context),
         ],
       ),
@@ -117,16 +117,16 @@ class _LoginBodyState extends State<LoginBody> {
         children: <Widget>[
           Container(
             padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
             child: Column(
               children: <Widget>[
-                Image(
-                  image: const AssetImage('assets/img/appSisVAcunacion.png'),
-                  fit: BoxFit.cover,
-                  //height: MediaQuery.of(context).size.height * 0.2,
-                  width: MediaQuery.of(context).size.width * .6,
+                FadeInDownBig(
+                  from: 40,
+                  child: Image(
+                    image: const AssetImage('assets/img/appSisVAcunacion.png'),
+                    fit: BoxFit.cover,
+                    //height: MediaQuery.of(context).size.height * 0.2,
+                    width: MediaQuery.of(context).size.width * .6,
+                  ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.06),
                 FadeInRight(

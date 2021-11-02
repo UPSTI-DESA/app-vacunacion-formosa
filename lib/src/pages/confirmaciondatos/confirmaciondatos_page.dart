@@ -10,6 +10,7 @@ import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/services/insertregistro_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class ConfirmarDatos extends StatefulWidget {
@@ -71,389 +72,407 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
           ),
         ),
       ),
-      body: BackgroundHeader(
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.02,
-                        left: MediaQuery.of(context).size.width * 0.02),
-                    child: Container(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width * 0.05),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          color: Colors.white),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          TitulosContainerPage(
-                            colorTitle: SisVacuColor.black,
-                            sizeTitle: 18.0,
-                            widthThickness: 1.5,
-                            title: 'Datos Beneficiario',
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.05),
-                          Row(
-                            children: [
-                              const Text('Nombre: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16.0),
-                                  textAlign: TextAlign.center),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                      insertRegistroService
-                                          .registro!.sysdesa10_nombre!,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16.0),
-                                      textAlign: TextAlign.center),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.02),
-                          Row(
-                            children: [
-                              const Text('Apellido: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16.0),
-                                  textAlign: TextAlign.center),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                      insertRegistroService
-                                          .registro!.sysdesa10_apellido!,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16.0),
-                                      textAlign: TextAlign.center),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.02),
-                          Row(
-                            children: [
-                              const Text('D.N.I.: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16.0),
-                                  textAlign: TextAlign.center),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                      insertRegistroService
-                                          .registro!.sysdesa10_dni!,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16.0),
-                                      textAlign: TextAlign.center),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  tutorService.existeTutor
-                      ? tutorService.tutor!.sysdesa10_dni_tutor == ''
-                          ? Padding(
-                              padding: EdgeInsets.only(
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  left:
-                                      MediaQuery.of(context).size.width * 0.02),
-                              child: Container(),
-                            )
-                          : Padding(
-                              padding: EdgeInsets.only(
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  left:
-                                      MediaQuery.of(context).size.width * 0.02),
-                              child: Container(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.05),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    color: Colors.white),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    TitulosContainerPage(
-                                      colorTitle: SisVacuColor.black,
-                                      sizeTitle: 18.0,
-                                      widthThickness: 1.5,
-                                      title: 'Datos Tutor',
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    Row(
-                                      children: [
-                                        const Text('Nombre: ',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 16.0),
-                                            textAlign: TextAlign.center),
-                                        Expanded(
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Text(
-                                                insertRegistroService.registro!
-                                                    .sysdesa10_nombre_tutor!,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 16.0),
-                                                textAlign: TextAlign.center),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.02),
-                                    Row(
-                                      children: [
-                                        const Text('Apellido: ',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 16.0),
-                                            textAlign: TextAlign.center),
-                                        Expanded(
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Text(
-                                                insertRegistroService.registro!
-                                                    .sysdesa10_apellido_tutor!,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 16.0),
-                                                textAlign: TextAlign.center),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.02),
-                                    Row(
-                                      children: [
-                                        const Text('D.N.I.: ',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 16.0),
-                                            textAlign: TextAlign.center),
-                                        Expanded(
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Text(
-                                                insertRegistroService.registro!
-                                                    .sysdesa10_dni_tutor!,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 16.0),
-                                                textAlign: TextAlign.center),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                      : Padding(
-                          padding: EdgeInsets.only(
-                              right: MediaQuery.of(context).size.width * 0.02,
-                              left: MediaQuery.of(context).size.width * 0.02),
-                          child: Container(),
-                        ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.02,
-                        left: MediaQuery.of(context).size.width * 0.02),
-                    child: Container(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width * 0.05),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          color: Colors.white),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          TitulosContainerPage(
-                            colorTitle: SisVacuColor.black,
-                            sizeTitle: 18.0,
-                            widthThickness: 1.5,
-                            title: 'Datos Vacuna',
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.05),
-                          Row(
-                            children: [
-                              const Text('Vacuna: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16.0),
-                                  textAlign: TextAlign.start),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                      insertRegistroService
-                                          .registro!.nombreVacuna!,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16.0),
-                                      textAlign: TextAlign.start),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.02),
-                          Row(
-                            children: [
-                              const Text('Configuración: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16.0),
-                                  textAlign: TextAlign.start),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                      insertRegistroService
-                                          .registro!.nombreConfiguracion!,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16.0),
-                                      textAlign: TextAlign.center),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.02),
-                          Row(
-                            children: [
-                              const Text('Lote: ',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16.0),
-                                  textAlign: TextAlign.center),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                      insertRegistroService
-                                          .registro!.nombreLote!,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16.0),
-                                      textAlign: TextAlign.center),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  BotonCustom(
-                      text: 'Registrar Vacunación',
-                      onPressed: () {
-                        enviarDatos(context);
-                      }),
-                  BotonCustom(
-                      text: 'Cancelar Registro',
-                      color: SisVacuColor.red,
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) => DialogoAlerta(
-                                  tituloAlerta: "Atención",
-                                  descripcionAlerta:
-                                      '¿Estas seguro que deseas cancelar el registro?',
-                                  textoBotonAlerta: 'Aceptar',
-                                  textoBotonAlerta2: 'Cancelar',
-                                  icon: Icon(
-                                    Icons.info,
-                                    size: 40,
-                                    color: SisVacuColor.white,
-                                  ),
-                                  color: Colors.red,
-                                  envioFuncion2: true,
-                                  funcion2: () => Navigator.of(context).pop(),
-                                  envioFuncion1: true,
-                                  funcion1: () {
-                                    tutorService.cargarTutor(Tutor(
-                                        sysdesa10_apellido_tutor: '',
-                                        sysdesa10_nombre_tutor: '',
-                                        sysdesa10_dni_tutor: '',
-                                        sysdesa10_sexo_tutor: '',
-                                        fotoTutor: null));
-                                    beneficiarioService
-                                        .cargarBeneficiario(Beneficiario());
-                                    notificacionesDosisService
-                                        .cargarRegistro(NotificacionesDosis());
-                                    insertRegistroService
-                                        .cargarRegistro(InsertRegistros());
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const BusquedaBeneficiario()),
-                                        (Route<dynamic> route) => false);
-                                  },
-                                ));
-                      }),
-                ],
-              ),
-              habilitarCircular
-                  ? Container(
-                      height: size.height,
-                      width: size.width,
-                      color: Colors.black.withOpacity(0.8),
-                      child: Center(
+      body: Stack(
+        children: [
+          const EncabezadoWave(),
+          SingleChildScrollView(
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.02),
+                      child: Container(
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.05),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: Colors.white),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            CircularProgressIndicator(),
-                            Text(
-                              'Espere porfavor...',
-                              style: TextStyle(color: Colors.white),
-                            )
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            TitulosContainerPage(
+                              colorTitle: SisVacuColor.black,
+                              sizeTitle: 18.0,
+                              widthThickness: 1.5,
+                              title: 'Datos Beneficiario',
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.width * 0.05),
+                            Row(
+                              children: [
+                                const Text('Nombre: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16.0),
+                                    textAlign: TextAlign.center),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                        insertRegistroService
+                                            .registro!.sysdesa10_nombre!,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.width * 0.02),
+                            Row(
+                              children: [
+                                const Text('Apellido: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16.0),
+                                    textAlign: TextAlign.center),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                        insertRegistroService
+                                            .registro!.sysdesa10_apellido!,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.width * 0.02),
+                            Row(
+                              children: [
+                                const Text('D.N.I.: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16.0),
+                                    textAlign: TextAlign.center),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                        insertRegistroService
+                                            .registro!.sysdesa10_dni!,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
-                    )
-                  : Container(),
-            ],
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    tutorService.existeTutor
+                        ? tutorService.tutor!.sysdesa10_dni_tutor == ''
+                            ? Padding(
+                                padding: EdgeInsets.only(
+                                    right: MediaQuery.of(context).size.width *
+                                        0.02,
+                                    left: MediaQuery.of(context).size.width *
+                                        0.02),
+                                child: Container(),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.only(
+                                    right: MediaQuery.of(context).size.width *
+                                        0.02,
+                                    left: MediaQuery.of(context).size.width *
+                                        0.02),
+                                child: Container(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.05),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      color: Colors.white),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      TitulosContainerPage(
+                                        colorTitle: SisVacuColor.black,
+                                        sizeTitle: 18.0,
+                                        widthThickness: 1.5,
+                                        title: 'Datos Tutor',
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.05),
+                                      Row(
+                                        children: [
+                                          const Text('Nombre: ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16.0),
+                                              textAlign: TextAlign.center),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                  insertRegistroService
+                                                      .registro!
+                                                      .sysdesa10_nombre_tutor!,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 16.0),
+                                                  textAlign: TextAlign.center),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      Row(
+                                        children: [
+                                          const Text('Apellido: ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16.0),
+                                              textAlign: TextAlign.center),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                  insertRegistroService
+                                                      .registro!
+                                                      .sysdesa10_apellido_tutor!,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 16.0),
+                                                  textAlign: TextAlign.center),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      Row(
+                                        children: [
+                                          const Text('D.N.I.: ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16.0),
+                                              textAlign: TextAlign.center),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                  insertRegistroService
+                                                      .registro!
+                                                      .sysdesa10_dni_tutor!,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 16.0),
+                                                  textAlign: TextAlign.center),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                        : Padding(
+                            padding: EdgeInsets.only(
+                                right: MediaQuery.of(context).size.width * 0.02,
+                                left: MediaQuery.of(context).size.width * 0.02),
+                            child: Container(),
+                          ),
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.02),
+                      child: Container(
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.05),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: Colors.white),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            TitulosContainerPage(
+                              colorTitle: SisVacuColor.black,
+                              sizeTitle: 18.0,
+                              widthThickness: 1.5,
+                              title: 'Datos Vacuna',
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.width * 0.05),
+                            Row(
+                              children: [
+                                const Text('Vacuna: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16.0),
+                                    textAlign: TextAlign.start),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                        insertRegistroService
+                                            .registro!.nombreVacuna!,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.start),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.width * 0.02),
+                            Row(
+                              children: [
+                                const Text('Configuración: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16.0),
+                                    textAlign: TextAlign.start),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                        insertRegistroService
+                                            .registro!.nombreConfiguracion!,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.width * 0.02),
+                            Row(
+                              children: [
+                                const Text('Lote: ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16.0),
+                                    textAlign: TextAlign.center),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                        insertRegistroService
+                                            .registro!.nombreLote!,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    BotonCustom(
+                        text: 'Registrar Vacunación',
+                        onPressed: () {
+                          enviarDatos(context);
+                        }),
+                    BotonCustom(
+                        text: 'Cancelar Registro',
+                        color: SisVacuColor.red,
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => DialogoAlerta(
+                                    tituloAlerta: "Atención",
+                                    descripcionAlerta:
+                                        '¿Estas seguro que deseas cancelar el registro?',
+                                    textoBotonAlerta: 'Aceptar',
+                                    textoBotonAlerta2: 'Cancelar',
+                                    icon: Icon(
+                                      Icons.info,
+                                      size: 40,
+                                      color: SisVacuColor.white,
+                                    ),
+                                    color: Colors.red,
+                                    envioFuncion2: true,
+                                    funcion2: () => Navigator.of(context).pop(),
+                                    envioFuncion1: true,
+                                    funcion1: () {
+                                      tutorService.cargarTutor(Tutor(
+                                          sysdesa10_apellido_tutor: '',
+                                          sysdesa10_nombre_tutor: '',
+                                          sysdesa10_dni_tutor: '',
+                                          sysdesa10_sexo_tutor: '',
+                                          fotoTutor: null));
+                                      beneficiarioService
+                                          .cargarBeneficiario(Beneficiario());
+                                      notificacionesDosisService.cargarRegistro(
+                                          NotificacionesDosis());
+                                      insertRegistroService
+                                          .cargarRegistro(InsertRegistros());
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const BusquedaBeneficiario()),
+                                          (Route<dynamic> route) => false);
+                                    },
+                                  ));
+                        }),
+                  ],
+                ),
+                habilitarCircular
+                    ? Container(
+                        height: size.height,
+                        width: size.width,
+                        color: Colors.black.withOpacity(0.8),
+                        child: Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              CircularProgressIndicator(),
+                              Text(
+                                'Espere porfavor...',
+                                style: TextStyle(color: Colors.white),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
