@@ -7,13 +7,18 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 class _LotesVacunaProviders {
   // ignore: missing_return
   Future<List<Lotes>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final lotes = Lotes.fromJsonList(decodedData['lotes_vacunas']);
-      return lotes.items;
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final lotes = Lotes.fromJsonList(decodedData['lotes_vacunas']);
+        return lotes.items;
+      }
+    } catch (e) {
+      throw 'Ocurrio un error $e';
     }
-    throw '';
+
+    throw 'Ocurrio un error';
   }
 
   Future validarLotes(String? idVacu) async {

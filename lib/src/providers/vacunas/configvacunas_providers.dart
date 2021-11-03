@@ -8,13 +8,18 @@ import 'package:sistema_vacunacion/src/services/services.dart';
 
 class _ConfiguracionVacunaProviders {
   Future<List<ConfiVacuna>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final configuracionVacunas =
-          ConfiVacuna.fromJsonList(decodedData['configuraciones']);
-      return configuracionVacunas.items;
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final configuracionVacunas =
+            ConfiVacuna.fromJsonList(decodedData['configuraciones']);
+        return configuracionVacunas.items;
+      }
+    } catch (e) {
+      throw 'Ocurrio un error $e';
     }
+
     throw Error();
   }
 

@@ -6,14 +6,19 @@ import 'package:sistema_vacunacion/src/models/sistema/notificacionesdosis_models
 
 class _NotificacionesProviders {
   Future<List<NotificacionesDosis>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final notificaciones = NotificacionesDosis.fromJsonList(
-          decodedData['aplicaciones_beneficiario']);
-      return notificaciones.items;
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final notificaciones = NotificacionesDosis.fromJsonList(
+            decodedData['aplicaciones_beneficiario']);
+        return notificaciones.items;
+      }
+    } catch (e) {
+      throw 'Hubo un error $e';
     }
-    throw '';
+
+    throw 'Hubo un error mas jodido';
   }
 
   Future validarNotificaciones(String? dni, String? sexo) async {

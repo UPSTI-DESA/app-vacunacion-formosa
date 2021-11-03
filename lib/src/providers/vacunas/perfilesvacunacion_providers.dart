@@ -7,13 +7,18 @@ import 'package:sistema_vacunacion/src/services/services.dart';
 
 class _PerfilesVacunacionProviders {
   Future<List<PerfilesVacunacion>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final perfiles =
-          PerfilesVacunacion.fromJsonList(decodedData['perfiles_vacunacion']);
-      return perfiles.items;
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final perfiles =
+            PerfilesVacunacion.fromJsonList(decodedData['perfiles_vacunacion']);
+        return perfiles.items;
+      }
+    } catch (e) {
+      throw 'Ocurrio un error $e';
     }
+
     throw 'Ocurrio un error';
   }
 

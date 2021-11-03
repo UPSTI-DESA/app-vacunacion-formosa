@@ -8,7 +8,7 @@ class LoadingEstrellas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
         height: double.infinity,
         width: double.infinity,
         child: Column(
@@ -18,7 +18,7 @@ class LoadingEstrellas extends StatelessWidget {
               width: MediaQuery.of(context).size.width * .15,
               height: MediaQuery.of(context).size.width * .15,
               child: Roulette(
-                duration: Duration(seconds: 10),
+                duration: const Duration(seconds: 10),
                 spins: 0.5,
                 child: const Image(
                   image: AssetImage('assets/img/fondo/estrellasNuevas.png'),

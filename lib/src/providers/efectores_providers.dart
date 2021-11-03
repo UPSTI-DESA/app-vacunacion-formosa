@@ -7,12 +7,17 @@ import 'package:sistema_vacunacion/src/services/efectores_servide.dart';
 
 class _EfectorsProviders {
   Future<List<Efectores>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final efectores = Efectores.fromJsonList(decodedData['usuario']);
-      return efectores.items;
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final efectores = Efectores.fromJsonList(decodedData['usuario']);
+        return efectores.items;
+      }
+    } catch (e) {
+      throw 'Ocurrio un error $e';
     }
+
     throw 'Ocurrio un error';
   }
 

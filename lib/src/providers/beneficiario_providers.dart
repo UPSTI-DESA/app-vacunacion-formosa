@@ -6,13 +6,18 @@ import 'dart:convert';
 class _BeneficiarioProviders {
   // ignore: missing_return
   Future<List<Beneficiario>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final beneficiario =
-          Beneficiario.fromJsonList(decodedData['beneficiario']);
-      return beneficiario.items;
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final beneficiario =
+            Beneficiario.fromJsonList(decodedData['beneficiario']);
+        return beneficiario.items;
+      }
+    } catch (e) {
+      throw 'Ocurrio un error $e';
     }
+
     throw 'Ocurrio un error';
   }
 

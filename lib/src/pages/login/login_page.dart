@@ -78,7 +78,7 @@ class _LoginBodyState extends State<LoginBody> {
       body: Stack(
         children: [
           const EncabezadoWave(),
-          _loginFormulario(context),
+          _LoginFormulario(context: context),
         ],
       ),
     );
@@ -106,7 +106,41 @@ class _LoginBodyState extends State<LoginBody> {
     }
   }
 
-  Widget _loginFormulario(BuildContext context) {
+  void mostrarAlertaActualizacion(BuildContext context, String mensaje) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Informacion Importante'),
+            content: Text(mensaje),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: _launchURL,
+              )
+            ],
+          );
+        });
+  }
+
+//Funcion para redirigir al Link de Descarga de la Ultima Aplicacion Disponible
+  _launchURL() async {
+    const url =
+        'https://drive.google.com/drive/u/0/folders/1Ia3CGOuCSbnpgt_4qNOGKlzkzc4FvuO4';
+    await launch(url);
+  }
+}
+
+class _LoginFormulario extends StatelessWidget {
+  const _LoginFormulario({
+    Key? key,
+    required this.context,
+  }) : super(key: key);
+
+  final BuildContext context;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
           top: MediaQuery.of(context).size.height * 0.15,
@@ -121,32 +155,13 @@ class _LoginBodyState extends State<LoginBody> {
               children: <Widget>[
                 FadeInDownBig(
                   from: 40,
-                  child: Material(
-                    color: Colors.transparent,
-                    elevation: 80,
-                    child: Image(
-                      image: const AssetImage('assets/logo/VacunApp2.png'),
-                      fit: BoxFit.cover,
-                      //height: MediaQuery.of(context).size.height * 0.2,
-                      width: MediaQuery.of(context).size.width * .55,
-                    ),
+                  child: Image(
+                    image: const AssetImage('assets/logo/VacunApp2.png'),
+                    fit: BoxFit.cover,
+                    //height: MediaQuery.of(context).size.height * 0.2,
+                    width: MediaQuery.of(context).size.width * .55,
                   ),
                 ),
-                // SizedBox(height: MediaQuery.of(context).size.width * 0.06),
-                // FadeInRight(
-                //   from: 40,
-                //   delay: const Duration(milliseconds: 1100),
-                //   child: Text(
-                //     'Registro de Vacunación',
-                //     style: GoogleFonts.barlow(
-                //       textStyle: TextStyle(
-                //           color: Colors.black87,
-                //           fontSize: MediaQuery.of(context).size.height * 0.034,
-                //           fontWeight: FontWeight.w600,
-                //           letterSpacing: 2.0),
-                //     ),
-                //   ),
-                // ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.12),
                 FadeInLeft(
                   from: 40,
@@ -173,7 +188,6 @@ class _LoginBodyState extends State<LoginBody> {
                   ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: FadeInLeft(
@@ -211,29 +225,5 @@ class _LoginBodyState extends State<LoginBody> {
         ],
       ),
     );
-  }
-
-  void mostrarAlertaActualizacion(BuildContext context, String mensaje) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Informacion Importante'),
-            content: Text(mensaje),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: _launchURL,
-              )
-            ],
-          );
-        });
-  }
-
-//Funcion para redirigir al Link de Descarga de la Ultima Aplicacion Disponible
-  _launchURL() async {
-    const url =
-        'https://drive.google.com/drive/u/0/folders/1Ia3CGOuCSbnpgt_4qNOGKlzkzc4FvuO4';
-    await launch(url);
   }
 }

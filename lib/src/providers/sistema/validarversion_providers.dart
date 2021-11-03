@@ -6,12 +6,19 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 
 class _ValidacionVersion {
   Future<List<Version>> procesarRespuesta(Uri url) async {
-    final resp = await http.get(url);
-    final decodedData = json.decode(resp.body);
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final version = Version.fromJsonList(decodedData['versiones']);
 
-    final version = Version.fromJsonList(decodedData['versiones']);
+        return version.items;
+      }
+    } catch (e) {
+      throw 'Hubo un error $e';
+    }
 
-    return version.items;
+    throw 'Hubo un error mas jodido';
   }
 
   Future validarVersion() async {

@@ -6,14 +6,19 @@ import 'package:sistema_vacunacion/src/services/services.dart';
 
 class _CantidadVacunadosFecha {
   Future<List<CantidadVacunados>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final cantidadVacunas =
-          CantidadVacunados.fromJsonList(decodedData['usuario']);
-      return cantidadVacunas.items;
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final cantidadVacunas =
+            CantidadVacunados.fromJsonList(decodedData['usuario']);
+        return cantidadVacunas.items;
+      }
+    } catch (e) {
+      throw 'Ocurrio un error $e';
     }
-    throw '';
+
+    throw 'Ocurrio un error mas jodido';
   }
 
   Future cantidadVacunas() async {

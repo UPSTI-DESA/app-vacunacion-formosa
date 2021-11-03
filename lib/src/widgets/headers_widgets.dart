@@ -9,14 +9,14 @@ class EncabezadoWave extends StatelessWidget {
     return Stack(
       children: [
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.55,
+          height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: CustomPaint(
             painter: _EncabezadoWavePainter(),
           ),
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.45,
+          height: MediaQuery.of(context).size.height * 0.80,
           width: MediaQuery.of(context).size.width,
           child: CustomPaint(
             painter: _EncabezadoWavePainter(),
@@ -34,7 +34,7 @@ class _EncabezadoWavePainter extends CustomPainter {
 
     //Propiedades
     lapiz.color = SisVacuColor.vercelesteCuaternario!
-        .withOpacity(0.2); //Color.fromRGBO(19, 44, 74, 1);
+        .withOpacity(0.25); //Color.fromRGBO(19, 44, 74, 1);
     lapiz.style = PaintingStyle.fill;
     lapiz.strokeWidth = 0.5;
 

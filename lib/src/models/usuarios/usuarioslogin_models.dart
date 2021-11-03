@@ -8,6 +8,21 @@ String usuariosToJson(List<Usuarios> data) =>
 
 class Usuarios {
   List<Usuarios> items = [];
+
+  // ignore: non_constant_identifier_names
+  String? id_flxcore03;
+  // ignore: non_constant_identifier_names
+  String? flxcore03_dni;
+  // ignore: non_constant_identifier_names
+  String? flxcore03_nombre;
+  // ignore: non_constant_identifier_names
+  String? rela_sysofic01;
+  // ignore: non_constant_identifier_names
+  String? sysofic01_descripcion;
+  // ignore: non_constant_identifier_names
+  String? codigo_mensaje;
+  String? mensaje;
+
   Usuarios(
       {
       // ignore: non_constant_identifier_names
@@ -23,20 +38,6 @@ class Usuarios {
       // ignore: non_constant_identifier_names
       this.codigo_mensaje,
       this.mensaje});
-
-  // ignore: non_constant_identifier_names
-  String? id_flxcore03;
-  // ignore: non_constant_identifier_names
-  String? flxcore03_dni;
-  // ignore: non_constant_identifier_names
-  String? flxcore03_nombre;
-  // ignore: non_constant_identifier_names
-  String? rela_sysofic01;
-  // ignore: non_constant_identifier_names
-  String? sysofic01_descripcion;
-  // ignore: non_constant_identifier_names
-  String? codigo_mensaje;
-  String? mensaje;
 
   factory Usuarios.fromJson(Map<String, dynamic> json) => Usuarios(
         id_flxcore03: json["id_flxcore03"],

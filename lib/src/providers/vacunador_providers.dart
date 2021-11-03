@@ -4,15 +4,19 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 import 'dart:convert';
 
 class _VacunadorProviders {
-  // ignore: missing_return
   Future<List<Vacunador>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final vacunador = Vacunador.fromJsonList(decodedData['vacunador']);
-      return vacunador.items;
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final vacunador = Vacunador.fromJsonList(decodedData['vacunador']);
+        return vacunador.items;
+      }
+    } catch (e) {
+      throw "Hubo un error $e";
     }
-    throw '';
+
+    throw 'Hubo un error global mas jodido';
   }
 
   Future validarVacunador(String? dni) async {

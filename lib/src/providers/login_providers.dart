@@ -3,16 +3,24 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:sistema_vacunacion/src/models/models.dart';
+import 'package:sistema_vacunacion/src/services/enviroment_service.dart';
 
 class _UsuariosProviders {
   Future<List<Usuarios>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final usuarios = Usuarios.fromJsonList(decodedData['usuario']);
-      return usuarios.items;
+    try {
+      final resp = await http.get(url);
+
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final usuarios = Usuarios.fromJsonList(decodedData['usuario']);
+
+        return usuarios.items;
+      }
+    } catch (e) {
+      throw "Hubo un error $e";
     }
-    throw 'Hubo un error';
+
+    throw 'Hubo un error global mas jodido';
   }
 
   Future validarUsuarios(String dni) async {

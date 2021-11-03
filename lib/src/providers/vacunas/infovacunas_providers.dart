@@ -6,16 +6,20 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 
 class _InfoVacunasProviders {
-  // ignore: missing_return
   Future<List<InfoVacunas>> procesarRespuestaDos(Uri url) async {
-    final resp = await http.get(url);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final informacion =
-          InfoVacunas.fromJsonList(decodedData['vacunas_configuradas']);
-      return informacion.items;
+    try {
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final informacion =
+            InfoVacunas.fromJsonList(decodedData['vacunas_configuradas']);
+        return informacion.items;
+      }
+    } catch (e) {
+      throw 'Ocurrio un error $e';
     }
-    throw '';
+
+    throw 'Ocurrio un error';
   }
 
   // ignore: missing_return

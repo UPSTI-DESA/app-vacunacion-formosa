@@ -22,24 +22,32 @@ class _InsertRegistro {
 
   // ignore: missing_return
   Future<List<MensajeServidor>> procesarRespuestaUri(Uri uri) async {
-    final resp = await http.post(uri);
-    if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
-      final mensaje = MensajeServidor.fromJsonList(decodedData['mensajes']);
-      return mensaje.items;
-    }
-    throw '';
-  }
-
-  Future<List<MensajeServidor>?> procesarRespuestaConExepciones(Uri uri) async {
-    {
+    try {
       final resp = await http.post(uri);
       if (resp.statusCode == 200) {
         final decodedData = json.decode(resp.body);
         final mensaje = MensajeServidor.fromJsonList(decodedData['mensajes']);
         return mensaje.items;
       }
+    } catch (e) {
+      throw 'Ocurrio un error $e';
     }
+
+    throw 'Ocurrio un error mas jodido';
+  }
+
+  Future<List<MensajeServidor>?> procesarRespuestaConExepciones(Uri uri) async {
+    try {
+      final resp = await http.post(uri);
+      if (resp.statusCode == 200) {
+        final decodedData = json.decode(resp.body);
+        final mensaje = MensajeServidor.fromJsonList(decodedData['mensajes']);
+        return mensaje.items;
+      }
+    } catch (e) {
+      throw 'Ocurrio un error $e';
+    }
+
     throw ('Tiempo de espera agotado');
   }
 }
