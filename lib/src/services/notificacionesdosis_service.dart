@@ -19,9 +19,32 @@ class _NotificacionesDosisService {
     _notiDosis = dosis;
     _notiDosisStreamController.add(dosis);
   }
+  // ----------------------- Manejo de Listas de Notificaciones ---------------------- //
+
+  List<NotificacionesDosis> _listaDosisAplicadas = [];
+
+  final StreamController<List<NotificacionesDosis>?>
+      _listaDosisAplicadasStreamController =
+      StreamController<List<NotificacionesDosis>?>.broadcast();
+
+  List<NotificacionesDosis> get listaDosisAplicadas => _listaDosisAplicadas;
+
+  Stream<List<NotificacionesDosis>?> get listaDosisAplicadasStream =>
+      _listaDosisAplicadasStreamController.stream;
+
+  void cargarListaDosis(List<NotificacionesDosis> dosisAplicadas) {
+    _listaDosisAplicadas = dosisAplicadas;
+    _listaDosisAplicadasStreamController.add(dosisAplicadas);
+  }
+
+  void eliminarListaDosis() {
+    _listaDosisAplicadas = [];
+    _listaDosisAplicadasStreamController.add(_listaDosisAplicadas);
+  }
 
   dispose() {
     _notiDosisStreamController.close();
+    _listaDosisAplicadasStreamController.close();
   }
 }
 

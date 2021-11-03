@@ -67,109 +67,6 @@ class _VacunasPageState extends State<VacunasPage>
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
-        floatingActionButton: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            notificacionesDosisService.dosis!.codigo_mensaje != null
-                ? Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 30.0),
-                        child: FloatingActionButton(
-                            heroTag: 'boton1',
-                            child: Icon(FontAwesomeIcons.exclamation,
-                                size: getValueForScreenType(
-                                    context: context, mobile: 18)),
-                            mini: true,
-                            onPressed: () {
-                              dynamic diasRestantes = int.parse(
-                                      notificacionesDosisService.dosis!
-                                          .sysvacu03_tiempo_interdosis!) -
-                                  int.parse(notificacionesDosisService
-                                      .dosis!.dias_transcurridos!);
-                              String? fechaProx = notificacionesDosisService
-                                          .dosis!.fecha_proxima_dosis! !=
-                                      "--"
-                                  ? notificacionesDosisService
-                                      .dosis!.fecha_proxima_dosis
-                                  : 'Sin restricción';
-                              diasRestantes = diasRestantes <= 0
-                                  ? ' Sin restricción'
-                                  : diasRestantes;
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      DialogoAlerta(
-                                        envioFuncion2: false,
-                                        envioFuncion1: false,
-                                        tituloAlerta: 'ATENCIÓN',
-                                        descripcionAlerta:
-                                            'Información sobre Dosis aplicadas: \n\n ${notificacionesDosisService.dosis!.sysvacu05_nombre} - ${notificacionesDosisService.dosis!.sysvacu04_nombre} \n\n Fecha aplicación: ${notificacionesDosisService.dosis!.sysdesa10_fecha_aplicacion} \n\n Proxima aplicación: $fechaProx \n\n Días restantes: $diasRestantes ',
-                                        textoBotonAlerta: 'Listo',
-                                        color: SisVacuColor.yelow700,
-                                        icon: Icon(
-                                          Icons.info,
-                                          size: 40.0,
-                                          color: SisVacuColor.grey,
-                                        ),
-                                      ));
-                            }),
-                      ),
-                      Positioned(
-                        top: 0.0,
-                        right: 0.0,
-                        child: Bounce(
-                          animate: notificacionesDosisService.existeDosis
-                              ? true
-                              : false,
-                          from: 10,
-                          infinite: true,
-                          duration: const Duration(milliseconds: 2000),
-                          child: Container(
-                            child: Text(
-                              '1',
-                              // notificacionesDosisService.existeDosis  ? '1' : null,
-                              style: TextStyle(
-                                  color: SisVacuColor.white, fontSize: 7),
-                            ),
-                            alignment: Alignment.center,
-                            width: 15,
-                            height: 15,
-                            decoration: const BoxDecoration(
-                                color: Colors.redAccent,
-                                shape: BoxShape.circle),
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                : Container(),
-            // FloatingActionButton(
-            //   heroTag: 'boton2',
-            //   child: const Icon(Icons.info_outline),
-            //   mini: true,
-            //   onPressed: () {
-            //     showDialog(
-            //         context: context,
-            //         builder: (BuildContext context) => DialogoAlerta(
-            //               envioFuncion2: false,
-            //               envioFuncion1: false,
-            //               tituloAlerta: 'Atención',
-            //               descripcionAlerta:
-            //                   'Compruebe la integridad de los datos del beneficiario y pase a seleccionar la vacuna con la condición y el lote. Recuerde que cada vacuna respeta la configuración cargada en el Sistema WEB, si no encuentra la condición o lote, probablemente tenga que agregar la configuración ',
-            //               textoBotonAlerta: 'Listo',
-            //               color: SisVacuColor.yelow700,
-            //               icon: Icon(
-            //                 Icons.info,
-            //                 size: 40.0,
-            //                 color: SisVacuColor.grey,
-            //               ),
-            //             ));
-            //   },
-            // ),
-          ],
-        ),
         appBar: AppBar(
           leading: Center(
             child: InkWell(
@@ -182,8 +79,50 @@ class _VacunasPageState extends State<VacunasPage>
                 showModalBottomSheet(
                     context: context,
                     builder: (BuildContext context) {
-                      return const ListTile(
-                        title: Text('Efectores'),
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * .01,
+                          ),
+                          Text(
+                            'Vacunas Aplicadas',
+                            style: GoogleFonts.nunito(
+                              textStyle: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 20),
+                            ),
+                          ),
+                          StreamBuilder(
+                            stream: notificacionesDosisService
+                                .listaDosisAplicadasStream,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<dynamic> snapshot) {
+                              return notificacionesDosisService
+                                      .listaDosisAplicadas.isNotEmpty
+                                  ? ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: notificacionesDosisService
+                                          .listaDosisAplicadas.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return ListTile(
+                                          title: Text(notificacionesDosisService
+                                                  .listaDosisAplicadas[index]
+                                                  .sysvacu05_nombre! +
+                                              ' - ' +
+                                              notificacionesDosisService
+                                                  .listaDosisAplicadas[index]
+                                                  .sysvacu04_nombre!),
+                                          subtitle: Text('Fecha de Aplicación: - ' +
+                                              notificacionesDosisService
+                                                  .listaDosisAplicadas[index]
+                                                  .sysdesa10_fecha_aplicacion!),
+                                        );
+                                      },
+                                    )
+                                  : const Text('No posee dosis aplicadas');
+                            },
+                          ),
+                        ],
                       );
                     });
               },
@@ -1537,7 +1476,7 @@ class _VacunasPageState extends State<VacunasPage>
                                     beneficiarioService
                                         .cargarBeneficiario(Beneficiario());
                                     notificacionesDosisService
-                                        .cargarRegistro(NotificacionesDosis());
+                                        .eliminarListaDosis();
                                     tutorService.cargarTutor(Tutor(
                                         sysdesa10_apellido_tutor: '',
                                         sysdesa10_nombre_tutor: '',

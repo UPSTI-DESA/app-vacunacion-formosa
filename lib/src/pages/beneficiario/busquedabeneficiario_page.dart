@@ -574,7 +574,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
         await notificacionesProvider.validarNotificaciones(dni, sexoPersona);
     notificaciones[0].codigo_mensaje == '1'
         ? {
-            notificacionesDosisService.cargarRegistro(notificaciones[0]),
+            notificacionesDosisService.cargarListaDosis(notificaciones),
             //Provider.of<ModeloNotificacion>(context, listen: false).numero = 1
           }
         : notificacionesDosisService.cargarRegistro(NotificacionesDosis());

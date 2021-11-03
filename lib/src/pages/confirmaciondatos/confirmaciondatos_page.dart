@@ -434,8 +434,8 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                           fotoTutor: null));
                                       beneficiarioService
                                           .cargarBeneficiario(Beneficiario());
-                                      notificacionesDosisService.cargarRegistro(
-                                          NotificacionesDosis());
+                                      notificacionesDosisService
+                                          .eliminarListaDosis();
                                       insertRegistroService
                                           .cargarRegistro(InsertRegistros());
                                       Navigator.pushAndRemoveUntil(

@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:sistema_vacunacion/src/models/sistema/notificacionesdosis_models.dart';
 
 class _NotificacionesProviders {
-
   Future<List<NotificacionesDosis>> procesarRespuestaDos(Uri url) async {
     final resp = await http.get(url);
     if (resp.statusCode == 200) {
