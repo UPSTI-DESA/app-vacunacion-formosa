@@ -87,7 +87,7 @@ class _VacunasPageState extends State<VacunasPage>
                           Text(
                             'Vacunas Aplicadas',
                             style: GoogleFonts.nunito(
-                              textStyle: TextStyle(
+                              textStyle: const TextStyle(
                                   fontWeight: FontWeight.w600, fontSize: 20),
                             ),
                           ),
