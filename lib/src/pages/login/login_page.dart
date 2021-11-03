@@ -121,29 +121,33 @@ class _LoginBodyState extends State<LoginBody> {
               children: <Widget>[
                 FadeInDownBig(
                   from: 40,
-                  child: Image(
-                    image: const AssetImage('assets/img/appSisVAcunacion.png'),
-                    fit: BoxFit.cover,
-                    //height: MediaQuery.of(context).size.height * 0.2,
-                    width: MediaQuery.of(context).size.width * .6,
-                  ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.06),
-                FadeInRight(
-                  from: 40,
-                  delay: const Duration(milliseconds: 1100),
-                  child: Text(
-                    'Registro de Vacunación',
-                    style: GoogleFonts.barlow(
-                      textStyle: TextStyle(
-                          color: Colors.black87,
-                          fontSize: MediaQuery.of(context).size.height * 0.034,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 2.0),
+                  child: Material(
+                    color: Colors.transparent,
+                    elevation: 80,
+                    child: Image(
+                      image: const AssetImage('assets/logo/VacunApp2.png'),
+                      fit: BoxFit.cover,
+                      //height: MediaQuery.of(context).size.height * 0.2,
+                      width: MediaQuery.of(context).size.width * .55,
                     ),
                   ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.02),
+                // SizedBox(height: MediaQuery.of(context).size.width * 0.06),
+                // FadeInRight(
+                //   from: 40,
+                //   delay: const Duration(milliseconds: 1100),
+                //   child: Text(
+                //     'Registro de Vacunación',
+                //     style: GoogleFonts.barlow(
+                //       textStyle: TextStyle(
+                //           color: Colors.black87,
+                //           fontSize: MediaQuery.of(context).size.height * 0.034,
+                //           fontWeight: FontWeight.w600,
+                //           letterSpacing: 2.0),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.12),
                 FadeInLeft(
                   from: 40,
                   delay: const Duration(milliseconds: 1100),
@@ -167,24 +171,27 @@ class _LoginBodyState extends State<LoginBody> {
                     iconBool: false,
                     anchoValor: MediaQuery.of(context).size.width * 0.1,
                   ),
-                )
+                ),
+                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: FadeInLeft(
+                    from: 40,
+                    delay: const Duration(milliseconds: 1100),
+                    child: Text(
+                        'Para uso interno, del ministerio de desarrollo humano',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.nunito(
+                          textStyle: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.height * 0.018,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 2.0),
+                        )),
+                  ),
+                ),
               ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: FadeInLeft(
-              from: 40,
-              delay: const Duration(milliseconds: 1100),
-              child: Text(
-                  'Para uso interno, del ministerio de desarrollo humano',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.nunito(
-                    textStyle: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * 0.018,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0),
-                  )),
             ),
           ),
           Align(
