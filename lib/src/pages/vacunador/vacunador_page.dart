@@ -175,10 +175,18 @@ class _VacunadorPageState extends State<VacunadorPage>
                                         child: Container(
                                           padding:
                                               const EdgeInsets.only(right: 5.0),
-                                          child: Text(
-                                            registradorService.registrador!
-                                                .sysofic01_descripcion!,
-                                            textAlign: TextAlign.center,
+                                          child: StreamBuilder(
+                                            stream: registradorService
+                                                .registradorStream,
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<dynamic>
+                                                    snapshot) {
+                                              return Text(
+                                                registradorService.registrador!
+                                                    .sysofic01_descripcion!,
+                                                textAlign: TextAlign.center,
+                                              );
+                                            },
                                           ),
                                         ),
                                       ),
@@ -192,6 +200,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                                         }
 
                                         showModalBottomSheet(
+                                            useRootNavigator: true,
                                             context: context,
                                             builder: (BuildContext context) {
                                               return StreamBuilder(
@@ -210,13 +219,26 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                           (BuildContext context,
                                                               int index) {
                                                         return ListTile(
-                                                          title: Text(
-                                                            efectoresService
-                                                                .listaEfectores![
-                                                                    index]
-                                                                .sysofic01Descripcion!,
-                                                            style: GoogleFonts
-                                                                .nunito(),
+                                                          title:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              registradorService
+                                                                  .editarEfectorUsuario(
+                                                                      efectoresService
+                                                                              .listaEfectores![
+                                                                          index]);
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(context);
+                                                            },
+                                                            child: Text(
+                                                              efectoresService
+                                                                  .listaEfectores![
+                                                                      index]
+                                                                  .sysofic01Descripcion!,
+                                                              style: GoogleFonts
+                                                                  .nunito(),
+                                                            ),
                                                           ),
                                                         );
                                                       },

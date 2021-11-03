@@ -20,6 +20,14 @@ class _RegistradorService {
     _registradorStreamController.add(registrador);
   }
 
+  //---------------- Editar el Efector de un Registrador ---------------------------//
+
+  void editarEfectorUsuario(Efectores nuevoEfector) {
+    _registrador!.rela_sysofic01 = nuevoEfector.relaSysofic01;
+    _registrador!.sysofic01_descripcion = nuevoEfector.sysofic01Descripcion;
+    _registradorStreamController.add(_registrador);
+  }
+
   dispose() {
     _registradorStreamController.close();
   }
