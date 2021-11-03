@@ -128,6 +128,10 @@ class _VacunadorPageState extends State<VacunadorPage>
                                               fontWeight: FontWeight.w600,
                                               fontSize: 20)),
                                     ),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3),
                                     IconButton(
                                       onPressed: () {
                                         showDialog(
@@ -493,7 +497,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                             },
                             icon: Icon(
                               FontAwesomeIcons.infoCircle,
-                              color: SisVacuColor.azulSecundario,
+                              color: SisVacuColor.azulCuaternario,
                             ),
                             iconSize: 25,
                           ),

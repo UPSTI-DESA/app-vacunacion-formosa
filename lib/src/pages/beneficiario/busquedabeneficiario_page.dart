@@ -159,8 +159,8 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                               },
                                               icon: Icon(
                                                 FontAwesomeIcons.infoCircle,
-                                                color:
-                                                    SisVacuColor.azulSecundario,
+                                                color: SisVacuColor
+                                                    .azulCuaternario,
                                               ),
                                               iconSize: 25,
                                             ),
@@ -295,8 +295,9 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                       .size
                                                       .height *
                                                   0.15,
-                                              decoration: const BoxDecoration(
-                                                  color: Colors.redAccent,
+                                              decoration: BoxDecoration(
+                                                  color: SisVacuColor
+                                                      .azulCuaternario!,
                                                   shape: BoxShape.circle),
                                             ),
                                           ),
