@@ -54,7 +54,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
         drawer: const BodyDrawer(),
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: SisVacuColor.azulCuaternario,
+          backgroundColor: SisVacuColor.vercelesteCuaternario,
           title: FadeInLeftBig(
             from: 50,
             child: Text(
@@ -160,7 +160,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                               icon: Icon(
                                                 FontAwesomeIcons.infoCircle,
                                                 color: SisVacuColor
-                                                    .azulCuaternario,
+                                                    .vercelesteCuaternario,
                                               ),
                                               iconSize: 25,
                                             ),
@@ -297,7 +297,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                   0.15,
                                               decoration: BoxDecoration(
                                                   color: SisVacuColor
-                                                      .azulCuaternario!,
+                                                      .vercelesteCuaternario!,
                                                   shape: BoxShape.circle),
                                             ),
                                           ),

@@ -30,7 +30,7 @@ class BotonCustom extends StatelessWidget {
       onPressed: onPressed,
       child: Container(
         decoration: BoxDecoration(
-            color: color ?? SisVacuColor.azulCuaternario,
+            color: color ?? SisVacuColor.vercelesteCuaternario,
             borderRadius: BorderRadius.circular(borderRadius ?? 32)),
         width: width ?? double.infinity,
         height: height ?? 40,
@@ -44,7 +44,7 @@ class BotonCustom extends StatelessWidget {
               ),
               Text(text,
                   style: GoogleFonts.nunito(
-                      textStyle: TextStyle(
+                      textStyle: const TextStyle(
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           fontSize: 18))),

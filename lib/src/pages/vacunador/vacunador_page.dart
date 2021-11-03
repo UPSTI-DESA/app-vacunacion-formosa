@@ -75,7 +75,7 @@ class _VacunadorPageState extends State<VacunadorPage>
             backgroundColor: SisVacuColor.white,
             appBar: AppBar(
               centerTitle: true,
-              backgroundColor: SisVacuColor.azulCuaternario,
+              backgroundColor: SisVacuColor.vercelesteCuaternario,
               title: FadeInLeftBig(
                 from: 50,
                 child: Text(
@@ -146,7 +146,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                       'Seleccione el switch si es la misma persona que registra y realiza la vacunación.',
                                                   textoBotonAlerta: 'Listo',
                                                   color: SisVacuColor
-                                                      .azulTerciario,
+                                                      .vercelesteTerciario,
                                                   icon: Icon(Icons.info,
                                                       size: 40.0,
                                                       color: Colors.grey[50]),
@@ -154,7 +154,8 @@ class _VacunadorPageState extends State<VacunadorPage>
                                       },
                                       icon: Icon(
                                         FontAwesomeIcons.infoCircle,
-                                        color: SisVacuColor.azulCuaternario,
+                                        color:
+                                            SisVacuColor.vercelesteCuaternario,
                                       ),
                                       iconSize: 25,
                                     ),
@@ -172,7 +173,8 @@ class _VacunadorPageState extends State<VacunadorPage>
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Container(
-                                          padding: EdgeInsets.only(right: 5.0),
+                                          padding:
+                                              const EdgeInsets.only(right: 5.0),
                                           child: Text(
                                             registradorService.registrador!
                                                 .sysofic01_descripcion!,
@@ -490,14 +492,15 @@ class _VacunadorPageState extends State<VacunadorPage>
                                         descripcionAlerta:
                                             'Registre al vacunador mediante el escaneo del codigo de barras, o ingresando manualmente el numero de D.N.I.',
                                         textoBotonAlerta: 'Listo',
-                                        color: SisVacuColor.azulCuaternario,
+                                        color:
+                                            SisVacuColor.vercelesteCuaternario,
                                         icon: Icon(Icons.info,
                                             size: 40.0, color: Colors.grey[50]),
                                       ));
                             },
                             icon: Icon(
                               FontAwesomeIcons.infoCircle,
-                              color: SisVacuColor.azulCuaternario,
+                              color: SisVacuColor.vercelesteCuaternario,
                             ),
                             iconSize: 25,
                           ),
@@ -539,7 +542,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                                   SnackBar(
                                       elevation: 2.0,
                                       backgroundColor:
-                                          SisVacuColor.azulTerciario,
+                                          SisVacuColor.vercelesteTerciario,
                                       behavior: SnackBarBehavior.floating,
                                       duration:
                                           const Duration(milliseconds: 2500),

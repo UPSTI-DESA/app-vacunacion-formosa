@@ -101,7 +101,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                   ListTile(
                       leading: Icon(
                         FontAwesomeIcons.solidEdit,
-                        color: SisVacuColor.azulCuaternario,
+                        color: SisVacuColor.vercelesteCuaternario,
                         size: MediaQuery.of(context).size.width / 20.0,
                       ),
                       title: Text('Editar equipo de trabajo',
@@ -125,7 +125,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                   ListTile(
                     leading: Icon(
                       FontAwesomeIcons.info,
-                      color: SisVacuColor.azulCuaternario,
+                      color: SisVacuColor.vercelesteCuaternario,
                       size: MediaQuery.of(context).size.width / 20.0,
                     ),
                     title: Text('Sobre Nosotros',
@@ -143,7 +143,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                   ListTile(
                       leading: Icon(
                         FontAwesomeIcons.solidFilePdf,
-                        color: SisVacuColor.azulCuaternario,
+                        color: SisVacuColor.vercelesteCuaternario,
                         size: MediaQuery.of(context).size.width / 20.0,
                       ),
                       title: Text('Descargar PDF',

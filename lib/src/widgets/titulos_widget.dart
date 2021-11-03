@@ -37,7 +37,7 @@ class TitulosContainerPage extends StatelessWidget {
         FadeInDownBig(
           from: 25,
           child: Divider(
-            color: SisVacuColor.azulTerciario,
+            color: SisVacuColor.vercelesteTerciario,
             thickness: widthThickness,
           ),
         ),

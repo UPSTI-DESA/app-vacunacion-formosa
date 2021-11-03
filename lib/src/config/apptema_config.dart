@@ -11,11 +11,11 @@ class SisVacuTheme {
     black: const Color(0xff071C07),
     white: const Color(0xffF2F2F2),
     grey200: Colors.grey[200],
-    blue: const Color(0xFF12345A),
-    azulPrimario: const Color(0xff2C2EFB),
-    azulSecundario: const Color(0xff1F7CFB),
-    azulTerciario: const Color(0xff0F8DED),
-    azulCuaternario: const Color(0xff009CAF),
+    verceleste: const Color(0xFF12345A),
+    vercelestePrimario: const Color(0xff2C2EFB),
+    vercelesteSecundario: const Color(0xff1F7CFB),
+    vercelesteTerciario: const Color(0xff0F8DED),
+    vercelesteCuaternario: const Color(0xff009CAF),
     azulFormosa: const Color(0xff004B8E),
     yellow700: Colors.yellow[700],
     pink: Colors.pink,
@@ -36,11 +36,11 @@ class SisVacuTheme {
     black: const Color(0xff071C07),
     white: const Color(0xffF2F2F2),
     grey200: Colors.grey[200],
-    blue: const Color(0xFF12345A),
-    azulPrimario: const Color(0xff2C2EFB),
-    azulSecundario: const Color(0xff1F7CFB),
-    azulTerciario: const Color(0xff0F8DED),
-    azulCuaternario: const Color(0xff009CAF),
+    verceleste: const Color(0xFF00B0C7),
+    vercelestePrimario: const Color(0xff005661),
+    vercelesteSecundario: const Color(0xff00C6E0),
+    vercelesteTerciario: const Color(0xff00D1ED),
+    vercelesteCuaternario: const Color(0xff009CAF),
     azulFormosa: const Color(0xff004B8E),
     yellow700: Colors.yellow[700],
     pink: Colors.pink,
@@ -53,10 +53,10 @@ class SisVacuTheme {
 
   ThemeData get theme => ThemeData(
         brightness: brightness,
-        primaryColor: azulCuaternario,
+        primaryColor: vercelesteCuaternario,
         bannerTheme: const MaterialBannerThemeData(),
         floatingActionButtonTheme:
-            FloatingActionButtonThemeData(backgroundColor: azulTerciario),
+            FloatingActionButtonThemeData(backgroundColor: vercelestePrimario),
         textTheme: const TextTheme(
           bodyText1: TextStyle(),
           bodyText2: TextStyle(),
@@ -95,11 +95,11 @@ class SisVacuTheme {
   final Color? black;
   final Color? white;
   final Color? grey200;
-  final Color? blue;
-  final Color? azulPrimario;
-  final Color? azulSecundario;
-  final Color? azulTerciario;
-  final Color? azulCuaternario;
+  final Color? verceleste;
+  final Color? vercelestePrimario;
+  final Color? vercelesteSecundario;
+  final Color? vercelesteTerciario;
+  final Color? vercelesteCuaternario;
   final Color? azulFormosa;
   final Color? yellow700;
   final Color? pink;
@@ -119,11 +119,11 @@ class SisVacuTheme {
     this.black,
     this.white,
     this.grey200,
-    this.blue,
-    this.azulPrimario,
-    this.azulSecundario,
-    this.azulTerciario,
-    this.azulCuaternario,
+    this.verceleste,
+    this.vercelestePrimario,
+    this.vercelesteSecundario,
+    this.vercelesteTerciario,
+    this.vercelesteCuaternario,
     this.azulFormosa,
     this.yellow700,
     this.pink,

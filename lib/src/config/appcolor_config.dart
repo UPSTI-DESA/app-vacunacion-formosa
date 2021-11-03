@@ -15,11 +15,11 @@ class SisVacuColor {
   static Color? get grey => theme.grey200;
   static Color? get inputsColor => theme.inputsColor;
   static Color? get borderContainer => theme.borderContainers;
-  static Color? get blue => theme.blue; //Switch
-  static Color? get azulPrimario => theme.azulPrimario;
-  static Color? get azulSecundario => theme.azulSecundario;
-  static Color? get azulTerciario => theme.azulTerciario;
-  static Color? get azulCuaternario => theme.azulCuaternario;
+  static Color? get verceleste => theme.verceleste; //Switch
+  static Color? get vercelestePrimario => theme.vercelestePrimario;
+  static Color? get vercelesteSecundario => theme.vercelesteSecundario;
+  static Color? get vercelesteTerciario => theme.vercelesteTerciario;
+  static Color? get vercelesteCuaternario => theme.vercelesteCuaternario;
   static Color? get azulFormosa => theme.azulFormosa;
   static Color? get yelow700 =>
       theme.yellow700; //Para los dialogos alerta de ATENCIÓN

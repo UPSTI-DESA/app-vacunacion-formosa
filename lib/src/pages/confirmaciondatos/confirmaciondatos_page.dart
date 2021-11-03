@@ -59,7 +59,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
       ),
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: SisVacuColor.azulCuaternario,
+        backgroundColor: SisVacuColor.vercelesteCuaternario,
         title: FadeInLeftBig(
           from: 50,
           child: Text(

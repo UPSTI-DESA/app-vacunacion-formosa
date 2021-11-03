@@ -33,7 +33,7 @@ class _EncabezadoWavePainter extends CustomPainter {
     final lapiz = Paint();
 
     //Propiedades
-    lapiz.color = SisVacuColor.azulCuaternario!
+    lapiz.color = SisVacuColor.vercelesteCuaternario!
         .withOpacity(0.2); //Color.fromRGBO(19, 44, 74, 1);
     lapiz.style = PaintingStyle.fill;
     lapiz.strokeWidth = 0.5;
@@ -68,7 +68,7 @@ class EncabezadoDos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.70,
       width: MediaQuery.of(context).size.width,
       child: CustomPaint(

@@ -196,7 +196,7 @@ class _VacunasPageState extends State<VacunasPage>
             ),
           ),
           centerTitle: true,
-          backgroundColor: SisVacuColor.azulCuaternario,
+          backgroundColor: SisVacuColor.vercelesteCuaternario,
           title: FadeInLeftBig(
             from: 50,
             child: Text(
@@ -640,7 +640,7 @@ class _VacunasPageState extends State<VacunasPage>
                                                         ? SisVacuColor.red!
                                                             .withOpacity(.5)
                                                         : SisVacuColor
-                                                            .azulCuaternario!
+                                                            .vercelesteCuaternario!
                                                             .withOpacity(.5),
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -770,49 +770,39 @@ class _VacunasPageState extends State<VacunasPage>
                     ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  FutureBuilder(
-                      future: Future.delayed(const Duration(milliseconds: 800)),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dynamic> snapshot) {
-                        return snapshot.connectionState ==
-                                ConnectionState.waiting
-                            ? const CircularProgressIndicator()
-                            : StreamBuilder(
-                                stream: vacunasxPerfilService
-                                    .listaVacunasxPerfilesStream,
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<dynamic> snapshot) {
-                                  return vacunasxPerfilService
-                                          .listavacunasxPerfil!.isNotEmpty
-                                      ? Padding(
-                                          padding: EdgeInsets.only(
-                                              right: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.02,
-                                              left: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.02),
-                                          child: Container(
-                                            padding: EdgeInsets.all(
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                boxShadow: <BoxShadow>[
-                                                  BoxShadow(
-                                                      color: Colors.black
-                                                          .withOpacity(0.08),
-                                                      offset:
-                                                          const Offset(0, 5),
-                                                      blurRadius: 5)
-                                                ],
-                                                color: Colors.white),
-                                            child: Column(
+                  StreamBuilder(
+                    stream: vacunasxPerfilService.listaVacunasxPerfilesStream,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      return vacunasxPerfilService
+                              .listavacunasxPerfil!.isNotEmpty
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  right:
+                                      MediaQuery.of(context).size.width * 0.02,
+                                  left:
+                                      MediaQuery.of(context).size.width * 0.02),
+                              child: Container(
+                                padding: EdgeInsets.all(
+                                    MediaQuery.of(context).size.width * 0.05),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          offset: const Offset(0, 5),
+                                          blurRadius: 5)
+                                    ],
+                                    color: Colors.white),
+                                child: FutureBuilder(
+                                    future: Future.delayed(
+                                        const Duration(milliseconds: 800)),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<dynamic> snapshot) {
+                                      return snapshot.connectionState ==
+                                              ConnectionState.waiting
+                                          ? const LoadingEstrellas()
+                                          : Column(
                                               children: [
                                                 Row(
                                                   children: [
@@ -968,13 +958,13 @@ class _VacunasPageState extends State<VacunasPage>
                                                               }).showModal(context);
                                                     }),
                                               ],
-                                            ),
-                                          ),
-                                        )
-                                      : Container();
-                                },
-                              );
-                      }),
+                                            );
+                                    }),
+                              ),
+                            )
+                          : Container();
+                    },
+                  ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   listaConfiguraciones!.isNotEmpty
                       ? Padding(
