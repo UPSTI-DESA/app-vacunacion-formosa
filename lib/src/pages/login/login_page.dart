@@ -172,7 +172,7 @@ class _LoginFormulario extends StatelessWidget {
                             color: Colors.black87,
                             fontSize:
                                 MediaQuery.of(context).size.height * 0.022,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w800,
                             letterSpacing: 2.0),
                       )),
                 ),
@@ -200,7 +200,7 @@ class _LoginFormulario extends StatelessWidget {
                           textStyle: TextStyle(
                               fontSize:
                                   MediaQuery.of(context).size.height * 0.018,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 2.0),
                         )),
                   ),

@@ -280,6 +280,7 @@ class _VacunasPageState extends State<VacunasPage>
                       ),
                     ),
                   ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   StreamBuilder(
                     stream: tutorService.tutorStream,
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -321,132 +322,131 @@ class _VacunasPageState extends State<VacunasPage>
                                         height:
                                             MediaQuery.of(context).size.width *
                                                 0.05),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.14,
-                                            height:
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.14,
-                                            child: tutorService
-                                                        .tutor!.fotoTutor !=
-                                                    null
-                                                ? tutorService.tutor!.fotoTutor!
-                                                        .isNotEmpty
-                                                    ? Image.memory(tutorService
-                                                        .tutor!.fotoTutor!)
-                                                    : Image.asset(
-                                                        'assets/img/fondo/noimage.jpg')
-                                                : Image.asset(
-                                                    'assets/img/fondo/noimage.jpg')),
-                                        Column(
-                                          children: [
-                                            Row(
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                Text('Nombre: ',
-                                                    style: GoogleFonts.nunito(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 16.0),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Text('Nombre: ',
+                                                        style:
+                                                            GoogleFonts.nunito(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      16.0),
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center),
+                                                    Text(
+                                                        tutorService.tutor!
+                                                            .sysdesa10_nombre_tutor!,
+                                                        style:
+                                                            GoogleFonts.nunito(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontSize:
+                                                                      16.0),
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.02),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'Apellido: ',
+                                                      style: GoogleFonts.nunito(
+                                                        textStyle:
+                                                            const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 16.0),
+                                                      ),
                                                     ),
-                                                    textAlign:
-                                                        TextAlign.center),
-                                                Text(
-                                                    tutorService.tutor!
-                                                        .sysdesa10_nombre_tutor!,
-                                                    style: GoogleFonts.nunito(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 16.0),
-                                                    ),
-                                                    textAlign:
-                                                        TextAlign.center),
+                                                    Text(
+                                                        tutorService.tutor!
+                                                            .sysdesa10_apellido_tutor!,
+                                                        style:
+                                                            GoogleFonts.nunito(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontSize:
+                                                                      16.0),
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.02),
+                                                Row(
+                                                  children: [
+                                                    Text('D.N.I.: ',
+                                                        style:
+                                                            GoogleFonts.nunito(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      16.0),
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center),
+                                                    Text(
+                                                        tutorService.tutor!
+                                                            .sysdesa10_dni_tutor!,
+                                                        style:
+                                                            GoogleFonts.nunito(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontSize:
+                                                                      16.0),
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center),
+                                                  ],
+                                                ),
                                               ],
                                             ),
-                                            SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.02),
-                                            Row(
-                                              children: [
-                                                Text('Apellido: ',
-                                                    style: GoogleFonts.nunito(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 16.0),
-                                                    ),
-                                                    textAlign:
-                                                        TextAlign.center),
-                                                Text(
-                                                    tutorService.tutor!
-                                                        .sysdesa10_apellido_tutor!,
-                                                    style: GoogleFonts.nunito(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 16.0),
-                                                    ),
-                                                    textAlign:
-                                                        TextAlign.center),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.02),
-                                            Row(
-                                              children: [
-                                                Text('D.N.I.: ',
-                                                    style: GoogleFonts.nunito(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 16.0),
-                                                    ),
-                                                    textAlign:
-                                                        TextAlign.center),
-                                                Text(
-                                                    tutorService.tutor!
-                                                        .sysdesa10_dni_tutor!,
-                                                    style: GoogleFonts.nunito(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              fontSize: 16.0),
-                                                    ),
-                                                    textAlign:
-                                                        TextAlign.center),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -721,7 +721,17 @@ class _VacunasPageState extends State<VacunasPage>
                                       MediaQuery.of(context).size.width * 0.02,
                                   left:
                                       MediaQuery.of(context).size.width * 0.02),
-                              child: Container(
+                              child:
+                                  // FutureBuilder(
+                                  //       future: Future.delayed(
+                                  //           const Duration(milliseconds: 800)),
+                                  //       builder: (BuildContext context,
+                                  //           AsyncSnapshot<dynamic> snapshot) {
+                                  //         return snapshot.connectionState ==
+                                  //                 ConnectionState.waiting
+                                  //             ? const LoadingEstrellas()
+                                  //             :
+                                  Container(
                                 padding: EdgeInsets.all(
                                     MediaQuery.of(context).size.width * 0.05),
                                 decoration: BoxDecoration(
@@ -733,172 +743,143 @@ class _VacunasPageState extends State<VacunasPage>
                                           blurRadius: 5)
                                     ],
                                     color: Colors.white),
-                                child: FutureBuilder(
-                                    future: Future.delayed(
-                                        const Duration(milliseconds: 800)),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<dynamic> snapshot) {
-                                      return snapshot.connectionState ==
-                                              ConnectionState.waiting
-                                          ? const LoadingEstrellas()
-                                          : Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      'Seleccione una vacuna',
-                                                      style: GoogleFonts.barlow(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize:
-                                                                      20)),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 15,
-                                                ),
-                                                GestureDetector(
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                            _selectVacunas ==
-                                                                    null
-                                                                ? 'Seleccione'
-                                                                : _selectVacunas!
-                                                                    .sysvacu04_nombre!,
-                                                            style: GoogleFonts
-                                                                .nunito(
-                                                              textStyle:
-                                                                  TextStyle(
-                                                                fontSize:
-                                                                    getValueForScreenType(
-                                                                        context:
-                                                                            context,
-                                                                        mobile:
-                                                                            15,
-                                                                        tablet:
-                                                                            20),
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
-                                                            )),
-                                                        const SizedBox(
-                                                            width: 5),
-                                                        Icon(
-                                                          _selectVacunas == null
-                                                              ? Icons
-                                                                  .keyboard_arrow_down
-                                                              : Icons
-                                                                  .keyboard_arrow_left,
-                                                          color: SisVacuColor
-                                                              .black,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    onTap: () {
-                                                      vacunasxPerfilService
-                                                              .listavacunasxPerfil!
-                                                              .isEmpty
-                                                          ? const Center(
-                                                              child: Text(
-                                                                  'Hubo un problema'),
-                                                            )
-                                                          : Picker(
-                                                              title: const Text(
-                                                                'Vacunas',
-                                                              ),
-                                                              itemExtent: 45,
-                                                              cancelText:
-                                                                  "Cancelar",
-                                                              confirmText:
-                                                                  'Confirmar',
-                                                              adapter:
-                                                                  PickerDataAdapter<
-                                                                      VacunasxPerfil>(
-                                                                data: vacunasxPerfilService
-                                                                    .listavacunasxPerfil!
-                                                                    .map((iv) =>
-                                                                        PickerItem<
-                                                                            VacunasxPerfil>(
-                                                                          text:
-                                                                              Center(child: Text(iv.sysvacu04_nombre!)),
-                                                                          value:
-                                                                              iv,
-                                                                        ))
-                                                                    .toList(),
-                                                              ),
-                                                              squeeze: 1,
-                                                              height:
-                                                                  size.height *
-                                                                      .2,
-                                                              onConfirm: (Picker
-                                                                      picker,
-                                                                  List
-                                                                      value) async {
-                                                                PickerDataAdapter<
-                                                                        VacunasxPerfil>
-                                                                    pickerAdapter =
-                                                                    picker.adapter
-                                                                        as PickerDataAdapter<
-                                                                            VacunasxPerfil>;
-                                                                listaConfiguraciones!
-                                                                    .clear();
-                                                                listaLotes!
-                                                                    .clear();
-                                                                setState(() {
-                                                                  _selectLote =
-                                                                      null;
-                                                                  _selectConfigVacuna =
-                                                                      null;
-                                                                  _selectVacunas =
-                                                                      pickerAdapter
-                                                                          .data[
-                                                                              value.first]
-                                                                          .value;
-                                                                });
-                                                                final tempLista =
-                                                                    await configuracionVacunaProvider
-                                                                        .validarConfiguraciones(
-                                                                            _selectVacunas!.id_sysvacu04);
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Seleccione una vacuna',
+                                          style: GoogleFonts.barlow(
+                                              textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 20)),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    GestureDetector(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                                _selectVacunas == null
+                                                    ? 'Seleccione'
+                                                    : _selectVacunas!
+                                                        .sysvacu04_nombre!,
+                                                style: GoogleFonts.nunito(
+                                                  textStyle: TextStyle(
+                                                    fontSize:
+                                                        getValueForScreenType(
+                                                            context: context,
+                                                            mobile: 15,
+                                                            tablet: 20),
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                )),
+                                            const SizedBox(width: 5),
+                                            Icon(
+                                              _selectVacunas == null
+                                                  ? Icons.keyboard_arrow_down
+                                                  : Icons.keyboard_arrow_left,
+                                              color: SisVacuColor.black,
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          vacunasxPerfilService
+                                                  .listavacunasxPerfil!.isEmpty
+                                              ? const Center(
+                                                  child:
+                                                      Text('Hubo un problema'),
+                                                )
+                                              : Picker(
+                                                  title: const Text(
+                                                    'Vacunas',
+                                                  ),
+                                                  itemExtent: 45,
+                                                  cancelText: "Cancelar",
+                                                  confirmText: 'Confirmar',
+                                                  adapter: PickerDataAdapter<
+                                                      VacunasxPerfil>(
+                                                    data: vacunasxPerfilService
+                                                        .listavacunasxPerfil!
+                                                        .map((iv) => PickerItem<
+                                                                VacunasxPerfil>(
+                                                              text: Center(
+                                                                  child: Text(iv
+                                                                      .sysvacu04_nombre!)),
+                                                              value: iv,
+                                                            ))
+                                                        .toList(),
+                                                  ),
+                                                  squeeze: 1,
+                                                  height: size.height * .2,
+                                                  onConfirm: (Picker picker,
+                                                      List value) async {
+                                                    PickerDataAdapter<
+                                                            VacunasxPerfil>
+                                                        pickerAdapter =
+                                                        picker.adapter
+                                                            as PickerDataAdapter<
+                                                                VacunasxPerfil>;
+                                                    listaConfiguraciones!
+                                                        .clear();
+                                                    listaLotes!.clear();
+                                                    setState(() {
+                                                      _selectLote = null;
+                                                      _selectConfigVacuna =
+                                                          null;
+                                                      _selectVacunas =
+                                                          pickerAdapter
+                                                              .data[value.first]
+                                                              .value;
+                                                    });
+                                                    final tempLista =
+                                                        await configuracionVacunaProvider
+                                                            .validarConfiguraciones(
+                                                                _selectVacunas!
+                                                                    .id_sysvacu04);
 
-                                                                tempLista[0].codigo_mensaje ==
-                                                                        "0"
-                                                                    ? showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder:
-                                                                            (BuildContext
-                                                                                context) {
-                                                                          return DialogoAlerta(
-                                                                              envioFuncion2: false,
-                                                                              envioFuncion1: false,
-                                                                              tituloAlerta: 'ATENCIÓN!',
-                                                                              descripcionAlerta: tempLista[0].mensaje,
-                                                                              textoBotonAlerta: 'Listo',
-                                                                              icon: const Icon(
-                                                                                Icons.error_outline,
-                                                                                size: 40,
-                                                                              ),
-                                                                              color: Colors.red);
-                                                                        })
-                                                                    : setState(
-                                                                        () {
-                                                                        listaConfiguraciones =
-                                                                            tempLista;
-                                                                      });
-                                                              }).showModal(context);
-                                                    }),
-                                              ],
-                                            );
-                                    }),
+                                                    tempLista[0].codigo_mensaje ==
+                                                            "0"
+                                                        ? showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return DialogoAlerta(
+                                                                  envioFuncion2:
+                                                                      false,
+                                                                  envioFuncion1:
+                                                                      false,
+                                                                  tituloAlerta:
+                                                                      'ATENCIÓN!',
+                                                                  descripcionAlerta:
+                                                                      tempLista[
+                                                                              0]
+                                                                          .mensaje,
+                                                                  textoBotonAlerta:
+                                                                      'Listo',
+                                                                  icon:
+                                                                      const Icon(
+                                                                    Icons
+                                                                        .error_outline,
+                                                                    size: 40,
+                                                                  ),
+                                                                  color: Colors
+                                                                      .red);
+                                                            })
+                                                        : setState(() {
+                                                            listaConfiguraciones =
+                                                                tempLista;
+                                                          });
+                                                  }).showModal(context);
+                                        }),
+                                  ],
+                                ),
                               ),
                             )
                           : Container();
@@ -1511,7 +1492,13 @@ class _VacunasPageState extends State<VacunasPage>
               padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
-                  color: SisVacuColor.white),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        offset: const Offset(0, 5),
+                        blurRadius: 5)
+                  ],
+                  color: Colors.white),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -1523,27 +1510,37 @@ class _VacunasPageState extends State<VacunasPage>
                             textStyle: const TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 20)),
                       ),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.4),
+                      IconButton(
+                        alignment: Alignment.centerRight,
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => DialogoAlerta(
+                                    envioFuncion2: false,
+                                    envioFuncion1: false,
+                                    tituloAlerta: 'Informacion',
+                                    descripcionAlerta:
+                                        'Registre al tutor mediante el escaneo del codigo de barras, o ingresando manualmente el numero de D.N.I.',
+                                    textoBotonAlerta: 'Listo',
+                                    color: SisVacuColor.vercelesteCuaternario,
+                                    icon: Icon(Icons.info,
+                                        size: 40.0, color: Colors.grey[50]),
+                                  ));
+                        },
+                        icon: Icon(
+                          FontAwesomeIcons.infoCircle,
+                          color: SisVacuColor.vercelesteCuaternario,
+                        ),
+                        iconSize: 25,
+                      ),
                     ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  const Text(
-                    "Escanee el Dni del Tutor",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   const EscanerDni(
                     'Tutor',
                     'Escanear',
                     'Escanee el D.N.I. del Tutor',
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  const Text(
-                    "Si el Tutor NO tiene su D.N.I., ingréselo Manualmente",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   Column(children: [
@@ -1590,33 +1587,37 @@ class _VacunasPageState extends State<VacunasPage>
                     const SizedBox(
                       height: 20.0,
                     ),
-                    ColorTextButton('Verificar',
-                        iconoBoton: const Icon(
-                          Icons.fingerprint,
-                          color: Colors.black,
-                        ),
-                        color: SisVacuColor.verdefuerte,
-                        iconoBool: true, onPressed: () {
-                      controladorDni.text.length >= 7
-                          ? obtenerDatosBeneficiario(
-                              context, controladorDni.text, sexoTutor!)
-                          : showDialog(
-                              context: context,
-                              builder: (BuildContext context) => DialogoAlerta(
-                                    envioFuncion2: false,
-                                    envioFuncion1: false,
-                                    tituloAlerta: 'Hubo un Error',
-                                    descripcionAlerta:
-                                        'Ingrese el D.N.I. y seleccione el sexo.',
-                                    textoBotonAlerta: 'Listo',
-                                    color: Colors.red,
-                                    icon: Icon(
-                                      Icons.error,
-                                      size: 40.0,
-                                      color: Colors.grey[50],
-                                    ),
-                                  ));
-                    }, anchoValor: 180.0)
+                    BotonCustom(
+                      width: 150,
+                      iconoBool: true,
+                      iconoBoton: const Icon(
+                        Icons.people,
+                        color: Colors.white,
+                      ),
+                      text: 'Verificar',
+                      onPressed: () {
+                        controladorDni.text.length >= 7
+                            ? obtenerDatosBeneficiario(
+                                context, controladorDni.text, sexoTutor!)
+                            : showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    DialogoAlerta(
+                                      envioFuncion2: false,
+                                      envioFuncion1: false,
+                                      tituloAlerta: 'Hubo un Error',
+                                      descripcionAlerta:
+                                          'Ingrese el D.N.I. y seleccione el sexo.',
+                                      textoBotonAlerta: 'Listo',
+                                      color: Colors.red,
+                                      icon: Icon(
+                                        Icons.error,
+                                        size: 40.0,
+                                        color: Colors.grey[50],
+                                      ),
+                                    ));
+                      },
+                    )
                   ]),
                 ],
               ),

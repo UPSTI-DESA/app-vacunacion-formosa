@@ -68,12 +68,37 @@ class EncabezadoDos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.70,
-      width: MediaQuery.of(context).size.width,
-      child: CustomPaint(
-        painter: _EncabezadoDosPainter(),
-      ),
+    return Stack(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.50,
+          width: MediaQuery.of(context).size.width,
+          child: CustomPaint(
+            painter: _EncabezadoDosPainter(),
+          ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.49,
+          width: MediaQuery.of(context).size.width,
+          child: CustomPaint(
+            painter: _EncabezadoDosPainter(),
+          ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.48,
+          width: MediaQuery.of(context).size.width,
+          child: CustomPaint(
+            painter: _EncabezadoDosPainter(),
+          ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.47,
+          width: MediaQuery.of(context).size.width,
+          child: CustomPaint(
+            painter: _EncabezadoDosPainter(),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -84,7 +109,8 @@ class _EncabezadoDosPainter extends CustomPainter {
     final lapiz = Paint();
 
     //Propiedades
-    lapiz.color = Colors.blue; //Color.fromRGBO(19, 44, 74, 1);
+    lapiz.color = SisVacuColor.verceleste!
+        .withOpacity(0.6); //Color.fromRGBO(19, 44, 74, 1);
     lapiz.style = PaintingStyle.fill;
     lapiz.strokeWidth = 20;
 

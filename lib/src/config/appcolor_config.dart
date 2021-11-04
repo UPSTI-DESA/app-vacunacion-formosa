@@ -4,7 +4,6 @@ import 'config.dart';
 
 class SisVacuColor {
   static SisVacuTheme theme = SisVacuTheme.defaultTheme;
-  static SisVacuTheme darktheme = SisVacuTheme.darkTheme;
 
   static Color? get primaryGreen => theme.primaryGreen;
   static Color? get primaryRed => theme.primaryRed;

@@ -11,31 +11,6 @@ class SisVacuTheme {
     black: const Color(0xff071C07),
     white: const Color(0xffF2F2F2),
     grey200: Colors.grey[200],
-    verceleste: const Color(0xFF12345A),
-    vercelestePrimario: const Color(0xff2C2EFB),
-    vercelesteSecundario: const Color(0xff1F7CFB),
-    vercelesteTerciario: const Color(0xff0F8DED),
-    vercelesteCuaternario: const Color(0xff009CAF),
-    azulFormosa: const Color(0xff004B8E),
-    yellow700: Colors.yellow[700],
-    pink: Colors.pink,
-    orange: Colors.orange,
-    purple: Colors.purple,
-    red: Colors.red,
-    inputsColor: const Color.fromRGBO(199, 224, 211, 0.57),
-    brightness: Brightness.light,
-  );
-
-  static SisVacuTheme darkTheme = SisVacuTheme._(
-    id: 2,
-    primaryGreen: const Color(0xFF39E489),
-    primaryRed: const Color(0xFFFE3D2E),
-    verdefuerte: const Color.fromRGBO(118, 214, 203, 1),
-    verdeclaro: const Color.fromRGBO(189, 233, 227, 1),
-    borderContainers: const Color.fromRGBO(202, 215, 230, 1),
-    black: const Color(0xff071C07),
-    white: const Color(0xffF2F2F2),
-    grey200: Colors.grey[200],
     verceleste: const Color(0xFF00B0C7),
     vercelestePrimario: const Color(0xff005661),
     vercelesteSecundario: const Color(0xff00C6E0),
@@ -48,7 +23,7 @@ class SisVacuTheme {
     purple: Colors.purple,
     red: Colors.red,
     inputsColor: const Color.fromRGBO(199, 224, 211, 0.57),
-    brightness: Brightness.dark,
+    brightness: Brightness.light,
   );
 
   ThemeData get theme => ThemeData(
