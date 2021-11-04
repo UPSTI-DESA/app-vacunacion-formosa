@@ -1518,14 +1518,17 @@ class _VacunasPageState extends State<VacunasPage>
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Datos Tutor',
-                        style: GoogleFonts.barlow(
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 20)),
+                      FadeInUpBig(
+                        from: 25,
+                        child: Text(
+                          'Datos del Tutor',
+                          style: GoogleFonts.barlow(
+                              textStyle: const TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 20)),
+                        ),
                       ),
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.4),
                       IconButton(
                         alignment: Alignment.centerRight,
                         onPressed: () {
@@ -1552,88 +1555,88 @@ class _VacunasPageState extends State<VacunasPage>
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  const EscanerDni(
-                    'Tutor',
-                    'Escanear',
-                    'Escanee el D.N.I. del Tutor',
+                  Text(
+                      'Ingrese el número de D.N.I. del Tutor y seleccione el sexo',
+                      style: GoogleFonts.nunito(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.w400, fontSize: 14.0),
+                      ),
+                      textAlign: TextAlign.center),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: TextField(
+                      controller: controladorDni,
+                      keyboardType: TextInputType.number,
+                      maxLength: 8,
+                      style: const TextStyle(color: Colors.blue),
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.fingerprint),
+                        enabledBorder: InputBorder.none,
+                        border: InputBorder.none,
+                        labelText: 'Ingrese el DNI',
+                      ),
+                      onChanged: (valor) {},
+                    ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  Column(children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: TextField(
-                        controller: controladorDni,
-                        keyboardType: TextInputType.number,
-                        maxLength: 8,
-                        style: const TextStyle(color: Colors.blue),
-                        textCapitalization: TextCapitalization.sentences,
-                        decoration: const InputDecoration(
-                          icon: Icon(Icons.people),
-                          enabledBorder: InputBorder.none,
-                          border: InputBorder.none,
-                          labelText: 'Ingrese el DNI',
-                        ),
-                        onChanged: (valor) {},
+                  Text('Seleccione el Sexo',
+                      style: GoogleFonts.barlow(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 16.0),
                       ),
+                      textAlign: TextAlign.center),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Femenino'),
+                      Switch(
+                          activeColor: Colors.blue,
+                          inactiveTrackColor: Colors.pink,
+                          inactiveThumbColor: Colors.pink,
+                          value: genero!,
+                          onChanged: (value) {
+                            setState(() {
+                              genero = value;
+                              genero! ? sexoTutor = 'M' : sexoTutor = 'F';
+                            });
+                          }),
+                      const Text('Masculino'),
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  BotonCustom(
+                    width: 150,
+                    iconoBool: true,
+                    iconoBoton: const Icon(
+                      Icons.people,
+                      color: Colors.white,
                     ),
-                    const Text('Seleccione el Sexo',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16.0),
-                        textAlign: TextAlign.center),
-                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Femenino'),
-                        Switch(
-                            activeColor: Colors.blue,
-                            inactiveTrackColor: Colors.pink,
-                            inactiveThumbColor: Colors.pink,
-                            value: genero!,
-                            onChanged: (value) {
-                              setState(() {
-                                genero = value;
-                                genero! ? sexoTutor = 'M' : sexoTutor = 'F';
-                              });
-                            }),
-                        const Text('Masculino'),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                    BotonCustom(
-                      width: 150,
-                      iconoBool: true,
-                      iconoBoton: const Icon(
-                        Icons.people,
-                        color: Colors.white,
-                      ),
-                      text: 'Verificar',
-                      onPressed: () {
-                        controladorDni.text.length >= 7
-                            ? obtenerDatosBeneficiario(
-                                context, controladorDni.text, sexoTutor!)
-                            : showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    DialogoAlerta(
-                                      envioFuncion2: false,
-                                      envioFuncion1: false,
-                                      tituloAlerta: 'Hubo un Error',
-                                      descripcionAlerta:
-                                          'Ingrese el D.N.I. y seleccione el sexo.',
-                                      textoBotonAlerta: 'Listo',
-                                      color: Colors.red,
-                                      icon: Icon(
-                                        Icons.error,
-                                        size: 40.0,
-                                        color: Colors.grey[50],
-                                      ),
-                                    ));
-                      },
-                    )
-                  ]),
+                    text: 'Verificar',
+                    onPressed: () {
+                      controladorDni.text.length >= 7
+                          ? obtenerDatosBeneficiario(
+                              context, controladorDni.text, sexoTutor!)
+                          : showDialog(
+                              context: context,
+                              builder: (BuildContext context) => DialogoAlerta(
+                                    envioFuncion2: false,
+                                    envioFuncion1: false,
+                                    tituloAlerta: 'Hubo un Error',
+                                    descripcionAlerta:
+                                        'Ingrese el D.N.I. y seleccione el sexo.',
+                                    textoBotonAlerta: 'Listo',
+                                    color: Colors.red,
+                                    icon: Icon(
+                                      Icons.error,
+                                      size: 40.0,
+                                      color: Colors.grey[50],
+                                    ),
+                                  ));
+                    },
+                  )
                 ],
               ),
             ),
