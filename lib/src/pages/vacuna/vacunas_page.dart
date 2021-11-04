@@ -13,6 +13,7 @@ import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
+import 'package:sistema_vacunacion/src/widgets/loading_x_tiempo_widget.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class VacunasPage extends StatefulWidget {
@@ -496,7 +497,10 @@ class _VacunasPageState extends State<VacunasPage>
                             builder: (BuildContext context,
                                 AsyncSnapshot<dynamic> snapshot) {
                               return perfilesVacunacionService
-                                      .listaPerfilesVacunacion!.isNotEmpty
+                                              .listaPerfilesVacunacion !=
+                                          null &&
+                                      perfilesVacunacionService
+                                          .listaPerfilesVacunacion!.isNotEmpty
                                   ? SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           .9,
@@ -567,8 +571,10 @@ class _VacunasPageState extends State<VacunasPage>
                                                                   color: Colors
                                                                       .red);
                                                             })
-                                                        : Container()
-                                                    : Container();
+                                                        : mostrarLoadingEstrellasXTiempo(
+                                                            context, 800)
+                                                    : mostrarLoadingEstrellasXTiempo(
+                                                        context, 800);
                                               },
                                               child: Container(
                                                 decoration: BoxDecoration(
@@ -600,7 +606,7 @@ class _VacunasPageState extends State<VacunasPage>
                                         },
                                       ),
                                     )
-                                  : const CircularProgressIndicator();
+                                  : const LoadingEstrellas();
                             },
                           )
 
@@ -842,7 +848,6 @@ class _VacunasPageState extends State<VacunasPage>
                                                             .validarConfiguraciones(
                                                                 _selectVacunas!
                                                                     .id_sysvacu04);
-
                                                     tempLista[0].codigo_mensaje ==
                                                             "0"
                                                         ? showDialog(
@@ -872,10 +877,14 @@ class _VacunasPageState extends State<VacunasPage>
                                                                   color: Colors
                                                                       .red);
                                                             })
-                                                        : setState(() {
-                                                            listaConfiguraciones =
-                                                                tempLista;
-                                                          });
+                                                        : {
+                                                            mostrarLoadingEstrellasXTiempo(
+                                                                context, 800),
+                                                            setState(() {
+                                                              listaConfiguraciones =
+                                                                  tempLista;
+                                                            })
+                                                          };
                                                   }).showModal(context);
                                         }),
                                   ],
@@ -1008,6 +1017,7 @@ class _VacunasPageState extends State<VacunasPage>
                                                         .validarLotes(
                                                             _selectVacunas!
                                                                 .id_sysvacu04!);
+
                                                 tempLista[0].codigo_mensaje ==
                                                         "0"
                                                     ? showDialog(
@@ -1034,9 +1044,14 @@ class _VacunasPageState extends State<VacunasPage>
                                                               color:
                                                                   Colors.red);
                                                         })
-                                                    : setState(() {
-                                                        listaLotes = tempLista;
-                                                      });
+                                                    : {
+                                                        mostrarLoadingEstrellasXTiempo(
+                                                            context, 800),
+                                                        setState(() {
+                                                          listaLotes =
+                                                              tempLista;
+                                                        })
+                                                      };
                                               }).showModal(context);
                                     }),
                               ],
