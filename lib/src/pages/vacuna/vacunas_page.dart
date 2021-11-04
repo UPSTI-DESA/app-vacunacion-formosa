@@ -38,7 +38,7 @@ class _VacunasPageState extends State<VacunasPage>
   Lotes? _selectLote;
   String uribeneficiario = beneficiarioService.beneficiario!.foto_beneficiario!;
   final TextEditingController controladorDni = TextEditingController();
-  bool? genero;
+  late bool genero;
   String? dniTutor;
   String? sexoTutor;
   Uint8List? fotoBeneficiario;
@@ -1559,32 +1559,14 @@ class _VacunasPageState extends State<VacunasPage>
                     'Tutor',
                     'Escanear',
                     'Escanee el D.N.I. del Tutor',
+                    largoValor: 150,
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  Text(
-                      'Ingrese el número de D.N.I. del Tutor y seleccione el sexo',
-                      style: GoogleFonts.nunito(
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.w400, fontSize: 14.0),
-                      ),
-                      textAlign: TextAlign.center),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: TextField(
-                      controller: controladorDni,
-                      keyboardType: TextInputType.number,
-                      maxLength: 8,
-                      style: const TextStyle(color: Colors.blue),
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: const InputDecoration(
-                        icon: Icon(Icons.fingerprint),
-                        enabledBorder: InputBorder.none,
-                        border: InputBorder.none,
-                        labelText: 'Ingrese el DNI',
-                      ),
-                      onChanged: (valor) {},
-                    ),
+                  CustomInput(
+                    icon: Icons.perm_identity,
+                    placeholder: 'D.N.I.',
+                    keyboardType: TextInputType.phone,
+                    textController: controladorDni,
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   Text('Seleccione el Sexo',
@@ -1597,19 +1579,31 @@ class _VacunasPageState extends State<VacunasPage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Femenino'),
+                      Text(
+                        'Femenino',
+                        style: GoogleFonts.nunito(
+                            color: !genero ? Colors.black87 : Colors.grey[300],
+                            fontWeight:
+                                !genero ? FontWeight.w700 : FontWeight.w100),
+                      ),
                       Switch(
                           activeColor: Colors.blue,
                           inactiveTrackColor: Colors.pink,
                           inactiveThumbColor: Colors.pink,
-                          value: genero!,
+                          value: genero,
                           onChanged: (value) {
                             setState(() {
                               genero = value;
-                              genero! ? sexoTutor = 'M' : sexoTutor = 'F';
+                              genero ? sexoTutor = 'M' : sexoTutor = 'F';
                             });
                           }),
-                      const Text('Masculino'),
+                      Text(
+                        'Masculino',
+                        style: GoogleFonts.nunito(
+                            color: genero ? Colors.black87 : Colors.grey[300],
+                            fontWeight:
+                                genero ? FontWeight.w700 : FontWeight.w100),
+                      ),
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
