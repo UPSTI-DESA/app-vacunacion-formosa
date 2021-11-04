@@ -1555,6 +1555,12 @@ class _VacunasPageState extends State<VacunasPage>
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  const EscanerDni(
+                    'Tutor',
+                    'Escanear',
+                    'Escanee el D.N.I. del Tutor',
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   Text(
                       'Ingrese el número de D.N.I. del Tutor y seleccione el sexo',
                       style: GoogleFonts.nunito(
