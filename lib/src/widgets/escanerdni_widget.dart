@@ -9,6 +9,7 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
+import 'package:sistema_vacunacion/src/services/loadingLogin_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,11 +43,7 @@ class _EscanerDniState extends State<EscanerDni> {
   String? nombrePersona;
   String? apellidoPersona;
   String? dniPersona;
-
   String? codigo;
-
-  bool loading = false;
-
   String? numeroTramite;
   String? codigodebarras;
   String sexoPersona = "F";
@@ -67,6 +64,8 @@ class _EscanerDniState extends State<EscanerDni> {
       ),
       text: 'Escanear',
       onPressed: () async {
+        loadingLoginService.cargarEstado(true);
+        loadingLoginService.cargarPrimerInicio(false);
         scanBarcodeNormal();
       },
     );
@@ -100,7 +99,6 @@ class _EscanerDniState extends State<EscanerDni> {
         //final respUsuario = await usuariosProviers.validarUsuarios(dniPersona);
         final respUsuario =
             await usuariosProviers.validarUsuariosNuevo(dniPersona);
-        retornarLoading(context, 'Espere Por favor');
         if (respUsuario[0].flxcore03_dni == '') {
           showDialog(
               context: context,
@@ -118,7 +116,7 @@ class _EscanerDniState extends State<EscanerDni> {
                     ),
                     color: Colors.red);
               });
-          // mostrarAlerta(context, respUsuario[0].mensaje);
+          loadingLoginService.cargarEstado(false);
         } else {
           if (respUsuario[0].sysofic01_descripcion != null) {
             //Singleton Registrador
@@ -134,6 +132,7 @@ class _EscanerDniState extends State<EscanerDni> {
                             )),
                     (Route<dynamic> route) => false);
               });
+              loadingLoginService.cargarEstado(false);
             } else {
               showDialog(
                   context: context,
@@ -151,6 +150,7 @@ class _EscanerDniState extends State<EscanerDni> {
                         ),
                         color: Colors.green);
                   });
+              loadingLoginService.cargarEstado(false);
             }
           } else {
             showDialog(
@@ -170,6 +170,7 @@ class _EscanerDniState extends State<EscanerDni> {
                       ),
                       color: Colors.red);
                 });
+            loadingLoginService.cargarEstado(false);
           }
         }
         break;
@@ -194,10 +195,12 @@ class _EscanerDniState extends State<EscanerDni> {
                       color: Colors.grey[50],
                     ),
                   ));
+          loadingLoginService.cargarEstado(false);
         } else {
           setState(() {
             vacunadorService.cargarVacunador(respUsuario[0]);
           });
+          loadingLoginService.cargarEstado(false);
         }
         break;
 
@@ -241,12 +244,8 @@ class _EscanerDniState extends State<EscanerDni> {
                   actions: [
                     TextButton(
                         onPressed: () {
-                          setState(() {
-                            loading = true;
-                          });
                           obtenerDatosBeneficiario(dniPersona);
                           Navigator.of(context).pop();
-                          retornarLoading(context, 'Espere por favor');
                         },
                         child: const Icon(Icons.send))
                   ],
@@ -327,8 +326,6 @@ class _EscanerDniState extends State<EscanerDni> {
         sexoPersona = conSplit[3];
         numeroTramite = conSplit[0];
         codigodebarras = conSplit.toString();
-        loading = true;
-
         // if (tipoEscaneo == 'Beneficiario') {
         //   // beneficiarioService.cargarBeneficiario(Beneficiario(
         //   //     dni: conSplit[4].replaceAll(' ', ''),
@@ -349,7 +346,6 @@ class _EscanerDniState extends State<EscanerDni> {
         sexoPersona = conSplit[8];
         numeroTramite = conSplit[10];
         codigodebarras = conSplit.toString();
-        loading = true;
 
         // if (tipoEscaneo == 'Beneficiario') {
         //   beneficiarioService.cargarBeneficiario(Beneficiario(
@@ -371,7 +367,6 @@ class _EscanerDniState extends State<EscanerDni> {
         sexoPersona = conSplit[3];
         numeroTramite = conSplit[0];
         codigodebarras = conSplit.toString();
-        loading = true;
 
         // if (tipoEscaneo == 'Beneficiario') {
         //   beneficiarioService.cargarBeneficiario(Beneficiario(
@@ -400,19 +395,5 @@ class _EscanerDniState extends State<EscanerDni> {
             ],
           );
         });
-  }
-
-  void retornarLoading(BuildContext context, String mensaje) {
-    loading == false
-        ? Container()
-        : showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  title: Text(
-                    mensaje,
-                  ),
-                  content: const LinearProgressIndicator());
-            });
   }
 }

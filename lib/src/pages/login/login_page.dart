@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sistema_vacunacion/src/config/appsize_config.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
+import 'package:sistema_vacunacion/src/services/loadingLogin_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
@@ -49,38 +50,70 @@ class _LoginBodyState extends State<LoginBody> {
   Widget build(BuildContext context) {
     validarVersionNueva();
     SizeConfiguracion().init(context);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: enviromentService.envState!.enviroment == 'DEV'
-          ? FloatingActionButton.extended(
-              heroTag: 'botonDesa',
-              icon: const Icon(Icons.perm_data_setting_sharp),
-              splashColor: Colors.red,
-              label: const Text('MBDM'),
-              isExtended: true,
-              tooltip: 'PARA SU USO EN DESA!',
-              //Esta condicion haabilita un boton flotante en el login para su ingreso sin escanear un dni.
-              onPressed: () async {
-                final respUsuario = await usuariosProviers.validarUsuariosNuevo(
-                    '36355149'); //Se inserta un numero de dni de un usuario que esta habilitado dentro del sistema de gestion
-                registradorService.cargarRegistrador(respUsuario[0]);
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        // ignore: missing_required_param
-                        builder: (context) => VacunadorPage(
-                              infoCargador: respUsuario,
-                            )),
-                    (Route<dynamic> route) => false);
-              },
-            )
-          : null,
-      body: Stack(
-        children: [
-          const EncabezadoWave(),
-          _LoginFormulario(context: context),
-        ],
-      ),
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: Colors.white,
+          floatingActionButton: enviromentService.envState!.enviroment == 'DEV'
+              ? FloatingActionButton.extended(
+                  heroTag: 'botonDesa',
+                  icon: const Icon(Icons.perm_data_setting_sharp),
+                  splashColor: Colors.red,
+                  label: const Text('MBDM'),
+                  isExtended: true,
+                  tooltip: 'PARA SU USO EN DESA!',
+                  //Esta condicion haabilita un boton flotante en el login para su ingreso sin escanear un dni.
+                  onPressed: () async {
+                    final respUsuario = await usuariosProviers.validarUsuariosNuevo(
+                        '36355149'); //Se inserta un numero de dni de un usuario que esta habilitado dentro del sistema de gestion
+                    registradorService.cargarRegistrador(respUsuario[0]);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            // ignore: missing_required_param
+                            builder: (context) => VacunadorPage(
+                                  infoCargador: respUsuario,
+                                )),
+                        (Route<dynamic> route) => false);
+                  },
+                )
+              : null,
+          body: Stack(
+            children: [
+              const EncabezadoWave(),
+              _LoginFormulario(context: context),
+            ],
+          ),
+        ),
+        StreamBuilder(
+          stream: loadingLoginService.loadingStateStream,
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            return loadingLoginService.getEstadoLoginState!
+                ? Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    color: Colors.black.withOpacity(.7),
+                    child: const Center(child: const LoadingEstrellas()))
+                : loadingLoginService.getEstadoPrimerInicioState!
+                    ? Container()
+                    : FutureBuilder(
+                        future: Future.delayed(Duration(milliseconds: 1000)),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<dynamic> snapshot) {
+                          return snapshot.connectionState ==
+                                  ConnectionState.waiting
+                              ? Container(
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                  color: Colors.black.withOpacity(.7),
+                                  child: const Center(
+                                      child: const LoadingEstrellas()))
+                              : Container();
+                        },
+                      );
+          },
+        ),
+      ],
     );
   }
 
