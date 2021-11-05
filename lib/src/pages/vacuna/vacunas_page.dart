@@ -749,17 +749,7 @@ class _VacunasPageState extends State<VacunasPage>
                                       MediaQuery.of(context).size.width * 0.02,
                                   left:
                                       MediaQuery.of(context).size.width * 0.02),
-                              child:
-                                  // FutureBuilder(
-                                  //       future: Future.delayed(
-                                  //           const Duration(milliseconds: 800)),
-                                  //       builder: (BuildContext context,
-                                  //           AsyncSnapshot<dynamic> snapshot) {
-                                  //         return snapshot.connectionState ==
-                                  //                 ConnectionState.waiting
-                                  //             ? const LoadingEstrellas()
-                                  //             :
-                                  Container(
+                              child: Container(
                                 padding: EdgeInsets.all(
                                     MediaQuery.of(context).size.width * 0.05),
                                 decoration: BoxDecoration(
@@ -1497,6 +1487,8 @@ class _VacunasPageState extends State<VacunasPage>
                                   funcion1: () {
                                     vacunasxPerfilService
                                         .eliminarListaVacunasxPerfil();
+                                    perfilesVacunacionService
+                                        .eliminarListaPerfiles();
                                     beneficiarioService
                                         .cargarBeneficiario(Beneficiario());
                                     notificacionesDosisService

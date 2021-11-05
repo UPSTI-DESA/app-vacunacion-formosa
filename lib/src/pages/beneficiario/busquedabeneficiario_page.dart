@@ -181,7 +181,6 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                   .size
                                                   .width *
                                               0.05),
-                                      //TODO CAMBIAR SHOWDIALOG VERIFICAR DATOS POR EL ACTUALIZADO
                                       const EscanerDni(
                                         'Beneficiario',
                                         'Escanee',

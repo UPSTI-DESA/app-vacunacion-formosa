@@ -32,7 +32,7 @@ class _PerfilesVacunacionrService {
   Stream<List<PerfilesVacunacion?>> get listaPerfilesVacunacionStream =>
       _listaPerfilesVacunacionStreamController.stream;
 
-  void cargarEfectores(PerfilesVacunacion? perfiles) {
+  void cargarPerfilesVacu(PerfilesVacunacion? perfiles) {
     _perfilesVacunacion = perfiles;
     _perfilesVacunacionStreamController.add(perfiles);
   }
@@ -41,6 +41,12 @@ class _PerfilesVacunacionrService {
       List<PerfilesVacunacion> listaPerfilesVacunacion) {
     _listaPerfilesVacunacion = listaPerfilesVacunacion;
     _listaPerfilesVacunacionStreamController.add(listaPerfilesVacunacion);
+  }
+
+  void eliminarListaPerfiles() {
+    List<PerfilesVacunacion> vacio = [];
+    _listaPerfilesVacunacion = vacio;
+    _listaPerfilesVacunacionStreamController.add(vacio);
   }
 
   dispose() {

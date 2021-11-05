@@ -10,6 +10,7 @@ import 'package:sistema_vacunacion/src/services/enviroment_service.dart';
 import 'src/pages/pages.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   _buildReleaseErrorWidgetBuilder();
   AppConfig appconfig = AppConfig(enviroment: 'DEV');
   enviromentService.cargarEnviroment(appconfig);
@@ -61,14 +62,12 @@ class MyApp extends StatelessWidget {
         Locale("es", "ES"), // Español
       ],
       routes: {
-        //TODO:LLEVAR A ARCHIVO DE RUTAS
         LoginBody.nombreRuta: (BuildContext context) => const LoginBody(),
         VacunadorPage.nombreRuta: (BuildContext context) => const VacunadorPage(
               infoCargador: [],
             ),
         BusquedaBeneficiario.nombreRuta: (context) =>
             const BusquedaBeneficiario(),
-
         VacunasPage.nombreRuta: (BuildContext context) => const VacunasPage(),
       },
     );

@@ -80,6 +80,9 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
               children: [
                 Column(
                   children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    ),
                     Padding(
                       padding: EdgeInsets.only(
                           right: MediaQuery.of(context).size.width * 0.02,
@@ -93,21 +96,27 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            TitulosContainerPage(
-                              colorTitle: SisVacuColor.black,
-                              sizeTitle: 18.0,
-                              widthThickness: 1.5,
-                              title: 'Datos Beneficiario',
+                            FadeInUpBig(
+                              from: 25,
+                              child: Text(
+                                'Datos Beneficiario',
+                                style: GoogleFonts.barlow(
+                                    textStyle: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20)),
+                              ),
                             ),
                             SizedBox(
                                 height:
                                     MediaQuery.of(context).size.width * 0.05),
                             Row(
                               children: [
-                                const Text('Nombre: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16.0),
+                                Text('Nombre: ',
+                                    style: GoogleFonts.nunito(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0),
+                                    ),
                                     textAlign: TextAlign.center),
                                 Expanded(
                                   child: SingleChildScrollView(
@@ -115,9 +124,11 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     child: Text(
                                         insertRegistroService
                                             .registro!.sysdesa10_nombre!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16.0),
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
+                                        ),
                                         textAlign: TextAlign.center),
                                   ),
                                 ),
@@ -128,10 +139,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     MediaQuery.of(context).size.width * 0.02),
                             Row(
                               children: [
-                                const Text('Apellido: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16.0),
+                                Text('Apellido: ',
+                                    style: GoogleFonts.nunito(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0),
+                                    ),
                                     textAlign: TextAlign.center),
                                 Expanded(
                                   child: SingleChildScrollView(
@@ -139,9 +152,11 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     child: Text(
                                         insertRegistroService
                                             .registro!.sysdesa10_apellido!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16.0),
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
+                                        ),
                                         textAlign: TextAlign.center),
                                   ),
                                 ),
@@ -152,10 +167,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     MediaQuery.of(context).size.width * 0.02),
                             Row(
                               children: [
-                                const Text('D.N.I.: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16.0),
+                                Text('D.N.I.: ',
+                                    style: GoogleFonts.nunito(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0),
+                                    ),
                                     textAlign: TextAlign.center),
                                 Expanded(
                                   child: SingleChildScrollView(
@@ -163,9 +180,11 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     child: Text(
                                         insertRegistroService
                                             .registro!.sysdesa10_dni!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16.0),
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
+                                        ),
                                         textAlign: TextAlign.center),
                                   ),
                                 ),
@@ -202,11 +221,15 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceAround,
                                     children: [
-                                      TitulosContainerPage(
-                                        colorTitle: SisVacuColor.black,
-                                        sizeTitle: 18.0,
-                                        widthThickness: 1.5,
-                                        title: 'Datos Tutor',
+                                      FadeInUpBig(
+                                        from: 25,
+                                        child: Text(
+                                          'Datos del Tutor',
+                                          style: GoogleFonts.barlow(
+                                              textStyle: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 20)),
+                                        ),
                                       ),
                                       SizedBox(
                                           height: MediaQuery.of(context)
@@ -215,10 +238,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               0.05),
                                       Row(
                                         children: [
-                                          const Text('Nombre: ',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 16.0),
+                                          Text('Nombre: ',
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0),
+                                              ),
                                               textAlign: TextAlign.center),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -227,10 +252,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                   insertRegistroService
                                                       .registro!
                                                       .sysdesa10_nombre_tutor!,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 16.0),
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
@@ -243,10 +270,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               0.02),
                                       Row(
                                         children: [
-                                          const Text('Apellido: ',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 16.0),
+                                          Text('Apellido: ',
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0),
+                                              ),
                                               textAlign: TextAlign.center),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -255,10 +284,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                   insertRegistroService
                                                       .registro!
                                                       .sysdesa10_apellido_tutor!,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 16.0),
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
@@ -271,10 +302,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               0.02),
                                       Row(
                                         children: [
-                                          const Text('D.N.I.: ',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 16.0),
+                                          Text('D.N.I.: ',
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0),
+                                              ),
                                               textAlign: TextAlign.center),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -283,10 +316,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                   insertRegistroService
                                                       .registro!
                                                       .sysdesa10_dni_tutor!,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontSize: 16.0),
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
@@ -316,21 +351,27 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            TitulosContainerPage(
-                              colorTitle: SisVacuColor.black,
-                              sizeTitle: 18.0,
-                              widthThickness: 1.5,
-                              title: 'Datos Vacuna',
+                            FadeInUpBig(
+                              from: 25,
+                              child: Text(
+                                'Datos Vacunas',
+                                style: GoogleFonts.barlow(
+                                    textStyle: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 20)),
+                              ),
                             ),
                             SizedBox(
                                 height:
                                     MediaQuery.of(context).size.width * 0.05),
                             Row(
                               children: [
-                                const Text('Vacuna: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16.0),
+                                Text('Vacuna: ',
+                                    style: GoogleFonts.nunito(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0),
+                                    ),
                                     textAlign: TextAlign.start),
                                 Expanded(
                                   child: SingleChildScrollView(
@@ -338,9 +379,11 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     child: Text(
                                         insertRegistroService
                                             .registro!.nombreVacuna!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16.0),
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
+                                        ),
                                         textAlign: TextAlign.start),
                                   ),
                                 ),
@@ -351,10 +394,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     MediaQuery.of(context).size.width * 0.02),
                             Row(
                               children: [
-                                const Text('Configuración: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16.0),
+                                Text('Configuración: ',
+                                    style: GoogleFonts.nunito(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0),
+                                    ),
                                     textAlign: TextAlign.start),
                                 Expanded(
                                   child: SingleChildScrollView(
@@ -362,9 +407,11 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     child: Text(
                                         insertRegistroService
                                             .registro!.nombreConfiguracion!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16.0),
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
+                                        ),
                                         textAlign: TextAlign.center),
                                   ),
                                 ),
@@ -375,10 +422,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     MediaQuery.of(context).size.width * 0.02),
                             Row(
                               children: [
-                                const Text('Lote: ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16.0),
+                                Text('Lote: ',
+                                    style: GoogleFonts.nunito(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0),
+                                    ),
                                     textAlign: TextAlign.center),
                                 Expanded(
                                   child: SingleChildScrollView(
@@ -386,9 +435,11 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     child: Text(
                                         insertRegistroService
                                             .registro!.nombreLote!,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16.0),
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
+                                        ),
                                         textAlign: TextAlign.center),
                                   ),
                                 ),
@@ -426,6 +477,10 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     funcion2: () => Navigator.of(context).pop(),
                                     envioFuncion1: true,
                                     funcion1: () {
+                                      vacunasxPerfilService
+                                          .eliminarListaVacunasxPerfil();
+                                      perfilesVacunacionService
+                                          .eliminarListaPerfiles();
                                       tutorService.cargarTutor(Tutor(
                                           sysdesa10_apellido_tutor: '',
                                           sysdesa10_nombre_tutor: '',
@@ -512,7 +567,6 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                   envioFuncion2: false,
                   envioFuncion1: true,
                   funcion1: () => Navigator.pushAndRemoveUntil(
-                      //ELIMINAR DATOS DE SINGLETONS
                       context,
                       MaterialPageRoute(
                           builder: (context) => const BusquedaBeneficiario()),
