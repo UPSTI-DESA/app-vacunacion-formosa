@@ -204,115 +204,6 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                             SizedBox(
                                 height:
                                     MediaQuery.of(context).size.width * 0.08),
-                            FadeInUp(
-                              from: 25,
-                              duration:
-                                  Duration(milliseconds: duracionAnimacion),
-                              delay: Duration(milliseconds: duracionDelay),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    right: MediaQuery.of(context).size.width *
-                                        0.02,
-                                    left: MediaQuery.of(context).size.width *
-                                        0.02),
-                                child: Container(
-                                  padding: const EdgeInsets.only(
-                                      top: 5.0,
-                                      right: 10.0,
-                                      left: 15.0,
-                                      bottom: 5.0),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.08),
-                                            offset: const Offset(0, 5),
-                                            blurRadius: 5)
-                                      ],
-                                      color: Colors.white),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            'Cantidad Vacunados: ',
-                                            style: GoogleFonts.nunito(
-                                              textStyle: const TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 20.0),
-                                            ),
-                                          ),
-                                          Bounce(
-                                            from: 10,
-                                            infinite: true,
-                                            duration: const Duration(
-                                                milliseconds: 2000),
-                                            child: Container(
-                                              child: StreamBuilder(
-                                                stream: cantidadVacunasService
-                                                    .cantidadvacunadosStream,
-                                                builder: (BuildContext context,
-                                                    AsyncSnapshot snapshot) {
-                                                  if (snapshot
-                                                          .connectionState ==
-                                                      ConnectionState.waiting) {
-                                                    return const Center(
-                                                        child:
-                                                            CircularProgressIndicator());
-                                                  } else {
-                                                    return Text(
-                                                      cantidadVacunasService
-                                                          .cantidadvacunados!
-                                                          .cantidad_aplicaciones!,
-                                                      style: TextStyle(
-                                                          color: SisVacuColor
-                                                              .white,
-                                                          fontSize:
-                                                              getValueForScreenType(
-                                                                  context:
-                                                                      context,
-                                                                  mobile: 15)),
-                                                    );
-                                                  }
-                                                },
-                                              ),
-                                              alignment: Alignment.center,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.15,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.15,
-                                              decoration: BoxDecoration(
-                                                  color: SisVacuColor
-                                                      .vercelesteCuaternario!,
-                                                  shape: BoxShape.circle),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                   modo
@@ -554,6 +445,87 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                 modo ? FontWeight.w700 : FontWeight.w100),
                       ),
                     ],
+                  ),
+                  modo
+                      ? SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05,
+                        )
+                      : SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.28,
+                        ),
+                  FadeInUp(
+                    from: 25,
+                    duration: Duration(milliseconds: duracionAnimacion),
+                    delay: Duration(milliseconds: duracionDelay),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.05),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                              height: MediaQuery.of(context).size.width * 0.04),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Vacunados:  ',
+                                style: GoogleFonts.nunito(
+                                  textStyle: const TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 20.0),
+                                ),
+                              ),
+                              Bounce(
+                                from: 10,
+                                infinite: true,
+                                duration: const Duration(milliseconds: 2000),
+                                child: Container(
+                                  child: StreamBuilder(
+                                    stream: cantidadVacunasService
+                                        .cantidadvacunadosStream,
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      } else {
+                                        return Text(
+                                          cantidadVacunasService
+                                              .cantidadvacunados!
+                                              .cantidad_aplicaciones!,
+                                          style: GoogleFonts.nunito(
+                                              textStyle: TextStyle(
+                                                  color: SisVacuColor.white,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize:
+                                                      getValueForScreenType(
+                                                          context: context,
+                                                          mobile: 18))),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  alignment: Alignment.center,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.12,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.12,
+                                  decoration: BoxDecoration(
+                                      color: SisVacuColor.vercelesteCuaternario!
+                                          .withOpacity(0.5),
+                                      shape: BoxShape.circle),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.width * 0.05),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
