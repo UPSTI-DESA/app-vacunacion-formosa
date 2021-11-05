@@ -57,16 +57,6 @@ class _VacunadorPageState extends State<VacunadorPage>
 
   @override
   Widget build(BuildContext context) {
-    const List<Color> _kDefaultRainbowColors = [
-      Colors.red,
-      Colors.orange,
-      Colors.yellow,
-      Colors.green,
-      Colors.blue,
-      Colors.indigo,
-      Colors.purple,
-    ];
-    final size = MediaQuery.of(context).size;
     return SafeArea(
         top: false,
         child: WillPopScope(
@@ -120,6 +110,8 @@ class _VacunadorPageState extends State<VacunadorPage>
                             child: Column(
                               children: [
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Equipo de trabajo',
@@ -128,10 +120,6 @@ class _VacunadorPageState extends State<VacunadorPage>
                                               fontWeight: FontWeight.w600,
                                               fontSize: 20)),
                                     ),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.3),
                                     IconButton(
                                       onPressed: () {
                                         showDialog(

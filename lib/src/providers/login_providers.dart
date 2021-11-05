@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:sistema_vacunacion/src/models/models.dart';
-import 'package:sistema_vacunacion/src/services/enviroment_service.dart';
 
 class _UsuariosProviders {
   Future<List<Usuarios>> procesarRespuestaDos(Uri url) async {

@@ -8,7 +8,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
 import 'package:sistema_vacunacion/src/services/loadingLogin_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
@@ -288,7 +287,7 @@ class _EscanerDniState extends State<EscanerDni> {
         : notificacionesDosisService.cargarRegistro(NotificacionesDosis());
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => VacunasPage()),
+        MaterialPageRoute(builder: (context) => const VacunasPage()),
         (Route<dynamic> route) => false);
   }
 

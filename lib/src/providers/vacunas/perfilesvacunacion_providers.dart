@@ -33,10 +33,10 @@ class _PerfilesVacunacionProviders {
         });
 
     final List<PerfilesVacunacion> resp = await procesarRespuestaDos(url);
-    if (resp[0].id_sysvacu12 != '') {
+    if (resp[0].codigo_mensaje != '0') {
       return perfilesVacunacionService.cargarlistaPerfilesVacunacion(resp);
     } else {
-      return 0;
+      return resp;
     }
   }
 }

@@ -1,10 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sistema_vacunacion/src/config/appsize_config.dart';
-import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/services/loadingLogin_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
@@ -93,11 +91,12 @@ class _LoginBodyState extends State<LoginBody> {
                     height: double.infinity,
                     width: double.infinity,
                     color: Colors.black.withOpacity(.7),
-                    child: const Center(child: const LoadingEstrellas()))
+                    child: const Center(child: LoadingEstrellas()))
                 : loadingLoginService.getEstadoPrimerInicioState!
                     ? Container()
                     : FutureBuilder(
-                        future: Future.delayed(Duration(milliseconds: 1000)),
+                        future:
+                            Future.delayed(const Duration(milliseconds: 1000)),
                         builder: (BuildContext context,
                             AsyncSnapshot<dynamic> snapshot) {
                           return snapshot.connectionState ==
@@ -106,8 +105,8 @@ class _LoginBodyState extends State<LoginBody> {
                                   height: double.infinity,
                                   width: double.infinity,
                                   color: Colors.black.withOpacity(.7),
-                                  child: const Center(
-                                      child: const LoadingEstrellas()))
+                                  child:
+                                      const Center(child: LoadingEstrellas()))
                               : Container();
                         },
                       );

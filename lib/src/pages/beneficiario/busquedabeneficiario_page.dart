@@ -6,7 +6,6 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/services/vacunadoscant_service.dart';
 import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
@@ -112,6 +111,8 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                         MainAxisAlignment.spaceAround,
                                     children: [
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           FadeInUpBig(
                                             from: 25,
@@ -124,11 +125,6 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                       fontSize: 20)),
                                             ),
                                           ),
-                                          SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.4),
                                           FadeInDownBig(
                                             from: 25,
                                             child: IconButton(
@@ -185,6 +181,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                   .size
                                                   .width *
                                               0.05),
+                                      //TODO CAMBIAR SHOWDIALOG VERIFICAR DATOS POR EL ACTUALIZADO
                                       const EscanerDni(
                                         'Beneficiario',
                                         'Escanee',
@@ -453,80 +450,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                       : SizedBox(
                           height: MediaQuery.of(context).size.height * 0.28,
                         ),
-                  FadeInUp(
-                    from: 25,
-                    duration: Duration(milliseconds: duracionAnimacion),
-                    delay: Duration(milliseconds: duracionDelay),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.02,
-                          left: MediaQuery.of(context).size.width * 0.05),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.04),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Vacunados:  ',
-                                style: GoogleFonts.nunito(
-                                  textStyle: const TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 20.0),
-                                ),
-                              ),
-                              Bounce(
-                                from: 10,
-                                infinite: true,
-                                duration: const Duration(milliseconds: 2000),
-                                child: Container(
-                                  child: StreamBuilder(
-                                    stream: cantidadVacunasService
-                                        .cantidadvacunadosStream,
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Center(
-                                            child: CircularProgressIndicator());
-                                      } else {
-                                        return Text(
-                                          cantidadVacunasService
-                                              .cantidadvacunados!
-                                              .cantidad_aplicaciones!,
-                                          style: GoogleFonts.nunito(
-                                              textStyle: TextStyle(
-                                                  color: SisVacuColor.white,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize:
-                                                      getValueForScreenType(
-                                                          context: context,
-                                                          mobile: 18))),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  alignment: Alignment.center,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.12,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.12,
-                                  decoration: BoxDecoration(
-                                      color: SisVacuColor.vercelesteCuaternario!
-                                          .withOpacity(0.5),
-                                      shape: BoxShape.circle),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.05),
-                        ],
-                      ),
-                    ),
-                  ),
+                  const CantidadVacunados(),
                 ],
               ),
             ),
@@ -586,7 +510,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
 
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => VacunasPage()),
+        MaterialPageRoute(builder: (context) => const VacunasPage()),
         (Route<dynamic> route) => false);
   }
 
@@ -632,5 +556,88 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     final cantidadVacunas = await cantidadVacunadosProvider.cantidadVacunas();
 
     cantidadVacunasService.cargarCantidadVacunados(cantidadVacunas[0]);
+  }
+}
+
+class CantidadVacunados extends StatefulWidget {
+  //TODO CONTINUAR ANIMACION LUEGO DE CAMBIAR EL SWITCH
+  const CantidadVacunados({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<CantidadVacunados> createState() => _CantidadVacunadosState();
+}
+
+class _CantidadVacunadosState extends State<CantidadVacunados> {
+  @override
+  Widget build(BuildContext context) {
+    int duracionAnimacion = 1000;
+
+    int duracionDelay = 0;
+    return FadeInUp(
+      from: 25,
+      duration: Duration(milliseconds: duracionAnimacion),
+      delay: Duration(milliseconds: duracionDelay),
+      child: Padding(
+        padding: EdgeInsets.only(
+            right: MediaQuery.of(context).size.width * 0.02,
+            left: MediaQuery.of(context).size.width * 0.05),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.width * 0.04),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Vacunados:  ',
+                  style: GoogleFonts.nunito(
+                    textStyle: const TextStyle(
+                        fontWeight: FontWeight.w800, fontSize: 20.0),
+                  ),
+                ),
+                Bounce(
+                  from: 10,
+                  infinite: true,
+                  duration: const Duration(milliseconds: 2000),
+                  child: Container(
+                    child: StreamBuilder(
+                      stream: cantidadVacunasService.cantidadvacunadosStream,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else {
+                          return Text(
+                            cantidadVacunasService
+                                .cantidadvacunados!.cantidad_aplicaciones!,
+                            style: GoogleFonts.nunito(
+                                textStyle: TextStyle(
+                                    color: SisVacuColor.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: getValueForScreenType(
+                                        context: context, mobile: 18))),
+                          );
+                        }
+                      },
+                    ),
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width * 0.12,
+                    height: MediaQuery.of(context).size.height * 0.12,
+                    decoration: BoxDecoration(
+                        color: SisVacuColor.vercelesteCuaternario!
+                            .withOpacity(0.5),
+                        shape: BoxShape.circle),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+          ],
+        ),
+      ),
+    );
   }
 }
