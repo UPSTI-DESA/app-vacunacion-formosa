@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sistema_vacunacion/src/config/config.dart';
 
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
@@ -237,17 +238,20 @@ class _EscanerDniState extends State<EscanerDni> {
                     color: Colors.grey[50],
                   ),
                 )
-              : AlertDialog(
-                  title: const Center(child: Text("Verificar Datos")),
-                  content: Text("Dni: $dniPersona , Sexo: $sexoPersona"),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          obtenerDatosBeneficiario(dniPersona);
-                          Navigator.of(context).pop();
-                        },
-                        child: const Icon(Icons.send))
-                  ],
+              : DialogoAlerta(
+                  color: SisVacuColor.yelow700,
+                  icon: const Icon(
+                    FontAwesomeIcons.check,
+                    color: Colors.white,
+                  ),
+                  tituloAlerta: "Verificar Datos",
+                  textoBotonAlerta: 'Verificar',
+                  textoBotonAlerta2: 'Cancelar',
+                  descripcionAlerta: "Dni: $dniPersona , Sexo: $sexoPersona",
+                  funcion1: () => obtenerDatosBeneficiario(dniPersona),
+                  funcion2: () => Navigator.of(context).pop(),
+                  envioFuncion1: true,
+                  envioFuncion2: true,
                 );
         });
   }

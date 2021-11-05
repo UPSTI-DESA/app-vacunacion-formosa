@@ -195,6 +195,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
 
   containerFoto(context) {
     return CircleAvatar(
+      backgroundColor: Colors.transparent,
       radius: 60,
       child: SizedBox(
         width: MediaQuery.of(context).size.height * 0.12,

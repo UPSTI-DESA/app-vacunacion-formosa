@@ -515,8 +515,7 @@ class _VacunasPageState extends State<VacunasPage>
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 4.0),
+                                            padding: const EdgeInsets.all(5.0),
                                             child: GestureDetector(
                                               onTap: () async {
                                                 listaConfiguraciones!.clear();
@@ -578,14 +577,30 @@ class _VacunasPageState extends State<VacunasPage>
                                               },
                                               child: Container(
                                                 decoration: BoxDecoration(
+                                                    boxShadow: _selectPerfil ==
+                                                            perfilesVacunacionService
+                                                                    .listaPerfilesVacunacion![
+                                                                index]
+                                                        ? <BoxShadow>[
+                                                            BoxShadow(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                                offset:
+                                                                    const Offset(
+                                                                        0, 5),
+                                                                blurRadius: 5)
+                                                          ]
+                                                        : null,
                                                     color: _selectPerfil ==
                                                             perfilesVacunacionService
                                                                     .listaPerfilesVacunacion![
                                                                 index]
-                                                        ? SisVacuColor.red!
-                                                            .withOpacity(.5)
-                                                        : SisVacuColor
+                                                        ? SisVacuColor
                                                             .vercelesteCuaternario!
+                                                            .withOpacity(.75)
+                                                        : SisVacuColor.white!
                                                             .withOpacity(.5),
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -598,6 +613,13 @@ class _VacunasPageState extends State<VacunasPage>
                                                             index]
                                                         .sysvacu12_descripcion!,
                                                     textAlign: TextAlign.center,
+                                                    style: GoogleFonts.nunito(
+                                                        fontWeight: _selectPerfil ==
+                                                                perfilesVacunacionService
+                                                                        .listaPerfilesVacunacion![
+                                                                    index]
+                                                            ? FontWeight.w700
+                                                            : FontWeight.w300),
                                                   ),
                                                 ),
                                               ),
@@ -815,8 +837,11 @@ class _VacunasPageState extends State<VacunasPage>
                                                         .map((iv) => PickerItem<
                                                                 VacunasxPerfil>(
                                                               text: Center(
-                                                                  child: Text(iv
-                                                                      .sysvacu04_nombre!)),
+                                                                  child: Text(
+                                                                iv.sysvacu04_nombre!,
+                                                                style: GoogleFonts
+                                                                    .nunito(),
+                                                              )),
                                                               value: iv,
                                                             ))
                                                         .toList(),
@@ -983,13 +1008,16 @@ class _VacunasPageState extends State<VacunasPage>
                                                               child: Padding(
                                                             padding:
                                                                 const EdgeInsets
-                                                                    .all(10.0),
-                                                            child: Text(iv
-                                                                    .sysvacu05_nombre! +
-                                                                '-' +
-                                                                iv.sysvacu01_descripcion! +
-                                                                '-' +
-                                                                iv.sysvacu02_descripcion!),
+                                                                    .all(5.0),
+                                                            child: Text(
+                                                              iv.sysvacu05_nombre! +
+                                                                  '-' +
+                                                                  iv.sysvacu01_descripcion! +
+                                                                  '-' +
+                                                                  iv.sysvacu02_descripcion!,
+                                                              style: GoogleFonts
+                                                                  .nunito(),
+                                                            ),
                                                           )),
                                                           value: iv,
                                                         ))
@@ -1487,7 +1515,10 @@ class _VacunasPageState extends State<VacunasPage>
                                         (Route<dynamic> route) => false);
                                   },
                                 ));
-                      })
+                      }),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
+                  )
                 ],
               ),
             ),

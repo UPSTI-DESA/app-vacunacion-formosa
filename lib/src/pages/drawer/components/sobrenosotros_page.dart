@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sistema_vacunacion/src/config/appcolor_config.dart';
 
 class SobreNosotrosPage extends StatelessWidget {
   const SobreNosotrosPage({Key? key}) : super(key: key);
@@ -15,15 +16,7 @@ class SobreNosotrosPage extends StatelessWidget {
     );
     return Scaffold(
         body: Container(
-      decoration: const BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: <Color>[
-            Color(0xff009CAF),
-            Color(0xff0F8DED),
-            Color(0xff1F7CFB),
-          ])),
+      decoration: BoxDecoration(color: SisVacuColor.white),
       child: Center(
           child: Container(
         width: size.width * 0.85,
@@ -45,7 +38,7 @@ class SobreNosotrosPage extends StatelessWidget {
             const SizedBox(
               height: 40.0,
             ),
-            Text("Versión: 2.5.0",
+            Text("Versión: 2.5.1",
                 style: GoogleFonts.nunito(
                   textStyle: const TextStyle(
                       fontSize: 25,
@@ -68,20 +61,17 @@ class SobreNosotrosPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                FadeInImage(
-                  placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+                Image(
                   image: const AssetImage('assets/img/fondo/logopolo.png'),
                   fit: BoxFit.cover,
                   height: size.height * 0.12,
                 ),
-                FadeInImage(
-                  placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+                Image(
                   image: const AssetImage('assets/img/fondo/logoupsti.png'),
                   fit: BoxFit.cover,
                   height: size.height * 0.05,
                 ),
-                FadeInImage(
-                  placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
+                Image(
                   image: const AssetImage('assets/img/fondo/sisVacunacion.png'),
                   fit: BoxFit.cover,
                   height: size.height * 0.10,

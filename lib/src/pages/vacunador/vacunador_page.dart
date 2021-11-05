@@ -368,11 +368,14 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                                   .w100),
                                                 ),
                                                 Switch(
-                                                    activeColor: Colors.orange,
+                                                    activeColor:
+                                                        SisVacuColor.red,
                                                     inactiveTrackColor:
-                                                        Colors.purple,
+                                                        SisVacuColor
+                                                            .azulFormosa,
                                                     inactiveThumbColor:
-                                                        Colors.purple,
+                                                        SisVacuColor
+                                                            .azulFormosa,
                                                     value: mismoVacunador!,
                                                     onChanged: (value) {
                                                       setState(() {

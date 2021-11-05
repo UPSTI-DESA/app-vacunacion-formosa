@@ -423,9 +423,9 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                 !modo ? FontWeight.w700 : FontWeight.w100),
                       ),
                       Switch(
-                          activeColor: Colors.orange,
-                          inactiveTrackColor: Colors.purple,
-                          inactiveThumbColor: Colors.purple,
+                          activeColor: SisVacuColor.verdeclaro,
+                          inactiveTrackColor: SisVacuColor.azulFormosa,
+                          inactiveThumbColor: SisVacuColor.azulFormosa,
                           value: modo,
                           onChanged: (value) {
                             setState(() {
@@ -560,7 +560,6 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
 }
 
 class CantidadVacunados extends StatefulWidget {
-  //TODO CONTINUAR ANIMACION LUEGO DE CAMBIAR EL SWITCH
   const CantidadVacunados({
     Key? key,
   }) : super(key: key);
@@ -598,6 +597,7 @@ class _CantidadVacunadosState extends State<CantidadVacunados> {
                   ),
                 ),
                 Bounce(
+                  manualTrigger: false,
                   from: 10,
                   infinite: true,
                   duration: const Duration(milliseconds: 2000),
