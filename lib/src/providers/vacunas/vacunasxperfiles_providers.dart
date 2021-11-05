@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'dart:convert';
 
@@ -26,10 +27,9 @@ class _VacunasxPerfiles {
   Future obtenerVacunasxPerfilesProviders(
       String? id, String? dni, String? sexo) async {
     final url = Uri(
-        scheme: 'https',
-        host: 'dh.formosa.gob.ar',
-        path:
-            '/modulos/webservice/php/version_2_0/copia_wserv_obtener_vacunas_configuradas_NUEVA_VERSION.php',
+        scheme: scheme,
+        host: host,
+        path: urlVacuxPerfiles,
         queryParameters: {
           'id_sysvacu12': id,
           'sysdesa10_dni': dni,

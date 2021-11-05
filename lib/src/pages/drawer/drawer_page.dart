@@ -45,7 +45,9 @@ class _BodyDrawerState extends State<BodyDrawer> {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.width * 0.04,
+                    bottom: MediaQuery.of(context).size.width * 0.07),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -85,95 +87,91 @@ class _BodyDrawerState extends State<BodyDrawer> {
               ),
               SizedBox(height: MediaQuery.of(context).size.width * 0.075),
               Expanded(
-                child: Container(
-                  color: Colors.white,
-                  child: ListView(
-                    padding: const EdgeInsets.only(top: 0.0),
-                    children: [
-                      ListTile(
-                          leading: Icon(
-                            FontAwesomeIcons.solidEdit,
-                            color: SisVacuColor.vercelesteCuaternario,
-                            size: MediaQuery.of(context).size.width / 20.0,
-                          ),
-                          title: Text('Editar equipo de trabajo',
-                              style: GoogleFonts.nunito(
-                                textStyle: const TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 20,
-                                ),
-                              )),
-                          onTap: () {
-                            vacunadorService.cargarVacunador(null);
-
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    // ignore: missing_required_param
-                                    builder: (context) => const VacunadorPage(
-                                          infoCargador: [],
-                                        )));
-                          }),
-                      ListTile(
+                child: ListView(
+                  padding: const EdgeInsets.only(top: 0.0),
+                  children: [
+                    ListTile(
                         leading: Icon(
-                          FontAwesomeIcons.info,
+                          FontAwesomeIcons.solidEdit,
                           color: SisVacuColor.vercelesteCuaternario,
                           size: MediaQuery.of(context).size.width / 20.0,
                         ),
-                        title: Text('Sobre Nosotros',
+                        title: Text('Editar equipo de trabajo',
                             style: GoogleFonts.nunito(
                               textStyle: const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 20,
                               ),
                             )),
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const SobreNosotrosPage())),
+                        onTap: () {
+                          vacunadorService.cargarVacunador(null);
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  // ignore: missing_required_param
+                                  builder: (context) => const VacunadorPage(
+                                        infoCargador: [],
+                                      )));
+                        }),
+                    ListTile(
+                      leading: Icon(
+                        FontAwesomeIcons.info,
+                        color: SisVacuColor.vercelesteCuaternario,
+                        size: MediaQuery.of(context).size.width / 20.0,
                       ),
-                      ListTile(
-                          leading: Icon(
-                            FontAwesomeIcons.solidFilePdf,
-                            color: SisVacuColor.vercelesteCuaternario,
-                            size: MediaQuery.of(context).size.width / 20.0,
-                          ),
-                          title: Text('Descargar PDF',
-                              style: GoogleFonts.nunito(
-                                textStyle: const TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 20,
-                                ),
-                              )),
-                          onTap: () {
-                            _launchPDF();
-                          }),
-                      ListTile(
-                          leading: Icon(
-                            FontAwesomeIcons.powerOff,
-                            color: SisVacuColor.red,
-                            size: MediaQuery.of(context).size.width / 20.0,
-                          ),
-                          title: Text('Cerrar Sesión',
-                              style: GoogleFonts.nunito(
-                                textStyle: const TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 20,
-                                ),
-                              )),
-                          onTap: () {
-                            loadingLoginService.cargarEstado(false);
-                            datosdecargaprovider.nombreVacunador = '';
-                            datosdecargaprovider.dniVacunador = '';
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const LoginBody(),
-                                ));
-                          }),
-                    ],
-                  ),
+                      title: Text('Sobre Nosotros',
+                          style: GoogleFonts.nunito(
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontSize: 20,
+                            ),
+                          )),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SobreNosotrosPage())),
+                    ),
+                    ListTile(
+                        leading: Icon(
+                          FontAwesomeIcons.solidFilePdf,
+                          color: SisVacuColor.vercelesteCuaternario,
+                          size: MediaQuery.of(context).size.width / 20.0,
+                        ),
+                        title: Text('Descargar PDF',
+                            style: GoogleFonts.nunito(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 20,
+                              ),
+                            )),
+                        onTap: () {
+                          _launchPDF();
+                        }),
+                    ListTile(
+                        leading: Icon(
+                          FontAwesomeIcons.powerOff,
+                          color: SisVacuColor.red,
+                          size: MediaQuery.of(context).size.width / 20.0,
+                        ),
+                        title: Text('Cerrar Sesión',
+                            style: GoogleFonts.nunito(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 20,
+                              ),
+                            )),
+                        onTap: () {
+                          loadingLoginService.cargarEstado(false);
+                          datosdecargaprovider.nombreVacunador = '';
+                          datosdecargaprovider.dniVacunador = '';
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginBody(),
+                              ));
+                        }),
+                  ],
                 ),
               ),
               // SizedBox(height: MediaQuery.of(context).size.height * 0.25),

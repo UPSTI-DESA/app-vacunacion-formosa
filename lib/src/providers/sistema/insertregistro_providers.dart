@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 
@@ -11,9 +12,9 @@ class _InsertRegistro {
     String registro = insertRegistrosToJson(listaRegistros);
 
     final url = Uri(
-        scheme: 'https',
-        host: 'dh.formosa.gob.ar',
-        path: '/modulos/webservice/php/version_2_0/wserv_registrar_vacuna.php',
+        scheme: scheme,
+        host: host,
+        path: urlInRegVacu,
         queryParameters: {'insertvacunado': registro});
     // ignore: unused_local_variable
     final cargarRegistro = await procesarRespuestaUri(url);

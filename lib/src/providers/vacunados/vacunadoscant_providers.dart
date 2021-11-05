@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:sistema_vacunacion/src/config/config.dart';
+
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 
@@ -22,19 +24,14 @@ class _CantidadVacunadosFecha {
   }
 
   Future cantidadVacunas() async {
-    final url = Uri(
-        scheme: 'https',
-        host: 'dh.formosa.gob.ar',
-        path:
-            '/modulos/webservice/php/version_2_0/wserv_cantidad_vacunas_registradas.php',
-        queryParameters: {
-          'id_sysdesa12': vacunadorService.vacunador!.id_sysdesa12,
-          'vacunador_registrador':
-              registradorService.registrador!.flxcore03_dni ==
-                      vacunadorService.vacunador!.id_sysdesa12
-                  ? '1'
-                  : '0',
-        });
+    final url =
+        Uri(scheme: scheme, host: host, path: urlCantVacu, queryParameters: {
+      'id_sysdesa12': vacunadorService.vacunador!.id_sysdesa12,
+      'vacunador_registrador': registradorService.registrador!.flxcore03_dni ==
+              vacunadorService.vacunador!.id_sysdesa12
+          ? '1'
+          : '0',
+    });
 
     final List<CantidadVacunados> resp = await procesarRespuestaDos(url);
     return resp;

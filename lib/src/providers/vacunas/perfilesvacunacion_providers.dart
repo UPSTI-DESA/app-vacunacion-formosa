@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'dart:convert';
 
@@ -23,14 +24,10 @@ class _PerfilesVacunacionProviders {
   }
 
   Future obtenerDatosPerfilesVacunacion(String? rela) async {
-    final url = Uri(
-        scheme: 'https',
-        host: 'dh.formosa.gob.ar',
-        path:
-            '/modulos/webservice/php/version_2_0/wserv_obtener_perfil_vacunacion.php',
-        queryParameters: {
-          'rela_flxcore03': rela,
-        });
+    final url =
+        Uri(scheme: scheme, host: host, path: urlPerfiVacu, queryParameters: {
+      'rela_flxcore03': rela,
+    });
 
     final List<PerfilesVacunacion> resp = await procesarRespuestaDos(url);
     if (resp[0].codigo_mensaje != '0') {

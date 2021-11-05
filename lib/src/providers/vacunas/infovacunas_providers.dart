@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:sistema_vacunacion/src/config/config.dart';
+
 import 'dart:convert';
 
 import 'package:sistema_vacunacion/src/models/models.dart';
@@ -35,15 +37,11 @@ class _InfoVacunasProviders {
   }
 
   Future validarVacunas() async {
-    final url = Uri(
-        scheme: 'https',
-        host: 'dh.formosa.gob.ar',
-        path:
-            '/modulos/webservice/php/version_2_0/wserv_obtener_vacunas_configuradas.php',
-        queryParameters: {
-          'sysdesa10_dni': beneficiarioService.beneficiario!.sysdesa10_dni,
-          'sysdesa10_sexo': beneficiarioService.beneficiario!.sysdesa10_sexo,
-        });
+    final url =
+        Uri(scheme: scheme, host: host, path: urlInfoVacu, queryParameters: {
+      'sysdesa10_dni': beneficiarioService.beneficiario!.sysdesa10_dni,
+      'sysdesa10_sexo': beneficiarioService.beneficiario!.sysdesa10_sexo,
+    });
 
     final List<InfoVacunas> resp = await obtenerRespuestaVacunas(url);
     if (resp[0].id_sysvacu04 != '') {

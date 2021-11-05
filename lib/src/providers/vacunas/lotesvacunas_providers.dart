@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:sistema_vacunacion/src/config/appconst_config.dart';
 import 'dart:convert';
 
 import 'package:sistema_vacunacion/src/models/models.dart';
@@ -22,14 +23,10 @@ class _LotesVacunaProviders {
   }
 
   Future validarLotes(String? idVacu) async {
-    final url = Uri(
-        scheme: 'https',
-        host: 'dh.formosa.gob.ar',
-        path:
-            '/modulos/webservice/php/version_2_0/wserv_obtener_lotes_vacunas.php',
-        queryParameters: {
-          'id_sysvacu04': idVacu,
-        });
+    final url =
+        Uri(scheme: scheme, host: host, path: urlLoteVacu, queryParameters: {
+      'id_sysvacu04': idVacu,
+    });
 
     final List<Lotes> resp = await procesarRespuestaDos(url);
     return resp;

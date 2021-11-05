@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:sistema_vacunacion/src/config/config.dart';
 import 'dart:convert';
 
 import 'package:sistema_vacunacion/src/models/models.dart';
@@ -23,13 +24,10 @@ class _UsuariosProviders {
   }
 
   Future validarUsuarios(String dni) async {
-    final url = Uri(
-        scheme: 'https',
-        host: 'dh.formosa.gob.ar',
-        path: '/modulos/webservice/php/wserv_efector_registrador.php',
-        queryParameters: {
-          'flxcore03_dni': dni,
-        });
+    final url =
+        Uri(scheme: scheme, host: host, path: urlLogin, queryParameters: {
+      'flxcore03_dni': dni,
+    });
 
     final List<Usuarios> resp = await procesarRespuestaDos(url);
     if (resp[0].flxcore03_dni != '') {

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:sistema_vacunacion/src/config/appconst_config.dart';
 import 'dart:convert';
 
 import 'package:sistema_vacunacion/src/models/sistema/notificacionesdosis_models.dart';
@@ -23,10 +24,9 @@ class _NotificacionesProviders {
 
   Future validarNotificaciones(String? dni, String? sexo) async {
     final url = Uri(
-        scheme: 'https',
-        host: 'dh.formosa.gob.ar',
-        path:
-            '/modulos/webservice/php/version_2_0/obtener_aplicaciones_beneficiario.php',
+        scheme: scheme,
+        host: host,
+        path: urlNoti,
         queryParameters: {'sysdesa10_dni': dni, 'sysdesa10_sexo': sexo});
 
     final List<NotificacionesDosis> resp = await procesarRespuestaDos(url);

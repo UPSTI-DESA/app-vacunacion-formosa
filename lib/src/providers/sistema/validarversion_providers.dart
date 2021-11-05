@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 
 class _ValidacionVersion {
@@ -23,9 +24,9 @@ class _ValidacionVersion {
 
   Future validarVersion() async {
     final url = Uri(
-      scheme: 'https',
-      host: 'dh.formosa.gob.ar',
-      path: '/modulos/webservice/php/wserv_versiones_app.php',
+      scheme: scheme,
+      host: host,
+      path: urlValVersion,
     );
 
     final List<Version> resp = await procesarRespuesta(url);
