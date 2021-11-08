@@ -71,7 +71,7 @@ flutter_native_splash:
   #Se puede agregar una Imagen como Background
   #background_image: "assets/background.png"  
  #Imagen a agregar en la Mitad de la pantalla   
-  image: assets/logo/VacunApp3.png
+  image: assets/logo/VacunApp2.png
   android: true
   ios: true
   web: true
@@ -84,7 +84,7 @@ flutter_icons:
   android: true
   adaptive_icon_background: "#FCEFEF"
   ios: true
-  image_path: "assets/logo/VacunApp1.png"
+  image_path: "assets/logo/logo.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
