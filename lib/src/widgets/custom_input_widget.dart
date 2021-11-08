@@ -6,6 +6,7 @@ class CustomInput extends StatelessWidget {
   final TextEditingController textController;
   final TextInputType keyboardType;
   final bool isPassword;
+  final int maxLength;
 
   const CustomInput({
     Key? key,
@@ -14,6 +15,7 @@ class CustomInput extends StatelessWidget {
     required this.textController,
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
+    this.maxLength = 8,
   }) : super(key: key);
 
   @override
@@ -33,6 +35,7 @@ class CustomInput extends StatelessWidget {
                 blurRadius: 5)
           ]),
       child: TextField(
+        maxLength: maxLength,
         autocorrect: false,
         controller: textController,
         keyboardType: keyboardType,

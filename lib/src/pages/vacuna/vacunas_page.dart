@@ -39,6 +39,7 @@ class _VacunasPageState extends State<VacunasPage>
   Lotes? _selectLote;
   String uribeneficiario = beneficiarioService.beneficiario!.foto_beneficiario!;
   final TextEditingController controladorDni = TextEditingController();
+  final TextEditingController controladorBusqueda = TextEditingController();
   late bool genero;
   String? dniTutor;
   String? sexoTutor;
@@ -530,6 +531,7 @@ class _VacunasPageState extends State<VacunasPage>
                                                       perfilesVacunacionService
                                                               .listaPerfilesVacunacion![
                                                           index];
+                                                  _selectVacunas = null;
                                                 });
                                                 final tempLista =
                                                     await vacunasxPerfiles
@@ -756,106 +758,281 @@ class _VacunasPageState extends State<VacunasPage>
                                                             child: Text(
                                                                 'Hubo un problema'),
                                                           )
-                                                        : Picker(
-                                                            title: const Text(
-                                                              'Vacunas',
-                                                            ),
-                                                            itemExtent: 45,
-                                                            cancelText:
-                                                                "Cancelar",
-                                                            confirmText:
-                                                                'Confirmar',
-                                                            adapter:
-                                                                PickerDataAdapter<
-                                                                    VacunasxPerfil>(
-                                                              data: vacunasxPerfilService
-                                                                  .listavacunasxPerfil!
-                                                                  .map((iv) =>
-                                                                      PickerItem<
-                                                                          VacunasxPerfil>(
-                                                                        text: Center(
-                                                                            child: Text(
-                                                                          iv.sysvacu04_nombre!,
-                                                                          style:
-                                                                              GoogleFonts.nunito(),
-                                                                        )),
-                                                                        value:
-                                                                            iv,
-                                                                      ))
-                                                                  .toList(),
-                                                            ),
-                                                            squeeze: 1,
-                                                            height:
-                                                                size.height *
-                                                                    .2,
-                                                            onConfirm: (Picker
-                                                                    picker,
-                                                                List
-                                                                    value) async {
-                                                              PickerDataAdapter<
-                                                                      VacunasxPerfil>
-                                                                  pickerAdapter =
-                                                                  picker.adapter
-                                                                      as PickerDataAdapter<
-                                                                          VacunasxPerfil>;
-                                                              listaConfiguraciones!
-                                                                  .clear();
-                                                              listaLotes!
-                                                                  .clear();
-                                                              setState(() {
-                                                                _selectLote =
-                                                                    null;
-                                                                _selectConfigVacuna =
-                                                                    null;
-                                                                _selectVacunas =
-                                                                    pickerAdapter
-                                                                        .data[value
-                                                                            .first]
-                                                                        .value;
-                                                              });
-                                                              final tempLista =
-                                                                  await configuracionVacunaProvider
-                                                                      .validarConfiguraciones(
-                                                                          _selectVacunas!
-                                                                              .id_sysvacu04);
-                                                              tempLista[0].codigo_mensaje ==
-                                                                      "0"
-                                                                  ? showDialog(
-                                                                      context:
-                                                                          context,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return DialogoAlerta(
-                                                                            envioFuncion2:
-                                                                                false,
-                                                                            envioFuncion1:
-                                                                                false,
-                                                                            tituloAlerta:
-                                                                                'ATENCIÓN!',
-                                                                            descripcionAlerta: tempLista[0]
-                                                                                .mensaje,
-                                                                            textoBotonAlerta:
-                                                                                'Listo',
-                                                                            icon:
-                                                                                const Icon(
-                                                                              Icons.error_outline,
-                                                                              size: 40,
-                                                                            ),
+                                                        : showModalBottomSheet(
+                                                            useRootNavigator:
+                                                                true,
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return StreamBuilder(
+                                                                builder: (BuildContext
+                                                                        context,
+                                                                    AsyncSnapshot<
+                                                                            dynamic>
+                                                                        snapshot) {
+                                                                  return Column(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        height: MediaQuery.of(context).size.height *
+                                                                            .005,
+                                                                      ),
+                                                                      Container(
+                                                                        padding: const EdgeInsets.only(
+                                                                            top:
+                                                                                5,
+                                                                            left:
+                                                                                5,
+                                                                            bottom:
+                                                                                5,
+                                                                            right:
+                                                                                20),
+                                                                        margin: EdgeInsets.only(
+                                                                            right: MediaQuery.of(context).size.width *
+                                                                                0.04,
+                                                                            left:
+                                                                                MediaQuery.of(context).size.width * 0.04),
+                                                                        decoration: BoxDecoration(
                                                                             color:
-                                                                                Colors.red);
-                                                                      })
-                                                                  : {
-                                                                      mostrarLoadingEstrellasXTiempo(
-                                                                          context,
-                                                                          800),
-                                                                      setState(
-                                                                          () {
-                                                                        listaConfiguraciones =
-                                                                            tempLista;
-                                                                      })
-                                                                    };
-                                                            }).showModal(context);
+                                                                                Colors.blueGrey[50],
+                                                                            borderRadius: BorderRadius.circular(20),
+                                                                            boxShadow: <BoxShadow>[
+                                                                              BoxShadow(color: Colors.black.withOpacity(0.05), offset: const Offset(0, 5), blurRadius: 5)
+                                                                            ]),
+                                                                        child:
+                                                                            TextField(
+                                                                          autocorrect:
+                                                                              false,
+                                                                          controller:
+                                                                              controladorBusqueda,
+                                                                          keyboardType:
+                                                                              TextInputType.text,
+                                                                          decoration:
+                                                                              const InputDecoration(
+                                                                            prefixIcon:
+                                                                                Icon(Icons.medical_services_rounded),
+                                                                            focusedBorder:
+                                                                                InputBorder.none,
+                                                                            border:
+                                                                                InputBorder.none,
+                                                                            hintText:
+                                                                                'Buscar Vacuna...',
+                                                                          ),
+                                                                          onChanged: (value) =>
+                                                                              vacunasxPerfilService.buscarVacuna(value.toUpperCase()),
+                                                                        ),
+                                                                      ),
+                                                                      StreamBuilder(
+                                                                        stream:
+                                                                            vacunasxPerfilService.listaBusquedaStream,
+                                                                        builder: (BuildContext
+                                                                                context,
+                                                                            AsyncSnapshot<dynamic>
+                                                                                snapshot) {
+                                                                          return controladorBusqueda.text.isEmpty
+                                                                              ? SizedBox(
+                                                                                  height: MediaQuery.of(context).size.height * .4,
+                                                                                  child: ListView.builder(
+                                                                                    shrinkWrap: true,
+                                                                                    itemCount: vacunasxPerfilService.listavacunasxPerfil!.length,
+                                                                                    itemBuilder: (BuildContext context, int index) {
+                                                                                      return InkWell(
+                                                                                        onTap: () async {
+                                                                                          listaConfiguraciones!.clear();
+                                                                                          listaLotes!.clear();
+                                                                                          setState(() {
+                                                                                            _selectLote = null;
+                                                                                            _selectConfigVacuna = null;
+                                                                                            _selectVacunas = vacunasxPerfilService.listavacunasxPerfil![index];
+                                                                                          });
+                                                                                          final tempLista = await configuracionVacunaProvider.validarConfiguraciones(_selectVacunas!.id_sysvacu04);
+                                                                                          tempLista[0].codigo_mensaje == "0"
+                                                                                              ? showDialog(
+                                                                                                  context: context,
+                                                                                                  builder: (BuildContext context) {
+                                                                                                    return DialogoAlerta(
+                                                                                                        envioFuncion2: false,
+                                                                                                        envioFuncion1: false,
+                                                                                                        tituloAlerta: 'ATENCIÓN!',
+                                                                                                        descripcionAlerta: tempLista[0].mensaje,
+                                                                                                        textoBotonAlerta: 'Listo',
+                                                                                                        icon: const Icon(
+                                                                                                          Icons.error_outline,
+                                                                                                          size: 40,
+                                                                                                        ),
+                                                                                                        color: Colors.red);
+                                                                                                  })
+                                                                                              : {
+                                                                                                  Navigator.of(context).pop(),
+                                                                                                  mostrarLoadingEstrellasXTiempo(context, 800),
+                                                                                                  setState(() {
+                                                                                                    listaConfiguraciones = tempLista;
+                                                                                                  }),
+                                                                                                };
+                                                                                        },
+                                                                                        child: ListTile(
+                                                                                          title: Text(vacunasxPerfilService.listavacunasxPerfil![index].sysvacu04_nombre!),
+                                                                                          trailing: const Icon(Icons.medical_services_outlined),
+                                                                                        ),
+                                                                                      );
+                                                                                    },
+                                                                                  ),
+                                                                                )
+                                                                              : SizedBox(
+                                                                                  height: MediaQuery.of(context).size.height * .4,
+                                                                                  child: ListView.builder(
+                                                                                    shrinkWrap: true,
+                                                                                    itemCount: vacunasxPerfilService.listavacunasxPerfilBusqueda!.length,
+                                                                                    itemBuilder: (BuildContext context, int index) {
+                                                                                      return InkWell(
+                                                                                        onTap: () async {
+                                                                                          listaConfiguraciones!.clear();
+                                                                                          listaLotes!.clear();
+                                                                                          setState(() {
+                                                                                            _selectLote = null;
+                                                                                            _selectConfigVacuna = null;
+                                                                                            _selectVacunas = vacunasxPerfilService.listavacunasxPerfilBusqueda![index];
+                                                                                          });
+                                                                                          final tempLista = await configuracionVacunaProvider.validarConfiguraciones(_selectVacunas!.id_sysvacu04);
+                                                                                          tempLista[0].codigo_mensaje == "0"
+                                                                                              ? showDialog(
+                                                                                                  context: context,
+                                                                                                  builder: (BuildContext context) {
+                                                                                                    return DialogoAlerta(
+                                                                                                        envioFuncion2: false,
+                                                                                                        envioFuncion1: false,
+                                                                                                        tituloAlerta: 'ATENCIÓN!',
+                                                                                                        descripcionAlerta: tempLista[0].mensaje,
+                                                                                                        textoBotonAlerta: 'Listo',
+                                                                                                        icon: const Icon(
+                                                                                                          Icons.error_outline,
+                                                                                                          size: 40,
+                                                                                                        ),
+                                                                                                        color: Colors.red);
+                                                                                                  })
+                                                                                              : {
+                                                                                                  Navigator.of(context).pop(),
+                                                                                                  mostrarLoadingEstrellasXTiempo(context, 800),
+                                                                                                  setState(() {
+                                                                                                    listaConfiguraciones = tempLista;
+                                                                                                  }),
+                                                                                                  Navigator.of(context).pop()
+                                                                                                };
+                                                                                        },
+                                                                                        child: ListTile(
+                                                                                          title: Text(vacunasxPerfilService.listavacunasxPerfilBusqueda![index].sysvacu04_nombre!),
+                                                                                          trailing: const Icon(Icons.medical_services_outlined),
+                                                                                        ),
+                                                                                      );
+                                                                                    },
+                                                                                  ),
+                                                                                );
+                                                                        },
+                                                                      )
+                                                                    ],
+                                                                  );
+                                                                },
+                                                              );
+                                                            });
+
+                                                    // Picker(
+                                                    //     title: const Text(
+                                                    //       'Vacunas',
+                                                    //     ),
+                                                    //     itemExtent: 45,
+                                                    //     cancelText: "Cancelar",
+                                                    //     confirmText:
+                                                    //         'Confirmar',
+                                                    //     adapter:
+                                                    //         PickerDataAdapter<
+                                                    //             VacunasxPerfil>(
+                                                    //       data: vacunasxPerfilService
+                                                    //           .listavacunasxPerfil!
+                                                    //           .map((iv) =>
+                                                    //               PickerItem<
+                                                    //                   VacunasxPerfil>(
+                                                    //                 text: Center(
+                                                    //                     child: Text(
+                                                    //                   iv.sysvacu04_nombre!,
+                                                    //                   style: GoogleFonts
+                                                    //                       .nunito(),
+                                                    //                 )),
+                                                    //                 value: iv,
+                                                    //               ))
+                                                    //           .toList(),
+                                                    //     ),
+                                                    //     squeeze: 1,
+                                                    //     height:
+                                                    //         size.height * .2,
+                                                    //     onConfirm: (Picker
+                                                    //             picker,
+                                                    //         List value) async {
+                                                    //       PickerDataAdapter<
+                                                    //               VacunasxPerfil>
+                                                    //           pickerAdapter =
+                                                    //           picker.adapter
+                                                    //               as PickerDataAdapter<
+                                                    //                   VacunasxPerfil>;
+                                                    //       listaConfiguraciones!
+                                                    //           .clear();
+                                                    //       listaLotes!.clear();
+                                                    //       setState(() {
+                                                    //         _selectLote = null;
+                                                    //         _selectConfigVacuna =
+                                                    //             null;
+                                                    //         _selectVacunas =
+                                                    //             pickerAdapter
+                                                    //                 .data[value
+                                                    //                     .first]
+                                                    //                 .value;
+                                                    //       });
+                                                    //       final tempLista =
+                                                    //           await configuracionVacunaProvider
+                                                    //               .validarConfiguraciones(
+                                                    //                   _selectVacunas!
+                                                    //                       .id_sysvacu04);
+                                                    //       tempLista[0].codigo_mensaje ==
+                                                    //               "0"
+                                                    //           ? showDialog(
+                                                    //               context:
+                                                    //                   context,
+                                                    //               builder:
+                                                    //                   (BuildContext
+                                                    //                       context) {
+                                                    //                 return DialogoAlerta(
+                                                    //                     envioFuncion2:
+                                                    //                         false,
+                                                    //                     envioFuncion1:
+                                                    //                         false,
+                                                    //                     tituloAlerta:
+                                                    //                         'ATENCIÓN!',
+                                                    //                     descripcionAlerta:
+                                                    //                         tempLista[0]
+                                                    //                             .mensaje,
+                                                    //                     textoBotonAlerta:
+                                                    //                         'Listo',
+                                                    //                     icon:
+                                                    //                         const Icon(
+                                                    //                       Icons
+                                                    //                           .error_outline,
+                                                    //                       size:
+                                                    //                           40,
+                                                    //                     ),
+                                                    //                     color: Colors
+                                                    //                         .red);
+                                                    //               })
+                                                    //           : {
+                                                    //               mostrarLoadingEstrellasXTiempo(
+                                                    //                   context,
+                                                    //                   800),
+                                                    //               setState(() {
+                                                    //                 listaConfiguraciones =
+                                                    //                     tempLista;
+                                                    //               })
+                                                    //             };
+                                                    //     })
+
+                                                    // .showModal(context);
                                                   }),
                                             ],
                                           ),
@@ -1450,9 +1627,9 @@ class _VacunasPageState extends State<VacunasPage>
 
                                     notificacionesDosisService
                                         .eliminarListaDosis();
-                                    tutorService.eliminarTutor();
-                                    vacunadorService.eliminarVacunador();
-
+                                    // tutorService.existeTutor
+                                    //     ? tutorService.eliminarTutor()
+                                    //     : () {};
                                     Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
