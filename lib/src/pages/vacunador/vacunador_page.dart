@@ -154,9 +154,8 @@ class _VacunadorPageState extends State<VacunadorPage>
                                     height: MediaQuery.of(context).size.width *
                                         0.05),
                                 Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       child: SingleChildScrollView(
@@ -182,12 +181,6 @@ class _VacunadorPageState extends State<VacunadorPage>
                                     ),
                                     InkWell(
                                         onTap: () {
-                                          if (animacionIcono!.isCompleted) {
-                                            animacionIcono!.reverse();
-                                          } else {
-                                            animacionIcono!.forward();
-                                          }
-
                                           showModalBottomSheet(
                                               useRootNavigator: true,
                                               context: context,
@@ -199,46 +192,82 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                             context,
                                                         AsyncSnapshot<dynamic>
                                                             snapshot) {
-                                                      return ListView.builder(
-                                                        itemCount:
-                                                            efectoresService
-                                                                .listaEfectores!
-                                                                .length,
-                                                        itemBuilder:
-                                                            (BuildContext
-                                                                    context,
-                                                                int index) {
-                                                          return ListTile(
-                                                            title:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                registradorService
-                                                                    .editarEfectorUsuario(
-                                                                        efectoresService
-                                                                            .listaEfectores![index]);
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(
-                                                                        context);
-                                                              },
-                                                              child: Text(
-                                                                efectoresService
-                                                                    .listaEfectores![
-                                                                        index]
-                                                                    .sysofic01Descripcion!,
-                                                                style: GoogleFonts
-                                                                    .nunito(),
-                                                              ),
+                                                      return Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Text(
+                                                              'Efectores',
+                                                              style: GoogleFonts.barlow(
+                                                                  letterSpacing:
+                                                                      1.5,
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700),
                                                             ),
-                                                          );
-                                                        },
+                                                          ),
+                                                          Expanded(
+                                                            child: ListView
+                                                                .builder(
+                                                              shrinkWrap: true,
+                                                              itemCount:
+                                                                  efectoresService
+                                                                      .listaEfectores!
+                                                                      .length,
+                                                              itemBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      int index) {
+                                                                return ListTile(
+                                                                  title:
+                                                                      InkWell(
+                                                                    highlightColor: SisVacuColor
+                                                                        .vercelestePrimario!
+                                                                        .withOpacity(
+                                                                            0.3),
+                                                                    onTap: () {
+                                                                      registradorService
+                                                                          .editarEfectorUsuario(
+                                                                              efectoresService.listaEfectores![index]);
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(
+                                                                              context);
+                                                                    },
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding:
+                                                                          const EdgeInsets.all(
+                                                                              8.0),
+                                                                      child:
+                                                                          Text(
+                                                                        efectoresService
+                                                                            .listaEfectores![index]
+                                                                            .sysofic01Descripcion!,
+                                                                        style: GoogleFonts.nunito(
+                                                                            fontWeight:
+                                                                                FontWeight.w600),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ],
                                                       );
                                                     });
                                               });
                                         },
                                         child: Padding(
                                             padding: const EdgeInsets.only(
-                                                right: 15.0),
+                                                right: 15.0, left: 15.0),
                                             child: FaIcon(FontAwesomeIcons.bars,
                                                 size: getValueForScreenType(
                                                     context: context,
