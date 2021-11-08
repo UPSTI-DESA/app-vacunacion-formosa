@@ -4,6 +4,7 @@ import 'dart:async';
 class _LoadingLoginService {
   bool? _loading = false;
   bool? _primerInicio = true;
+  bool? _loadingPerfil = true;
 
   final StreamController<bool> _loadingLoginStreamController =
       StreamController<bool>.broadcast();
@@ -17,6 +18,7 @@ class _LoadingLoginService {
 
     _loadingLoginStreamController.add(estado);
   }
+
 //--------------- Manejo Primer Inicio -----------//
 
   final StreamController<bool> _primerInicioStreamController =
@@ -32,8 +34,23 @@ class _LoadingLoginService {
 
     _primerInicioStreamController.add(estado);
   }
+//--------------- Manejo Carga Perfiles -----------//
+
+  final StreamController<bool> _cargaPerfilesStreamController =
+      StreamController<bool>.broadcast();
+
+  bool? get getCargaPerfilState => _loadingPerfil;
+
+  Stream<bool> get cargaPerfilStateStream =>
+      _cargaPerfilesStreamController.stream;
+
+  void cargaPerfil(bool estado) {
+    _loadingPerfil = estado;
+    _cargaPerfilesStreamController.add(estado);
+  }
 
   dispose() {
+    _cargaPerfilesStreamController.close();
     _loadingLoginStreamController.close();
     _primerInicioStreamController.close();
   }
