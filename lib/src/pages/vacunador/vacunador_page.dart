@@ -135,7 +135,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                       'Seleccione el switch si es la misma persona que registra y realiza la vacunación.\nDe ser necesario, cambie el efector haciendo click en el icono',
                                                   textoBotonAlerta: 'Listo',
                                                   color: SisVacuColor
-                                                      .vercelesteTerciario,
+                                                      .vercelesteCuaternario,
                                                   icon: Icon(Icons.info,
                                                       size: 40.0,
                                                       color: Colors.grey[50]),
