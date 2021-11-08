@@ -6,6 +6,8 @@ export 'package:sistema_vacunacion/src/services/tutor_service.dart';
 export 'package:sistema_vacunacion/src/services/notificacionesdosis_service.dart';
 export 'package:sistema_vacunacion/src/services/vacunascant_service.dart';
 export 'package:sistema_vacunacion/src/services/vacunadoscant_service.dart';
+export 'package:sistema_vacunacion/src/services/vacunasconfiguracion_service.dart';
+export 'package:sistema_vacunacion/src/services/vacunaslotes_service.dart';
 export 'package:sistema_vacunacion/src/services/vacunasxperfiles_service.dart';
 export 'package:sistema_vacunacion/src/services/insertregistro_service.dart';
 export 'package:sistema_vacunacion/src/services/perfilesvacunacion_service.dart';

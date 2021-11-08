@@ -73,69 +73,65 @@ class _VacunasPageState extends State<VacunasPage>
         appBar: AppBar(
           leading: Center(
             child: InkWell(
-              onTap: () {
-                if (appBarIcon!.isCompleted) {
-                  appBarIcon!.reverse();
-                } else {
-                  appBarIcon!.forward();
-                }
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * .01,
-                          ),
-                          Text(
-                            'Vacunas Aplicadas',
-                            style: GoogleFonts.nunito(
-                              textStyle: const TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 20),
+                onTap: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * .01,
                             ),
-                          ),
-                          StreamBuilder(
-                            stream: notificacionesDosisService
-                                .listaDosisAplicadasStream,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<dynamic> snapshot) {
-                              return notificacionesDosisService
-                                      .listaDosisAplicadas.isNotEmpty
-                                  ? ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: notificacionesDosisService
-                                          .listaDosisAplicadas.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return ListTile(
-                                          title: Text(notificacionesDosisService
-                                                  .listaDosisAplicadas[index]
-                                                  .sysvacu05_nombre! +
-                                              ' - ' +
-                                              notificacionesDosisService
-                                                  .listaDosisAplicadas[index]
-                                                  .sysvacu04_nombre!),
-                                          subtitle: Text('Fecha de Aplicación: - ' +
-                                              notificacionesDosisService
-                                                  .listaDosisAplicadas[index]
-                                                  .sysdesa10_fecha_aplicacion!),
-                                        );
-                                      },
-                                    )
-                                  : const Text('No posee dosis aplicadas');
-                            },
-                          ),
-                        ],
-                      );
-                    });
-              },
-              child: AnimatedIcon(
-                progress: appBarIcon!,
-                icon: AnimatedIcons.home_menu,
-                size: 30,
-                color: Colors.white,
-              ),
-            ),
+                            Text(
+                              'Vacunas Aplicadas',
+                              style: GoogleFonts.nunito(
+                                textStyle: const TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 20),
+                              ),
+                            ),
+                            StreamBuilder(
+                              stream: notificacionesDosisService
+                                  .listaDosisAplicadasStream,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<dynamic> snapshot) {
+                                return notificacionesDosisService
+                                        .listaDosisAplicadas.isNotEmpty
+                                    ? ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: notificacionesDosisService
+                                            .listaDosisAplicadas.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return ListTile(
+                                            title: Text(
+                                                notificacionesDosisService
+                                                        .listaDosisAplicadas[
+                                                            index]
+                                                        .sysvacu05_nombre! +
+                                                    ' - ' +
+                                                    notificacionesDosisService
+                                                        .listaDosisAplicadas[
+                                                            index]
+                                                        .sysvacu04_nombre!),
+                                            subtitle: Text(
+                                                'Fecha de Aplicación: - ' +
+                                                    notificacionesDosisService
+                                                        .listaDosisAplicadas[
+                                                            index]
+                                                        .sysdesa10_fecha_aplicacion!),
+                                          );
+                                        },
+                                      )
+                                    : const Text('No posee dosis aplicadas');
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                },
+                child: FaIcon(FontAwesomeIcons.crutch,
+                    size: getValueForScreenType(context: context, mobile: 20),
+                    color: SisVacuColor.red!.withOpacity(0.75))),
           ),
           centerTitle: true,
           backgroundColor: SisVacuColor.vercelesteCuaternario,
@@ -179,12 +175,15 @@ class _VacunasPageState extends State<VacunasPage>
                         children: [
                           Row(
                             children: [
-                              Text(
-                                'Datos Beneficiario',
-                                style: GoogleFonts.barlow(
-                                    textStyle: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20)),
+                              FadeInUpBig(
+                                from: 25,
+                                child: Text(
+                                  'Datos Beneficiario',
+                                  style: GoogleFonts.barlow(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20)),
+                                ),
                               ),
                             ],
                           ),
@@ -312,12 +311,15 @@ class _VacunasPageState extends State<VacunasPage>
                                   children: [
                                     Row(
                                       children: [
-                                        Text(
-                                          'Datos Tutor',
-                                          style: GoogleFonts.barlow(
-                                              textStyle: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 20)),
+                                        FadeInUpBig(
+                                          from: 25,
+                                          child: Text(
+                                            'Datos Tutor',
+                                            style: GoogleFonts.barlow(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 20)),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -480,12 +482,15 @@ class _VacunasPageState extends State<VacunasPage>
                         children: [
                           Row(
                             children: [
-                              Text(
-                                'Seleccione un Perfil',
-                                style: GoogleFonts.barlow(
-                                    textStyle: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20)),
+                              FadeInUpBig(
+                                from: 25,
+                                child: Text(
+                                  'Seleccione un Perfil',
+                                  style: GoogleFonts.barlow(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20)),
+                                ),
                               ),
                             ],
                           ),
@@ -695,15 +700,19 @@ class _VacunasPageState extends State<VacunasPage>
                                             children: [
                                               Row(
                                                 children: [
-                                                  Text(
-                                                    'Seleccione una vacuna',
-                                                    style: GoogleFonts.barlow(
-                                                        textStyle:
-                                                            const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 20)),
+                                                  FadeInUpBig(
+                                                    from: 20,
+                                                    child: Text(
+                                                      'Seleccione una vacuna',
+                                                      style: GoogleFonts.barlow(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      20)),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -740,11 +749,8 @@ class _VacunasPageState extends State<VacunasPage>
                                                           )),
                                                       const SizedBox(width: 5),
                                                       Icon(
-                                                        _selectVacunas == null
-                                                            ? Icons
-                                                                .keyboard_arrow_down
-                                                            : Icons
-                                                                .keyboard_arrow_left,
+                                                        Icons
+                                                            .keyboard_arrow_down,
                                                         color:
                                                             SisVacuColor.black,
                                                       ),
@@ -934,105 +940,6 @@ class _VacunasPageState extends State<VacunasPage>
                                                                 },
                                                               );
                                                             });
-
-                                                    // Picker(
-                                                    //     title: const Text(
-                                                    //       'Vacunas',
-                                                    //     ),
-                                                    //     itemExtent: 45,
-                                                    //     cancelText: "Cancelar",
-                                                    //     confirmText:
-                                                    //         'Confirmar',
-                                                    //     adapter:
-                                                    //         PickerDataAdapter<
-                                                    //             VacunasxPerfil>(
-                                                    //       data: vacunasxPerfilService
-                                                    //           .listavacunasxPerfil!
-                                                    //           .map((iv) =>
-                                                    //               PickerItem<
-                                                    //                   VacunasxPerfil>(
-                                                    //                 text: Center(
-                                                    //                     child: Text(
-                                                    //                   iv.sysvacu04_nombre!,
-                                                    //                   style: GoogleFonts
-                                                    //                       .nunito(),
-                                                    //                 )),
-                                                    //                 value: iv,
-                                                    //               ))
-                                                    //           .toList(),
-                                                    //     ),
-                                                    //     squeeze: 1,
-                                                    //     height:
-                                                    //         size.height * .2,
-                                                    //     onConfirm: (Picker
-                                                    //             picker,
-                                                    //         List value) async {
-                                                    //       PickerDataAdapter<
-                                                    //               VacunasxPerfil>
-                                                    //           pickerAdapter =
-                                                    //           picker.adapter
-                                                    //               as PickerDataAdapter<
-                                                    //                   VacunasxPerfil>;
-                                                    //       listaConfiguraciones!
-                                                    //           .clear();
-                                                    //       listaLotes!.clear();
-                                                    //       setState(() {
-                                                    //         _selectLote = null;
-                                                    //         _selectConfigVacuna =
-                                                    //             null;
-                                                    //         _selectVacunas =
-                                                    //             pickerAdapter
-                                                    //                 .data[value
-                                                    //                     .first]
-                                                    //                 .value;
-                                                    //       });
-                                                    //       final tempLista =
-                                                    //           await configuracionVacunaProvider
-                                                    //               .validarConfiguraciones(
-                                                    //                   _selectVacunas!
-                                                    //                       .id_sysvacu04);
-                                                    //       tempLista[0].codigo_mensaje ==
-                                                    //               "0"
-                                                    //           ? showDialog(
-                                                    //               context:
-                                                    //                   context,
-                                                    //               builder:
-                                                    //                   (BuildContext
-                                                    //                       context) {
-                                                    //                 return DialogoAlerta(
-                                                    //                     envioFuncion2:
-                                                    //                         false,
-                                                    //                     envioFuncion1:
-                                                    //                         false,
-                                                    //                     tituloAlerta:
-                                                    //                         'ATENCIÓN!',
-                                                    //                     descripcionAlerta:
-                                                    //                         tempLista[0]
-                                                    //                             .mensaje,
-                                                    //                     textoBotonAlerta:
-                                                    //                         'Listo',
-                                                    //                     icon:
-                                                    //                         const Icon(
-                                                    //                       Icons
-                                                    //                           .error_outline,
-                                                    //                       size:
-                                                    //                           40,
-                                                    //                     ),
-                                                    //                     color: Colors
-                                                    //                         .red);
-                                                    //               })
-                                                    //           : {
-                                                    //               mostrarLoadingEstrellasXTiempo(
-                                                    //                   context,
-                                                    //                   800),
-                                                    //               setState(() {
-                                                    //                 listaConfiguraciones =
-                                                    //                     tempLista;
-                                                    //               })
-                                                    //             };
-                                                    //     })
-
-                                                    // .showModal(context);
                                                   }),
                                             ],
                                           ),
@@ -1066,12 +973,15 @@ class _VacunasPageState extends State<VacunasPage>
                               children: [
                                 Row(
                                   children: [
-                                    Text(
-                                      'Seleccione una condición',
-                                      style: GoogleFonts.barlow(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 20)),
+                                    FadeInUpBig(
+                                      from: 25,
+                                      child: Text(
+                                        'Seleccione una condición',
+                                        style: GoogleFonts.barlow(
+                                            textStyle: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 20)),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -1234,12 +1144,15 @@ class _VacunasPageState extends State<VacunasPage>
                               children: [
                                 Row(
                                   children: [
-                                    Text(
-                                      'Seleccione un lote',
-                                      style: GoogleFonts.barlow(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 20)),
+                                    FadeInUpBig(
+                                      from: 25,
+                                      child: Text(
+                                        'Seleccione un lote',
+                                        style: GoogleFonts.barlow(
+                                            textStyle: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 20)),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -1683,28 +1596,32 @@ class _VacunasPageState extends State<VacunasPage>
                                   fontWeight: FontWeight.w600, fontSize: 20)),
                         ),
                       ),
-                      IconButton(
-                        alignment: Alignment.centerRight,
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) => DialogoAlerta(
-                                    envioFuncion2: false,
-                                    envioFuncion1: false,
-                                    tituloAlerta: 'Informacion',
-                                    descripcionAlerta:
-                                        'Registre al tutor mediante el escaneo del codigo de barras, o ingresando manualmente el numero de D.N.I.',
-                                    textoBotonAlerta: 'Listo',
-                                    color: SisVacuColor.vercelesteCuaternario,
-                                    icon: Icon(Icons.info,
-                                        size: 40.0, color: Colors.grey[50]),
-                                  ));
-                        },
-                        icon: Icon(
-                          FontAwesomeIcons.infoCircle,
-                          color: SisVacuColor.vercelesteCuaternario,
+                      FadeInDownBig(
+                        from: 25,
+                        child: IconButton(
+                          alignment: Alignment.centerRight,
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    DialogoAlerta(
+                                      envioFuncion2: false,
+                                      envioFuncion1: false,
+                                      tituloAlerta: 'Informacion',
+                                      descripcionAlerta:
+                                          'Registre al tutor mediante el escaneo del codigo de barras, o ingresando manualmente el numero de D.N.I.',
+                                      textoBotonAlerta: 'Listo',
+                                      color: SisVacuColor.vercelesteCuaternario,
+                                      icon: Icon(Icons.info,
+                                          size: 40.0, color: Colors.grey[50]),
+                                    ));
+                          },
+                          icon: Icon(
+                            FontAwesomeIcons.infoCircle,
+                            color: SisVacuColor.vercelesteCuaternario,
+                          ),
+                          iconSize: 25,
                         ),
-                        iconSize: 25,
                       ),
                     ],
                   ),
