@@ -20,6 +20,11 @@ class _RegistradorService {
     _registradorStreamController.add(registrador);
   }
 
+  void eliminarRegistrador() {
+    _registrador = null;
+    _registradorStreamController.add(_registrador!);
+  }
+
   //---------------- Editar el Efector de un Registrador ---------------------------//
 
   void editarEfectorUsuario(Efectores nuevoEfector) {

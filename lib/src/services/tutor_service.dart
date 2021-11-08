@@ -20,6 +20,12 @@ class _TutorService {
     _tutorStreamController.add(tutor);
   }
 
+  void eliminarTutor() {
+    _tutor = null;
+
+    _tutorStreamController.add(_tutor!);
+  }
+
   dispose() {
     _tutorStreamController.close();
   }
