@@ -144,7 +144,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                           textoBotonAlerta:
                                                               'Listo',
                                                           color: SisVacuColor
-                                                              .yelow700,
+                                                              .vercelesteCuaternario,
                                                           icon: Icon(
                                                             Icons.info,
                                                             size: 40.0,
@@ -380,8 +380,8 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                       FontAwesomeIcons.check,
                                                       color: Colors.white,
                                                     ),
-                                                    color:
-                                                        SisVacuColor.yelow700,
+                                                    color: SisVacuColor
+                                                        .vercelesteCuaternario,
                                                   );
                                                 })
                                             : showDialog(

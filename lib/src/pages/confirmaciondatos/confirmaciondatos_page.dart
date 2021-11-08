@@ -48,7 +48,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                     descripcionAlerta:
                         'Última instancia para comprobar los datos del beneficiario y los datos de la vacuna. Registre la vacunación de ser válidos los datos, de lo contrario cancele y vuelva a empezar.',
                     textoBotonAlerta: 'Listo',
-                    color: SisVacuColor.yelow700,
+                    color: SisVacuColor.vercelesteCuaternario,
                     icon: Icon(
                       Icons.info,
                       size: 40.0,

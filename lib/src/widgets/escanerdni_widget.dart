@@ -239,7 +239,7 @@ class _EscanerDniState extends State<EscanerDni> {
                   ),
                 )
               : DialogoAlerta(
-                  color: SisVacuColor.yelow700,
+                  color: SisVacuColor.vercelesteCuaternario,
                   icon: const Icon(
                     FontAwesomeIcons.check,
                     color: Colors.white,
