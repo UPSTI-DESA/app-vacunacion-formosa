@@ -422,7 +422,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                 !modo ? FontWeight.w700 : FontWeight.w100),
                       ),
                       Switch(
-                          activeColor: SisVacuColor.verdeclaro,
+                          activeColor: SisVacuColor.azulFormosa,
                           inactiveTrackColor: SisVacuColor.azulFormosa,
                           inactiveThumbColor: SisVacuColor.azulFormosa,
                           value: modo,

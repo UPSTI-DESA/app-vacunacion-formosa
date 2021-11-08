@@ -799,9 +799,7 @@ class _VacunasPageState extends State<VacunasPage>
                                                 )),
                                             const SizedBox(width: 5),
                                             Icon(
-                                              _selectVacunas == null
-                                                  ? Icons.keyboard_arrow_down
-                                                  : Icons.keyboard_arrow_left,
+                                              Icons.keyboard_arrow_down,
                                               color: SisVacuColor.black,
                                             ),
                                           ],
@@ -1489,16 +1487,12 @@ class _VacunasPageState extends State<VacunasPage>
                                         .eliminarListaVacunasxPerfil();
                                     perfilesVacunacionService
                                         .eliminarListaPerfiles();
-                                    beneficiarioService
-                                        .cargarBeneficiario(Beneficiario());
+                                    
                                     notificacionesDosisService
                                         .eliminarListaDosis();
-                                    tutorService.cargarTutor(Tutor(
-                                        sysdesa10_apellido_tutor: '',
-                                        sysdesa10_nombre_tutor: '',
-                                        sysdesa10_dni_tutor: '',
-                                        sysdesa10_sexo_tutor: '',
-                                        fotoTutor: noImage));
+                                    tutorService.eliminarTutor();
+                                    vacunadorService.eliminarVacunador();
+
                                     Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(

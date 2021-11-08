@@ -21,6 +21,11 @@ class _BeneficiariorService {
     _beneficiarioStreamController.add(beneficiario);
   }
 
+  void eliminarBeneficiario() {
+    _beneficiario = null;
+    _beneficiarioStreamController.add(_beneficiario!);
+  }
+
   dispose() {
     _beneficiarioStreamController.close();
   }

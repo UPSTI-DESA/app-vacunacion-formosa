@@ -162,9 +162,14 @@ class _BodyDrawerState extends State<BodyDrawer> {
                               ),
                             )),
                         onTap: () {
+                          vacunasxPerfilService.eliminarListaVacunasxPerfil();
+                          perfilesVacunacionService.eliminarListaPerfiles();
+                          beneficiarioService.eliminarBeneficiario();
+                          notificacionesDosisService.eliminarListaDosis();
+                          tutorService.eliminarTutor();
+                          vacunadorService.eliminarVacunador();
+                          beneficiarioService.eliminarBeneficiario();
                           loadingLoginService.cargarEstado(false);
-                          datosdecargaprovider.nombreVacunador = '';
-                          datosdecargaprovider.dniVacunador = '';
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(

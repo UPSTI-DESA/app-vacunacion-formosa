@@ -18,6 +18,11 @@ class _VacunadorService {
     _vacunadorStreamController.add(vacunador);
   }
 
+  void eliminarVacunador() {
+    _vacunador = null;
+    _vacunadorStreamController.add(_vacunador!);
+  }
+
   dispose() {
     _vacunadorStreamController.close();
   }

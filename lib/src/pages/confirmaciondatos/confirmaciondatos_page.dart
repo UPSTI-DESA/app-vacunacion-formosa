@@ -453,6 +453,13 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                     BotonCustom(
                         text: 'Registrar Vacunación',
                         onPressed: () {
+                          vacunasxPerfilService.eliminarListaVacunasxPerfil();
+                          perfilesVacunacionService.eliminarListaPerfiles();
+                          beneficiarioService.eliminarBeneficiario();
+                          notificacionesDosisService.eliminarListaDosis();
+                          tutorService.eliminarTutor();
+                          vacunadorService.eliminarVacunador();
+
                           enviarDatos(context);
                         }),
                     BotonCustom(
@@ -481,14 +488,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                           .eliminarListaVacunasxPerfil();
                                       perfilesVacunacionService
                                           .eliminarListaPerfiles();
-                                      tutorService.cargarTutor(Tutor(
-                                          sysdesa10_apellido_tutor: '',
-                                          sysdesa10_nombre_tutor: '',
-                                          sysdesa10_dni_tutor: '',
-                                          sysdesa10_sexo_tutor: '',
-                                          fotoTutor: null));
-                                      beneficiarioService
-                                          .cargarBeneficiario(Beneficiario());
+
+                                      notificacionesDosisService
+                                          .eliminarListaDosis();
+                                      tutorService.eliminarTutor();
+                                      vacunadorService.eliminarVacunador();
+
                                       notificacionesDosisService
                                           .eliminarListaDosis();
                                       insertRegistroService

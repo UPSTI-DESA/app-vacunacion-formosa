@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
@@ -131,7 +132,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                   tituloAlerta:
                                                       'Información Adicional',
                                                   descripcionAlerta:
-                                                      'Seleccione el switch si es la misma persona que registra y realiza la vacunación.',
+                                                      'Seleccione el switch si es la misma persona que registra y realiza la vacunación.\nDe ser necesario, cambie el efector haciendo click en el icono',
                                                   textoBotonAlerta: 'Listo',
                                                   color: SisVacuColor
                                                       .vercelesteTerciario,
@@ -180,67 +181,70 @@ class _VacunadorPageState extends State<VacunadorPage>
                                       ),
                                     ),
                                     InkWell(
-                                      onTap: () {
-                                        if (animacionIcono!.isCompleted) {
-                                          animacionIcono!.reverse();
-                                        } else {
-                                          animacionIcono!.forward();
-                                        }
+                                        onTap: () {
+                                          if (animacionIcono!.isCompleted) {
+                                            animacionIcono!.reverse();
+                                          } else {
+                                            animacionIcono!.forward();
+                                          }
 
-                                        showModalBottomSheet(
-                                            useRootNavigator: true,
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return StreamBuilder(
-                                                  stream: efectoresService
-                                                      .listaEfectoresStream,
-                                                  builder:
-                                                      (BuildContext context,
-                                                          AsyncSnapshot<dynamic>
-                                                              snapshot) {
-                                                    return ListView.builder(
-                                                      itemCount:
-                                                          efectoresService
-                                                              .listaEfectores!
-                                                              .length,
-                                                      itemBuilder:
-                                                          (BuildContext context,
-                                                              int index) {
-                                                        return ListTile(
-                                                          title:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              registradorService
-                                                                  .editarEfectorUsuario(
-                                                                      efectoresService
-                                                                              .listaEfectores![
-                                                                          index]);
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(context);
-                                                            },
-                                                            child: Text(
-                                                              efectoresService
-                                                                  .listaEfectores![
-                                                                      index]
-                                                                  .sysofic01Descripcion!,
-                                                              style: GoogleFonts
-                                                                  .nunito(),
+                                          showModalBottomSheet(
+                                              useRootNavigator: true,
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return StreamBuilder(
+                                                    stream: efectoresService
+                                                        .listaEfectoresStream,
+                                                    builder: (BuildContext
+                                                            context,
+                                                        AsyncSnapshot<dynamic>
+                                                            snapshot) {
+                                                      return ListView.builder(
+                                                        itemCount:
+                                                            efectoresService
+                                                                .listaEfectores!
+                                                                .length,
+                                                        itemBuilder:
+                                                            (BuildContext
+                                                                    context,
+                                                                int index) {
+                                                          return ListTile(
+                                                            title:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                registradorService
+                                                                    .editarEfectorUsuario(
+                                                                        efectoresService
+                                                                            .listaEfectores![index]);
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(
+                                                                        context);
+                                                              },
+                                                              child: Text(
+                                                                efectoresService
+                                                                    .listaEfectores![
+                                                                        index]
+                                                                    .sysofic01Descripcion!,
+                                                                style: GoogleFonts
+                                                                    .nunito(),
+                                                              ),
                                                             ),
-                                                          ),
-                                                        );
-                                                      },
-                                                    );
-                                                  });
-                                            });
-                                      },
-                                      child: AnimatedIcon(
-                                        progress: animacionIcono!,
-                                        icon: AnimatedIcons.menu_home,
-                                        size: 20,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
+                                                          );
+                                                        },
+                                                      );
+                                                    });
+                                              });
+                                        },
+                                        child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 15.0),
+                                            child: FaIcon(FontAwesomeIcons.bars,
+                                                size: getValueForScreenType(
+                                                    context: context,
+                                                    mobile: 18),
+                                                color: SisVacuColor
+                                                    .vercelesteCuaternario))),
                                   ],
                                 ),
                                 const SizedBox(
