@@ -10,6 +10,7 @@ import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/services/insertregistro_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/services/vacunas_service.dart';
 import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
@@ -457,9 +458,9 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                           perfilesVacunacionService.eliminarListaPerfiles();
                           beneficiarioService.eliminarBeneficiario();
                           notificacionesDosisService.eliminarListaDosis();
-                          tutorService.eliminarTutor();
-                          vacunadorService.eliminarVacunador();
-
+                          vacunasConfiguracionService
+                              .eliminarListaVacunasConfiguracion();
+                          vacunasLotesService.eliminarListaVacunasLotes();
                           enviarDatos(context);
                         }),
                     BotonCustom(
@@ -489,10 +490,10 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                       perfilesVacunacionService
                                           .eliminarListaPerfiles();
 
-                                      notificacionesDosisService
-                                          .eliminarListaDosis();
-                                      tutorService.eliminarTutor();
-                                      vacunadorService.eliminarVacunador();
+                                      vacunasConfiguracionService
+                                          .eliminarListaVacunasConfiguracion();
+                                      vacunasLotesService
+                                          .eliminarListaVacunasLotes();
 
                                       notificacionesDosisService
                                           .eliminarListaDosis();

@@ -162,13 +162,13 @@ class _BodyDrawerState extends State<BodyDrawer> {
                               ),
                             )),
                         onTap: () {
-                          vacunasxPerfilService.eliminarListaVacunasxPerfil();
-                          perfilesVacunacionService.eliminarListaPerfiles();
-                          beneficiarioService.eliminarBeneficiario();
-                          notificacionesDosisService.eliminarListaDosis();
-                          tutorService.eliminarTutor();
-                          vacunadorService.eliminarVacunador();
-                          beneficiarioService.eliminarBeneficiario();
+                          // vacunasxPerfilService.eliminarListaVacunasxPerfil();
+                          // perfilesVacunacionService.eliminarListaPerfiles();
+
+                          // notificacionesDosisService.eliminarListaDosis();
+
+                          // vacunadorService.eliminarVacunador();
+
                           loadingLoginService.cargarEstado(false);
                           Navigator.pushReplacement(
                               context,
@@ -182,14 +182,11 @@ class _BodyDrawerState extends State<BodyDrawer> {
               // SizedBox(height: MediaQuery.of(context).size.height * 0.25),
               Padding(
                 padding: const EdgeInsets.only(bottom: 14.0),
-                child: FadeInImage(
-                  placeholder: const AssetImage('assets/img/fondo/noimage.jpg'),
-                  image: const AssetImage(
-                    'assets/img/fondo/logo_polo_upsti_azul.png',
-                  ),
-                  // fit: BoxFit.fill,
-                  height: MediaQuery.of(context).size.height * 0.05,
+                child: Image.asset(
+                  'assets/img/fondo/logo_polo_upsti_azul.png',
+                  height: MediaQuery.of(context).size.height * 0.055,
                 ),
+                // fit: BoxFit.fill,
               ),
             ],
           ),

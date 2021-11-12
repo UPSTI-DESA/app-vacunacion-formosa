@@ -5,8 +5,13 @@ class CustomInput extends StatelessWidget {
   final String placeholder;
   final TextEditingController textController;
   final TextInputType keyboardType;
+  final Function()? funcion;
+
   final bool isPassword;
+  final bool funcionTerminar;
+  final bool autoFocus;
   final int maxLength;
+  final FocusNode focusNode;
 
   const CustomInput({
     Key? key,
@@ -15,7 +20,11 @@ class CustomInput extends StatelessWidget {
     required this.textController,
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
+    this.autoFocus = false,
+    this.funcionTerminar = false,
     this.maxLength = 8,
+    required this.focusNode,
+    this.funcion,
   }) : super(key: key);
 
   @override
@@ -26,7 +35,8 @@ class CustomInput extends StatelessWidget {
           right: MediaQuery.of(context).size.width * 0.04,
           left: MediaQuery.of(context).size.width * 0.04),
       decoration: BoxDecoration(
-          color: Colors.blueGrey[50],
+          color: Colors.white,
+          // color: Colors.blueGrey[50],
           borderRadius: BorderRadius.circular(20),
           boxShadow: <BoxShadow>[
             BoxShadow(
@@ -35,11 +45,14 @@ class CustomInput extends StatelessWidget {
                 blurRadius: 5)
           ]),
       child: TextField(
+        autofocus: autoFocus,
+        focusNode: focusNode,
         maxLength: maxLength,
         autocorrect: false,
         controller: textController,
         keyboardType: keyboardType,
         obscureText: isPassword,
+        onEditingComplete: funcionTerminar == true ? funcion : null,
         decoration: InputDecoration(
           prefixIcon: Icon(icon),
           focusedBorder: InputBorder.none,

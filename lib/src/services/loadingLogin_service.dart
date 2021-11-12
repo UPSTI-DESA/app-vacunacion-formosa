@@ -5,6 +5,8 @@ class _LoadingLoginService {
   bool? _loading = false;
   bool? _primerInicio = true;
   bool? _loadingPerfil = true;
+  bool? _loadingConfiguracion = true;
+  bool? _loadingLotes = true;
 
   final StreamController<bool> _loadingLoginStreamController =
       StreamController<bool>.broadcast();
@@ -49,8 +51,39 @@ class _LoadingLoginService {
     _cargaPerfilesStreamController.add(estado);
   }
 
+  //--------------- Manejo Carga Configuraciones -----------//
+
+  final StreamController<bool> _cargaConfiguracionesStreamController =
+      StreamController<bool>.broadcast();
+
+  bool? get getCargaConfiguracionState => _loadingConfiguracion;
+
+  Stream<bool> get cargarConfiguracionStateStream =>
+      _cargaConfiguracionesStreamController.stream;
+
+  void cargaConfiguracion(bool estado) {
+    _loadingConfiguracion = estado;
+    _cargaConfiguracionesStreamController.add(estado);
+  }
+
+  //--------------- Manejo Carga Lotes -----------//
+
+  final StreamController<bool> _cargarLotesStreamController =
+      StreamController<bool>.broadcast();
+
+  bool? get getCargaLotesState => _loadingLotes;
+
+  Stream<bool> get cargaLotesStateStream => _cargarLotesStreamController.stream;
+
+  void cargaLotes(bool estado) {
+    _loadingLotes = estado;
+    _cargarLotesStreamController.add(estado);
+  }
+
   dispose() {
     _cargaPerfilesStreamController.close();
+    _cargaConfiguracionesStreamController.close();
+    _cargarLotesStreamController.close();
     _loadingLoginStreamController.close();
     _primerInicioStreamController.close();
   }

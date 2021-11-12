@@ -26,11 +26,9 @@ class VacunadorPage extends StatefulWidget {
   _VacunadorPageState createState() => _VacunadorPageState();
 }
 
-class _VacunadorPageState extends State<VacunadorPage>
-    with SingleTickerProviderStateMixin {
-  AnimationController? animacionIcono;
-
-  final controladorDni = TextEditingController();
+class _VacunadorPageState extends State<VacunadorPage> {
+  late TextEditingController controladorDni;
+  late FocusNode focusNode;
   bool estadoVacunador = false;
   bool? animacionNombreVacunado;
   bool? mismoVacunador;
@@ -45,13 +43,13 @@ class _VacunadorPageState extends State<VacunadorPage>
     stringVacunador = 'No';
     cargarEfectoresService(registradorService.registrador!.flxcore03_dni!);
     super.initState();
-
-    animacionIcono = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
+    controladorDni = TextEditingController();
+    focusNode = FocusNode();
   }
 
   @override
   void dispose() {
+    focusNode.dispose();
     controladorDni.dispose();
     super.dispose();
   }
@@ -172,6 +170,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                                               return Text(
                                                 registradorService.registrador!
                                                     .sysofic01_descripcion!,
+                                                style: GoogleFonts.nunito(),
                                                 textAlign: TextAlign.center,
                                               );
                                             },
@@ -200,10 +199,10 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                                     .all(8.0),
                                                             child: Text(
                                                               'Efectores',
-                                                              style: GoogleFonts.barlow(
+                                                              style: GoogleFonts.nunito(
                                                                   letterSpacing:
                                                                       1.5,
-                                                                  fontSize: 20,
+                                                                  fontSize: 22,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w700),
@@ -212,6 +211,8 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                           Expanded(
                                                             child: ListView
                                                                 .builder(
+                                                              physics:
+                                                                  const BouncingScrollPhysics(),
                                                               shrinkWrap: true,
                                                               itemCount:
                                                                   efectoresService
@@ -222,6 +223,14 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                                           context,
                                                                       int index) {
                                                                 return ListTile(
+                                                                  leading:
+                                                                      FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .hospitalAlt,
+                                                                    size: 20,
+                                                                    color: SisVacuColor
+                                                                        .vercelesteCuaternario,
+                                                                  ),
                                                                   title:
                                                                       InkWell(
                                                                     highlightColor: SisVacuColor
@@ -268,7 +277,8 @@ class _VacunadorPageState extends State<VacunadorPage>
                                         child: Padding(
                                             padding: const EdgeInsets.only(
                                                 right: 15.0, left: 15.0),
-                                            child: FaIcon(FontAwesomeIcons.bars,
+                                            child: FaIcon(
+                                                FontAwesomeIcons.hospitalAlt,
                                                 size: getValueForScreenType(
                                                     context: context,
                                                     mobile: 18),
@@ -281,10 +291,12 @@ class _VacunadorPageState extends State<VacunadorPage>
                                 ),
                                 Row(
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Registrador: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                       textAlign: TextAlign.center,
                                     ),
                                     Expanded(
@@ -293,6 +305,7 @@ class _VacunadorPageState extends State<VacunadorPage>
                                         child: Text(
                                           registradorService
                                               .registrador!.flxcore03_nombre!,
+                                          style: GoogleFonts.nunito(),
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -304,10 +317,12 @@ class _VacunadorPageState extends State<VacunadorPage>
                                 ),
                                 Row(
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Vacunador: ',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                      style: GoogleFonts.nunito(
+                                        textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                       textAlign: TextAlign.center,
                                     ),
                                     StreamBuilder(
@@ -322,25 +337,30 @@ class _VacunadorPageState extends State<VacunadorPage>
                                                   child: Text(
                                                     vacunadorService.vacunador!
                                                         .sysdesa06_nombre!,
-                                                    style: const TextStyle(),
+                                                    style: GoogleFonts.nunito(),
                                                   ),
                                                 ),
                                               )
                                             : Text(
                                                 mismoVacunador!
-                                                    ? 'Sin Asignar'
+                                                    ? 'Falta Asignar'
                                                     : registradorService
                                                         .registrador!
                                                         .flxcore03_nombre!,
-                                                style: TextStyle(
-                                                    color: mismoVacunador!
-                                                        ? Colors.red
-                                                        : SisVacuColor.black,
-                                                    letterSpacing:
-                                                        mismoVacunador!
-                                                            ? 3.0
-                                                            : 0.0),
-                                              );
+                                                style: GoogleFonts.nunito(
+                                                  textStyle: TextStyle(
+                                                      fontWeight:
+                                                          mismoVacunador!
+                                                              ? FontWeight.w800
+                                                              : FontWeight.w500,
+                                                      color: mismoVacunador!
+                                                          ? Colors.red
+                                                          : SisVacuColor.black,
+                                                      letterSpacing:
+                                                          mismoVacunador!
+                                                              ? 3.0
+                                                              : 0.0),
+                                                ));
                                       },
                                     ),
                                   ],
@@ -564,42 +584,33 @@ class _VacunadorPageState extends State<VacunadorPage>
                         const SizedBox(
                           height: 20.0,
                         ),
+
                         CustomInput(
+                          autoFocus: true,
+                          focusNode: focusNode,
                           icon: Icons.perm_identity,
                           placeholder: 'D.N.I.',
                           keyboardType: TextInputType.phone,
                           textController: controladorDni,
+                          funcionTerminar: true,
+                          funcion: () {
+                            verificarEscencialText(controladorDni.text);
+                          },
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.width * 0.03,
                         ),
-                        BotonCustom(
-                            width: 150,
-                            iconoBool: true,
-                            iconoBoton: const Icon(
-                              Icons.people,
-                              color: Colors.white,
-                            ),
-                            text: 'Verificar',
-                            onPressed: () {
-                              // FocusScope.of(context).unfocus();
-                              verificarEscencialText(controladorDni.text);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      elevation: 2.0,
-                                      backgroundColor:
-                                          SisVacuColor.vercelesteTerciario,
-                                      behavior: SnackBarBehavior.floating,
-                                      duration:
-                                          const Duration(milliseconds: 2500),
-                                      content: Text(
-                                        'Se agrego al vacunador ',
-                                        style: GoogleFonts.nunito(
-                                            textStyle: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                color: SisVacuColor.white)),
-                                      )));
-                            })
+                        // BotonCustom(
+                        //     width: 150,
+                        //     iconoBool: true,
+                        //     iconoBoton: const Icon(
+                        //       Icons.people,
+                        //       color: Colors.white,
+                        //     ),
+                        //     text: 'Verificar',
+                        //     onPressed: () {
+                        //       // FocusScope.of(context).unfocus();
+                        //     })
                       ]),
                       const SizedBox(
                         height: 5.0,
@@ -658,11 +669,35 @@ class _VacunadorPageState extends State<VacunadorPage>
                   color: Colors.grey[50],
                 ),
               ));
+      controladorDni.clear();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          elevation: 2.0,
+          backgroundColor: SisVacuColor.red!.withOpacity(0.7),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(milliseconds: 1500),
+          content: Text(
+            ':(',
+            style: GoogleFonts.nunito(
+                textStyle: TextStyle(
+                    fontWeight: FontWeight.w600, color: SisVacuColor.white)),
+          )));
     } else {
       setState(() {
         vacunadorService.cargarVacunador(respUsuario[0]);
         estadoVacunador = true;
       });
+      controladorDni.clear();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          elevation: 2.0,
+          backgroundColor: SisVacuColor.vercelestePrimario,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(milliseconds: 2500),
+          content: Text(
+            'Se agrego al vacunador ',
+            style: GoogleFonts.nunito(
+                textStyle: TextStyle(
+                    fontWeight: FontWeight.w600, color: SisVacuColor.white)),
+          )));
     }
   }
 

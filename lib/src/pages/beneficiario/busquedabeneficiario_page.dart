@@ -27,7 +27,8 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
   bool loading = false;
   String? dniBeneficiario;
   String? sexoBeneficiario;
-  TextEditingController? dniController;
+  late TextEditingController dniController;
+  late FocusNode focusNode;
 
   @override
   void initState() {
@@ -35,8 +36,17 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     modo = false;
     dniBeneficiario = '';
     sexoBeneficiario = 'F';
-    dniController = TextEditingController();
     super.initState();
+    dniController = TextEditingController();
+    focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    dniController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -260,9 +270,11 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                     padding: const EdgeInsets.only(
                                         left: 10, right: 10),
                                     child: TextField(
+                                      autofocus: true,
                                       controller: dniController,
                                       keyboardType: TextInputType.number,
                                       maxLength: 8,
+                                      focusNode: focusNode,
                                       style:
                                           const TextStyle(color: Colors.blue),
                                       textCapitalization:
@@ -273,6 +285,9 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                         border: InputBorder.none,
                                         labelText: 'Ingrese el DNI',
                                       ),
+                                      onEditingComplete: () {
+                                        focusNode.unfocus();
+                                      },
                                       onChanged: (valor) {
                                         setState(() {
                                           dniBeneficiario = valor;
@@ -430,7 +445,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                             setState(() {
                               modo = value;
                               dniBeneficiario = '';
-                              dniController!.text = '';
+                              dniController.text = '';
                             });
                           }),
                       Text(

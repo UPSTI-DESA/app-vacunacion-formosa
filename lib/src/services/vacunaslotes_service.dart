@@ -2,92 +2,87 @@ import 'dart:async';
 
 import 'package:sistema_vacunacion/src/models/models.dart';
 
-//TODO:FALTA CAMBIAR
 class _VacunasLotes {
-  VacunasxPerfil? _vacunasxperfil;
+  Lotes? _vacunasLotes;
 
-  List<VacunasxPerfil>? _listavacunasxperfil = [];
+  List<Lotes>? _listavacunaslotes = [];
 
-  List<VacunasxPerfil>? _listavacunasxperfilBusqueda = [];
+  List<Lotes>? _listavacunaslotesBusqueda = [];
 
-  final StreamController<VacunasxPerfil?> _vacunasxperfilStreamController =
-      StreamController<VacunasxPerfil?>.broadcast();
+  final StreamController<Lotes?> _vacunasLotesStreamController =
+      StreamController<Lotes?>.broadcast();
 
-  VacunasxPerfil? get vacunasxPerfil => _vacunasxperfil;
+  Lotes? get vacunasLotes => _vacunasLotes;
 
-  bool get existeVacunasxPerfil => (_vacunasxperfil != null) ? true : false;
+  bool get existeVacunasLotes => (_vacunasLotes != null) ? true : false;
 
-  Stream<VacunasxPerfil?> get efectoresStream =>
-      _vacunasxperfilStreamController.stream;
+  Stream<Lotes?> get lotesStream => _vacunasLotesStreamController.stream;
 
-  void cargarVacunasxPerfil(VacunasxPerfil? perfiles) {
-    _vacunasxperfil = perfiles;
-    _vacunasxperfilStreamController.add(perfiles);
+  void cargarVacunasLotes(Lotes? lotes) {
+    _vacunasLotes = lotes;
+    _vacunasLotesStreamController.add(lotes);
   }
 
   //Manejo de Listas
 
-  final StreamController<List<VacunasxPerfil?>>
-      _listavacunasxperfilStreamController =
-      StreamController<List<VacunasxPerfil?>>.broadcast();
+  final StreamController<List<Lotes?>> _listavacunaslotesStreamController =
+      StreamController<List<Lotes?>>.broadcast();
 
-  List<VacunasxPerfil>? get listavacunasxPerfil => _listavacunasxperfil;
+  List<Lotes>? get listavacunasLotes => _listavacunaslotes;
 
-  bool get existelistaVacunasxPerfiles =>
-      (_listavacunasxperfil!.isNotEmpty) ? true : false;
+  bool get existelistaVacunasLotes =>
+      (_listavacunaslotes!.isNotEmpty) ? true : false;
 
-  Stream<List<VacunasxPerfil?>> get listaVacunasxPerfilesStream =>
-      _listavacunasxperfilStreamController.stream;
+  Stream<List<Lotes?>> get listaVacunasLotesStream =>
+      _listavacunaslotesStreamController.stream;
 
-  void cargarListaVacunasxPerfil(List<VacunasxPerfil> listavacunasxPerfil) {
-    _listavacunasxperfil = listavacunasxPerfil;
-    _listavacunasxperfilStreamController.add(listavacunasxPerfil);
-    _listavacunasxperfilBusquedaStreamController.add(listavacunasxPerfil);
+  void cargarListaVacunasLotes(List<Lotes> listavacunaslotes) {
+    _listavacunaslotes = listavacunaslotes;
+    _listavacunaslotesStreamController.add(listavacunaslotes);
+    _listavacunaslotesBusquedaStreamController.add(listavacunaslotes);
   }
 
-  void eliminarListaVacunasxPerfil() {
-    List<VacunasxPerfil> vacio = [];
-    _listavacunasxperfil = vacio;
-    _listavacunasxperfilStreamController.add(vacio);
+  void eliminarListaVacunasLotes() {
+    List<Lotes> vacio = [];
+    _listavacunaslotes = vacio;
+    _listavacunaslotesStreamController.add(vacio);
   }
 
   //---------------------  Manejo de Busqueda --------------------------///
 
-  final StreamController<List<VacunasxPerfil?>>
-      _listavacunasxperfilBusquedaStreamController =
-      StreamController<List<VacunasxPerfil?>>.broadcast();
+  final StreamController<List<Lotes?>>
+      _listavacunaslotesBusquedaStreamController =
+      StreamController<List<Lotes?>>.broadcast();
 
-  List<VacunasxPerfil>? get listavacunasxPerfilBusqueda =>
-      _listavacunasxperfilBusqueda;
+  List<Lotes>? get listavacunasLotesBusqueda => _listavacunaslotesBusqueda;
 
-  bool get existeBusquedaxPerfiles =>
-      (_listavacunasxperfilBusqueda!.isNotEmpty) ? true : false;
+  bool get existeBusquedaxLotes =>
+      (_listavacunaslotesBusqueda!.isNotEmpty) ? true : false;
 
-  Stream<List<VacunasxPerfil?>> get listaBusquedaStream =>
-      _listavacunasxperfilBusquedaStreamController.stream;
+  Stream<List<Lotes?>> get listaBusquedaLotesStream =>
+      _listavacunaslotesBusquedaStreamController.stream;
 
-  void buscarVacuna(String busqueda) {
-    List<VacunasxPerfil> busquedaVacunas = _listavacunasxperfil!
-        .where((element) =>
-            element.sysvacu04_nombre!.toUpperCase().contains(busqueda))
+  void buscarLotes(String lotes) {
+    List<Lotes> busquedaLotes = _listavacunaslotes!
+        .where(
+            (element) => element.sysdesa18_lote!.toUpperCase().contains(lotes))
         .toList();
-    _listavacunasxperfilBusqueda = busquedaVacunas;
-    _listavacunasxperfilBusquedaStreamController
-        .add(_listavacunasxperfilBusqueda!);
+    _listavacunaslotesBusqueda = busquedaLotes;
+    _listavacunaslotesBusquedaStreamController.add(_listavacunaslotesBusqueda!);
   }
 
-  void eliminarBusqueda() {
-    List<VacunasxPerfil> vacio = [];
-    _listavacunasxperfilBusqueda = vacio;
-    _listavacunasxperfilBusquedaStreamController.add(vacio);
+  void eliminarBusquedaLotes() {
+    List<Lotes> vacio = [];
+    _listavacunaslotesBusqueda = vacio;
+    _listavacunaslotesBusquedaStreamController.add(vacio);
   }
 
 ////------------------------------------------------------------------------------------///////
 
   dispose() {
-    _listavacunasxperfilBusquedaStreamController.close();
-    _vacunasxperfilStreamController.close();
-    _listavacunasxperfilStreamController.close();
+    _listavacunaslotesBusquedaStreamController.close();
+    _vacunasLotesStreamController.close();
+    _listavacunaslotesStreamController.close();
   }
 }
 

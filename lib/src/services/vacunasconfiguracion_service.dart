@@ -20,12 +20,12 @@ class _VacunasConfiguracion {
   Stream<ConfiVacuna?> get vacunasConfiguracionStream =>
       _vacunasConfiguracionStreamController.stream;
 
-  void cargarVacunasConfiguracion(ConfiVacuna? perfiles) {
-    _vacunasConfiguracion = perfiles;
-    _vacunasConfiguracionStreamController.add(perfiles);
+  void cargarVacunasConfiguracion(ConfiVacuna? configuraciones) {
+    _vacunasConfiguracion = configuraciones;
+    _vacunasConfiguracionStreamController.add(configuraciones);
   }
 
-  //Manejo de Listas
+  //----------------------------Manejo de Listas-------------------------//
 
   final StreamController<List<ConfiVacuna?>>
       _listavacunasConfiguracionStreamController =
@@ -63,23 +63,24 @@ class _VacunasConfiguracion {
   List<ConfiVacuna>? get listavacunasConfiguracionBusqueda =>
       _listavacunasConfiguracionBusqueda;
 
-  bool get existeBusquedaxPerfiles =>
+  bool get existeBusquedaxConfiguracion =>
       (_listavacunasConfiguracionBusqueda!.isNotEmpty) ? true : false;
 
-  Stream<List<ConfiVacuna?>> get listaBusquedaStream =>
+  Stream<List<ConfiVacuna?>> get listaBusquedaConfiguracionStream =>
       _listavacunasConfiguracionBusquedaStreamController.stream;
 
-  void buscarVacuna(String busqueda) {
-    List<ConfiVacuna> busquedaVacunas = _listavacunasConfiguracion!
-        .where((element) =>
-            element.sysvacu02_descripcion!.toUpperCase().contains(busqueda))
+  void buscarConfiguracion(String busqconfiguracion) {
+    List<ConfiVacuna> busquedaConfiguracion = _listavacunasConfiguracion!
+        .where((element) => element.sysvacu02_descripcion!
+            .toUpperCase()
+            .contains(busqconfiguracion))
         .toList();
-    _listavacunasConfiguracionBusqueda = busquedaVacunas;
+    _listavacunasConfiguracionBusqueda = busquedaConfiguracion;
     _listavacunasConfiguracionBusquedaStreamController
         .add(_listavacunasConfiguracionBusqueda!);
   }
 
-  void eliminarBusqueda() {
+  void eliminarBusquedaConfiguracion() {
     List<ConfiVacuna> vacio = [];
     _listavacunasConfiguracionBusqueda = vacio;
     _listavacunasConfiguracionBusquedaStreamController.add(vacio);
