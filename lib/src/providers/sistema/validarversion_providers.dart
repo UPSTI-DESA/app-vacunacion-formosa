@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 
 class _ValidacionVersion {
@@ -20,21 +19,6 @@ class _ValidacionVersion {
     }
 
     throw 'Hubo un error mas jodido';
-  }
-
-  Future validarVersion() async {
-    final url = Uri(
-      scheme: scheme,
-      host: host,
-      path: urlValVersion,
-    );
-
-    final List<Version> resp = await procesarRespuesta(url);
-    if (resp.isNotEmpty) {
-      return resp[0].sysappl01_version;
-    } else {
-      return 0;
-    }
   }
 
   Future validarVersionNuevaVersion(String nombreapp, String versionApp) async {

@@ -116,17 +116,6 @@ class _LoginBodyState extends State<LoginBody> {
     );
   }
 
-  //Funcion para Validar la Version de la App local con la Activa en Servidor
-  validarVersion() async {
-    final versionSv = await validacionVersionProvider.validarVersion();
-    if (versionSv == versionApp) {
-      datosdecargaprovider.versionApp = 'Ok';
-    } else {
-      mostrarAlertaActualizacion(context, 'Debe Actualizar la Aplicación');
-      datosdecargaprovider.versionApp = 'No';
-    }
-  }
-
   validarVersionNueva() async {
     final versionSv = await validacionVersionProvider
         .validarVersionNuevaVersion(nombreApp, versionApp);
