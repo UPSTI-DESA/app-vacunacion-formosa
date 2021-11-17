@@ -12,7 +12,7 @@ import 'src/pages/pages.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   _buildReleaseErrorWidgetBuilder();
-  AppConfig appconfig = AppConfig(enviroment: 'PROD');
+  AppConfig appconfig = AppConfig(enviroment: 'DEV');
   enviromentService.cargarEnviroment(appconfig);
 
   runApp(const MyApp());

@@ -615,15 +615,22 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                       .red);
                                                             })
                                                         : {
-                                                            mostrarLoadingEstrellasXTiempo(
-                                                                context, 850),
+                                                            loadingLoginService
+                                                                    .getCargaPerfilState!
+                                                                ? mostrarLoadingEstrellasXTiempo(
+                                                                    context,
+                                                                    850)
+                                                                : () {},
                                                             loadingLoginService
                                                                 .cargaPerfil(
                                                                     false)
                                                           }
                                                     : {
-                                                        mostrarLoadingEstrellasXTiempo(
-                                                            context, 850),
+                                                        loadingLoginService
+                                                                .getCargaPerfilState!
+                                                            ? mostrarLoadingEstrellasXTiempo(
+                                                                context, 850)
+                                                            : () {},
                                                         loadingLoginService
                                                             .cargaPerfil(false)
                                                       };
@@ -905,7 +912,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                                                   })
                                                                                               : {
                                                                                                   Navigator.of(context).pop(),
-                                                                                                  mostrarLoadingEstrellasXTiempo(context, 800),
+                                                                                                  loadingLoginService.getCargaConfiguracionState! ? mostrarLoadingEstrellasXTiempo(context, 800) : () {},
                                                                                                   setState(() {
                                                                                                     listaConfiguraciones = tempLista;
                                                                                                     vacunasConfiguracionService.cargarListaVacunasConfiguracion(tempLista);
@@ -956,7 +963,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                                                   })
                                                                                               : {
                                                                                                   Navigator.of(context).pop(),
-                                                                                                  mostrarLoadingEstrellasXTiempo(context, 800),
+                                                                                                  loadingLoginService.getCargaConfiguracionState! ? mostrarLoadingEstrellasXTiempo(context, 800) : () {},
                                                                                                   setState(() {
                                                                                                     listaConfiguraciones = tempLista;
                                                                                                     vacunasConfiguracionService.cargarListaVacunasConfiguracion(tempLista);
@@ -1209,7 +1216,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                                                   })
                                                                                               : {
                                                                                                   Navigator.of(context).pop(),
-                                                                                                  mostrarLoadingEstrellasXTiempo(context, 800),
+                                                                                                  loadingLoginService.getCargaLotesState! ? mostrarLoadingEstrellasXTiempo(context, 800) : () {},
                                                                                                   // loadingLoginService.cargaConfiguracion(false),
                                                                                                   setState(() {
                                                                                                     listaLotes = tempLista;
@@ -1260,7 +1267,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                                                   })
                                                                                               : {
                                                                                                   Navigator.of(context).pop(),
-                                                                                                  mostrarLoadingEstrellasXTiempo(context, 800),
+                                                                                                  loadingLoginService.getCargaLotesState! ? mostrarLoadingEstrellasXTiempo(context, 800) : () {},
                                                                                                   setState(() {
                                                                                                     listaLotes = tempLista;
                                                                                                     vacunasLotesService.cargarListaVacunasLotes(tempLista);
