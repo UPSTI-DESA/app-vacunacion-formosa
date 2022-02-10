@@ -456,7 +456,6 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                         onPressed: () {
                           vacunasxPerfilService.eliminarListaVacunasxPerfil();
                           perfilesVacunacionService.eliminarListaPerfiles();
-                          beneficiarioService.eliminarBeneficiario();
                           notificacionesDosisService.eliminarListaDosis();
                           vacunasConfiguracionService
                               .eliminarListaVacunasConfiguracion();

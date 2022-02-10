@@ -71,11 +71,11 @@ class SobreNosotrosPage extends StatelessWidget {
                   fit: BoxFit.cover,
                   height: size.height * 0.05,
                 ),
-                Image(
-                  image: const AssetImage('assets/img/fondo/sisVacunacion.png'),
-                  fit: BoxFit.cover,
-                  height: size.height * 0.10,
-                ),
+                // Image(
+                //   image: const AssetImage('assets/logo/VacunApp3.png'),
+                //   fit: BoxFit.cover,
+                //   height: size.height * 0.10,
+                // ),
               ],
             ),
           ],

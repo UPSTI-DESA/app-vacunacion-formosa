@@ -57,9 +57,9 @@ class _LoginBodyState extends State<LoginBody> {
                   heroTag: 'botonDesa',
                   icon: const Icon(Icons.perm_data_setting_sharp),
                   splashColor: Colors.red,
-                  label: const Text('MBDM'),
+                  label: const Text('DESA'),
                   isExtended: true,
-                  tooltip: 'PARA SU USO EN DESA!',
+                  tooltip: 'PARA SU USO EN DESARROLLO!',
                   //Esta condicion haabilita un boton flotante en el login para su ingreso sin escanear un dni.
                   onPressed: () async {
                     final respUsuario = await usuariosProviers.validarUsuariosNuevo(

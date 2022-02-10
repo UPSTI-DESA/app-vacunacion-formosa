@@ -320,7 +320,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                     Text(
                                       'Vacunador: ',
                                       style: GoogleFonts.nunito(
-                                        textStyle: TextStyle(
+                                        textStyle: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
                                       textAlign: TextAlign.center,
