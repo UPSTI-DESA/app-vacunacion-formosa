@@ -24,17 +24,20 @@ class _CantidadVacunadosFecha {
   }
 
   Future cantidadVacunas() async {
-    final url =
-        Uri(scheme: scheme, host: host, path: urlCantVacu, queryParameters: {
-      'id_sysdesa12': vacunadorService.vacunador!.id_sysdesa12,
-      'vacunador_registrador': registradorService.registrador!.flxcore03_dni ==
-              vacunadorService.vacunador!.id_sysdesa12
-          ? '1'
-          : '0',
-    });
+    if (vacunadorService.existeVacunador != false) {
+      final url =
+          Uri(scheme: scheme, host: host, path: urlCantVacu, queryParameters: {
+        'id_sysdesa12': vacunadorService.vacunador!.id_sysdesa12,
+        'vacunador_registrador':
+            registradorService.registrador!.flxcore03_dni ==
+                    vacunadorService.vacunador!.id_sysdesa12
+                ? '1'
+                : '0',
+      });
 
-    final List<CantidadVacunados> resp = await procesarRespuestaDos(url);
-    return resp;
+      final List<CantidadVacunados> resp = await procesarRespuestaDos(url);
+      return resp;
+    }
   }
 }
 

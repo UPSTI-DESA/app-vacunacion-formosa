@@ -55,7 +55,9 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
 
     int duracionDelay = 0;
 
-    _incrementoVacunados();
+    if (vacunadorService.existeVacunador != false) {
+      _incrementoVacunados();
+    }
 
     return WillPopScope(
       onWillPop: onWillPop,

@@ -304,7 +304,8 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                         scrollDirection: Axis.horizontal,
                                         child: Text(
                                           registradorService
-                                              .registrador!.flxcore03_nombre!,
+                                              .registrador!.flxcore03_nombre!
+                                              .toUpperCase(),
                                           style: GoogleFonts.nunito(),
                                           textAlign: TextAlign.center,
                                         ),
@@ -463,9 +464,11 @@ class _VacunadorPageState extends State<VacunadorPage> {
                       ),
                       mismoVacunador == false
                           ? Container()
-                          : FadeIn(
-                              duration: const Duration(milliseconds: 800),
-                              child: _infoVacunador(context)),
+                          : vacunadorService.existeVacunador
+                              ? const SizedBox()
+                              : FadeIn(
+                                  duration: const Duration(milliseconds: 800),
+                                  child: _infoVacunador(context)),
                       //Fin de Ocultar
                       const SizedBox(
                         height: 20.0,
@@ -515,8 +518,8 @@ class _VacunadorPageState extends State<VacunadorPage> {
     return StreamBuilder(
       stream: vacunadorService.vacunadorStream,
       builder: (BuildContext context, AsyncSnapshot<Vacunador?> snapshot) {
-        return snapshot.hasData
-            ? Container()
+        return vacunadorService.existeVacunador
+            ? const SizedBox()
             : Padding(
                 padding: EdgeInsets.only(
                     right: MediaQuery.of(context).size.width * 0.02,
