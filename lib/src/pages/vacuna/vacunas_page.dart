@@ -143,12 +143,16 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         .listaDosisAplicadas[
                                                             index]
                                                         .sysvacu04_nombre!),
-                                            subtitle: Text(
-                                                'Fecha de Aplicación: - ' +
+                                            subtitle: Column(
+                                              children: [
+                                                Text('Fecha de Aplicación: - ' +
                                                     notificacionesDosisService
                                                         .listaDosisAplicadas[
                                                             index]
                                                         .sysdesa10_fecha_aplicacion!),
+                                                //TODO:Agregar la informacion del lote y configuracion de las vacunas aplicadas
+                                              ],
+                                            ),
                                           );
                                         },
                                       )
@@ -493,6 +497,7 @@ class _VacunasPageState extends State<VacunasPage> {
                   ),
                   //CUANDO EL TUTORSERVICE TENGA DATOS
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+
                   Padding(
                     padding: EdgeInsets.only(
                         right: MediaQuery.of(context).size.width * 0.02,
@@ -609,6 +614,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                     Icons
                                                                         .error_outline,
                                                                     size: 40,
+                                                                    color: Colors
+                                                                        .white,
                                                                   ),
                                                                   color: Colors
                                                                       .red);
@@ -1071,6 +1078,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           MainAxisAlignment
                                                               .center,
                                                       children: [
+                                                        //TODO: DIVIDIR LAS CONFIGURACIONES EN CONDICION ESQUEMA DOSIS
                                                         Text(
                                                             _selectConfigVacuna ==
                                                                     null
@@ -1575,52 +1583,71 @@ class _VacunasPageState extends State<VacunasPage> {
                                                 ? _selectLote != null
                                                     // ignore: unnecessary_statements
                                                     ? {
-                                                        insertRegistroService.cargarRegistro(
-                                                            InsertRegistros(
-                                                                id_flxcore03: registradorService
-                                                                    .registrador!
-                                                                    .id_flxcore03, //Obligatorio
-                                                                id_sysdesa12: vacunadorService
-                                                                    .vacunador!
-                                                                    .id_sysdesa12, //Obligatorio
-                                                                id_sysdesa18: _selectLote!
-                                                                    .id_sysdesa18, //Obligatorio
-                                                                id_sysofic01: registradorService
-                                                                    .registrador!
-                                                                    .rela_sysofic01, //Obligatorio
-                                                                id_sysvacu03: _selectConfigVacuna!
-                                                                    .id_sysvacu03, //Obligatorio
-                                                                sysdesa10_apellido: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_apellido, //Obligatorio
-                                                                sysdesa10_cadena_dni: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_cadena_dni, //Solo con Escaner
-                                                                sysdesa10_dni: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_dni, //Obligatorio
-                                                                sysdesa10_nombre: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_nombre, //Obligatorio
-                                                                sysdesa10_nro_tramite: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_nro_tramite, //Solo con Escaner
-                                                                sysdesa10_sexo: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_sexo, //Obligatorio
-                                                                sysdesa10_edad: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_edad,
-                                                                //DatosExtras que no se envian, SOlo para vista
-                                                                nombreVacuna: _selectVacunas!.sysvacu04_nombre,
-                                                                nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
-                                                                nombreLote: _selectLote!.sysdesa18_lote,
-                                                                sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
-                                                                vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
-                                                                sysdesa10_apellido_tutor: tutorService.tutor!.sysdesa10_apellido_tutor,
-                                                                sysdesa10_dni_tutor: tutorService.tutor!.sysdesa10_dni_tutor,
-                                                                sysdesa10_nombre_tutor: tutorService.tutor!.sysdesa10_nombre_tutor,
-                                                                sysdesa10_sexo_tutor: tutorService.tutor!.sysdesa10_sexo_tutor)),
+                                                        insertRegistroService
+                                                            .cargarRegistro(
+                                                                //TODO: Cambiar el formato de las fechas al insertar
+                                                                InsertRegistros(
+                                                                    id_flxcore03: registradorService
+                                                                        .registrador!
+                                                                        .id_flxcore03, //Obligatorio
+                                                                    id_sysdesa12: vacunadorService
+                                                                        .vacunador!
+                                                                        .id_sysdesa12, //Obligatorio
+                                                                    id_sysdesa18: _selectLote!
+                                                                        .id_sysdesa18, //Obligatorio
+                                                                    id_sysofic01: registradorService
+                                                                        .registrador!
+                                                                        .rela_sysofic01, //Obligatorio
+                                                                    id_sysvacu03:
+                                                                        _selectConfigVacuna!
+                                                                            .id_sysvacu03, //Obligatorio
+                                                                    sysdesa10_apellido: beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_apellido, //Obligatorio
+                                                                    sysdesa10_cadena_dni: beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_cadena_dni, //Solo con Escaner
+                                                                    sysdesa10_dni: beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_dni, //Obligatorio
+                                                                    sysdesa10_nombre: beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_nombre, //Obligatorio
+                                                                    sysdesa10_nro_tramite: beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_nro_tramite, //Solo con Escaner
+                                                                    sysdesa10_sexo: beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_sexo, //Obligatorio
+                                                                    sysdesa10_edad: beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_edad,
+                                                                    //DatosExtras que no se envian, SOlo para vista
+                                                                    nombreVacuna:
+                                                                        _selectVacunas!
+                                                                            .sysvacu04_nombre,
+                                                                    nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! +
+                                                                        '-' +
+                                                                        _selectConfigVacuna!
+                                                                            .sysvacu01_descripcion! +
+                                                                        '-' +
+                                                                        _selectConfigVacuna!
+                                                                            .sysvacu02_descripcion!,
+                                                                    nombreLote: _selectLote!
+                                                                        .sysdesa18_lote,
+                                                                    sysdesa10_fecha_nacimiento: beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_fecha_nacimiento,
+                                                                    vacunador_registrador:
+                                                                        registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12
+                                                                            ? '1'
+                                                                            : '0',
+                                                                    sysdesa10_apellido_tutor: tutorService
+                                                                        .tutor!
+                                                                        .sysdesa10_apellido_tutor,
+                                                                    sysdesa10_dni_tutor: tutorService.tutor!.sysdesa10_dni_tutor,
+                                                                    sysdesa10_nombre_tutor: tutorService.tutor!.sysdesa10_nombre_tutor,
+                                                                    sysdesa10_sexo_tutor: tutorService.tutor!.sysdesa10_sexo_tutor)),
                                                         Navigator.pushAndRemoveUntil(
                                                             context,
                                                             MaterialPageRoute(
