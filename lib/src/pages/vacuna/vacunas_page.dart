@@ -142,12 +142,23 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         .listaDosisAplicadas[
                                                             index]
                                                         .sysvacu04_nombre!),
-                                            subtitle: Text(
-                                                'Fecha de Aplicación: - ' +
+                                            subtitle: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                //TODO Cambiar por variable LOTE
+                                                Text('Lote: - ' +
                                                     notificacionesDosisService
                                                         .listaDosisAplicadas[
                                                             index]
                                                         .sysdesa10_fecha_aplicacion!),
+                                                Text('Fecha de Aplicación: - ' +
+                                                    notificacionesDosisService
+                                                        .listaDosisAplicadas[
+                                                            index]
+                                                        .sysdesa10_fecha_aplicacion!),
+                                              ],
+                                            ),
                                           );
                                         },
                                       )
@@ -313,6 +324,7 @@ class _VacunasPageState extends State<VacunasPage> {
                     ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  //CUANDO EL TUTORSERVICE TENGA DATOS
                   StreamBuilder(
                     stream: tutorService.tutorStream,
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -490,7 +502,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           : verificarEdad(context);
                     },
                   ),
-                  //CUANDO EL TUTORSERVICE TENGA DATOS
+                  
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
                   Padding(
                     padding: EdgeInsets.only(
