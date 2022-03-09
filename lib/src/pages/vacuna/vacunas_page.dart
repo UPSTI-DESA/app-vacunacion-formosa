@@ -96,7 +96,6 @@ class _VacunasPageState extends State<VacunasPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
@@ -318,6 +317,7 @@ class _VacunasPageState extends State<VacunasPage> {
                     ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                  //CUANDO EL TUTORSERVICE TENGA DATOS
                   StreamBuilder(
                     stream: tutorService.tutorStream,
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -495,7 +495,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           : verificarEdad(context);
                     },
                   ),
-                  //CUANDO EL TUTORSERVICE TENGA DATOS
+
                   SizedBox(height: MediaQuery.of(context).size.width * 0.05),
 
                   Padding(
