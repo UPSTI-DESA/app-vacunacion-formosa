@@ -96,7 +96,6 @@ class _VacunasPageState extends State<VacunasPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(

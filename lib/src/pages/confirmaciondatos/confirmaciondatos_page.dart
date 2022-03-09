@@ -8,9 +8,7 @@ import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/insertregistro_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/services/vacunas_service.dart';
 import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
