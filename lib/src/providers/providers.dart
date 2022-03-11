@@ -10,3 +10,4 @@ export 'package:sistema_vacunacion/src/providers/vacunados/vacunadoscant_provide
 export 'package:sistema_vacunacion/src/providers/sistema/notificaciones_providers.dart';
 export 'package:sistema_vacunacion/src/providers/sistema/insertregistro_providers.dart';
 export 'package:sistema_vacunacion/src/providers/sistema/validarversion_providers.dart';
+export 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';

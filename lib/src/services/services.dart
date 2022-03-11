@@ -11,3 +11,4 @@ export 'package:sistema_vacunacion/src/services/vacunaslotes_service.dart';
 export 'package:sistema_vacunacion/src/services/vacunasxperfiles_service.dart';
 export 'package:sistema_vacunacion/src/services/insertregistro_service.dart';
 export 'package:sistema_vacunacion/src/services/perfilesvacunacion_service.dart';
+export 'package:sistema_vacunacion/src/services/loadingLogin_service.dart';

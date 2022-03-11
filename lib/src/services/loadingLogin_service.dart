@@ -7,6 +7,8 @@ class _LoadingLoginService {
   bool? _loadingPerfil = true;
   bool? _loadingConfiguracion = true;
   bool? _loadingLotes = true;
+  bool? _loadingCondicion = true;
+  bool? _loadingEsquema = true;
 
   final StreamController<bool> _loadingLoginStreamController =
       StreamController<bool>.broadcast();
@@ -21,6 +23,37 @@ class _LoadingLoginService {
     _loadingLoginStreamController.add(estado);
   }
 
+//--------------- Manejo Primer condicion -----------//
+
+  final StreamController<bool> _loadingEsquemaStreamController =
+      StreamController<bool>.broadcast();
+
+  bool? get getLoadingEsquemaState => _loadingEsquema;
+
+  Stream<bool> get loadingEsquemaStateStream =>
+      _loadingEsquemaStreamController.stream;
+
+  void cargarEsquema(bool estado) {
+    _loadingEsquema = estado;
+
+    _loadingEsquemaStreamController.add(estado);
+  }
+
+//--------------- Manejo Primer condicion -----------//
+
+  final StreamController<bool> _loadingCondicionStreamController =
+      StreamController<bool>.broadcast();
+
+  bool? get getLoadingCondicionState => _loadingCondicion;
+
+  Stream<bool> get loadingCondicionStateStream =>
+      _loadingCondicionStreamController.stream;
+
+  void cargarCondicion(bool estado) {
+    _loadingCondicion = estado;
+
+    _loadingCondicionStreamController.add(estado);
+  }
 //--------------- Manejo Primer Inicio -----------//
 
   final StreamController<bool> _primerInicioStreamController =

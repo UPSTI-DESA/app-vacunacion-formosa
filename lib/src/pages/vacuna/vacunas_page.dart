@@ -2,20 +2,21 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
+import 'package:sistema_vacunacion/src/models/vacunas/vacunas_condicion_model.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
-import 'package:sistema_vacunacion/src/services/loadingLogin_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
-import 'package:sistema_vacunacion/src/widgets/loading_x_tiempo_widget.dart';
+import 'package:sistema_vacunacion/src/services/vacunas_condicion_service.dart';
+import 'package:sistema_vacunacion/src/services/vacunas_esquema_service.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
+
+import '../../providers/vacunas/vacunas_condicion_providers.dart';
 
 class VacunasPage extends StatefulWidget {
   const VacunasPage({
@@ -27,16 +28,25 @@ class VacunasPage extends StatefulWidget {
 }
 
 class _VacunasPageState extends State<VacunasPage> {
+  bool? mostrarBeneficiario;
+  bool? mostrarTutor;
+  int pasos = 1;
   VacunasxPerfil? _selectVacunas;
+  VacunasCondicion? _selectCondicion;
   PerfilesVacunacion? _selectPerfil;
   List<InfoVacunas>? listaVacunas;
-  List<ConfiVacuna>? listaConfiguraciones;
-  ConfiVacuna? _selectConfigVacuna;
+  List<VacunasCondicion>? listaCondiciones;
   List<Lotes>? listaLotes;
   Lotes? _selectLote;
   String uribeneficiario = beneficiarioService.beneficiario!.foto_beneficiario!;
   final TextEditingController controladorDni = TextEditingController();
   final TextEditingController controladorBusqueda = TextEditingController();
+  final TextEditingController controladorBusquedaVacunas =
+      TextEditingController();
+  final TextEditingController controladorBusquedaCondicion =
+      TextEditingController();
+  final TextEditingController controladorBusquedaEsquema =
+      TextEditingController();
   final TextEditingController controladorBusquedaConfig =
       TextEditingController();
   final TextEditingController controladorBusquedaLotes =
@@ -58,8 +68,10 @@ class _VacunasPageState extends State<VacunasPage> {
   @override
   void initState() {
     fotoBeneficiario = base64.decode(uribeneficiario.split(',').last);
-
-    listaConfiguraciones = [];
+    mostrarBeneficiario = false;
+    mostrarTutor = false;
+    pasos = 1;
+    listaCondiciones = [];
     listaVacunas = [];
     listaLotes = [];
     dniTutor = '';
@@ -89,13 +101,18 @@ class _VacunasPageState extends State<VacunasPage> {
     focusNode.dispose();
     controladorDni.dispose();
     controladorBusqueda.dispose();
-    controladorBusquedaConfig.dispose();
     controladorBusquedaLotes.dispose();
+    controladorBusquedaVacunas.dispose();
+    controladorBusquedaCondicion.dispose();
+    controladorBusquedaEsquema.dispose();
+    controladorBusquedaEsquema.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    ScrollController generalScroll = ScrollController();
+
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
@@ -106,67 +123,7 @@ class _VacunasPageState extends State<VacunasPage> {
                   showModalBottomSheet(
                       context: context,
                       builder: (BuildContext context) {
-                        return Column(
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * .01,
-                            ),
-                            Text(
-                              'Vacunas Aplicadas',
-                              style: GoogleFonts.nunito(
-                                textStyle: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 20),
-                              ),
-                            ),
-                            StreamBuilder(
-                              stream: notificacionesDosisService
-                                  .listaDosisAplicadasStream,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<dynamic> snapshot) {
-                                return notificacionesDosisService
-                                        .listaDosisAplicadas.isNotEmpty
-                                    ? ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: notificacionesDosisService
-                                            .listaDosisAplicadas.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return ListTile(
-                                            title: Text(
-                                                notificacionesDosisService
-                                                        .listaDosisAplicadas[
-                                                            index]
-                                                        .sysvacu05_nombre! +
-                                                    ' - ' +
-                                                    notificacionesDosisService
-                                                        .listaDosisAplicadas[
-                                                            index]
-                                                        .sysvacu04_nombre!),
-                                            subtitle: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                //TODO Cambiar por variable LOTE
-                                                Text('Lote: - ' +
-                                                    notificacionesDosisService
-                                                        .listaDosisAplicadas[
-                                                            index]
-                                                        .sysdesa10_fecha_aplicacion!),
-                                                Text('Fecha de Aplicación: - ' +
-                                                    notificacionesDosisService
-                                                        .listaDosisAplicadas[
-                                                            index]
-                                                        .sysdesa10_fecha_aplicacion!),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      )
-                                    : const Text('No posee dosis aplicadas');
-                              },
-                            ),
-                          ],
-                        );
+                        return vacunasAplicadas();
                       });
                 },
                 child: FaIcon(FontAwesomeIcons.hospitalUser,
@@ -190,865 +147,388 @@ class _VacunasPageState extends State<VacunasPage> {
         body: Stack(
           children: [
             const EncabezadoWave(),
-            SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.02,
-                        left: MediaQuery.of(context).size.width * 0.02),
-                    child: Container(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width * 0.05),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
-                                offset: const Offset(0, 5),
-                                blurRadius: 5)
-                          ],
-                          color: Colors.white),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Row(
-                            children: [
-                              FadeInUpBig(
-                                from: 25,
-                                child: Text(
-                                  'Datos Beneficiario',
-                                  style: GoogleFonts.barlow(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 20)),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.width * 0.05),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text('Nombre: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
-                                              textAlign: TextAlign.center),
-                                          Text(
-                                              beneficiarioService.beneficiario!
-                                                  .sysdesa10_nombre!,
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 16.0),
-                                              ),
-                                              textAlign: TextAlign.center),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
-                                      Row(
-                                        children: [
-                                          Text('Apellido: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
-                                              textAlign: TextAlign.center),
-                                          Text(
-                                              beneficiarioService.beneficiario!
-                                                  .sysdesa10_apellido!,
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 16.0),
-                                              ),
-                                              textAlign: TextAlign.center),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
-                                      Row(
-                                        children: [
-                                          Text('D.N.I.: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
-                                              textAlign: TextAlign.center),
-                                          Text(
-                                              beneficiarioService
-                                                  .beneficiario!.sysdesa10_dni!,
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 16.0),
-                                              ),
-                                              textAlign: TextAlign.center),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  //CUANDO EL TUTORSERVICE TENGA DATOS
-                  StreamBuilder(
-                    stream: tutorService.tutorStream,
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      return snapshot.hasData
-                          ? Padding(
-                              padding: EdgeInsets.only(
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  left:
-                                      MediaQuery.of(context).size.width * 0.02),
-                              child: Container(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.05),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    boxShadow: <BoxShadow>[
-                                      BoxShadow(
-                                          color: Colors.black.withOpacity(0.08),
-                                          offset: const Offset(0, 5),
-                                          blurRadius: 5)
-                                    ],
-                                    color: SisVacuColor.white),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        FadeInUpBig(
-                                          from: 25,
-                                          child: Text(
-                                            'Datos Tutor',
-                                            style: GoogleFonts.barlow(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 20)),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Text('Nombre: ',
-                                                        style:
-                                                            GoogleFonts.nunito(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize:
-                                                                      16.0),
+            RawScrollbar(
+              thumbColor: SisVacuColor.verceleste,
+              isAlwaysShown: true,
+              radius: Radius.circular(20),
+              thickness: 5,
+              controller: generalScroll,
+              child: SingleChildScrollView(
+                controller: generalScroll,
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+
+                    containerBeneficiario(),
+
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    //CUANDO EL TUTORSERVICE TENGA DATOS
+                    containerTutor(),
+
+                    containerPasos(),
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    //  containerPerfiles(),
+
+                    // SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+
+                    // containerVacunas(),
+
+                    // SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+
+                    // containerConfiguraciones(),
+
+                    // SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+
+                    // containerLotes(),
+
+                    // SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+
+                    BotonCustom(
+                        text: 'Registrar Vacunación',
+                        onPressed: () {
+                          beneficiarioService.beneficiario!.sysdesa10_dni != ''
+                              ? int.parse(beneficiarioService
+                                          .beneficiario!.sysdesa10_edad!) <
+                                      18
+                                  ? tutorService.existeTutor
+                                      ? tutorService
+                                                  .tutor!.sysdesa10_dni_tutor !=
+                                              ''
+                                          ? _selectVacunas != null
+                                              ? _selectCondicion != null
+                                                  ? _selectLote != null
+                                                      // ignore: unnecessary_statements
+                                                      ? {
+                                                          insertRegistroService.cargarRegistro(
+                                                              InsertRegistros(
+                                                                  id_flxcore03: registradorService
+                                                                      .registrador!
+                                                                      .id_flxcore03, //Obligatorio
+                                                                  id_sysdesa12: vacunadorService
+                                                                      .vacunador!
+                                                                      .id_sysdesa12, //Obligatorio
+                                                                  id_sysdesa18:
+                                                                      _selectLote!
+                                                                          .id_sysdesa18, //Obligatorio
+                                                                  id_sysofic01: registradorService
+                                                                      .registrador!
+                                                                      .rela_sysofic01, //Obligatorio
+                                                                  // id_sysvacu03:
+                                                                  //     _selectConfigVacuna!
+                                                                  // .id_sysvacu03, //Obligatorio
+                                                                  sysdesa10_apellido: beneficiarioService
+                                                                      .beneficiario!
+                                                                      .sysdesa10_apellido, //Obligatorio
+                                                                  sysdesa10_cadena_dni: beneficiarioService
+                                                                      .beneficiario!
+                                                                      .sysdesa10_cadena_dni, //Solo con Escaner
+                                                                  sysdesa10_dni: beneficiarioService
+                                                                      .beneficiario!
+                                                                      .sysdesa10_dni, //Obligatorio
+                                                                  sysdesa10_nombre: beneficiarioService
+                                                                      .beneficiario!
+                                                                      .sysdesa10_nombre, //Obligatorio
+                                                                  sysdesa10_nro_tramite: beneficiarioService
+                                                                      .beneficiario!
+                                                                      .sysdesa10_nro_tramite, //Solo con Escaner
+                                                                  sysdesa10_sexo: beneficiarioService
+                                                                      .beneficiario!
+                                                                      .sysdesa10_sexo, //Obligatorio
+                                                                  sysdesa10_edad:
+                                                                      beneficiarioService
+                                                                          .beneficiario!
+                                                                          .sysdesa10_edad,
+                                                                  //DatosExtras que no se envian, SOlo para vista
+                                                                  nombreVacuna:
+                                                                      _selectVacunas!.sysvacu04_nombre,
+                                                                  //     nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
+                                                                  nombreLote: _selectLote!.sysdesa18_lote,
+                                                                  sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
+                                                                  vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
+                                                                  sysdesa10_apellido_tutor: tutorService.tutor!.sysdesa10_apellido_tutor,
+                                                                  sysdesa10_dni_tutor: tutorService.tutor!.sysdesa10_dni_tutor,
+                                                                  sysdesa10_nombre_tutor: tutorService.tutor!.sysdesa10_nombre_tutor,
+                                                                  sysdesa10_sexo_tutor: tutorService.tutor!.sysdesa10_sexo_tutor)),
+                                                          Navigator.pushAndRemoveUntil(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          const ConfirmarDatos()),
+                                                              (Route<dynamic>
+                                                                      route) =>
+                                                                  false)
+                                                        }
+                                                      : showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return const DialogoAlerta(
+                                                                envioFuncion2:
+                                                                    false,
+                                                                envioFuncion1:
+                                                                    false,
+                                                                tituloAlerta:
+                                                                    'ATENCIÓN!',
+                                                                descripcionAlerta:
+                                                                    'Debe Seleccionar un Lote',
+                                                                textoBotonAlerta:
+                                                                    'Listo',
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .error_outline,
+                                                                  size: 40,
+                                                                ),
+                                                                color:
+                                                                    Colors.red);
+                                                          })
+                                                  : showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return const DialogoAlerta(
+                                                            envioFuncion2:
+                                                                false,
+                                                            envioFuncion1:
+                                                                false,
+                                                            tituloAlerta:
+                                                                'ATENCIÓN!',
+                                                            descripcionAlerta:
+                                                                'Debe Seleccionar una Configuración',
+                                                            textoBotonAlerta:
+                                                                'Listo',
+                                                            icon: Icon(
+                                                              Icons
+                                                                  .error_outline,
+                                                              size: 40,
+                                                            ),
+                                                            color: Colors.red);
+                                                      })
+                                              : showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const DialogoAlerta(
+                                                        envioFuncion2: false,
+                                                        envioFuncion1: false,
+                                                        tituloAlerta:
+                                                            'ATENCIÓN!',
+                                                        descripcionAlerta:
+                                                            'Debe Seleccionar una Vacuna',
+                                                        textoBotonAlerta:
+                                                            'Listo',
+                                                        icon: Icon(
+                                                          Icons.error_outline,
+                                                          size: 40,
                                                         ),
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                    Text(
-                                                        tutorService.tutor!
-                                                            .sysdesa10_nombre_tutor!,
-                                                        style:
-                                                            GoogleFonts.nunito(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontSize:
-                                                                      16.0),
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.02),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      'Apellido: ',
-                                                      style: GoogleFonts.nunito(
-                                                        textStyle:
-                                                            const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16.0),
-                                                      ),
+                                                        color: Colors.red);
+                                                  })
+                                          : showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const DialogoAlerta(
+                                                    envioFuncion2: false,
+                                                    envioFuncion1: false,
+                                                    tituloAlerta: 'ATENCIÓN!',
+                                                    descripcionAlerta:
+                                                        'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
+                                                    textoBotonAlerta: 'Listo',
+                                                    icon: Icon(
+                                                      Icons.error_outline,
+                                                      size: 40,
                                                     ),
-                                                    Text(
-                                                        tutorService.tutor!
-                                                            .sysdesa10_apellido_tutor!,
-                                                        style:
-                                                            GoogleFonts.nunito(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontSize:
-                                                                      16.0),
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                  ],
+                                                    color: Colors.red);
+                                              })
+                                      : showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const DialogoAlerta(
+                                                envioFuncion2: false,
+                                                envioFuncion1: false,
+                                                tituloAlerta: 'ATENCIÓN!',
+                                                descripcionAlerta:
+                                                    'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
+                                                textoBotonAlerta: 'Listo',
+                                                icon: Icon(
+                                                  Icons.error_outline,
+                                                  size: 40,
                                                 ),
-                                                SizedBox(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.02),
-                                                Row(
-                                                  children: [
-                                                    Text('D.N.I.: ',
-                                                        style:
-                                                            GoogleFonts.nunito(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize:
-                                                                      16.0),
+                                                color: Colors.red);
+                                          })
+                                  : _selectVacunas != null
+                                      ? _selectCondicion != null
+                                          ? _selectLote != null
+                                              // ignore: unnecessary_statements
+                                              ? {
+                                                  insertRegistroService.cargarRegistro(
+                                                      InsertRegistros(
+                                                          id_flxcore03: registradorService
+                                                              .registrador!
+                                                              .id_flxcore03, //Obligatorio
+                                                          id_sysdesa12: vacunadorService
+                                                              .vacunador!
+                                                              .id_sysdesa12, //Obligatorio
+                                                          id_sysdesa18: _selectLote!
+                                                              .id_sysdesa18, //Obligatorio
+                                                          id_sysofic01: registradorService
+                                                              .registrador!
+                                                              .rela_sysofic01, //Obligatorio
+                                                          // id_sysvacu03: _selectConfigVacuna!
+                                                          //     .id_sysvacu03, //Obligatorio
+                                                          sysdesa10_apellido: beneficiarioService
+                                                              .beneficiario!
+                                                              .sysdesa10_apellido, //Obligatorio
+                                                          sysdesa10_cadena_dni: beneficiarioService
+                                                              .beneficiario!
+                                                              .sysdesa10_cadena_dni, //Solo con Escaner
+                                                          sysdesa10_dni: beneficiarioService
+                                                              .beneficiario!
+                                                              .sysdesa10_dni, //Obligatorio
+                                                          sysdesa10_nombre: beneficiarioService
+                                                              .beneficiario!
+                                                              .sysdesa10_nombre, //Obligatorio
+                                                          sysdesa10_nro_tramite:
+                                                              beneficiarioService
+                                                                  .beneficiario!
+                                                                  .sysdesa10_nro_tramite, //Solo con Escaner
+                                                          sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
+                                                          sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
+                                                          //DatosExtras que no se envian, SOlo para vista
+                                                          nombreVacuna: _selectVacunas!.sysvacu04_nombre,
+                                                          //   nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
+                                                          nombreLote: _selectLote!.sysdesa18_lote,
+                                                          sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
+                                                          vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
+                                                          sysdesa10_apellido_tutor: '',
+                                                          sysdesa10_dni_tutor: '',
+                                                          sysdesa10_nombre_tutor: '',
+                                                          sysdesa10_sexo_tutor: '')),
+                                                  Navigator.pushAndRemoveUntil(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const ConfirmarDatos()),
+                                                      (Route<dynamic> route) =>
+                                                          false)
+                                                }
+                                              : showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const DialogoAlerta(
+                                                        envioFuncion2: false,
+                                                        envioFuncion1: false,
+                                                        tituloAlerta:
+                                                            'ATENCIÓN!',
+                                                        descripcionAlerta:
+                                                            'Debe Seleccionar un Lote',
+                                                        textoBotonAlerta:
+                                                            'Listo',
+                                                        icon: Icon(
+                                                          Icons.error_outline,
+                                                          size: 40,
                                                         ),
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                    Text(
-                                                        tutorService.tutor!
-                                                            .sysdesa10_dni_tutor!,
-                                                        style:
-                                                            GoogleFonts.nunito(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontSize:
-                                                                      16.0),
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                  ],
+                                                        color: Colors.red);
+                                                  })
+                                          : showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const DialogoAlerta(
+                                                    envioFuncion2: false,
+                                                    envioFuncion1: false,
+                                                    tituloAlerta: 'ATENCIÓN!',
+                                                    descripcionAlerta:
+                                                        'Debe Seleccionar una Configuracion',
+                                                    textoBotonAlerta: 'Listo',
+                                                    icon: Icon(
+                                                      Icons.error_outline,
+                                                      size: 40,
+                                                    ),
+                                                    color: Colors.red);
+                                              })
+                                      : showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const DialogoAlerta(
+                                                envioFuncion2: false,
+                                                envioFuncion1: false,
+                                                tituloAlerta: 'ATENCIÓN!',
+                                                descripcionAlerta:
+                                                    'Debe Seleccionar una Vacuna',
+                                                textoBotonAlerta: 'Listo',
+                                                icon: Icon(
+                                                  Icons.error_outline,
+                                                  size: 40,
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                                color: Colors.red);
+                                          })
+                              : showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const DialogoAlerta(
+                                        envioFuncion2: false,
+                                        envioFuncion1: false,
+                                        tituloAlerta: 'ATENCIÓN!',
+                                        descripcionAlerta:
+                                            'Hubo un error con el Beneficiario',
+                                        textoBotonAlerta: 'Listo',
+                                        icon: Icon(
+                                          Icons.error_outline,
+                                          size: 40,
+                                        ),
+                                        color: Colors.red);
+                                  });
+                        }),
+
+                    BotonCustom(
+                        text: 'Cancelar Registro',
+                        color: SisVacuColor.red,
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => DialogoAlerta(
+                                    tituloAlerta: "Atención",
+                                    descripcionAlerta:
+                                        '¿Estás seguro que deseas cancelar el registro?',
+                                    textoBotonAlerta: 'Aceptar',
+                                    textoBotonAlerta2: 'Cancelar',
+                                    icon: Icon(
+                                      Icons.error,
+                                      size: 40,
+                                      color: Colors.grey[50],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : verificarEdad(context);
-                    },
-                  ),
-
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.02,
-                        left: MediaQuery.of(context).size.width * 0.02),
-                    child: Container(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width * 0.05),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
-                                offset: const Offset(0, 5),
-                                blurRadius: 5)
-                          ],
-                          color: Colors.white),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              FadeInUpBig(
-                                from: 25,
-                                child: Text(
-                                  'Seleccione un Perfil',
-                                  style: GoogleFonts.barlow(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 20)),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          // ignore: sized_box_for_whitespace
-                          StreamBuilder(
-                            stream: perfilesVacunacionService
-                                .listaPerfilesVacunacionStream,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<dynamic> snapshot) {
-                              return perfilesVacunacionService
-                                              .listaPerfilesVacunacion !=
-                                          null &&
+                                    color: Colors.red,
+                                    envioFuncion2: true,
+                                    funcion2: () => Navigator.of(context).pop(),
+                                    envioFuncion1: true,
+                                    funcion1: () {
+                                      vacunasxPerfilService
+                                          .eliminarListaVacunasxPerfil();
                                       perfilesVacunacionService
-                                          .listaPerfilesVacunacion!.isNotEmpty
-                                  ? SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          .9,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .1,
-                                      child: ListView.builder(
-                                        physics: const BouncingScrollPhysics(),
-                                        scrollDirection: Axis.horizontal,
-                                        reverse: true,
-                                        itemExtent: 90,
-                                        itemCount: perfilesVacunacionService
-                                            .listaPerfilesVacunacion!.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: GestureDetector(
-                                              onTap: () async {
-                                                loadingLoginService
-                                                    .cargaPerfil(true);
-                                                listaConfiguraciones!.clear();
-                                                listaLotes!.clear();
-                                                setState(() {
-                                                  _selectLote = null;
-                                                  _selectConfigVacuna = null;
-                                                  _selectPerfil =
-                                                      perfilesVacunacionService
-                                                              .listaPerfilesVacunacion![
-                                                          index];
-                                                  _selectVacunas = null;
-                                                });
-                                                final tempLista =
-                                                    await vacunasxPerfiles
-                                                        .obtenerVacunasxPerfilesProviders(
-                                                            _selectPerfil!
-                                                                .id_sysvacu12,
-                                                            beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_dni,
-                                                            beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_sexo);
-                                                tempLista != null
-                                                    ? tempLista[0]
-                                                                .codigo_mensaje ==
-                                                            "0"
-                                                        ? showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return DialogoAlerta(
-                                                                  envioFuncion2:
-                                                                      false,
-                                                                  envioFuncion1:
-                                                                      false,
-                                                                  tituloAlerta:
-                                                                      'ATENCIÓN!',
-                                                                  descripcionAlerta:
-                                                                      tempLista[
-                                                                              0]
-                                                                          .mensaje,
-                                                                  textoBotonAlerta:
-                                                                      'Listo',
-                                                                  icon:
-                                                                      const Icon(
-                                                                    Icons
-                                                                        .error_outline,
-                                                                    size: 40,
-                                                                  ),
-                                                                  color: Colors
-                                                                      .red);
-                                                            })
-                                                        : {
-                                                            loadingLoginService
-                                                                    .getCargaPerfilState!
-                                                                ? mostrarLoadingEstrellasXTiempo(
-                                                                    context,
-                                                                    850)
-                                                                : () {},
-                                                            loadingLoginService
-                                                                .cargaPerfil(
-                                                                    false)
-                                                          }
-                                                    : {
-                                                        loadingLoginService
-                                                                .getCargaPerfilState!
-                                                            ? mostrarLoadingEstrellasXTiempo(
-                                                                context, 850)
-                                                            : () {},
-                                                        loadingLoginService
-                                                            .cargaPerfil(false)
-                                                      };
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    boxShadow: _selectPerfil ==
-                                                            perfilesVacunacionService
-                                                                    .listaPerfilesVacunacion![
-                                                                index]
-                                                        ? <BoxShadow>[
-                                                            BoxShadow(
-                                                                color: Colors
-                                                                    .black
-                                                                    .withOpacity(
-                                                                        0.1),
-                                                                offset:
-                                                                    const Offset(
-                                                                        0, 5),
-                                                                blurRadius: 5)
-                                                          ]
-                                                        : null,
-                                                    color: _selectPerfil ==
-                                                            perfilesVacunacionService
-                                                                    .listaPerfilesVacunacion![
-                                                                index]
-                                                        ? SisVacuColor
-                                                            .vercelesteCuaternario!
-                                                            .withOpacity(.75)
-                                                        : SisVacuColor.white!
-                                                            .withOpacity(.5),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15)),
-                                                //height: MediaQuery.of(context).size.height * .2,
-                                                child: Center(
-                                                  child: Text(
-                                                    perfilesVacunacionService
-                                                        .listaPerfilesVacunacion![
-                                                            index]
-                                                        .sysvacu12_descripcion!,
-                                                    textAlign: TextAlign.center,
-                                                    style: GoogleFonts.nunito(
-                                                        fontWeight: _selectPerfil ==
-                                                                perfilesVacunacionService
-                                                                        .listaPerfilesVacunacion![
-                                                                    index]
-                                                            ? FontWeight.w700
-                                                            : FontWeight.w300),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  : const LoadingEstrellas();
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                                          .eliminarListaPerfiles();
+                                      vacunasConfiguracionService
+                                          .eliminarListaVacunasConfiguracion();
+                                      vacunasLotesService
+                                          .eliminarListaVacunasLotes();
+                                      notificacionesDosisService
+                                          .eliminarListaDosis();
 
-                  containerVacunas(),
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const BusquedaBeneficiario()),
+                                          (Route<dynamic> route) => false);
+                                    },
+                                  ));
+                        }),
 
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-
-                  containerConfiguraciones(),
-
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-
-                  containerLotes(),
-
-                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-
-                  BotonCustom(
-                      text: 'Registrar Vacunación',
-                      onPressed: () {
-                        beneficiarioService.beneficiario!.sysdesa10_dni != ''
-                            ? int.parse(beneficiarioService
-                                        .beneficiario!.sysdesa10_edad!) <
-                                    18
-                                ? tutorService.existeTutor
-                                    ? tutorService.tutor!.sysdesa10_dni_tutor !=
-                                            ''
-                                        ? _selectVacunas != null
-                                            ? _selectConfigVacuna != null
-                                                ? _selectLote != null
-                                                    // ignore: unnecessary_statements
-                                                    ? {
-                                                        insertRegistroService.cargarRegistro(
-                                                            InsertRegistros(
-                                                                id_flxcore03: registradorService
-                                                                    .registrador!
-                                                                    .id_flxcore03, //Obligatorio
-                                                                id_sysdesa12: vacunadorService
-                                                                    .vacunador!
-                                                                    .id_sysdesa12, //Obligatorio
-                                                                id_sysdesa18: _selectLote!
-                                                                    .id_sysdesa18, //Obligatorio
-                                                                id_sysofic01: registradorService
-                                                                    .registrador!
-                                                                    .rela_sysofic01, //Obligatorio
-                                                                id_sysvacu03: _selectConfigVacuna!
-                                                                    .id_sysvacu03, //Obligatorio
-                                                                sysdesa10_apellido: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_apellido, //Obligatorio
-                                                                sysdesa10_cadena_dni: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_cadena_dni, //Solo con Escaner
-                                                                sysdesa10_dni: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_dni, //Obligatorio
-                                                                sysdesa10_nombre: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_nombre, //Obligatorio
-                                                                sysdesa10_nro_tramite: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_nro_tramite, //Solo con Escaner
-                                                                sysdesa10_sexo: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_sexo, //Obligatorio
-                                                                sysdesa10_edad: beneficiarioService
-                                                                    .beneficiario!
-                                                                    .sysdesa10_edad,
-                                                                //DatosExtras que no se envian, SOlo para vista
-                                                                nombreVacuna: _selectVacunas!.sysvacu04_nombre,
-                                                                nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
-                                                                nombreLote: _selectLote!.sysdesa18_lote,
-                                                                sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
-                                                                vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
-                                                                sysdesa10_apellido_tutor: tutorService.tutor!.sysdesa10_apellido_tutor,
-                                                                sysdesa10_dni_tutor: tutorService.tutor!.sysdesa10_dni_tutor,
-                                                                sysdesa10_nombre_tutor: tutorService.tutor!.sysdesa10_nombre_tutor,
-                                                                sysdesa10_sexo_tutor: tutorService.tutor!.sysdesa10_sexo_tutor)),
-                                                        Navigator.pushAndRemoveUntil(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        const ConfirmarDatos()),
-                                                            (Route<dynamic>
-                                                                    route) =>
-                                                                false)
-                                                      }
-                                                    : showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return const DialogoAlerta(
-                                                              envioFuncion2:
-                                                                  false,
-                                                              envioFuncion1:
-                                                                  false,
-                                                              tituloAlerta:
-                                                                  'ATENCIÓN!',
-                                                              descripcionAlerta:
-                                                                  'Debe Seleccionar un Lote',
-                                                              textoBotonAlerta:
-                                                                  'Listo',
-                                                              icon: Icon(
-                                                                Icons
-                                                                    .error_outline,
-                                                                size: 40,
-                                                              ),
-                                                              color:
-                                                                  Colors.red);
-                                                        })
-                                                : showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return const DialogoAlerta(
-                                                          envioFuncion2: false,
-                                                          envioFuncion1: false,
-                                                          tituloAlerta:
-                                                              'ATENCIÓN!',
-                                                          descripcionAlerta:
-                                                              'Debe Seleccionar una Configuración',
-                                                          textoBotonAlerta:
-                                                              'Listo',
-                                                          icon: Icon(
-                                                            Icons.error_outline,
-                                                            size: 40,
-                                                          ),
-                                                          color: Colors.red);
-                                                    })
-                                            : showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return const DialogoAlerta(
-                                                      envioFuncion2: false,
-                                                      envioFuncion1: false,
-                                                      tituloAlerta: 'ATENCIÓN!',
-                                                      descripcionAlerta:
-                                                          'Debe Seleccionar una Vacuna',
-                                                      textoBotonAlerta: 'Listo',
-                                                      icon: Icon(
-                                                        Icons.error_outline,
-                                                        size: 40,
-                                                      ),
-                                                      color: Colors.red);
-                                                })
-                                        : showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return const DialogoAlerta(
-                                                  envioFuncion2: false,
-                                                  envioFuncion1: false,
-                                                  tituloAlerta: 'ATENCIÓN!',
-                                                  descripcionAlerta:
-                                                      'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
-                                                  textoBotonAlerta: 'Listo',
-                                                  icon: Icon(
-                                                    Icons.error_outline,
-                                                    size: 40,
-                                                  ),
-                                                  color: Colors.red);
-                                            })
-                                    : showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return const DialogoAlerta(
-                                              envioFuncion2: false,
-                                              envioFuncion1: false,
-                                              tituloAlerta: 'ATENCIÓN!',
-                                              descripcionAlerta:
-                                                  'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
-                                              textoBotonAlerta: 'Listo',
-                                              icon: Icon(
-                                                Icons.error_outline,
-                                                size: 40,
-                                              ),
-                                              color: Colors.red);
-                                        })
-                                : _selectVacunas != null
-                                    ? _selectConfigVacuna != null
-                                        ? _selectLote != null
-                                            // ignore: unnecessary_statements
-                                            ? {
-                                                insertRegistroService.cargarRegistro(
-                                                    InsertRegistros(
-                                                        id_flxcore03: registradorService
-                                                            .registrador!
-                                                            .id_flxcore03, //Obligatorio
-                                                        id_sysdesa12: vacunadorService
-                                                            .vacunador!
-                                                            .id_sysdesa12, //Obligatorio
-                                                        id_sysdesa18: _selectLote!
-                                                            .id_sysdesa18, //Obligatorio
-                                                        id_sysofic01: registradorService
-                                                            .registrador!
-                                                            .rela_sysofic01, //Obligatorio
-                                                        id_sysvacu03: _selectConfigVacuna!
-                                                            .id_sysvacu03, //Obligatorio
-                                                        sysdesa10_apellido:
-                                                            beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_apellido, //Obligatorio
-                                                        sysdesa10_cadena_dni:
-                                                            beneficiarioService
-                                                                .beneficiario!
-                                                                .sysdesa10_cadena_dni, //Solo con Escaner
-                                                        sysdesa10_dni: beneficiarioService
-                                                            .beneficiario!
-                                                            .sysdesa10_dni, //Obligatorio
-                                                        sysdesa10_nombre: beneficiarioService
-                                                            .beneficiario!
-                                                            .sysdesa10_nombre, //Obligatorio
-                                                        sysdesa10_nro_tramite: beneficiarioService.beneficiario!.sysdesa10_nro_tramite, //Solo con Escaner
-                                                        sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
-                                                        sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
-                                                        //DatosExtras que no se envian, SOlo para vista
-                                                        nombreVacuna: _selectVacunas!.sysvacu04_nombre,
-                                                        nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
-                                                        nombreLote: _selectLote!.sysdesa18_lote,
-                                                        sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
-                                                        vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
-                                                        sysdesa10_apellido_tutor: '',
-                                                        sysdesa10_dni_tutor: '',
-                                                        sysdesa10_nombre_tutor: '',
-                                                        sysdesa10_sexo_tutor: '')),
-                                                Navigator.pushAndRemoveUntil(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const ConfirmarDatos()),
-                                                    (Route<dynamic> route) =>
-                                                        false)
-                                              }
-                                            : showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return const DialogoAlerta(
-                                                      envioFuncion2: false,
-                                                      envioFuncion1: false,
-                                                      tituloAlerta: 'ATENCIÓN!',
-                                                      descripcionAlerta:
-                                                          'Debe Seleccionar un Lote',
-                                                      textoBotonAlerta: 'Listo',
-                                                      icon: Icon(
-                                                        Icons.error_outline,
-                                                        size: 40,
-                                                      ),
-                                                      color: Colors.red);
-                                                })
-                                        : showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return const DialogoAlerta(
-                                                  envioFuncion2: false,
-                                                  envioFuncion1: false,
-                                                  tituloAlerta: 'ATENCIÓN!',
-                                                  descripcionAlerta:
-                                                      'Debe Seleccionar una Configuracion',
-                                                  textoBotonAlerta: 'Listo',
-                                                  icon: Icon(
-                                                    Icons.error_outline,
-                                                    size: 40,
-                                                  ),
-                                                  color: Colors.red);
-                                            })
-                                    : showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return const DialogoAlerta(
-                                              envioFuncion2: false,
-                                              envioFuncion1: false,
-                                              tituloAlerta: 'ATENCIÓN!',
-                                              descripcionAlerta:
-                                                  'Debe Seleccionar una Vacuna',
-                                              textoBotonAlerta: 'Listo',
-                                              icon: Icon(
-                                                Icons.error_outline,
-                                                size: 40,
-                                              ),
-                                              color: Colors.red);
-                                        })
-                            : showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return const DialogoAlerta(
-                                      envioFuncion2: false,
-                                      envioFuncion1: false,
-                                      tituloAlerta: 'ATENCIÓN!',
-                                      descripcionAlerta:
-                                          'Hubo un error con el Beneficiario',
-                                      textoBotonAlerta: 'Listo',
-                                      icon: Icon(
-                                        Icons.error_outline,
-                                        size: 40,
-                                      ),
-                                      color: Colors.red);
-                                });
-                      }),
-
-                  BotonCustom(
-                      text: 'Cancelar Registro',
-                      color: SisVacuColor.red,
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) => DialogoAlerta(
-                                  tituloAlerta: "Atención",
-                                  descripcionAlerta:
-                                      '¿Estás seguro que deseas cancelar el registro?',
-                                  textoBotonAlerta: 'Aceptar',
-                                  textoBotonAlerta2: 'Cancelar',
-                                  icon: Icon(
-                                    Icons.error,
-                                    size: 40,
-                                    color: Colors.grey[50],
-                                  ),
-                                  color: Colors.red,
-                                  envioFuncion2: true,
-                                  funcion2: () => Navigator.of(context).pop(),
-                                  envioFuncion1: true,
-                                  funcion1: () {
-                                    vacunasxPerfilService
-                                        .eliminarListaVacunasxPerfil();
-                                    perfilesVacunacionService
-                                        .eliminarListaPerfiles();
-                                    vacunasConfiguracionService
-                                        .eliminarListaVacunasConfiguracion();
-                                    vacunasLotesService
-                                        .eliminarListaVacunasLotes();
-                                    notificacionesDosisService
-                                        .eliminarListaDosis();
-
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const BusquedaBeneficiario()),
-                                        (Route<dynamic> route) => false);
-                                  },
-                                ));
-                      }),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.02,
-                  )
-                ],
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    )
+                  ],
+                ),
               ),
             ),
           ],
@@ -1057,7 +537,560 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
+  Widget containerPasos() {
+    switch (pasos) {
+
+      // 1 -> Perfiles // 2 -> Vacuna // 3 -> Esquema // 4 -> Condicion // 5 -> Dosis // 6 -> Lote
+
+      case 1:
+        return FadeInLeft(child: containerPerfiles());
+      case 2:
+        return FadeInRight(child: containerVacunas());
+      case 3:
+        return FadeInLeft(child: containerCondiciones());
+      case 4:
+        return FadeInRight(child: containerLotes());
+      case 5:
+        return FadeInRight(child: containerLotes());
+
+      default:
+        return containerPerfiles();
+    }
+  }
+
+  Widget vacunasAplicadas() {
+    return Column(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * .01,
+        ),
+        Text(
+          'Vacunas Aplicadas',
+          style: GoogleFonts.nunito(
+            textStyle:
+                const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+          ),
+        ),
+        StreamBuilder(
+          stream: notificacionesDosisService.listaDosisAplicadasStream,
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            return notificacionesDosisService.listaDosisAplicadas.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount:
+                        notificacionesDosisService.listaDosisAplicadas.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text(notificacionesDosisService
+                                .listaDosisAplicadas[index].sysvacu05_nombre! +
+                            ' - ' +
+                            notificacionesDosisService
+                                .listaDosisAplicadas[index].sysvacu04_nombre!),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Lote: - ' +
+                                notificacionesDosisService
+                                    .listaDosisAplicadas[index]
+                                    .sysdesa18_lote!),
+                            Text('Fecha de Aplicación: - ' +
+                                notificacionesDosisService
+                                    .listaDosisAplicadas[index]
+                                    .sysdesa10_fecha_aplicacion!),
+                          ],
+                        ),
+                      );
+                    },
+                  )
+                : const Text('No posee dosis aplicadas');
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget containerBeneficiario() {
+    return Padding(
+      padding: EdgeInsets.only(
+          right: MediaQuery.of(context).size.width * 0.02,
+          left: MediaQuery.of(context).size.width * 0.02),
+      child: Container(
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  offset: const Offset(0, 5),
+                  blurRadius: 5)
+            ],
+            color: Colors.white),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FadeInUpBig(
+                  from: 25,
+                  child: Text(
+                    'Datos Beneficiario',
+                    style: GoogleFonts.barlow(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 20)),
+                  ),
+                ),
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        mostrarBeneficiario!
+                            ? mostrarBeneficiario = false
+                            : mostrarBeneficiario = true;
+                      });
+                    },
+                    icon: mostrarBeneficiario!
+                        ? const Icon(Icons.keyboard_arrow_down_outlined)
+                        : const Icon(Icons.keyboard_arrow_right_outlined))
+              ],
+            ),
+            mostrarBeneficiario!
+                ? SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text('Nombre: ',
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16.0),
+                                      ),
+                                      textAlign: TextAlign.center),
+                                  Text(
+                                      beneficiarioService
+                                          .beneficiario!.sysdesa10_nombre!,
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0),
+                                      ),
+                                      textAlign: TextAlign.center),
+                                ],
+                              ),
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.02),
+                              Row(
+                                children: [
+                                  Text('Apellido: ',
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16.0),
+                                      ),
+                                      textAlign: TextAlign.center),
+                                  Text(
+                                      beneficiarioService
+                                          .beneficiario!.sysdesa10_apellido!,
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0),
+                                      ),
+                                      textAlign: TextAlign.center),
+                                ],
+                              ),
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.02),
+                              Row(
+                                children: [
+                                  Text('D.N.I.: ',
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16.0),
+                                      ),
+                                      textAlign: TextAlign.center),
+                                  Text(
+                                      beneficiarioService
+                                          .beneficiario!.sysdesa10_dni!,
+                                      style: GoogleFonts.nunito(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16.0),
+                                      ),
+                                      textAlign: TextAlign.center),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Container()
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget containerTutor() {
+    return StreamBuilder(
+      stream: tutorService.tutorStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        right: MediaQuery.of(context).size.width * 0.02,
+                        left: MediaQuery.of(context).size.width * 0.02),
+                    child: Container(
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * 0.05),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                offset: const Offset(0, 5),
+                                blurRadius: 5)
+                          ],
+                          color: SisVacuColor.white),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              FadeInUpBig(
+                                from: 25,
+                                child: Text(
+                                  'Datos Tutor',
+                                  style: GoogleFonts.barlow(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 20)),
+                                ),
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      mostrarTutor!
+                                          ? mostrarTutor = false
+                                          : mostrarTutor = true;
+                                    });
+                                  },
+                                  icon: mostrarTutor!
+                                      ? const Icon(
+                                          Icons.keyboard_arrow_down_outlined)
+                                      : const Icon(
+                                          Icons.keyboard_arrow_right_outlined))
+                            ],
+                          ),
+                          mostrarTutor!
+                              ? SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Text('Nombre: ',
+                                                    style: GoogleFonts.nunito(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 16.0),
+                                                    ),
+                                                    textAlign:
+                                                        TextAlign.center),
+                                                Text(
+                                                    tutorService.tutor!
+                                                        .sysdesa10_nombre_tutor!,
+                                                    style: GoogleFonts.nunito(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              fontSize: 16.0),
+                                                    ),
+                                                    textAlign:
+                                                        TextAlign.center),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.02),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Apellido: ',
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
+                                                ),
+                                                Text(
+                                                    tutorService.tutor!
+                                                        .sysdesa10_apellido_tutor!,
+                                                    style: GoogleFonts.nunito(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              fontSize: 16.0),
+                                                    ),
+                                                    textAlign:
+                                                        TextAlign.center),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.02),
+                                            Row(
+                                              children: [
+                                                Text('D.N.I.: ',
+                                                    style: GoogleFonts.nunito(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 16.0),
+                                                    ),
+                                                    textAlign:
+                                                        TextAlign.center),
+                                                Text(
+                                                    tutorService.tutor!
+                                                        .sysdesa10_dni_tutor!,
+                                                    style: GoogleFonts.nunito(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              fontSize: 16.0),
+                                                    ),
+                                                    textAlign:
+                                                        TextAlign.center),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container()
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                ],
+              )
+            : verificarEdad(context);
+      },
+    );
+  }
+
+  Widget containerPerfiles() {
+    return Padding(
+      padding: EdgeInsets.only(
+          right: MediaQuery.of(context).size.width * 0.02,
+          left: MediaQuery.of(context).size.width * 0.02),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5.0),
+            child: FadeInUpBig(
+              from: 25,
+              child: Text(
+                'Seleccione un Perfil',
+                style: GoogleFonts.barlow(
+                    textStyle: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 20)),
+              ),
+            ),
+          ),
+          Container(
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        offset: const Offset(0, 5),
+                        blurRadius: 5)
+                  ],
+                  color: Colors.white),
+              child: StreamBuilder(
+                stream: perfilesVacunacionService.listaPerfilesVacunacionStream,
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  return perfilesVacunacionService.listaPerfilesVacunacion !=
+                              null &&
+                          perfilesVacunacionService
+                              .listaPerfilesVacunacion!.isNotEmpty
+                      ? SizedBox(
+                          width: MediaQuery.of(context).size.width * .9,
+                          height: MediaQuery.of(context).size.height * .1,
+                          child: ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            reverse: true,
+                            itemExtent: 90,
+                            itemCount: perfilesVacunacionService
+                                .listaPerfilesVacunacion!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    loadingLoginService.cargaPerfil(true);
+                                    listaLotes!.clear();
+                                    setState(() {
+                                      _selectLote = null;
+                                      _selectCondicion = null;
+                                      _selectPerfil = perfilesVacunacionService
+                                          .listaPerfilesVacunacion![index];
+                                      _selectVacunas = null;
+                                    });
+                                    final tempLista = await vacunasxPerfiles
+                                        .obtenerVacunasxPerfilesProviders(
+                                            _selectPerfil!.id_sysvacu12,
+                                            beneficiarioService
+                                                .beneficiario!.sysdesa10_dni,
+                                            beneficiarioService
+                                                .beneficiario!.sysdesa10_sexo);
+                                    tempLista != null
+                                        ? tempLista[0].codigo_mensaje == "0"
+                                            ? showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return DialogoAlerta(
+                                                      envioFuncion2: false,
+                                                      envioFuncion1: false,
+                                                      tituloAlerta: 'ATENCIÓN!',
+                                                      descripcionAlerta:
+                                                          tempLista[0].mensaje,
+                                                      textoBotonAlerta: 'Listo',
+                                                      icon: const Icon(
+                                                        Icons.error_outline,
+                                                        size: 40,
+                                                      ),
+                                                      color: Colors.red);
+                                                })
+                                            : {
+                                                loadingLoginService
+                                                        .getCargaPerfilState!
+                                                    ? mostrarLoadingEstrellasXTiempo(
+                                                        context, 850)
+                                                    : () {},
+                                                loadingLoginService
+                                                    .cargaPerfil(false)
+                                              }
+                                        : {
+                                            loadingLoginService
+                                                    .getCargaPerfilState!
+                                                ? {
+                                                    mostrarLoadingEstrellasXTiempo(
+                                                        context, 850),
+                                                  }
+                                                : () {},
+                                            loadingLoginService
+                                                .cargaPerfil(false),
+                                            setState(() {
+                                              pasos++;
+                                            })
+                                          };
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        boxShadow: _selectPerfil ==
+                                                perfilesVacunacionService
+                                                        .listaPerfilesVacunacion![
+                                                    index]
+                                            ? <BoxShadow>[
+                                                BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.1),
+                                                    offset: const Offset(0, 5),
+                                                    blurRadius: 5)
+                                              ]
+                                            : null,
+                                        color: _selectPerfil ==
+                                                perfilesVacunacionService
+                                                        .listaPerfilesVacunacion![
+                                                    index]
+                                            ? SisVacuColor
+                                                .vercelesteCuaternario!
+                                                .withOpacity(.75)
+                                            : SisVacuColor.white!
+                                                .withOpacity(.5),
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    //height: MediaQuery.of(context).size.height * .2,
+                                    child: Center(
+                                      child: Text(
+                                        perfilesVacunacionService
+                                            .listaPerfilesVacunacion![index]
+                                            .sysvacu12_descripcion!,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.nunito(
+                                            fontWeight: _selectPerfil ==
+                                                    perfilesVacunacionService
+                                                            .listaPerfilesVacunacion![
+                                                        index]
+                                                ? FontWeight.w700
+                                                : FontWeight.w300),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      : const LoadingEstrellas();
+                },
+              )),
+        ],
+      ),
+    );
+  }
+
   Widget containerVacunas() {
+    ScrollController vacunaScrollController = ScrollController();
     return StreamBuilder(
       stream: loadingLoginService.cargaPerfilStateStream,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -1072,323 +1105,307 @@ class _VacunasPageState extends State<VacunasPage> {
                           padding: EdgeInsets.only(
                               right: MediaQuery.of(context).size.width * 0.02,
                               left: MediaQuery.of(context).size.width * 0.02),
-                          child: Container(
-                            padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.width * 0.05),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                      color: Colors.black.withOpacity(0.08),
-                                      offset: const Offset(0, 5),
-                                      blurRadius: 5)
-                                ],
-                                color: Colors.white),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    FadeInUpBig(
-                                      from: 20,
-                                      child: Text(
-                                        'Seleccione una vacuna',
-                                        style: GoogleFonts.barlow(
-                                            textStyle: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 20)),
-                                      ),
-                                    ),
-                                  ],
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: FadeInUpBig(
+                                  from: 20,
+                                  child: Text(
+                                    'Seleccione una vacuna',
+                                    style: GoogleFonts.barlow(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 20)),
+                                  ),
                                 ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                GestureDetector(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                            _selectVacunas == null
-                                                ? 'Seleccione'
-                                                : _selectVacunas!
-                                                    .sysvacu04_nombre!,
-                                            style: GoogleFonts.nunito(
-                                              textStyle: TextStyle(
-                                                fontSize: getValueForScreenType(
-                                                    context: context,
-                                                    mobile: 15,
-                                                    tablet: 20),
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            )),
-                                        const SizedBox(width: 5),
-                                        Icon(
-                                          Icons.keyboard_arrow_down,
-                                          color: SisVacuColor.black,
-                                        ),
+                              ),
+                              Container(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.05),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.08),
+                                            offset: const Offset(0, 5),
+                                            blurRadius: 5)
                                       ],
-                                    ),
-                                    onTap: () {
-                                      loadingLoginService
-                                          .cargaConfiguracion(true);
-                                      vacunasxPerfilService
-                                              .listavacunasxPerfil!.isEmpty
-                                          ? const Center(
-                                              child: Text('Hubo un problema'),
-                                            )
-                                          : showModalBottomSheet(
-                                              useRootNavigator: true,
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return StreamBuilder(
-                                                  builder:
-                                                      (BuildContext context,
-                                                          AsyncSnapshot<dynamic>
-                                                              snapshot) {
-                                                    return Column(
-                                                      children: [
-                                                        SizedBox(
-                                                          height: MediaQuery.of(
-                                                                      context)
+                                      color: Colors.white),
+                                  child: StreamBuilder(
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<dynamic> snapshot) {
+                                      return Column(
+                                        children: [
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .005,
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.blueGrey[50],
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                boxShadow: <BoxShadow>[
+                                                  BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.05),
+                                                      offset:
+                                                          const Offset(0, 5),
+                                                      blurRadius: 5)
+                                                ]),
+                                            child: TextField(
+                                                autocorrect: false,
+                                                controller: controladorBusqueda,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  prefixIcon: Icon(
+                                                    Icons.search,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  hintText: 'Buscar Vacuna...',
+                                                ),
+                                                focusNode: focusNode,
+                                                onChanged: (value) {
+                                                  vacunasxPerfilService
+                                                      .buscarVacuna(
+                                                          value.toUpperCase());
+
+                                                  if (value.length >= 3) {
+                                                    focusNode.unfocus();
+                                                  }
+                                                }),
+                                          ),
+                                          StreamBuilder(
+                                            stream: vacunasxPerfilService
+                                                .listaBusquedaStream,
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<dynamic>
+                                                    snapshot) {
+                                              return controladorBusqueda
+                                                      .text.isEmpty
+                                                  ? SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
                                                                   .size
                                                                   .height *
-                                                              .005,
-                                                        ),
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 5,
-                                                                  left: 5,
-                                                                  bottom: 5,
-                                                                  right: 20),
-                                                          margin: EdgeInsets.only(
-                                                              right: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.04,
-                                                              left: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.04),
-                                                          decoration: BoxDecoration(
-                                                              color: Colors
-                                                                  .blueGrey[50],
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                              boxShadow: <
-                                                                  BoxShadow>[
-                                                                BoxShadow(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.05),
-                                                                    offset:
-                                                                        const Offset(
-                                                                            0,
-                                                                            5),
-                                                                    blurRadius:
-                                                                        5)
-                                                              ]),
-                                                          child: TextField(
-                                                              autocorrect:
-                                                                  false,
-                                                              controller:
-                                                                  controladorBusqueda,
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .text,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                prefixIcon:
-                                                                    Icon(Icons
-                                                                        .medical_services_rounded),
-                                                                focusedBorder:
-                                                                    InputBorder
-                                                                        .none,
-                                                                border:
-                                                                    InputBorder
-                                                                        .none,
-                                                                hintText:
-                                                                    'Buscar Vacuna...',
-                                                              ),
-                                                              focusNode:
-                                                                  focusNode,
-                                                              onChanged:
-                                                                  (value) {
-                                                                vacunasxPerfilService
-                                                                    .buscarVacuna(
-                                                                        value
-                                                                            .toUpperCase());
+                                                              .45,
+                                                      child: RawScrollbar(
+                                                        thumbColor: SisVacuColor
+                                                            .verceleste,
+                                                        isAlwaysShown: true,
+                                                        radius:
+                                                            Radius.circular(20),
+                                                        controller:
+                                                            vacunaScrollController,
+                                                        child: ListView.builder(
+                                                          controller:
+                                                              vacunaScrollController,
+                                                          physics:
+                                                              const BouncingScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount:
+                                                              vacunasxPerfilService
+                                                                  .listavacunasxPerfil!
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  int index) {
+                                                            return InkWell(
+                                                              onTap: () async {
+                                                                listaLotes!
+                                                                    .clear();
+                                                                setState(() {
+                                                                  _selectLote =
+                                                                      null;
+                                                                  _selectCondicion =
+                                                                      null;
+                                                                  _selectVacunas =
+                                                                      vacunasxPerfilService
+                                                                              .listavacunasxPerfil![
+                                                                          index];
+                                                                });
+                                                                final tempLista = await vacunasCondicion.obtenerCondicionesProviders(
+                                                                    _selectVacunas!
+                                                                        .id_sysvacu04,
+                                                                    beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_edad!);
 
-                                                                if (value
-                                                                        .length >=
-                                                                    3) {
-                                                                  focusNode
-                                                                      .unfocus();
-                                                                }
-                                                              }),
-                                                        ),
-                                                        StreamBuilder(
-                                                          stream: vacunasxPerfilService
-                                                              .listaBusquedaStream,
-                                                          builder: (BuildContext
-                                                                  context,
-                                                              AsyncSnapshot<
-                                                                      dynamic>
-                                                                  snapshot) {
-                                                            return controladorBusqueda
-                                                                    .text
-                                                                    .isEmpty
-                                                                ? SizedBox(
-                                                                    height: MediaQuery.of(context)
-                                                                            .size
-                                                                            .height *
-                                                                        .45,
-                                                                    child: ListView
-                                                                        .builder(
-                                                                      physics:
-                                                                          const BouncingScrollPhysics(),
-                                                                      shrinkWrap:
-                                                                          true,
-                                                                      itemCount: vacunasxPerfilService
-                                                                          .listavacunasxPerfil!
-                                                                          .length,
-                                                                      itemBuilder:
-                                                                          (BuildContext context,
-                                                                              int index) {
-                                                                        return InkWell(
-                                                                          onTap:
-                                                                              () async {
-                                                                            listaConfiguraciones!.clear();
-                                                                            listaLotes!.clear();
-                                                                            setState(() {
-                                                                              _selectLote = null;
-                                                                              _selectConfigVacuna = null;
-                                                                              _selectVacunas = vacunasxPerfilService.listavacunasxPerfil![index];
-                                                                            });
-                                                                            // controladorBusqueda.clear();
-                                                                            final tempLista =
-                                                                                await configuracionVacunaProvider.validarConfiguraciones(_selectVacunas!.id_sysvacu04);
-                                                                            tempLista[0].codigo_mensaje == "0"
-                                                                                ? showDialog(
-                                                                                    context: context,
-                                                                                    builder: (BuildContext context) {
-                                                                                      return DialogoAlerta(
-                                                                                          envioFuncion2: false,
-                                                                                          envioFuncion1: false,
-                                                                                          tituloAlerta: 'ATENCIÓN!',
-                                                                                          descripcionAlerta: tempLista[0].mensaje,
-                                                                                          textoBotonAlerta: 'Listo',
-                                                                                          icon: const Icon(
-                                                                                            Icons.error_outline,
-                                                                                            size: 40,
-                                                                                          ),
-                                                                                          color: Colors.red);
-                                                                                    })
-                                                                                : {
-                                                                                    Navigator.of(context).pop(),
-                                                                                    loadingLoginService.getCargaConfiguracionState! ? mostrarLoadingEstrellasXTiempo(context, 800) : () {},
-                                                                                    setState(() {
-                                                                                      listaConfiguraciones = tempLista;
-                                                                                      vacunasConfiguracionService.cargarListaVacunasConfiguracion(tempLista);
-                                                                                    }),
-                                                                                    loadingLoginService.cargaConfiguracion(false),
-                                                                                  };
-                                                                          },
-                                                                          child:
-                                                                              ListTile(
-                                                                            title:
-                                                                                Text(vacunasxPerfilService.listavacunasxPerfil![index].sysvacu04_nombre!),
-                                                                            leading:
-                                                                                const Icon(Icons.medical_services_outlined),
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  )
-                                                                : SizedBox(
-                                                                    height: MediaQuery.of(context)
-                                                                            .size
-                                                                            .height *
-                                                                        .45,
-                                                                    child: ListView
-                                                                        .builder(
-                                                                      physics:
-                                                                          const BouncingScrollPhysics(),
-                                                                      shrinkWrap:
-                                                                          true,
-                                                                      itemCount: vacunasxPerfilService
-                                                                          .listavacunasxPerfilBusqueda!
-                                                                          .length,
-                                                                      itemBuilder:
-                                                                          (BuildContext context,
-                                                                              int index) {
-                                                                        return InkWell(
-                                                                          onTap:
-                                                                              () async {
-                                                                            listaConfiguraciones!.clear();
-                                                                            listaLotes!.clear();
-                                                                            setState(() {
-                                                                              _selectLote = null;
-                                                                              _selectConfigVacuna = null;
-                                                                              _selectVacunas = vacunasxPerfilService.listavacunasxPerfilBusqueda![index];
-                                                                            });
-                                                                            final tempLista =
-                                                                                await configuracionVacunaProvider.validarConfiguraciones(_selectVacunas!.id_sysvacu04);
-                                                                            tempLista[0].codigo_mensaje == "0"
-                                                                                ? showDialog(
-                                                                                    context: context,
-                                                                                    builder: (BuildContext context) {
-                                                                                      return DialogoAlerta(
-                                                                                          envioFuncion2: false,
-                                                                                          envioFuncion1: false,
-                                                                                          tituloAlerta: 'ATENCIÓN!',
-                                                                                          descripcionAlerta: tempLista[0].mensaje,
-                                                                                          textoBotonAlerta: 'Listo',
-                                                                                          icon: const Icon(
-                                                                                            Icons.error_outline,
-                                                                                            size: 40,
-                                                                                          ),
-                                                                                          color: Colors.red);
-                                                                                    })
-                                                                                : {
-                                                                                    Navigator.of(context).pop(),
-                                                                                    loadingLoginService.getCargaConfiguracionState! ? mostrarLoadingEstrellasXTiempo(context, 800) : () {},
-                                                                                    setState(() {
-                                                                                      listaConfiguraciones = tempLista;
-                                                                                      vacunasConfiguracionService.cargarListaVacunasConfiguracion(tempLista);
-                                                                                    }),
-                                                                                    loadingLoginService.cargaConfiguracion(false),
-                                                                                    Navigator.of(context).pop()
-                                                                                  };
-                                                                          },
-                                                                          child:
-                                                                              ListTile(
-                                                                            title:
-                                                                                Text(vacunasxPerfilService.listavacunasxPerfilBusqueda![index].sysvacu04_nombre!),
-                                                                            trailing:
-                                                                                const Icon(Icons.medical_services_outlined),
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  );
+                                                                // .validarConfiguraciones(
+                                                                //     _selectVacunas!.id_sysvacu04);
+                                                                tempLista[0].codigo_mensaje ==
+                                                                        "0"
+                                                                    ? showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return DialogoAlerta(
+                                                                              envioFuncion2: false,
+                                                                              envioFuncion1: false,
+                                                                              tituloAlerta: 'ATENCIÓN!',
+                                                                              descripcionAlerta: tempLista[0].mensaje,
+                                                                              textoBotonAlerta: 'Listo',
+                                                                              icon: const Icon(
+                                                                                Icons.error_outline,
+                                                                                size: 40,
+                                                                              ),
+                                                                              color: Colors.red);
+                                                                        })
+                                                                    : {
+                                                                        // Navigator.of(
+                                                                        //         context)
+                                                                        //     .pop(),
+                                                                        loadingLoginService.getLoadingCondicionState!
+                                                                            ? mostrarLoadingEstrellasXTiempo(context,
+                                                                                800)
+                                                                            : () {},
+                                                                        setState(
+                                                                            () {
+                                                                          listaCondiciones =
+                                                                              tempLista;
+                                                                          vacunasCondicionService
+                                                                              .cargarListaVacunasCondicion(tempLista);
+                                                                        }),
+                                                                        loadingLoginService
+                                                                            .cargarCondicion(false),
+                                                                        setState(
+                                                                            () {
+                                                                          pasos++;
+                                                                        })
+                                                                      };
+                                                              },
+                                                              child: ListTile(
+                                                                title: Text(vacunasxPerfilService
+                                                                    .listavacunasxPerfil![
+                                                                        index]
+                                                                    .sysvacu04_nombre!),
+                                                                // leading: const Icon(
+                                                                //     Icons
+                                                                //         .medical_services_outlined),
+                                                              ),
+                                                            );
                                                           },
-                                                        )
-                                                      ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              .45,
+                                                      child: RawScrollbar(
+                                                        thumbColor: SisVacuColor
+                                                            .verceleste,
+                                                        isAlwaysShown: true,
+                                                        radius:
+                                                            Radius.circular(20),
+                                                        child: ListView.builder(
+                                                          physics:
+                                                              const BouncingScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount:
+                                                              vacunasxPerfilService
+                                                                  .listavacunasxPerfilBusqueda!
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  int index) {
+                                                            return InkWell(
+                                                              onTap: () async {
+                                                                listaLotes!
+                                                                    .clear();
+                                                                setState(() {
+                                                                  _selectLote =
+                                                                      null;
+                                                                  _selectCondicion =
+                                                                      null;
+                                                                  _selectVacunas =
+                                                                      vacunasxPerfilService
+                                                                              .listavacunasxPerfilBusqueda![
+                                                                          index];
+                                                                });
+                                                                final tempLista = await vacunasCondicion.obtenerCondicionesProviders(
+                                                                    _selectVacunas!
+                                                                        .id_sysvacu04,
+                                                                    beneficiarioService
+                                                                        .beneficiario!
+                                                                        .sysdesa10_edad!);
+
+                                                                tempLista[0].codigo_mensaje ==
+                                                                        "0"
+                                                                    ? showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return DialogoAlerta(
+                                                                              envioFuncion2: false,
+                                                                              envioFuncion1: false,
+                                                                              tituloAlerta: 'ATENCIÓN!',
+                                                                              descripcionAlerta: tempLista[0].mensaje,
+                                                                              textoBotonAlerta: 'Listo',
+                                                                              icon: const Icon(
+                                                                                Icons.error_outline,
+                                                                                size: 40,
+                                                                              ),
+                                                                              color: Colors.red);
+                                                                        })
+                                                                    : {
+                                                                        loadingLoginService.getLoadingCondicionState!
+                                                                            ? mostrarLoadingEstrellasXTiempo(context,
+                                                                                800)
+                                                                            : () {},
+                                                                        setState(
+                                                                            () {
+                                                                          listaCondiciones =
+                                                                              tempLista;
+                                                                          vacunasCondicionService
+                                                                              .cargarListaVacunasCondicion(tempLista);
+                                                                        }),
+                                                                        loadingLoginService
+                                                                            .cargarCondicion(false),
+                                                                        setState(
+                                                                            () {
+                                                                          pasos++;
+                                                                        })
+                                                                      };
+                                                              },
+                                                              child: ListTile(
+                                                                title: Text(vacunasxPerfilService
+                                                                    .listavacunasxPerfilBusqueda![
+                                                                        index]
+                                                                    .sysvacu04_nombre!),
+                                                                // trailing:
+                                                                //     const Icon(Icons
+                                                                //         .medical_services_outlined),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
                                                     );
-                                                  },
-                                                );
-                                              });
-                                    }),
-                              ],
-                            ),
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  )),
+                            ],
                           ),
                         )
                       : Container();
@@ -1398,340 +1415,645 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  Widget containerConfiguraciones() {
+  Widget containerCondiciones() {
+    ScrollController vacunaScrollController = ScrollController();
     return StreamBuilder(
-      stream: loadingLoginService.cargarConfiguracionStateStream,
+      stream: loadingLoginService.loadingCondicionStateStream,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        return loadingLoginService.getCargaConfiguracionState!
+        return loadingLoginService.getLoadingCondicionState!
             ? Container()
             : StreamBuilder(
-                stream: vacunasConfiguracionService
-                    .listaVacunasConfiguracionesStream,
+                stream: vacunasCondicionService.listaVacunasCondicionesStream,
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  return vacunasConfiguracionService
-                          .listavacunasConfiguracion!.isNotEmpty
+                  return vacunasCondicionService
+                          .listaVacunasCondicion!.isNotEmpty
                       ? Padding(
                           padding: EdgeInsets.only(
                               right: MediaQuery.of(context).size.width * 0.02,
                               left: MediaQuery.of(context).size.width * 0.02),
-                          child: Container(
-                            padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.width * 0.05),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                      color: Colors.black.withOpacity(0.08),
-                                      offset: const Offset(0, 5),
-                                      blurRadius: 5)
-                                ],
-                                color: Colors.white),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    FadeInUpBig(
-                                      from: 20,
-                                      child: Text(
-                                        'Seleccione una Configuracion',
-                                        style: GoogleFonts.barlow(
-                                            textStyle: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 20)),
-                                      ),
-                                    ),
-                                  ],
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: FadeInUpBig(
+                                  from: 20,
+                                  child: Text(
+                                    'Seleccione una Condicion',
+                                    style: GoogleFonts.barlow(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 20)),
+                                  ),
                                 ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                GestureDetector(
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                              ),
+                              Container(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.05),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.08),
+                                            offset: const Offset(0, 5),
+                                            blurRadius: 5)
+                                      ],
+                                      color: Colors.white),
+                                  child: StreamBuilder(
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<dynamic> snapshot) {
+                                      return Column(
                                         children: [
-                                          Text(
-                                              _selectConfigVacuna == null
-                                                  ? 'Seleccione'
-                                                  : _selectConfigVacuna!
-                                                          .sysvacu05_nombre! +
-                                                      '-' +
-                                                      _selectConfigVacuna!
-                                                          .sysvacu02_descripcion!,
-                                              style: GoogleFonts.nunito(
-                                                textStyle: TextStyle(
-                                                  fontSize:
-                                                      getValueForScreenType(
-                                                          context: context,
-                                                          mobile: 15,
-                                                          tablet: 20),
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              )),
-                                          const SizedBox(width: 5),
-                                          Icon(
-                                            Icons.keyboard_arrow_down,
-                                            color: SisVacuColor.black,
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .005,
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    onTap: () {
-                                      vacunasConfiguracionService
-                                              .listavacunasConfiguracion!
-                                              .isEmpty
-                                          ? const Center(
-                                              child: Text('Hubo un problema'),
-                                            )
-                                          : showModalBottomSheet(
-                                              useRootNavigator: true,
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return StreamBuilder(
-                                                  builder:
-                                                      (BuildContext context,
-                                                          AsyncSnapshot<dynamic>
-                                                              snapshot) {
-                                                    return Column(
-                                                      children: [
-                                                        SizedBox(
-                                                          height: MediaQuery.of(
-                                                                      context)
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.blueGrey[50],
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                boxShadow: <BoxShadow>[
+                                                  BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.05),
+                                                      offset:
+                                                          const Offset(0, 5),
+                                                      blurRadius: 5)
+                                                ]),
+                                            child: TextField(
+                                                autocorrect: false,
+                                                controller:
+                                                    controladorBusquedaCondicion,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  prefixIcon: Icon(
+                                                    Icons.search,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  hintText:
+                                                      'Buscar Condicion...',
+                                                ),
+                                                focusNode: focusNode,
+                                                onChanged: (value) {
+                                                  vacunasCondicionService
+                                                      .buscarCondicion(
+                                                          value.toUpperCase());
+
+                                                  if (value.length >= 3) {
+                                                    focusNode.unfocus();
+                                                  }
+                                                }),
+                                          ),
+                                          StreamBuilder(
+                                            stream: vacunasCondicionService
+                                                .listaBusquedaStream,
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<dynamic>
+                                                    snapshot) {
+                                              return controladorBusquedaCondicion
+                                                      .text.isEmpty
+                                                  ? SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
                                                                   .size
                                                                   .height *
-                                                              .005,
-                                                        ),
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  top: 5,
-                                                                  left: 5,
-                                                                  bottom: 5,
-                                                                  right: 20),
-                                                          margin: EdgeInsets.only(
-                                                              right: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.04,
-                                                              left: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.04),
-                                                          decoration: BoxDecoration(
-                                                              color: Colors
-                                                                  .blueGrey[50],
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                              boxShadow: <
-                                                                  BoxShadow>[
-                                                                BoxShadow(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.05),
-                                                                    offset:
-                                                                        const Offset(
-                                                                            0,
-                                                                            5),
-                                                                    blurRadius:
-                                                                        5)
-                                                              ]),
-                                                          child: TextField(
-                                                              autocorrect:
-                                                                  false,
-                                                              controller:
-                                                                  controladorBusquedaConfig,
-                                                              keyboardType:
-                                                                  TextInputType
-                                                                      .text,
-                                                              decoration:
-                                                                  const InputDecoration(
-                                                                prefixIcon:
-                                                                    Icon(Icons
-                                                                        .medical_services_rounded),
-                                                                focusedBorder:
-                                                                    InputBorder
-                                                                        .none,
-                                                                border:
-                                                                    InputBorder
-                                                                        .none,
-                                                                hintText:
-                                                                    'Buscar Configuracion...',
+                                                              .45,
+                                                      child: RawScrollbar(
+                                                        thumbColor: SisVacuColor
+                                                            .verceleste,
+                                                        isAlwaysShown: true,
+                                                        radius:
+                                                            Radius.circular(20),
+                                                        controller:
+                                                            vacunaScrollController,
+                                                        child: ListView.builder(
+                                                          controller:
+                                                              vacunaScrollController,
+                                                          physics:
+                                                              const BouncingScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount:
+                                                              vacunasCondicionService
+                                                                  .listaVacunasCondicion!
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  int index) {
+                                                            return InkWell(
+                                                              onTap: () async {
+                                                                listaLotes!
+                                                                    .clear();
+                                                                setState(() {
+                                                                  _selectLote =
+                                                                      null;
+
+                                                                  _selectCondicion =
+                                                                      vacunasCondicionService
+                                                                              .listaVacunasCondicion![
+                                                                          index];
+                                                                });
+                                                                // TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
+                                                                // final tempLista =
+                                                                //     await configuracionVacunaProvider
+                                                                //         .validarConfiguraciones(
+                                                                //             _selectVacunas!.id_sysvacu04);
+                                                                // tempLista[0].codigo_mensaje ==
+                                                                //         "0"
+                                                                //     ? showDialog(
+                                                                //         context:
+                                                                //             context,
+                                                                //         builder:
+                                                                //             (BuildContext
+                                                                //                 context) {
+                                                                //           return DialogoAlerta(
+                                                                //               envioFuncion2: false,
+                                                                //               envioFuncion1: false,
+                                                                //               tituloAlerta: 'ATENCIÓN!',
+                                                                //               descripcionAlerta: tempLista[0].mensaje,
+                                                                //               textoBotonAlerta: 'Listo',
+                                                                //               icon: const Icon(
+                                                                //                 Icons.error_outline,
+                                                                //                 size: 40,
+                                                                //               ),
+                                                                //               color: Colors.red);
+                                                                //         })
+                                                                //     : {
+                                                                //         // Navigator.of(
+                                                                //         //         context)
+                                                                //         //     .pop(),
+                                                                //         loadingLoginService.getCargaConfiguracionState!
+                                                                //             ? mostrarLoadingEstrellasXTiempo(context,
+                                                                //                 800)
+                                                                //             : () {},
+                                                                //         setState(
+                                                                //             () {
+                                                                //           listaConfiguraciones =
+                                                                //               tempLista;
+                                                                //           vacunasConfiguracionService
+                                                                //               .cargarListaVacunasConfiguracion(tempLista);
+                                                                //         }),
+                                                                //         loadingLoginService
+                                                                //             .cargaConfiguracion(false),
+                                                                //         setState(
+                                                                //             () {
+                                                                //           pasos++;
+                                                                //         })
+                                                                //       };
+                                                              },
+                                                              child: ListTile(
+                                                                title: Text(vacunasCondicionService
+                                                                    .listaVacunasCondicion![
+                                                                        index]
+                                                                    .sysvacu01_descripcion!),
+                                                                // leading: const Icon(
+                                                                //     Icons
+                                                                //         .medical_services_outlined),
                                                               ),
-                                                              focusNode:
-                                                                  focusNode,
-                                                              onChanged:
-                                                                  (value) {
-                                                                vacunasConfiguracionService
-                                                                    .buscarConfiguracion(
-                                                                        value
-                                                                            .toUpperCase());
-                                                              }),
-                                                        ),
-                                                        StreamBuilder(
-                                                          stream: vacunasConfiguracionService
-                                                              .listaBusquedaConfiguracionStream,
-                                                          builder: (BuildContext
-                                                                  context,
-                                                              AsyncSnapshot<
-                                                                      dynamic>
-                                                                  snapshot) {
-                                                            return controladorBusquedaConfig
-                                                                    .text
-                                                                    .isEmpty
-                                                                ? SizedBox(
-                                                                    height: MediaQuery.of(context)
-                                                                            .size
-                                                                            .height *
-                                                                        .45,
-                                                                    child: ListView
-                                                                        .builder(
-                                                                      physics:
-                                                                          const BouncingScrollPhysics(),
-                                                                      shrinkWrap:
-                                                                          true,
-                                                                      itemCount: vacunasConfiguracionService
-                                                                          .listavacunasConfiguracion!
-                                                                          .length,
-                                                                      itemBuilder:
-                                                                          (BuildContext context,
-                                                                              int index) {
-                                                                        return InkWell(
-                                                                          onTap:
-                                                                              () async {
-                                                                            loadingLoginService.cargaLotes(true);
-                                                                            listaLotes!.clear();
-                                                                            setState(() {
-                                                                              _selectLote = null;
-                                                                              _selectConfigVacuna = vacunasConfiguracionService.listavacunasConfiguracion![index];
-                                                                              // _selectVacunas = vacunasxPerfilService.listavacunasxPerfil![index];
-                                                                            });
-                                                                            final tempLista =
-                                                                                await lotesVacunaProvider.validarLotes(_selectVacunas!.id_sysvacu04);
-                                                                            tempLista[0].codigo_mensaje == "0"
-                                                                                ? showDialog(
-                                                                                    context: context,
-                                                                                    builder: (BuildContext context) {
-                                                                                      return DialogoAlerta(
-                                                                                          envioFuncion2: false,
-                                                                                          envioFuncion1: false,
-                                                                                          tituloAlerta: 'ATENCIÓN!',
-                                                                                          descripcionAlerta: tempLista[0].mensaje,
-                                                                                          textoBotonAlerta: 'Listo',
-                                                                                          icon: const Icon(
-                                                                                            Icons.error_outline,
-                                                                                            size: 40,
-                                                                                          ),
-                                                                                          color: Colors.red);
-                                                                                    })
-                                                                                : {
-                                                                                    Navigator.of(context).pop(),
-                                                                                    loadingLoginService.getCargaLotesState! ? mostrarLoadingEstrellasXTiempo(context, 800) : () {},
-                                                                                    // loadingLoginService.cargaConfiguracion(false),
-                                                                                    setState(() {
-                                                                                      listaLotes = tempLista;
-                                                                                      vacunasLotesService.cargarListaVacunasLotes(tempLista);
-                                                                                    }),
-                                                                                    loadingLoginService.cargaLotes(false),
-                                                                                  };
-                                                                          },
-                                                                          child:
-                                                                              ListTile(
-                                                                            title: Text(vacunasConfiguracionService.listavacunasConfiguracion![index].sysvacu05_nombre! +
-                                                                                '-' +
-                                                                                vacunasConfiguracionService.listavacunasConfiguracion![index].sysvacu01_descripcion!),
-                                                                            leading:
-                                                                                const Icon(Icons.medical_services_outlined),
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  )
-                                                                : SizedBox(
-                                                                    height: MediaQuery.of(context)
-                                                                            .size
-                                                                            .height *
-                                                                        .45,
-                                                                    child: ListView
-                                                                        .builder(
-                                                                      physics:
-                                                                          const BouncingScrollPhysics(),
-                                                                      shrinkWrap:
-                                                                          true,
-                                                                      itemCount: vacunasConfiguracionService
-                                                                          .listavacunasConfiguracionBusqueda!
-                                                                          .length,
-                                                                      itemBuilder:
-                                                                          (BuildContext context,
-                                                                              int index) {
-                                                                        return InkWell(
-                                                                          onTap:
-                                                                              () async {
-                                                                            listaLotes!.clear();
-                                                                            setState(() {
-                                                                              _selectLote = null;
-                                                                              _selectConfigVacuna = vacunasConfiguracionService.listavacunasConfiguracionBusqueda![index];
-                                                                              // _selectVacunas = vacunasxPerfilService.listavacunasxPerfilBusqueda![index];
-                                                                            });
-                                                                            final tempLista =
-                                                                                await lotesVacunaProvider.validarLotes(_selectVacunas!.id_sysvacu04);
-                                                                            tempLista[0].codigo_mensaje == "0"
-                                                                                ? showDialog(
-                                                                                    context: context,
-                                                                                    builder: (BuildContext context) {
-                                                                                      return DialogoAlerta(
-                                                                                          envioFuncion2: false,
-                                                                                          envioFuncion1: false,
-                                                                                          tituloAlerta: 'ATENCIÓN!',
-                                                                                          descripcionAlerta: tempLista[0].mensaje,
-                                                                                          textoBotonAlerta: 'Listo',
-                                                                                          icon: const Icon(
-                                                                                            Icons.error_outline,
-                                                                                            size: 40,
-                                                                                          ),
-                                                                                          color: Colors.red);
-                                                                                    })
-                                                                                : {
-                                                                                    Navigator.of(context).pop(),
-                                                                                    loadingLoginService.getCargaLotesState! ? mostrarLoadingEstrellasXTiempo(context, 800) : () {},
-                                                                                    setState(() {
-                                                                                      listaLotes = tempLista;
-                                                                                      vacunasLotesService.cargarListaVacunasLotes(tempLista);
-                                                                                    }),
-                                                                                    loadingLoginService.cargaLotes(false),
-                                                                                    Navigator.of(context).pop()
-                                                                                  };
-                                                                          },
-                                                                          child:
-                                                                              ListTile(
-                                                                            title: Text(vacunasConfiguracionService.listavacunasConfiguracion![index].sysvacu05_nombre! +
-                                                                                '-' +
-                                                                                vacunasConfiguracionService.listavacunasConfiguracion![index].sysvacu01_descripcion!),
-                                                                            trailing:
-                                                                                const Icon(Icons.medical_services_outlined),
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  );
+                                                            );
                                                           },
-                                                        )
-                                                      ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              .45,
+                                                      child: RawScrollbar(
+                                                        thumbColor: SisVacuColor
+                                                            .verceleste,
+                                                        isAlwaysShown: true,
+                                                        radius:
+                                                            Radius.circular(20),
+                                                        child: ListView.builder(
+                                                          physics:
+                                                              const BouncingScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount:
+                                                              vacunasCondicionService
+                                                                  .listaVacunasCondicionBusqueda!
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  int index) {
+                                                            return InkWell(
+                                                              onTap: () async {
+                                                                //TODO CARGAR ESQUEMA
+                                                                // listaConfiguraciones!
+                                                                //     .clear();
+                                                                // listaLotes!
+                                                                //     .clear();
+                                                                // setState(() {
+                                                                //   _selectLote =
+                                                                //       null;
+                                                                //   _selectConfigVacuna =
+                                                                //       null;
+                                                                //   _selectCondicion =
+                                                                //       vacunasCondicionService
+                                                                //               .listaVacunasCondicion![
+                                                                //           index];
+                                                                // });
+                                                                // final tempLista =
+                                                                //     await configuracionVacunaProvider
+                                                                //         .validarConfiguraciones(
+                                                                //             _selectVacunas!.id_sysvacu04);
+                                                                // tempLista[0].codigo_mensaje ==
+                                                                //         "0"
+                                                                //     ? showDialog(
+                                                                //         context:
+                                                                //             context,
+                                                                //         builder:
+                                                                //             (BuildContext
+                                                                //                 context) {
+                                                                //           return DialogoAlerta(
+                                                                //               envioFuncion2: false,
+                                                                //               envioFuncion1: false,
+                                                                //               tituloAlerta: 'ATENCIÓN!',
+                                                                //               descripcionAlerta: tempLista[0].mensaje,
+                                                                //               textoBotonAlerta: 'Listo',
+                                                                //               icon: const Icon(
+                                                                //                 Icons.error_outline,
+                                                                //                 size: 40,
+                                                                //               ),
+                                                                //               color: Colors.red);
+                                                                //         })
+                                                                //     : {
+                                                                //         loadingLoginService.getCargaConfiguracionState!
+                                                                //             ? mostrarLoadingEstrellasXTiempo(context,
+                                                                //                 800)
+                                                                //             : () {},
+                                                                //         setState(
+                                                                //             () {
+                                                                //           listaConfiguraciones =
+                                                                //               tempLista;
+                                                                //           vacunasConfiguracionService
+                                                                //               .cargarListaVacunasConfiguracion(tempLista);
+                                                                //         }),
+                                                                //         loadingLoginService
+                                                                //             .cargaConfiguracion(false),
+                                                                //         setState(
+                                                                //             () {
+                                                                //           pasos++;
+                                                                //         })
+                                                                //       };
+                                                              },
+                                                              child: ListTile(
+                                                                title: Text(vacunasCondicionService
+                                                                    .listaVacunasCondicionBusqueda![
+                                                                        index]
+                                                                    .sysvacu01_descripcion!),
+                                                                // trailing:
+                                                                //     const Icon(Icons
+                                                                //         .medical_services_outlined),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
                                                     );
-                                                  },
-                                                );
-                                              });
-                                    }),
-                              ],
-                            ),
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  )),
+                            ],
+                          ),
+                        )
+                      : Container();
+                },
+              );
+      },
+    );
+  }
+
+  Widget containerEsquemas() {
+    ScrollController esquemaScrollController = ScrollController();
+    return StreamBuilder(
+      stream: loadingLoginService.loadingCondicionStateStream,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        return loadingLoginService.getLoadingEsquemaState!
+            ? Container()
+            : StreamBuilder(
+                stream: vacunasEsquemaService.listavacunasEsquemaesStream,
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  return vacunasCondicionService
+                          .listaVacunasCondicion!.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width * 0.02,
+                              left: MediaQuery.of(context).size.width * 0.02),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: FadeInUpBig(
+                                  from: 20,
+                                  child: Text(
+                                    'Seleccione una Condicion',
+                                    style: GoogleFonts.barlow(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 20)),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.05),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.08),
+                                            offset: const Offset(0, 5),
+                                            blurRadius: 5)
+                                      ],
+                                      color: Colors.white),
+                                  child: StreamBuilder(
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<dynamic> snapshot) {
+                                      return Column(
+                                        children: [
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .005,
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.blueGrey[50],
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                boxShadow: <BoxShadow>[
+                                                  BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.05),
+                                                      offset:
+                                                          const Offset(0, 5),
+                                                      blurRadius: 5)
+                                                ]),
+                                            child: TextField(
+                                                autocorrect: false,
+                                                controller: controladorBusqueda,
+                                                keyboardType:
+                                                    TextInputType.text,
+                                                decoration:
+                                                    const InputDecoration(
+                                                  prefixIcon: Icon(
+                                                    Icons.search,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  hintText:
+                                                      'Buscar Condicion...',
+                                                ),
+                                                focusNode: focusNode,
+                                                onChanged: (value) {
+                                                  vacunasCondicionService
+                                                      .buscarCondicion(
+                                                          value.toUpperCase());
+
+                                                  if (value.length >= 3) {
+                                                    focusNode.unfocus();
+                                                  }
+                                                }),
+                                          ),
+                                          StreamBuilder(
+                                            stream: vacunasCondicionService
+                                                .listaBusquedaStream,
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<dynamic>
+                                                    snapshot) {
+                                              return controladorBusqueda
+                                                      .text.isEmpty
+                                                  ? SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              .45,
+                                                      child: RawScrollbar(
+                                                        thumbColor: SisVacuColor
+                                                            .verceleste,
+                                                        isAlwaysShown: true,
+                                                        radius:
+                                                            Radius.circular(20),
+                                                        controller:
+                                                            esquemaScrollController,
+                                                        child: ListView.builder(
+                                                          controller:
+                                                              esquemaScrollController,
+                                                          physics:
+                                                              const BouncingScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount:
+                                                              vacunasCondicionService
+                                                                  .listaVacunasCondicion!
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  int index) {
+                                                            return InkWell(
+                                                              onTap: () async {
+                                                                listaLotes!
+                                                                    .clear();
+                                                                setState(() {
+                                                                  _selectLote =
+                                                                      null;
+                                                                  _selectCondicion =
+                                                                      null;
+                                                                  _selectCondicion =
+                                                                      vacunasCondicionService
+                                                                              .listaVacunasCondicion![
+                                                                          index];
+                                                                });
+                                                                // TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
+                                                                // final tempLista =
+                                                                //     await configuracionVacunaProvider
+                                                                //         .validarConfiguraciones(
+                                                                //             _selectVacunas!.id_sysvacu04);
+                                                                // tempLista[0].codigo_mensaje ==
+                                                                //         "0"
+                                                                //     ? showDialog(
+                                                                //         context:
+                                                                //             context,
+                                                                //         builder:
+                                                                //             (BuildContext
+                                                                //                 context) {
+                                                                //           return DialogoAlerta(
+                                                                //               envioFuncion2: false,
+                                                                //               envioFuncion1: false,
+                                                                //               tituloAlerta: 'ATENCIÓN!',
+                                                                //               descripcionAlerta: tempLista[0].mensaje,
+                                                                //               textoBotonAlerta: 'Listo',
+                                                                //               icon: const Icon(
+                                                                //                 Icons.error_outline,
+                                                                //                 size: 40,
+                                                                //               ),
+                                                                //               color: Colors.red);
+                                                                //         })
+                                                                //     : {
+                                                                //         // Navigator.of(
+                                                                //         //         context)
+                                                                //         //     .pop(),
+                                                                //         loadingLoginService.getCargaConfiguracionState!
+                                                                //             ? mostrarLoadingEstrellasXTiempo(context,
+                                                                //                 800)
+                                                                //             : () {},
+                                                                //         setState(
+                                                                //             () {
+                                                                //           listaConfiguraciones =
+                                                                //               tempLista;
+                                                                //           vacunasConfiguracionService
+                                                                //               .cargarListaVacunasConfiguracion(tempLista);
+                                                                //         }),
+                                                                //         loadingLoginService
+                                                                //             .cargaConfiguracion(false),
+                                                                //         setState(
+                                                                //             () {
+                                                                //           pasos++;
+                                                                //         })
+                                                                //       };
+                                                              },
+                                                              child: ListTile(
+                                                                title: Text(vacunasCondicionService
+                                                                    .listaVacunasCondicion![
+                                                                        index]
+                                                                    .sysvacu01_descripcion!),
+                                                                // leading: const Icon(
+                                                                //     Icons
+                                                                //         .medical_services_outlined),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              .45,
+                                                      child: RawScrollbar(
+                                                        thumbColor: SisVacuColor
+                                                            .verceleste,
+                                                        isAlwaysShown: true,
+                                                        radius:
+                                                            Radius.circular(20),
+                                                        child: ListView.builder(
+                                                          physics:
+                                                              const BouncingScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount:
+                                                              vacunasCondicionService
+                                                                  .listaVacunasCondicionBusqueda!
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (BuildContext
+                                                                      context,
+                                                                  int index) {
+                                                            return InkWell(
+                                                              onTap: () async {
+                                                                //TODO CARGAR ESQUEMA
+                                                                // listaConfiguraciones!
+                                                                //     .clear();
+                                                                // listaLotes!
+                                                                //     .clear();
+                                                                // setState(() {
+                                                                //   _selectLote =
+                                                                //       null;
+                                                                //   _selectConfigVacuna =
+                                                                //       null;
+                                                                //   _selectCondicion =
+                                                                //       vacunasCondicionService
+                                                                //               .listaVacunasCondicion![
+                                                                //           index];
+                                                                // });
+                                                                // final tempLista =
+                                                                //     await configuracionVacunaProvider
+                                                                //         .validarConfiguraciones(
+                                                                //             _selectVacunas!.id_sysvacu04);
+                                                                // tempLista[0].codigo_mensaje ==
+                                                                //         "0"
+                                                                //     ? showDialog(
+                                                                //         context:
+                                                                //             context,
+                                                                //         builder:
+                                                                //             (BuildContext
+                                                                //                 context) {
+                                                                //           return DialogoAlerta(
+                                                                //               envioFuncion2: false,
+                                                                //               envioFuncion1: false,
+                                                                //               tituloAlerta: 'ATENCIÓN!',
+                                                                //               descripcionAlerta: tempLista[0].mensaje,
+                                                                //               textoBotonAlerta: 'Listo',
+                                                                //               icon: const Icon(
+                                                                //                 Icons.error_outline,
+                                                                //                 size: 40,
+                                                                //               ),
+                                                                //               color: Colors.red);
+                                                                //         })
+                                                                //     : {
+                                                                //         loadingLoginService.getCargaConfiguracionState!
+                                                                //             ? mostrarLoadingEstrellasXTiempo(context,
+                                                                //                 800)
+                                                                //             : () {},
+                                                                //         setState(
+                                                                //             () {
+                                                                //           listaConfiguraciones =
+                                                                //               tempLista;
+                                                                //           vacunasConfiguracionService
+                                                                //               .cargarListaVacunasConfiguracion(tempLista);
+                                                                //         }),
+                                                                //         loadingLoginService
+                                                                //             .cargaConfiguracion(false),
+                                                                //         setState(
+                                                                //             () {
+                                                                //           pasos++;
+                                                                //         })
+                                                                //       };
+                                                              },
+                                                              child: ListTile(
+                                                                title: Text(vacunasCondicionService
+                                                                    .listaVacunasCondicionBusqueda![
+                                                                        index]
+                                                                    .sysvacu01_descripcion!),
+                                                                // trailing:
+                                                                //     const Icon(Icons
+                                                                //         .medical_services_outlined),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    );
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  )),
+                            ],
                           ),
                         )
                       : Container();
@@ -1964,6 +2286,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                   Navigator.of(
                                                                           context)
                                                                       .pop();
+
+                                                                  pasos++;
                                                                 },
                                                                 child: ListTile(
                                                                   title: Text(vacunasLotesService
