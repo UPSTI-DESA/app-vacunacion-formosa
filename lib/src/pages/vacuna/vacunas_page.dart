@@ -8,15 +8,13 @@ import 'package:responsive_builder/responsive_builder.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
-import 'package:sistema_vacunacion/src/models/vacunas/vacunas_condicion_model.dart';
+import 'package:sistema_vacunacion/src/models/vacunas/vacunas_dosis_model.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
+import 'package:sistema_vacunacion/src/providers/vacunas/vacunas_dosis_provider.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/services/vacunas_condicion_service.dart';
-import 'package:sistema_vacunacion/src/services/vacunas_esquema_service.dart';
+import 'package:sistema_vacunacion/src/services/vacunas_dosis_service.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
-
-import '../../providers/vacunas/vacunas_condicion_providers.dart';
 
 class VacunasPage extends StatefulWidget {
   const VacunasPage({
@@ -33,9 +31,13 @@ class _VacunasPageState extends State<VacunasPage> {
   int pasos = 1;
   VacunasxPerfil? _selectVacunas;
   VacunasCondicion? _selectCondicion;
+  VacunasEsquema? _selectEsquema;
+  VacunasEsquema? _selectDosis;
   PerfilesVacunacion? _selectPerfil;
   List<InfoVacunas>? listaVacunas;
   List<VacunasCondicion>? listaCondiciones;
+  List<VacunasEsquema>? listaEsquemas;
+  List<VacunasDosis>? listaDosis;
   List<Lotes>? listaLotes;
   Lotes? _selectLote;
   String uribeneficiario = beneficiarioService.beneficiario!.foto_beneficiario!;
@@ -46,6 +48,8 @@ class _VacunasPageState extends State<VacunasPage> {
   final TextEditingController controladorBusquedaCondicion =
       TextEditingController();
   final TextEditingController controladorBusquedaEsquema =
+      TextEditingController();
+  final TextEditingController controladorBusquedaDosis =
       TextEditingController();
   final TextEditingController controladorBusquedaConfig =
       TextEditingController();
@@ -72,6 +76,8 @@ class _VacunasPageState extends State<VacunasPage> {
     mostrarTutor = false;
     pasos = 1;
     listaCondiciones = [];
+    listaEsquemas = [];
+    listaDosis = [];
     listaVacunas = [];
     listaLotes = [];
     dniTutor = '';
@@ -105,7 +111,7 @@ class _VacunasPageState extends State<VacunasPage> {
     controladorBusquedaVacunas.dispose();
     controladorBusquedaCondicion.dispose();
     controladorBusquedaEsquema.dispose();
-    controladorBusquedaEsquema.dispose();
+    controladorBusquedaDosis.dispose();
     super.dispose();
   }
 
@@ -549,8 +555,10 @@ class _VacunasPageState extends State<VacunasPage> {
       case 3:
         return FadeInLeft(child: containerCondiciones());
       case 4:
-        return FadeInRight(child: containerLotes());
+        return FadeInRight(child: containerEsquemas());
       case 5:
+        return FadeInRight(child: containerDosis());
+      case 6:
         return FadeInRight(child: containerLotes());
 
       default:
@@ -1197,7 +1205,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .height *
-                                                              .45,
+                                                              .3,
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
@@ -1305,7 +1313,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .height *
-                                                              .45,
+                                                              .3,
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
@@ -1526,7 +1534,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .height *
-                                                              .45,
+                                                              .3,
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
@@ -1553,6 +1561,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                               onTap: () async {
                                                                 listaLotes!
                                                                     .clear();
+                                                                listaEsquemas!
+                                                                    .clear();
                                                                 setState(() {
                                                                   _selectLote =
                                                                       null;
@@ -1562,53 +1572,55 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                               .listaVacunasCondicion![
                                                                           index];
                                                                 });
-                                                                // TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
-                                                                // final tempLista =
-                                                                //     await configuracionVacunaProvider
-                                                                //         .validarConfiguraciones(
-                                                                //             _selectVacunas!.id_sysvacu04);
-                                                                // tempLista[0].codigo_mensaje ==
-                                                                //         "0"
-                                                                //     ? showDialog(
-                                                                //         context:
-                                                                //             context,
-                                                                //         builder:
-                                                                //             (BuildContext
-                                                                //                 context) {
-                                                                //           return DialogoAlerta(
-                                                                //               envioFuncion2: false,
-                                                                //               envioFuncion1: false,
-                                                                //               tituloAlerta: 'ATENCIÓN!',
-                                                                //               descripcionAlerta: tempLista[0].mensaje,
-                                                                //               textoBotonAlerta: 'Listo',
-                                                                //               icon: const Icon(
-                                                                //                 Icons.error_outline,
-                                                                //                 size: 40,
-                                                                //               ),
-                                                                //               color: Colors.red);
-                                                                //         })
-                                                                //     : {
-                                                                //         // Navigator.of(
-                                                                //         //         context)
-                                                                //         //     .pop(),
-                                                                //         loadingLoginService.getCargaConfiguracionState!
-                                                                //             ? mostrarLoadingEstrellasXTiempo(context,
-                                                                //                 800)
-                                                                //             : () {},
-                                                                //         setState(
-                                                                //             () {
-                                                                //           listaConfiguraciones =
-                                                                //               tempLista;
-                                                                //           vacunasConfiguracionService
-                                                                //               .cargarListaVacunasConfiguracion(tempLista);
-                                                                //         }),
-                                                                //         loadingLoginService
-                                                                //             .cargaConfiguracion(false),
-                                                                //         setState(
-                                                                //             () {
-                                                                //           pasos++;
-                                                                //         })
-                                                                //       };
+                                                                //  TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
+                                                                final tempLista = await vacunasEsquemaProvider.obtenerEsquemasProviders(
+                                                                    _selectVacunas!
+                                                                        .id_sysvacu04!,
+                                                                    _selectCondicion!
+                                                                        .id_sysvacu01);
+
+                                                                tempLista[0].codigo_mensaje ==
+                                                                        "0"
+                                                                    ? showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return DialogoAlerta(
+                                                                              envioFuncion2: false,
+                                                                              envioFuncion1: false,
+                                                                              tituloAlerta: 'ATENCIÓN!',
+                                                                              descripcionAlerta: tempLista[0].mensaje,
+                                                                              textoBotonAlerta: 'Listo',
+                                                                              icon: const Icon(
+                                                                                Icons.error_outline,
+                                                                                size: 40,
+                                                                              ),
+                                                                              color: Colors.red);
+                                                                        })
+                                                                    : {
+                                                                        // Navigator.of(
+                                                                        //         context)
+                                                                        //     .pop(),
+                                                                        loadingLoginService.getCargaConfiguracionState!
+                                                                            ? mostrarLoadingEstrellasXTiempo(context,
+                                                                                800)
+                                                                            : () {},
+                                                                        setState(
+                                                                            () {
+                                                                          listaEsquemas =
+                                                                              tempLista;
+                                                                          vacunasEsquemaService
+                                                                              .cargarListavacunasEsquema(tempLista);
+                                                                        }),
+                                                                        loadingLoginService
+                                                                            .cargarEsquema(false),
+                                                                        setState(
+                                                                            () {
+                                                                          pasos++;
+                                                                        })
+                                                                      };
                                                               },
                                                               child: ListTile(
                                                                 title: Text(vacunasCondicionService
@@ -1629,7 +1641,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .height *
-                                                              .45,
+                                                              .3,
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
@@ -1650,64 +1662,63 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                   int index) {
                                                             return InkWell(
                                                               onTap: () async {
-                                                                //TODO CARGAR ESQUEMA
-                                                                // listaConfiguraciones!
-                                                                //     .clear();
-                                                                // listaLotes!
-                                                                //     .clear();
-                                                                // setState(() {
-                                                                //   _selectLote =
-                                                                //       null;
-                                                                //   _selectConfigVacuna =
-                                                                //       null;
-                                                                //   _selectCondicion =
-                                                                //       vacunasCondicionService
-                                                                //               .listaVacunasCondicion![
-                                                                //           index];
-                                                                // });
-                                                                // final tempLista =
-                                                                //     await configuracionVacunaProvider
-                                                                //         .validarConfiguraciones(
-                                                                //             _selectVacunas!.id_sysvacu04);
-                                                                // tempLista[0].codigo_mensaje ==
-                                                                //         "0"
-                                                                //     ? showDialog(
-                                                                //         context:
-                                                                //             context,
-                                                                //         builder:
-                                                                //             (BuildContext
-                                                                //                 context) {
-                                                                //           return DialogoAlerta(
-                                                                //               envioFuncion2: false,
-                                                                //               envioFuncion1: false,
-                                                                //               tituloAlerta: 'ATENCIÓN!',
-                                                                //               descripcionAlerta: tempLista[0].mensaje,
-                                                                //               textoBotonAlerta: 'Listo',
-                                                                //               icon: const Icon(
-                                                                //                 Icons.error_outline,
-                                                                //                 size: 40,
-                                                                //               ),
-                                                                //               color: Colors.red);
-                                                                //         })
-                                                                //     : {
-                                                                //         loadingLoginService.getCargaConfiguracionState!
-                                                                //             ? mostrarLoadingEstrellasXTiempo(context,
-                                                                //                 800)
-                                                                //             : () {},
-                                                                //         setState(
-                                                                //             () {
-                                                                //           listaConfiguraciones =
-                                                                //               tempLista;
-                                                                //           vacunasConfiguracionService
-                                                                //               .cargarListaVacunasConfiguracion(tempLista);
-                                                                //         }),
-                                                                //         loadingLoginService
-                                                                //             .cargaConfiguracion(false),
-                                                                //         setState(
-                                                                //             () {
-                                                                //           pasos++;
-                                                                //         })
-                                                                //       };
+                                                                //    TODO CARGAR ESQUEMA
+                                                                listaEsquemas!
+                                                                    .clear();
+                                                                setState(() {
+                                                                  _selectLote =
+                                                                      null;
+                                                                  _selectEsquema =
+                                                                      null;
+                                                                  _selectEsquema =
+                                                                      vacunasEsquemaService
+                                                                              .listavacunasEsquema![
+                                                                          index];
+                                                                });
+                                                                final tempLista = await vacunasEsquemaProvider.obtenerEsquemasProviders(
+                                                                    _selectVacunas!
+                                                                        .id_sysvacu04,
+                                                                    _selectCondicion!
+                                                                        .id_sysvacu01);
+                                                                tempLista[0].codigo_mensaje ==
+                                                                        "0"
+                                                                    ? showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return DialogoAlerta(
+                                                                              envioFuncion2: false,
+                                                                              envioFuncion1: false,
+                                                                              tituloAlerta: 'ATENCIÓN!',
+                                                                              descripcionAlerta: tempLista[0].mensaje,
+                                                                              textoBotonAlerta: 'Listo',
+                                                                              icon: const Icon(
+                                                                                Icons.error_outline,
+                                                                                size: 40,
+                                                                              ),
+                                                                              color: Colors.red);
+                                                                        })
+                                                                    : {
+                                                                        loadingLoginService.getLoadingEsquemaState!
+                                                                            ? mostrarLoadingEstrellasXTiempo(context,
+                                                                                800)
+                                                                            : () {},
+                                                                        setState(
+                                                                            () {
+                                                                          listaEsquemas =
+                                                                              tempLista;
+                                                                          vacunasEsquemaService
+                                                                              .cargarListavacunasEsquema(tempLista);
+                                                                        }),
+                                                                        loadingLoginService
+                                                                            .cargarEsquema(false),
+                                                                        setState(
+                                                                            () {
+                                                                          pasos++;
+                                                                        })
+                                                                      };
                                                               },
                                                               child: ListTile(
                                                                 title: Text(vacunasCondicionService
@@ -1742,7 +1753,7 @@ class _VacunasPageState extends State<VacunasPage> {
   Widget containerEsquemas() {
     ScrollController esquemaScrollController = ScrollController();
     return StreamBuilder(
-      stream: loadingLoginService.loadingCondicionStateStream,
+      stream: loadingLoginService.loadingEsquemaStateStream,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return loadingLoginService.getLoadingEsquemaState!
             ? Container()
@@ -1750,8 +1761,7 @@ class _VacunasPageState extends State<VacunasPage> {
                 stream: vacunasEsquemaService.listavacunasEsquemaesStream,
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  return vacunasCondicionService
-                          .listaVacunasCondicion!.isNotEmpty
+                  return vacunasEsquemaService.listavacunasEsquema!.isNotEmpty
                       ? Padding(
                           padding: EdgeInsets.only(
                               right: MediaQuery.of(context).size.width * 0.02,
@@ -1763,7 +1773,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                 child: FadeInUpBig(
                                   from: 20,
                                   child: Text(
-                                    'Seleccione una Condicion',
+                                    'Seleccione un Esquema',
                                     style: GoogleFonts.barlow(
                                         textStyle: const TextStyle(
                                             fontWeight: FontWeight.w600,
@@ -1810,7 +1820,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                 ]),
                                             child: TextField(
                                                 autocorrect: false,
-                                                controller: controladorBusqueda,
+                                                controller:
+                                                    controladorBusquedaEsquema,
                                                 keyboardType:
                                                     TextInputType.text,
                                                 decoration:
@@ -1822,13 +1833,12 @@ class _VacunasPageState extends State<VacunasPage> {
                                                   focusedBorder:
                                                       InputBorder.none,
                                                   border: InputBorder.none,
-                                                  hintText:
-                                                      'Buscar Condicion...',
+                                                  hintText: 'Buscar Esquema...',
                                                 ),
                                                 focusNode: focusNode,
                                                 onChanged: (value) {
-                                                  vacunasCondicionService
-                                                      .buscarCondicion(
+                                                  vacunasEsquemaService
+                                                      .buscaresquema(
                                                           value.toUpperCase());
 
                                                   if (value.length >= 3) {
@@ -1837,19 +1847,19 @@ class _VacunasPageState extends State<VacunasPage> {
                                                 }),
                                           ),
                                           StreamBuilder(
-                                            stream: vacunasCondicionService
+                                            stream: vacunasEsquemaService
                                                 .listaBusquedaStream,
                                             builder: (BuildContext context,
                                                 AsyncSnapshot<dynamic>
                                                     snapshot) {
-                                              return controladorBusqueda
+                                              return controladorBusquedaEsquema
                                                       .text.isEmpty
                                                   ? SizedBox(
                                                       height:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .height *
-                                                              .45,
+                                                              .3,
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
@@ -1865,8 +1875,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                               const BouncingScrollPhysics(),
                                                           shrinkWrap: true,
                                                           itemCount:
-                                                              vacunasCondicionService
-                                                                  .listaVacunasCondicion!
+                                                              vacunasEsquemaService
+                                                                  .listavacunasEsquema!
                                                                   .length,
                                                           itemBuilder:
                                                               (BuildContext
@@ -1879,66 +1889,69 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                 setState(() {
                                                                   _selectLote =
                                                                       null;
-                                                                  _selectCondicion =
+                                                                  _selectEsquema =
                                                                       null;
-                                                                  _selectCondicion =
-                                                                      vacunasCondicionService
-                                                                              .listaVacunasCondicion![
+                                                                  _selectEsquema =
+                                                                      vacunasEsquemaService
+                                                                              .listavacunasEsquema![
                                                                           index];
                                                                 });
-                                                                // TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
-                                                                // final tempLista =
-                                                                //     await configuracionVacunaProvider
-                                                                //         .validarConfiguraciones(
-                                                                //             _selectVacunas!.id_sysvacu04);
-                                                                // tempLista[0].codigo_mensaje ==
-                                                                //         "0"
-                                                                //     ? showDialog(
-                                                                //         context:
-                                                                //             context,
-                                                                //         builder:
-                                                                //             (BuildContext
-                                                                //                 context) {
-                                                                //           return DialogoAlerta(
-                                                                //               envioFuncion2: false,
-                                                                //               envioFuncion1: false,
-                                                                //               tituloAlerta: 'ATENCIÓN!',
-                                                                //               descripcionAlerta: tempLista[0].mensaje,
-                                                                //               textoBotonAlerta: 'Listo',
-                                                                //               icon: const Icon(
-                                                                //                 Icons.error_outline,
-                                                                //                 size: 40,
-                                                                //               ),
-                                                                //               color: Colors.red);
-                                                                //         })
-                                                                //     : {
-                                                                //         // Navigator.of(
-                                                                //         //         context)
-                                                                //         //     .pop(),
-                                                                //         loadingLoginService.getCargaConfiguracionState!
-                                                                //             ? mostrarLoadingEstrellasXTiempo(context,
-                                                                //                 800)
-                                                                //             : () {},
-                                                                //         setState(
-                                                                //             () {
-                                                                //           listaConfiguraciones =
-                                                                //               tempLista;
-                                                                //           vacunasConfiguracionService
-                                                                //               .cargarListaVacunasConfiguracion(tempLista);
-                                                                //         }),
-                                                                //         loadingLoginService
-                                                                //             .cargaConfiguracion(false),
-                                                                //         setState(
-                                                                //             () {
-                                                                //           pasos++;
-                                                                //         })
-                                                                //       };
+                                                                //    TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
+                                                                final tempLista = await vacunasDosisProvider.obtenerDosisProviders(
+                                                                    _selectVacunas!
+                                                                        .id_sysvacu04!,
+                                                                    _selectCondicion!
+                                                                        .id_sysvacu01!,
+                                                                    _selectEsquema!
+                                                                        .id_sysvacu02!);
+                                                                tempLista[0].codigo_mensaje ==
+                                                                        "0"
+                                                                    ? showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return DialogoAlerta(
+                                                                              envioFuncion2: false,
+                                                                              envioFuncion1: false,
+                                                                              tituloAlerta: 'ATENCIÓN!',
+                                                                              descripcionAlerta: tempLista[0].mensaje,
+                                                                              textoBotonAlerta: 'Listo',
+                                                                              icon: const Icon(
+                                                                                Icons.error_outline,
+                                                                                size: 40,
+                                                                              ),
+                                                                              color: Colors.red);
+                                                                        })
+                                                                    : {
+                                                                        // Navigator.of(
+                                                                        //         context)
+                                                                        //     .pop(),
+                                                                        loadingLoginService.getLoadingDosisState!
+                                                                            ? mostrarLoadingEstrellasXTiempo(context,
+                                                                                800)
+                                                                            : () {},
+                                                                        setState(
+                                                                            () {
+                                                                          listaDosis =
+                                                                              tempLista;
+                                                                          vacunasDosisService
+                                                                              .cargarListaVacunasDosis(tempLista);
+                                                                        }),
+                                                                        loadingLoginService
+                                                                            .cargarDosis(false),
+                                                                        setState(
+                                                                            () {
+                                                                          pasos++;
+                                                                        })
+                                                                      };
                                                               },
                                                               child: ListTile(
-                                                                title: Text(vacunasCondicionService
-                                                                    .listaVacunasCondicion![
+                                                                title: Text(vacunasEsquemaService
+                                                                    .listavacunasEsquema![
                                                                         index]
-                                                                    .sysvacu01_descripcion!),
+                                                                    .sysvacu02_descripcion!),
                                                                 // leading: const Icon(
                                                                 //     Icons
                                                                 //         .medical_services_outlined),
@@ -1953,7 +1966,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .height *
-                                                              .45,
+                                                              .3,
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
@@ -1965,8 +1978,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                               const BouncingScrollPhysics(),
                                                           shrinkWrap: true,
                                                           itemCount:
-                                                              vacunasCondicionService
-                                                                  .listaVacunasCondicionBusqueda!
+                                                              vacunasEsquemaService
+                                                                  .listavacunasEsquemaBusqueda!
                                                                   .length,
                                                           itemBuilder:
                                                               (BuildContext
@@ -1974,70 +1987,72 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                   int index) {
                                                             return InkWell(
                                                               onTap: () async {
-                                                                //TODO CARGAR ESQUEMA
-                                                                // listaConfiguraciones!
-                                                                //     .clear();
-                                                                // listaLotes!
-                                                                //     .clear();
-                                                                // setState(() {
-                                                                //   _selectLote =
-                                                                //       null;
-                                                                //   _selectConfigVacuna =
-                                                                //       null;
-                                                                //   _selectCondicion =
-                                                                //       vacunasCondicionService
-                                                                //               .listaVacunasCondicion![
-                                                                //           index];
-                                                                // });
-                                                                // final tempLista =
-                                                                //     await configuracionVacunaProvider
-                                                                //         .validarConfiguraciones(
-                                                                //             _selectVacunas!.id_sysvacu04);
-                                                                // tempLista[0].codigo_mensaje ==
-                                                                //         "0"
-                                                                //     ? showDialog(
-                                                                //         context:
-                                                                //             context,
-                                                                //         builder:
-                                                                //             (BuildContext
-                                                                //                 context) {
-                                                                //           return DialogoAlerta(
-                                                                //               envioFuncion2: false,
-                                                                //               envioFuncion1: false,
-                                                                //               tituloAlerta: 'ATENCIÓN!',
-                                                                //               descripcionAlerta: tempLista[0].mensaje,
-                                                                //               textoBotonAlerta: 'Listo',
-                                                                //               icon: const Icon(
-                                                                //                 Icons.error_outline,
-                                                                //                 size: 40,
-                                                                //               ),
-                                                                //               color: Colors.red);
-                                                                //         })
-                                                                //     : {
-                                                                //         loadingLoginService.getCargaConfiguracionState!
-                                                                //             ? mostrarLoadingEstrellasXTiempo(context,
-                                                                //                 800)
-                                                                //             : () {},
-                                                                //         setState(
-                                                                //             () {
-                                                                //           listaConfiguraciones =
-                                                                //               tempLista;
-                                                                //           vacunasConfiguracionService
-                                                                //               .cargarListaVacunasConfiguracion(tempLista);
-                                                                //         }),
-                                                                //         loadingLoginService
-                                                                //             .cargaConfiguracion(false),
-                                                                //         setState(
-                                                                //             () {
-                                                                //           pasos++;
-                                                                //         })
-                                                                //       };
+                                                                /// TODO CARGAR ESQUEMA
+
+                                                                listaLotes!
+                                                                    .clear();
+                                                                setState(() {
+                                                                  _selectLote =
+                                                                      null;
+                                                                  _selectEsquema =
+                                                                      null;
+                                                                  _selectEsquema =
+                                                                      vacunasEsquemaService
+                                                                              .listavacunasEsquema![
+                                                                          index];
+                                                                });
+                                                                final tempLista = await vacunasDosisProvider.obtenerDosisProviders(
+                                                                    _selectVacunas!
+                                                                        .id_sysvacu04!,
+                                                                    _selectCondicion!
+                                                                        .id_sysvacu01!,
+                                                                    _selectEsquema!
+                                                                        .id_sysvacu02!);
+                                                                tempLista[0].codigo_mensaje ==
+                                                                        "0"
+                                                                    ? showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return DialogoAlerta(
+                                                                              envioFuncion2: false,
+                                                                              envioFuncion1: false,
+                                                                              tituloAlerta: 'ATENCIÓN!',
+                                                                              descripcionAlerta: tempLista[0].mensaje,
+                                                                              textoBotonAlerta: 'Listo',
+                                                                              icon: const Icon(
+                                                                                Icons.error_outline,
+                                                                                size: 40,
+                                                                              ),
+                                                                              color: Colors.red);
+                                                                        })
+                                                                    : {
+                                                                        loadingLoginService.getLoadingDosisState!
+                                                                            ? mostrarLoadingEstrellasXTiempo(context,
+                                                                                800)
+                                                                            : () {},
+                                                                        setState(
+                                                                            () {
+                                                                          listaDosis =
+                                                                              tempLista;
+                                                                          vacunasDosisService
+                                                                              .cargarListaVacunasDosis(tempLista);
+                                                                        }),
+                                                                        loadingLoginService
+                                                                            .cargarDosis(false),
+                                                                        setState(
+                                                                            () {
+                                                                          pasos++;
+                                                                        })
+                                                                      };
                                                               },
                                                               child: ListTile(
-                                                                title: Text(vacunasCondicionService
-                                                                    .listaVacunasCondicionBusqueda![
+                                                                title: Text(vacunasEsquemaService
+                                                                    .listavacunasEsquemaBusqueda![
                                                                         index]
-                                                                    .sysvacu01_descripcion!),
+                                                                    .sysvacu02_descripcion!),
                                                                 // trailing:
                                                                 //     const Icon(Icons
                                                                 //         .medical_services_outlined),
@@ -2053,6 +2068,186 @@ class _VacunasPageState extends State<VacunasPage> {
                                       );
                                     },
                                   )),
+                            ],
+                          ),
+                        )
+                      : Container();
+                },
+              );
+      },
+    );
+  }
+
+  Widget containerDosis() {
+    ScrollController dosisScrollController = ScrollController();
+    return StreamBuilder(
+      stream: loadingLoginService.loadingDosisStateStream,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        return loadingLoginService.getLoadingDosisState!
+            ? Container()
+            : StreamBuilder(
+                stream: vacunasDosisService.listaVacunasDosisStream,
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  return vacunasDosisService.listaVacunasDosis!.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width * 0.02,
+                              left: MediaQuery.of(context).size.width * 0.02),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: FadeInUpBig(
+                                  from: 20,
+                                  child: Text(
+                                    'Seleccione una dosis',
+                                    style: GoogleFonts.barlow(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 20)),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.width * 0.05),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.08),
+                                            offset: const Offset(0, 5),
+                                            blurRadius: 5)
+                                      ],
+                                      color: Colors.white),
+                                  child: StreamBuilder(
+                                    stream:
+                                        vacunasDosisService.listaBusquedaStream,
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<dynamic> snapshot) {
+                                      return SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .1,
+                                        child: RawScrollbar(
+                                          thumbColor: SisVacuColor.verceleste,
+                                          isAlwaysShown: true,
+                                          radius: Radius.circular(20),
+                                          controller: dosisScrollController,
+                                          child: ListView.separated(
+                                            separatorBuilder:
+                                                (BuildContext context,
+                                                        int index) =>
+                                                    SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .05,
+                                            ),
+                                            scrollDirection: Axis.horizontal,
+                                            controller: dosisScrollController,
+                                            physics:
+                                                const BouncingScrollPhysics(),
+                                            shrinkWrap: true,
+                                            itemCount: vacunasDosisService
+                                                .listaVacunasDosis!.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return InkWell(
+                                                onTap: () async {
+                                                  loadingLoginService
+                                                          .getCargaConfiguracionState!
+                                                      ? mostrarLoadingEstrellasXTiempo(
+                                                          context, 800)
+                                                      : () {};
+                                                  loadingLoginService
+                                                      .cargaLotes(false);
+                                                  setState(() {
+                                                    pasos++;
+                                                  });
+
+                                                  // listaLotes!
+                                                  //     .clear();
+                                                  // setState(() {
+                                                  //   _selectLote =
+                                                  //       null;
+                                                  //   _selectEsquema =
+                                                  //       null;
+                                                  //   _selectEsquema =
+                                                  //       vacunasEsquemaService
+                                                  //               .listavacunasEsquema![
+                                                  //           index];
+                                                  // });
+                                                  // TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
+                                                  // final tempLista =
+                                                  //     await configuracionVacunaProvider
+                                                  //         .validarConfiguraciones(
+                                                  //             _selectVacunas!.id_sysvacu04);
+                                                  // tempLista[0].codigo_mensaje ==
+                                                  //         "0"
+                                                  //     ? showDialog(
+                                                  //         context:
+                                                  //             context,
+                                                  //         builder:
+                                                  //             (BuildContext
+                                                  //                 context) {
+                                                  //           return DialogoAlerta(
+                                                  //               envioFuncion2: false,
+                                                  //               envioFuncion1: false,
+                                                  //               tituloAlerta: 'ATENCIÓN!',
+                                                  //               descripcionAlerta: tempLista[0].mensaje,
+                                                  //               textoBotonAlerta: 'Listo',
+                                                  //               icon: const Icon(
+                                                  //                 Icons.error_outline,
+                                                  //                 size: 40,
+                                                  //               ),
+                                                  //               color: Colors.red);
+                                                  //         })
+                                                  //     : {
+                                                  //         // Navigator.of(
+                                                  //         //         context)
+                                                  //         //     .pop(),
+                                                  //         loadingLoginService.getCargaConfiguracionState!
+                                                  //             ? mostrarLoadingEstrellasXTiempo(context,
+                                                  //                 800)
+                                                  //             : () {},
+                                                  //         setState(
+                                                  //             () {
+                                                  //           listaConfiguraciones =
+                                                  //               tempLista;
+                                                  //           vacunasConfiguracionService
+                                                  //               .cargarListaVacunasConfiguracion(tempLista);
+                                                  //         }),
+                                                  //         loadingLoginService
+                                                  //             .cargaConfiguracion(false),
+                                                  //         setState(
+                                                  //             () {
+                                                  //           pasos++;
+                                                  //         })
+                                                  //       };
+                                                },
+                                                child: Chip(
+                                                  backgroundColor:
+                                                      SisVacuColor.verceleste,
+                                                  label: Text(
+                                                      vacunasDosisService
+                                                          .listaVacunasDosis![
+                                                              index]
+                                                          .sysvacu05_nombre!),
+
+                                                  // leading: const Icon(
+                                                  //     Icons
+                                                  //         .medical_services_outlined),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ))
                             ],
                           ),
                         )
