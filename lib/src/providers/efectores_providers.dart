@@ -32,7 +32,7 @@ class _EfectorsProviders {
     if (resp[0].flxcore03Dni != '') {
       return efectoresService.cargarListaEfectores(resp);
     } else {
-      return 0;
+      return resp;
     }
   }
 }

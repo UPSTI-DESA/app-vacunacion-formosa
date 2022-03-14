@@ -14,7 +14,9 @@ import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/providers/vacunas/vacunas_dosis_provider.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/services/vacunas_dosis_service.dart';
+import 'package:sistema_vacunacion/src/services/vacunas_service.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class VacunasPage extends StatefulWidget {
   const VacunasPage({
@@ -28,12 +30,14 @@ class VacunasPage extends StatefulWidget {
 class _VacunasPageState extends State<VacunasPage> {
   bool? mostrarBeneficiario;
   bool? mostrarTutor;
+
   int pasos = 1;
+  PerfilesVacunacion? _selectPerfil;
   VacunasxPerfil? _selectVacunas;
   VacunasCondicion? _selectCondicion;
   VacunasEsquema? _selectEsquema;
-  VacunasEsquema? _selectDosis;
-  PerfilesVacunacion? _selectPerfil;
+  VacunasDosis? _selectDosis;
+
   List<InfoVacunas>? listaVacunas;
   List<VacunasCondicion>? listaCondiciones;
   List<VacunasEsquema>? listaEsquemas;
@@ -59,16 +63,11 @@ class _VacunasPageState extends State<VacunasPage> {
   late bool genero;
   String? dniTutor;
   String? sexoTutor;
+
   Uint8List? fotoBeneficiario;
   Uint8List? noImage;
 
   List<Widget> listaWidget = [];
-
-  // Future scrollToItem(int index) async {
-  //   itemController.scrollTo(
-  //       index: index, duration: const Duration(milliseconds: 50));
-  // }
-
   @override
   void initState() {
     fotoBeneficiario = base64.decode(uribeneficiario.split(',').last);
@@ -86,20 +85,6 @@ class _VacunasPageState extends State<VacunasPage> {
     super.initState();
     focusNode = FocusNode();
     cargarPerfilesService(registradorService.registrador!.id_flxcore03!);
-
-    // itemListener.itemPositions.addListener(() {
-    //   final indices = itemListener.itemPositions.value
-    //       .where((item) {
-
-    //         final isTopVisible = item.itemLeadingEdge >= 0;
-    //         final isBottomVisible = item.itemTrailingEdge <= 1;
-
-    //         return isTopVisible && isBottomVisible;
-    //       })
-    //       .map((e) => e.index)
-    //       .toList();
-
-    // });
   }
 
   @override
@@ -115,6 +100,8 @@ class _VacunasPageState extends State<VacunasPage> {
     super.dispose();
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     ScrollController generalScroll = ScrollController();
@@ -122,6 +109,7 @@ class _VacunasPageState extends State<VacunasPage> {
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           leading: Center(
             child: InkWell(
@@ -156,7 +144,7 @@ class _VacunasPageState extends State<VacunasPage> {
             RawScrollbar(
               thumbColor: SisVacuColor.verceleste,
               isAlwaysShown: true,
-              radius: Radius.circular(20),
+              radius: const Radius.circular(20),
               thickness: 5,
               controller: generalScroll,
               child: SingleChildScrollView(
@@ -174,325 +162,16 @@ class _VacunasPageState extends State<VacunasPage> {
 
                     containerPasos(),
                     SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                    //  containerPerfiles(),
-
-                    // SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-
-                    // containerVacunas(),
-
-                    // SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-
-                    // containerConfiguraciones(),
-
-                    // SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-
-                    // containerLotes(),
-
-                    // SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-
-                    BotonCustom(
-                        text: 'Registrar Vacunación',
-                        onPressed: () {
-                          beneficiarioService.beneficiario!.sysdesa10_dni != ''
-                              ? int.parse(beneficiarioService
-                                          .beneficiario!.sysdesa10_edad!) <
-                                      18
-                                  ? tutorService.existeTutor
-                                      ? tutorService
-                                                  .tutor!.sysdesa10_dni_tutor !=
-                                              ''
-                                          ? _selectVacunas != null
-                                              ? _selectCondicion != null
-                                                  ? _selectLote != null
-                                                      // ignore: unnecessary_statements
-                                                      ? {
-                                                          insertRegistroService.cargarRegistro(
-                                                              InsertRegistros(
-                                                                  id_flxcore03: registradorService
-                                                                      .registrador!
-                                                                      .id_flxcore03, //Obligatorio
-                                                                  id_sysdesa12: vacunadorService
-                                                                      .vacunador!
-                                                                      .id_sysdesa12, //Obligatorio
-                                                                  id_sysdesa18:
-                                                                      _selectLote!
-                                                                          .id_sysdesa18, //Obligatorio
-                                                                  id_sysofic01: registradorService
-                                                                      .registrador!
-                                                                      .rela_sysofic01, //Obligatorio
-                                                                  // id_sysvacu03:
-                                                                  //     _selectConfigVacuna!
-                                                                  // .id_sysvacu03, //Obligatorio
-                                                                  sysdesa10_apellido: beneficiarioService
-                                                                      .beneficiario!
-                                                                      .sysdesa10_apellido, //Obligatorio
-                                                                  sysdesa10_cadena_dni: beneficiarioService
-                                                                      .beneficiario!
-                                                                      .sysdesa10_cadena_dni, //Solo con Escaner
-                                                                  sysdesa10_dni: beneficiarioService
-                                                                      .beneficiario!
-                                                                      .sysdesa10_dni, //Obligatorio
-                                                                  sysdesa10_nombre: beneficiarioService
-                                                                      .beneficiario!
-                                                                      .sysdesa10_nombre, //Obligatorio
-                                                                  sysdesa10_nro_tramite: beneficiarioService
-                                                                      .beneficiario!
-                                                                      .sysdesa10_nro_tramite, //Solo con Escaner
-                                                                  sysdesa10_sexo: beneficiarioService
-                                                                      .beneficiario!
-                                                                      .sysdesa10_sexo, //Obligatorio
-                                                                  sysdesa10_edad:
-                                                                      beneficiarioService
-                                                                          .beneficiario!
-                                                                          .sysdesa10_edad,
-                                                                  //DatosExtras que no se envian, SOlo para vista
-                                                                  nombreVacuna:
-                                                                      _selectVacunas!.sysvacu04_nombre,
-                                                                  //     nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
-                                                                  nombreLote: _selectLote!.sysdesa18_lote,
-                                                                  sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
-                                                                  vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
-                                                                  sysdesa10_apellido_tutor: tutorService.tutor!.sysdesa10_apellido_tutor,
-                                                                  sysdesa10_dni_tutor: tutorService.tutor!.sysdesa10_dni_tutor,
-                                                                  sysdesa10_nombre_tutor: tutorService.tutor!.sysdesa10_nombre_tutor,
-                                                                  sysdesa10_sexo_tutor: tutorService.tutor!.sysdesa10_sexo_tutor)),
-                                                          Navigator.pushAndRemoveUntil(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          const ConfirmarDatos()),
-                                                              (Route<dynamic>
-                                                                      route) =>
-                                                                  false)
-                                                        }
-                                                      : showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return const DialogoAlerta(
-                                                                envioFuncion2:
-                                                                    false,
-                                                                envioFuncion1:
-                                                                    false,
-                                                                tituloAlerta:
-                                                                    'ATENCIÓN!',
-                                                                descripcionAlerta:
-                                                                    'Debe Seleccionar un Lote',
-                                                                textoBotonAlerta:
-                                                                    'Listo',
-                                                                icon: Icon(
-                                                                  Icons
-                                                                      .error_outline,
-                                                                  size: 40,
-                                                                ),
-                                                                color:
-                                                                    Colors.red);
-                                                          })
-                                                  : showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return const DialogoAlerta(
-                                                            envioFuncion2:
-                                                                false,
-                                                            envioFuncion1:
-                                                                false,
-                                                            tituloAlerta:
-                                                                'ATENCIÓN!',
-                                                            descripcionAlerta:
-                                                                'Debe Seleccionar una Configuración',
-                                                            textoBotonAlerta:
-                                                                'Listo',
-                                                            icon: Icon(
-                                                              Icons
-                                                                  .error_outline,
-                                                              size: 40,
-                                                            ),
-                                                            color: Colors.red);
-                                                      })
-                                              : showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const DialogoAlerta(
-                                                        envioFuncion2: false,
-                                                        envioFuncion1: false,
-                                                        tituloAlerta:
-                                                            'ATENCIÓN!',
-                                                        descripcionAlerta:
-                                                            'Debe Seleccionar una Vacuna',
-                                                        textoBotonAlerta:
-                                                            'Listo',
-                                                        icon: Icon(
-                                                          Icons.error_outline,
-                                                          size: 40,
-                                                        ),
-                                                        color: Colors.red);
-                                                  })
-                                          : showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const DialogoAlerta(
-                                                    envioFuncion2: false,
-                                                    envioFuncion1: false,
-                                                    tituloAlerta: 'ATENCIÓN!',
-                                                    descripcionAlerta:
-                                                        'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
-                                                    textoBotonAlerta: 'Listo',
-                                                    icon: Icon(
-                                                      Icons.error_outline,
-                                                      size: 40,
-                                                    ),
-                                                    color: Colors.red);
-                                              })
-                                      : showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return const DialogoAlerta(
-                                                envioFuncion2: false,
-                                                envioFuncion1: false,
-                                                tituloAlerta: 'ATENCIÓN!',
-                                                descripcionAlerta:
-                                                    'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
-                                                textoBotonAlerta: 'Listo',
-                                                icon: Icon(
-                                                  Icons.error_outline,
-                                                  size: 40,
-                                                ),
-                                                color: Colors.red);
-                                          })
-                                  : _selectVacunas != null
-                                      ? _selectCondicion != null
-                                          ? _selectLote != null
-                                              // ignore: unnecessary_statements
-                                              ? {
-                                                  insertRegistroService.cargarRegistro(
-                                                      InsertRegistros(
-                                                          id_flxcore03: registradorService
-                                                              .registrador!
-                                                              .id_flxcore03, //Obligatorio
-                                                          id_sysdesa12: vacunadorService
-                                                              .vacunador!
-                                                              .id_sysdesa12, //Obligatorio
-                                                          id_sysdesa18: _selectLote!
-                                                              .id_sysdesa18, //Obligatorio
-                                                          id_sysofic01: registradorService
-                                                              .registrador!
-                                                              .rela_sysofic01, //Obligatorio
-                                                          // id_sysvacu03: _selectConfigVacuna!
-                                                          //     .id_sysvacu03, //Obligatorio
-                                                          sysdesa10_apellido: beneficiarioService
-                                                              .beneficiario!
-                                                              .sysdesa10_apellido, //Obligatorio
-                                                          sysdesa10_cadena_dni: beneficiarioService
-                                                              .beneficiario!
-                                                              .sysdesa10_cadena_dni, //Solo con Escaner
-                                                          sysdesa10_dni: beneficiarioService
-                                                              .beneficiario!
-                                                              .sysdesa10_dni, //Obligatorio
-                                                          sysdesa10_nombre: beneficiarioService
-                                                              .beneficiario!
-                                                              .sysdesa10_nombre, //Obligatorio
-                                                          sysdesa10_nro_tramite:
-                                                              beneficiarioService
-                                                                  .beneficiario!
-                                                                  .sysdesa10_nro_tramite, //Solo con Escaner
-                                                          sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
-                                                          sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
-                                                          //DatosExtras que no se envian, SOlo para vista
-                                                          nombreVacuna: _selectVacunas!.sysvacu04_nombre,
-                                                          //   nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
-                                                          nombreLote: _selectLote!.sysdesa18_lote,
-                                                          sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
-                                                          vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
-                                                          sysdesa10_apellido_tutor: '',
-                                                          sysdesa10_dni_tutor: '',
-                                                          sysdesa10_nombre_tutor: '',
-                                                          sysdesa10_sexo_tutor: '')),
-                                                  Navigator.pushAndRemoveUntil(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const ConfirmarDatos()),
-                                                      (Route<dynamic> route) =>
-                                                          false)
-                                                }
-                                              : showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const DialogoAlerta(
-                                                        envioFuncion2: false,
-                                                        envioFuncion1: false,
-                                                        tituloAlerta:
-                                                            'ATENCIÓN!',
-                                                        descripcionAlerta:
-                                                            'Debe Seleccionar un Lote',
-                                                        textoBotonAlerta:
-                                                            'Listo',
-                                                        icon: Icon(
-                                                          Icons.error_outline,
-                                                          size: 40,
-                                                        ),
-                                                        color: Colors.red);
-                                                  })
-                                          : showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return const DialogoAlerta(
-                                                    envioFuncion2: false,
-                                                    envioFuncion1: false,
-                                                    tituloAlerta: 'ATENCIÓN!',
-                                                    descripcionAlerta:
-                                                        'Debe Seleccionar una Configuracion',
-                                                    textoBotonAlerta: 'Listo',
-                                                    icon: Icon(
-                                                      Icons.error_outline,
-                                                      size: 40,
-                                                    ),
-                                                    color: Colors.red);
-                                              })
-                                      : showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return const DialogoAlerta(
-                                                envioFuncion2: false,
-                                                envioFuncion1: false,
-                                                tituloAlerta: 'ATENCIÓN!',
-                                                descripcionAlerta:
-                                                    'Debe Seleccionar una Vacuna',
-                                                textoBotonAlerta: 'Listo',
-                                                icon: Icon(
-                                                  Icons.error_outline,
-                                                  size: 40,
-                                                ),
-                                                color: Colors.red);
-                                          })
-                              : showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return const DialogoAlerta(
-                                        envioFuncion2: false,
-                                        envioFuncion1: false,
-                                        tituloAlerta: 'ATENCIÓN!',
-                                        descripcionAlerta:
-                                            'Hubo un error con el Beneficiario',
-                                        textoBotonAlerta: 'Listo',
-                                        icon: Icon(
-                                          Icons.error_outline,
-                                          size: 40,
-                                        ),
-                                        color: Colors.red);
-                                  });
-                        }),
+                    containerProgressBar(),
+                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    pasos == 7 ? botonRegistrarVacunacion() : Container(),
 
                     BotonCustom(
                         text: 'Cancelar Registro',
                         color: SisVacuColor.red,
                         onPressed: () {
                           showDialog(
-                              context: context,
+                              context: _scaffoldKey.currentContext!,
                               builder: (BuildContext context) => DialogoAlerta(
                                     tituloAlerta: "Atención",
                                     descripcionAlerta:
@@ -560,6 +239,8 @@ class _VacunasPageState extends State<VacunasPage> {
         return FadeInRight(child: containerDosis());
       case 6:
         return FadeInRight(child: containerLotes());
+      case 7:
+        return FadeInRight(child: containerVerificar());
 
       default:
         return containerPerfiles();
@@ -1002,7 +683,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                     tempLista != null
                                         ? tempLista[0].codigo_mensaje == "0"
                                             ? showDialog(
-                                                context: context,
+                                                context: _scaffoldKey
+                                                    .currentContext!,
                                                 builder:
                                                     (BuildContext context) {
                                                   return DialogoAlerta(
@@ -1255,7 +937,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                         "0"
                                                                     ? showDialog(
                                                                         context:
-                                                                            context,
+                                                                            _scaffoldKey
+                                                                                .currentContext!,
                                                                         builder:
                                                                             (BuildContext
                                                                                 context) {
@@ -1357,7 +1040,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                         "0"
                                                                     ? showDialog(
                                                                         context:
-                                                                            context,
+                                                                            _scaffoldKey
+                                                                                .currentContext!,
                                                                         builder:
                                                                             (BuildContext
                                                                                 context) {
@@ -1583,7 +1267,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                         "0"
                                                                     ? showDialog(
                                                                         context:
-                                                                            context,
+                                                                            _scaffoldKey
+                                                                                .currentContext!,
                                                                         builder:
                                                                             (BuildContext
                                                                                 context) {
@@ -1603,7 +1288,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                         // Navigator.of(
                                                                         //         context)
                                                                         //     .pop(),
-                                                                        loadingLoginService.getCargaConfiguracionState!
+                                                                        loadingLoginService.getLoadingCondicionState!
                                                                             ? mostrarLoadingEstrellasXTiempo(context,
                                                                                 800)
                                                                             : () {},
@@ -1684,7 +1369,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                         "0"
                                                                     ? showDialog(
                                                                         context:
-                                                                            context,
+                                                                            _scaffoldKey
+                                                                                .currentContext!,
                                                                         builder:
                                                                             (BuildContext
                                                                                 context) {
@@ -1908,7 +1594,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                         "0"
                                                                     ? showDialog(
                                                                         context:
-                                                                            context,
+                                                                            _scaffoldKey
+                                                                                .currentContext!,
                                                                         builder:
                                                                             (BuildContext
                                                                                 context) {
@@ -2012,7 +1699,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                         "0"
                                                                     ? showDialog(
                                                                         context:
-                                                                            context,
+                                                                            _scaffoldKey
+                                                                                .currentContext!,
                                                                         builder:
                                                                             (BuildContext
                                                                                 context) {
@@ -2158,75 +1846,75 @@ class _VacunasPageState extends State<VacunasPage> {
                                               return InkWell(
                                                 onTap: () async {
                                                   loadingLoginService
-                                                          .getCargaConfiguracionState!
+                                                          .getLoadingDosisState!
                                                       ? mostrarLoadingEstrellasXTiempo(
                                                           context, 800)
                                                       : () {};
                                                   loadingLoginService
                                                       .cargaLotes(false);
+
+                                                  listaLotes!.clear();
                                                   setState(() {
-                                                    pasos++;
+                                                    _selectLote = null;
+                                                    _selectDosis =
+                                                        vacunasDosisService
+                                                                .listaVacunasDosis![
+                                                            index];
                                                   });
 
-                                                  // listaLotes!
-                                                  //     .clear();
-                                                  // setState(() {
-                                                  //   _selectLote =
-                                                  //       null;
-                                                  //   _selectEsquema =
-                                                  //       null;
-                                                  //   _selectEsquema =
-                                                  //       vacunasEsquemaService
-                                                  //               .listavacunasEsquema![
-                                                  //           index];
-                                                  // });
-                                                  // TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
-                                                  // final tempLista =
-                                                  //     await configuracionVacunaProvider
-                                                  //         .validarConfiguraciones(
-                                                  //             _selectVacunas!.id_sysvacu04);
-                                                  // tempLista[0].codigo_mensaje ==
-                                                  //         "0"
-                                                  //     ? showDialog(
-                                                  //         context:
-                                                  //             context,
-                                                  //         builder:
-                                                  //             (BuildContext
-                                                  //                 context) {
-                                                  //           return DialogoAlerta(
-                                                  //               envioFuncion2: false,
-                                                  //               envioFuncion1: false,
-                                                  //               tituloAlerta: 'ATENCIÓN!',
-                                                  //               descripcionAlerta: tempLista[0].mensaje,
-                                                  //               textoBotonAlerta: 'Listo',
-                                                  //               icon: const Icon(
-                                                  //                 Icons.error_outline,
-                                                  //                 size: 40,
-                                                  //               ),
-                                                  //               color: Colors.red);
-                                                  //         })
-                                                  //     : {
-                                                  //         // Navigator.of(
-                                                  //         //         context)
-                                                  //         //     .pop(),
-                                                  //         loadingLoginService.getCargaConfiguracionState!
-                                                  //             ? mostrarLoadingEstrellasXTiempo(context,
-                                                  //                 800)
-                                                  //             : () {},
-                                                  //         setState(
-                                                  //             () {
-                                                  //           listaConfiguraciones =
-                                                  //               tempLista;
-                                                  //           vacunasConfiguracionService
-                                                  //               .cargarListaVacunasConfiguracion(tempLista);
-                                                  //         }),
-                                                  //         loadingLoginService
-                                                  //             .cargaConfiguracion(false),
-                                                  //         setState(
-                                                  //             () {
-                                                  //           pasos++;
-                                                  //         })
-                                                  //       };
+                                                  final tempLista =
+                                                      await lotesVacunaProvider
+                                                          .validarLotes(
+                                                              _selectVacunas!
+                                                                  .id_sysvacu04);
+                                                  tempLista[0].codigo_mensaje ==
+                                                          "0"
+                                                      ? showDialog(
+                                                          context: _scaffoldKey
+                                                              .currentContext!,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return DialogoAlerta(
+                                                                envioFuncion2:
+                                                                    false,
+                                                                envioFuncion1:
+                                                                    false,
+                                                                tituloAlerta:
+                                                                    'ATENCIÓN!',
+                                                                descripcionAlerta:
+                                                                    tempLista[0]
+                                                                        .mensaje,
+                                                                textoBotonAlerta:
+                                                                    'Listo',
+                                                                icon:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .error_outline,
+                                                                  size: 40,
+                                                                ),
+                                                                color:
+                                                                    Colors.red);
+                                                          })
+                                                      : {
+                                                          loadingLoginService
+                                                                  .getCargaLotesState!
+                                                              ? mostrarLoadingEstrellasXTiempo(
+                                                                  context, 800)
+                                                              : () {},
+                                                          setState(() {
+                                                            listaLotes =
+                                                                tempLista;
+                                                            vacunasLotesService
+                                                                .cargarListaVacunasLotes(
+                                                                    tempLista);
+                                                          }),
+                                                          loadingLoginService
+                                                              .cargaLotes(
+                                                                  false),
+                                                          setState(() {
+                                                            pasos++;
+                                                          })
+                                                        };
                                                 },
                                                 child: Chip(
                                                   backgroundColor:
@@ -2259,6 +1947,8 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget containerLotes() {
+    ScrollController lotesScrollController = ScrollController();
+
     return StreamBuilder(
       stream: vacunasLotesService.listaVacunasLotesStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -2299,218 +1989,122 @@ class _VacunasPageState extends State<VacunasPage> {
                       const SizedBox(
                         height: 15,
                       ),
-                      GestureDetector(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  _selectLote == null
-                                      ? 'Seleccione un Lote'
-                                      : _selectLote!.sysdesa18_lote!,
-                                  style: TextStyle(
-                                    fontSize: getValueForScreenType(
-                                        context: context,
-                                        mobile: 15,
-                                        tablet: 20),
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                const SizedBox(width: 5),
-                                Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: SisVacuColor.black,
-                                ),
-                              ],
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * .1,
+                        child: RawScrollbar(
+                          thumbColor: SisVacuColor.verceleste,
+                          isAlwaysShown: true,
+                          radius: const Radius.circular(20),
+                          controller: lotesScrollController,
+                          child: ListView.separated(
+                            separatorBuilder:
+                                (BuildContext context, int index) => SizedBox(
+                              width: MediaQuery.of(context).size.width * .05,
                             ),
-                          ),
-                          onTap: () {
-                            vacunasLotesService.listavacunasLotes!.isEmpty
-                                ? const Center(
-                                    child: Text('Hubo un problema'),
-                                  )
-                                : showModalBottomSheet(
-                                    useRootNavigator: true,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return StreamBuilder(
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<dynamic> snapshot) {
-                                          return Column(
-                                            children: [
-                                              SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    .005,
-                                              ),
-                                              Container(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5,
-                                                    left: 5,
-                                                    bottom: 5,
-                                                    right: 20),
-                                                margin: EdgeInsets.only(
-                                                    right:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.04,
-                                                    left: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.04),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.blueGrey[50],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                    boxShadow: <BoxShadow>[
-                                                      BoxShadow(
-                                                          color: Colors.black
-                                                              .withOpacity(
-                                                                  0.05),
-                                                          offset: const Offset(
-                                                              0, 5),
-                                                          blurRadius: 5)
-                                                    ]),
-                                                child: TextField(
-                                                    autocorrect: false,
-                                                    controller:
-                                                        controladorBusquedaLotes,
-                                                    keyboardType:
-                                                        TextInputType.text,
-                                                    decoration:
-                                                        const InputDecoration(
-                                                      prefixIcon: Icon(Icons
-                                                          .medical_services_rounded),
-                                                      focusedBorder:
-                                                          InputBorder.none,
-                                                      border: InputBorder.none,
-                                                      hintText:
-                                                          'Buscar Lotes...',
-                                                    ),
-                                                    focusNode: focusNode,
-                                                    onChanged: (value) {
-                                                      vacunasLotesService
-                                                          .buscarLotes(value
-                                                              .toUpperCase());
-                                                    }),
-                                              ),
-                                              StreamBuilder(
-                                                stream: vacunasLotesService
-                                                    .listaVacunasLotesStream,
-                                                builder: (BuildContext context,
-                                                    AsyncSnapshot<dynamic>
-                                                        snapshot) {
-                                                  return controladorBusquedaLotes
-                                                          .text.isEmpty
-                                                      ? SizedBox(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              .4,
-                                                          child:
-                                                              ListView.builder(
-                                                            physics:
-                                                                const BouncingScrollPhysics(),
-                                                            shrinkWrap: true,
-                                                            itemCount:
-                                                                vacunasLotesService
-                                                                    .listavacunasLotes!
-                                                                    .length,
-                                                            itemBuilder:
-                                                                (BuildContext
-                                                                        context,
-                                                                    int index) {
-                                                              return InkWell(
-                                                                onTap:
-                                                                    () async {
-                                                                  setState(() {
-                                                                    _selectLote =
-                                                                        vacunasLotesService
-                                                                            .listavacunasLotes![index];
-                                                                  });
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                child: ListTile(
-                                                                  title: Text(vacunasLotesService
-                                                                      .listavacunasLotes![
-                                                                          index]
-                                                                      .sysdesa18_lote!),
-                                                                  leading:
-                                                                      const Icon(
-                                                                          Icons
-                                                                              .medical_services_outlined),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        )
-                                                      : SizedBox(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              .4,
-                                                          child:
-                                                              ListView.builder(
-                                                            physics:
-                                                                const BouncingScrollPhysics(),
-                                                            shrinkWrap: true,
-                                                            itemCount:
-                                                                vacunasLotesService
-                                                                    .listavacunasLotesBusqueda!
-                                                                    .length,
-                                                            itemBuilder:
-                                                                (BuildContext
-                                                                        context,
-                                                                    int index) {
-                                                              return InkWell(
-                                                                onTap:
-                                                                    () async {
-                                                                  setState(() {
-                                                                    _selectLote =
-                                                                        vacunasLotesService
-                                                                            .listavacunasLotesBusqueda![index];
-                                                                  });
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
+                            scrollDirection: Axis.horizontal,
+                            controller: lotesScrollController,
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount:
+                                vacunasLotesService.listavacunasLotes!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return InkWell(
+                                onTap: () async {
+                                  loadingLoginService.getLoadingVerificarState!
+                                      ? mostrarLoadingEstrellasXTiempo(
+                                          context, 800)
+                                      : () {};
+                                  loadingLoginService.cargarVerificar(false);
+                                  setState(() {
+                                    _selectLote = vacunasLotesService
+                                        .listavacunasLotes![index];
+                                    pasos++;
+                                  });
+                                },
+                                child: Chip(
+                                  backgroundColor: SisVacuColor.verceleste,
+                                  label: Text(vacunasLotesService
+                                      .listavacunasLotes![index]
+                                      .sysdesa18_lote!),
 
-                                                                  pasos++;
-                                                                },
-                                                                child: ListTile(
-                                                                  title: Text(vacunasLotesService
-                                                                      .listavacunasLotesBusqueda![
-                                                                          index]
-                                                                      .sysdesa18_lote!),
-                                                                  trailing:
-                                                                      const Icon(
-                                                                          Icons
-                                                                              .medical_services_outlined),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        );
-                                                },
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    });
-                          }),
+                                  // leading: const Icon(
+                                  //     Icons
+                                  //         .medical_services_outlined),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
               );
       },
+    );
+  }
+
+  Widget containerVerificar() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+        padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  offset: const Offset(0, 5),
+                  blurRadius: 5)
+            ],
+            color: Colors.white),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.check_circle,
+              size: 50,
+              color: Colors.green,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .02,
+            ),
+            Text('Continue para verificar los datos',
+                style: GoogleFonts.nunito(
+                  textStyle: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 16.0),
+                ),
+                textAlign: TextAlign.center),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget containerProgressBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: StepProgressIndicator(
+        totalSteps: 6,
+        currentStep: pasos - 1,
+        size: 36,
+        selectedColor: SisVacuColor.verceleste!,
+        unselectedColor: Colors.black.withOpacity(.7),
+        customStep: (index, color, _) => color != Colors.black.withOpacity(.7)
+            ? Container(
+                color: color,
+                child: const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                ),
+              )
+            : Container(
+                color: color,
+                child: const Icon(
+                  Icons.remove,
+                ),
+              ),
+      ),
     );
   }
 
@@ -2552,7 +2146,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           alignment: Alignment.centerRight,
                           onPressed: () {
                             showDialog(
-                                context: context,
+                                context: _scaffoldKey.currentContext!,
                                 builder: (BuildContext context) =>
                                     DialogoAlerta(
                                       envioFuncion2: false,
@@ -2642,7 +2236,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           ? obtenerDatosBeneficiario(
                               context, controladorDni.text, sexoTutor!)
                           : showDialog(
-                              context: context,
+                              context: _scaffoldKey.currentContext!,
                               builder: (BuildContext context) => DialogoAlerta(
                                     envioFuncion2: false,
                                     envioFuncion1: false,
@@ -2666,6 +2260,289 @@ class _VacunasPageState extends State<VacunasPage> {
         : Container();
   }
 
+  Widget botonRegistrarVacunacion() {
+    return BotonCustom(
+        text: 'Registrar Vacunación',
+        onPressed: () {
+          beneficiarioService.beneficiario!.sysdesa10_dni != ''
+              ? int.parse(beneficiarioService.beneficiario!.sysdesa10_edad!) <
+                      18
+                  ? tutorService.existeTutor
+                      ? tutorService.tutor!.sysdesa10_dni_tutor != ''
+                          ? _selectVacunas != null
+                              ? _selectCondicion != null
+                                  ? _selectLote != null
+                                      // ignore: unnecessary_statements
+                                      ? {
+                                          insertRegistroService.cargarRegistro(
+                                              InsertRegistros(
+                                                  id_flxcore03: registradorService
+                                                      .registrador!
+                                                      .id_flxcore03, //Obligatorio
+                                                  id_sysdesa12: vacunadorService
+                                                      .vacunador!
+                                                      .id_sysdesa12, //Obligatorio
+                                                  id_sysdesa18: _selectLote!
+                                                      .id_sysdesa18, //Obligatorio
+                                                  id_sysofic01: registradorService
+                                                      .registrador!
+                                                      .rela_sysofic01, //Obligatorio
+                                                  id_sysvacu01: _selectCondicion!
+                                                      .id_sysvacu01!,
+                                                  id_sysvacu02: _selectEsquema!
+                                                      .id_sysvacu02!,
+                                                  id_sysvacu05: _selectDosis!
+                                                      .id_sysvacu05!,
+                                                  nombreVacuna: _selectVacunas!
+                                                      .sysvacu04_nombre,
+                                                  nombreCondicion: _selectCondicion!
+                                                      .sysvacu01_descripcion,
+                                                  nombreEsquema: _selectEsquema!
+                                                      .sysvacu02_descripcion,
+                                                  nombreDosis: _selectDosis!
+                                                      .sysvacu05_nombre,
+                                                  nombreLote: _selectLote!
+                                                      .sysdesa18_lote,
+                                                  // id_sysvacu03:
+                                                  //     _selectConfigVacuna!
+                                                  // .id_sysvacu03, //Obligatorio
+                                                  sysdesa10_apellido: beneficiarioService
+                                                      .beneficiario!
+                                                      .sysdesa10_apellido, //Obligatorio
+                                                  sysdesa10_cadena_dni: beneficiarioService
+                                                      .beneficiario!
+                                                      .sysdesa10_cadena_dni, //Solo con Escaner
+                                                  sysdesa10_dni: beneficiarioService
+                                                      .beneficiario!
+                                                      .sysdesa10_dni, //Obligatorio
+                                                  sysdesa10_nombre: beneficiarioService.beneficiario!.sysdesa10_nombre, //Obligatorio
+                                                  sysdesa10_nro_tramite: beneficiarioService.beneficiario!.sysdesa10_nro_tramite, //Solo con Escaner
+                                                  sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
+                                                  sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad, //DatosExtras que no se envian, SOlo para vista
+
+                                                  //     nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
+
+                                                  sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
+                                                  vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
+                                                  sysdesa10_apellido_tutor: tutorService.tutor!.sysdesa10_apellido_tutor,
+                                                  sysdesa10_dni_tutor: tutorService.tutor!.sysdesa10_dni_tutor,
+                                                  sysdesa10_nombre_tutor: tutorService.tutor!.sysdesa10_nombre_tutor,
+                                                  sysdesa10_sexo_tutor: tutorService.tutor!.sysdesa10_sexo_tutor)),
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const ConfirmarDatos()),
+                                              (Route<dynamic> route) => false)
+                                        }
+                                      : showDialog(
+                                          context: _scaffoldKey.currentContext!,
+                                          builder: (BuildContext context) {
+                                            return const DialogoAlerta(
+                                                envioFuncion2: false,
+                                                envioFuncion1: false,
+                                                tituloAlerta: 'ATENCIÓN!',
+                                                descripcionAlerta:
+                                                    'Debe Seleccionar un Lote',
+                                                textoBotonAlerta: 'Listo',
+                                                icon: Icon(
+                                                  Icons.error_outline,
+                                                  size: 40,
+                                                ),
+                                                color: Colors.red);
+                                          })
+                                  : showDialog(
+                                      context: _scaffoldKey.currentContext!,
+                                      builder: (BuildContext context) {
+                                        return const DialogoAlerta(
+                                            envioFuncion2: false,
+                                            envioFuncion1: false,
+                                            tituloAlerta: 'ATENCIÓN!',
+                                            descripcionAlerta:
+                                                'Debe Seleccionar una Configuración',
+                                            textoBotonAlerta: 'Listo',
+                                            icon: Icon(
+                                              Icons.error_outline,
+                                              size: 40,
+                                            ),
+                                            color: Colors.red);
+                                      })
+                              : showDialog(
+                                  context: _scaffoldKey.currentContext!,
+                                  builder: (BuildContext context) {
+                                    return const DialogoAlerta(
+                                        envioFuncion2: false,
+                                        envioFuncion1: false,
+                                        tituloAlerta: 'ATENCIÓN!',
+                                        descripcionAlerta:
+                                            'Debe Seleccionar una Vacuna',
+                                        textoBotonAlerta: 'Listo',
+                                        icon: Icon(
+                                          Icons.error_outline,
+                                          size: 40,
+                                        ),
+                                        color: Colors.red);
+                                  })
+                          : showDialog(
+                              context: _scaffoldKey.currentContext!,
+                              builder: (BuildContext context) {
+                                return const DialogoAlerta(
+                                    envioFuncion2: false,
+                                    envioFuncion1: false,
+                                    tituloAlerta: 'ATENCIÓN!',
+                                    descripcionAlerta:
+                                        'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
+                                    textoBotonAlerta: 'Listo',
+                                    icon: Icon(
+                                      Icons.error_outline,
+                                      size: 40,
+                                    ),
+                                    color: Colors.red);
+                              })
+                      : showDialog(
+                          context: _scaffoldKey.currentContext!,
+                          builder: (BuildContext context) {
+                            return const DialogoAlerta(
+                                envioFuncion2: false,
+                                envioFuncion1: false,
+                                tituloAlerta: 'ATENCIÓN!',
+                                descripcionAlerta:
+                                    'El beneficiario es menor de edad. Debe cargar los datos del Tutor',
+                                textoBotonAlerta: 'Listo',
+                                icon: Icon(
+                                  Icons.error_outline,
+                                  size: 40,
+                                ),
+                                color: Colors.red);
+                          })
+                  : _selectVacunas != null
+                      ? _selectCondicion != null
+                          ? _selectLote != null
+                              // ignore: unnecessary_statements
+                              ? {
+                                  insertRegistroService.cargarRegistro(
+                                      InsertRegistros(
+                                          id_flxcore03: registradorService
+                                              .registrador!
+                                              .id_flxcore03, //Obligatorio
+                                          id_sysdesa12: vacunadorService
+                                              .vacunador!
+                                              .id_sysdesa12, //Obligatorio
+                                          id_sysdesa18: _selectLote!
+                                              .id_sysdesa18, //Obligatorio
+                                          id_sysofic01: registradorService
+                                              .registrador!.rela_sysofic01,
+                                          nombreVacuna:
+                                              _selectVacunas!.sysvacu04_nombre,
+                                          nombreCondicion: _selectCondicion!
+                                              .sysvacu01_descripcion,
+                                          nombreEsquema: _selectEsquema!
+                                              .sysvacu02_descripcion,
+                                          nombreDosis:
+                                              _selectDosis!.sysvacu05_nombre,
+                                          nombreLote: _selectLote!
+                                              .sysdesa18_lote, //Obligatorio
+                                          // id_sysvacu03: _selectConfigVacuna!
+                                          //     .id_sysvacu03, //Obligatorio
+                                          sysdesa10_apellido: beneficiarioService
+                                              .beneficiario!
+                                              .sysdesa10_apellido, //Obligatorio
+                                          sysdesa10_cadena_dni: beneficiarioService
+                                              .beneficiario!
+                                              .sysdesa10_cadena_dni, //Solo con Escaner
+                                          sysdesa10_dni: beneficiarioService
+                                              .beneficiario!
+                                              .sysdesa10_dni, //Obligatorio
+                                          sysdesa10_nombre: beneficiarioService
+                                              .beneficiario!
+                                              .sysdesa10_nombre, //Obligatorio
+                                          sysdesa10_nro_tramite: beneficiarioService
+                                              .beneficiario!
+                                              .sysdesa10_nro_tramite, //Solo con Escaner
+                                          sysdesa10_sexo:
+                                              beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
+                                          sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
+                                          //DatosExtras que no se envian, SOlo para vista
+                                          //   nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
+                                          sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
+                                          vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
+                                          sysdesa10_apellido_tutor: '',
+                                          sysdesa10_dni_tutor: '',
+                                          sysdesa10_nombre_tutor: '',
+                                          sysdesa10_sexo_tutor: '')),
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ConfirmarDatos()),
+                                      (Route<dynamic> route) => false)
+                                }
+                              : showDialog(
+                                  context: _scaffoldKey.currentContext!,
+                                  builder: (BuildContext context) {
+                                    return const DialogoAlerta(
+                                        envioFuncion2: false,
+                                        envioFuncion1: false,
+                                        tituloAlerta: 'ATENCIÓN!',
+                                        descripcionAlerta:
+                                            'Debe Seleccionar un Lote',
+                                        textoBotonAlerta: 'Listo',
+                                        icon: Icon(
+                                          Icons.error_outline,
+                                          size: 40,
+                                        ),
+                                        color: Colors.red);
+                                  })
+                          : showDialog(
+                              context: _scaffoldKey.currentContext!,
+                              builder: (BuildContext context) {
+                                return const DialogoAlerta(
+                                    envioFuncion2: false,
+                                    envioFuncion1: false,
+                                    tituloAlerta: 'ATENCIÓN!',
+                                    descripcionAlerta:
+                                        'Debe Seleccionar una Configuracion',
+                                    textoBotonAlerta: 'Listo',
+                                    icon: Icon(
+                                      Icons.error_outline,
+                                      size: 40,
+                                    ),
+                                    color: Colors.red);
+                              })
+                      : showDialog(
+                          context: _scaffoldKey.currentContext!,
+                          builder: (BuildContext context) {
+                            return const DialogoAlerta(
+                                envioFuncion2: false,
+                                envioFuncion1: false,
+                                tituloAlerta: 'ATENCIÓN!',
+                                descripcionAlerta:
+                                    'Debe Seleccionar una Vacuna',
+                                textoBotonAlerta: 'Listo',
+                                icon: Icon(
+                                  Icons.error_outline,
+                                  size: 40,
+                                ),
+                                color: Colors.red);
+                          })
+              : showDialog(
+                  context: _scaffoldKey.currentContext!,
+                  builder: (BuildContext context) {
+                    return const DialogoAlerta(
+                        envioFuncion2: false,
+                        envioFuncion1: false,
+                        tituloAlerta: 'ATENCIÓN!',
+                        descripcionAlerta: 'Hubo un error con el Beneficiario',
+                        textoBotonAlerta: 'Listo',
+                        icon: Icon(
+                          Icons.error_outline,
+                          size: 40,
+                        ),
+                        color: Colors.red);
+                  });
+        });
+  }
+
   obtenerDatosBeneficiario(
       BuildContext context1, String dni, String sexoPersona) async {
     //Provider con Datos del Beneficiario
@@ -2674,7 +2551,7 @@ class _VacunasPageState extends State<VacunasPage> {
         .obtenerDatosBeneficiario('', dni, sexoPersona);
     datosBeneficiario == 0
         ? showDialog(
-            context: context,
+            context: _scaffoldKey.currentContext!,
             builder: (BuildContext context) => DialogoAlerta(
                   envioFuncion2: false,
                   envioFuncion1: false,
@@ -2707,7 +2584,7 @@ class _VacunasPageState extends State<VacunasPage> {
 
   Future<bool> onWillPop() async {
     final mensajeExit = await showDialog(
-        context: context,
+        context: _scaffoldKey.currentContext!,
         builder: (context) => DialogoAlerta(
               envioFuncion2: true,
               envioFuncion1: true,

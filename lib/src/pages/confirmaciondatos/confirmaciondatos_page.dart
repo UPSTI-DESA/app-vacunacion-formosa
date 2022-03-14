@@ -393,7 +393,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     MediaQuery.of(context).size.width * 0.02),
                             Row(
                               children: [
-                                Text('Configuración: ',
+                                Text('Condicion: ',
                                     style: GoogleFonts.nunito(
                                       textStyle: const TextStyle(
                                           fontWeight: FontWeight.w600,
@@ -405,7 +405,63 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     scrollDirection: Axis.horizontal,
                                     child: Text(
                                         insertRegistroService
-                                            .registro!.nombreConfiguracion!,
+                                            .registro!.nombreCondicion!,
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
+                                        ),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.width * 0.02),
+                            Row(
+                              children: [
+                                Text('Esquema: ',
+                                    style: GoogleFonts.nunito(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0),
+                                    ),
+                                    textAlign: TextAlign.start),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                        insertRegistroService
+                                            .registro!.nombreEsquema!,
+                                        style: GoogleFonts.nunito(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.0),
+                                        ),
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.width * 0.02),
+                            Row(
+                              children: [
+                                Text('Dosis: ',
+                                    style: GoogleFonts.nunito(
+                                      textStyle: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16.0),
+                                    ),
+                                    textAlign: TextAlign.start),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                        insertRegistroService
+                                            .registro!.nombreDosis!,
                                         style: GoogleFonts.nunito(
                                           textStyle: const TextStyle(
                                               fontWeight: FontWeight.w600,

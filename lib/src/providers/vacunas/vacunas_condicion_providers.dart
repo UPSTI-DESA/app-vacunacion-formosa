@@ -36,7 +36,7 @@ class _VacunasCondicion {
     if (resp[0].id_sysvacu01 != '') {
       return resp;
     } else {
-      return 0;
+      return resp;
     }
   }
 }

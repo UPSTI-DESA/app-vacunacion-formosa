@@ -36,7 +36,7 @@ class _VacunasEsquemaProvider {
     if (resp[0].id_sysvacu02 != '') {
       return resp;
     } else {
-      return 0;
+      return resp;
     }
   }
 }

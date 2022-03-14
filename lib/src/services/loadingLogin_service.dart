@@ -10,6 +10,7 @@ class _LoadingLoginService {
   bool? _loadingCondicion = true;
   bool? _loadingEsquema = true;
   bool? _loadingDosis = true;
+  bool? _loadingVerificar = true;
 
   final StreamController<bool> _loadingLoginStreamController =
       StreamController<bool>.broadcast();
@@ -23,7 +24,23 @@ class _LoadingLoginService {
 
     _loadingLoginStreamController.add(estado);
   }
-  //--------------- Manejo Primer Esquema -----------//
+  //--------------- Manejo Primer Dosis -----------//
+
+  final StreamController<bool> _loadingVerificarStreamController =
+      StreamController<bool>.broadcast();
+
+  bool? get getLoadingVerificarState => _loadingVerificar;
+
+  Stream<bool> get loadingVerificarStateStream =>
+      _loadingVerificarStreamController.stream;
+
+  void cargarVerificar(bool estado) {
+    _loadingVerificar = estado;
+
+    _loadingVerificarStreamController.add(estado);
+  }
+
+  //--------------- Manejo Primer Dosis -----------//
 
   final StreamController<bool> _loadingDosisStreamController =
       StreamController<bool>.broadcast();
@@ -100,21 +117,6 @@ class _LoadingLoginService {
     _cargaPerfilesStreamController.add(estado);
   }
 
-  //--------------- Manejo Carga Configuraciones -----------//
-
-  final StreamController<bool> _cargaConfiguracionesStreamController =
-      StreamController<bool>.broadcast();
-
-  bool? get getCargaConfiguracionState => _loadingConfiguracion;
-
-  Stream<bool> get cargarConfiguracionStateStream =>
-      _cargaConfiguracionesStreamController.stream;
-
-  void cargaConfiguracion(bool estado) {
-    _loadingConfiguracion = estado;
-    _cargaConfiguracionesStreamController.add(estado);
-  }
-
   //--------------- Manejo Carga Lotes -----------//
 
   final StreamController<bool> _cargarLotesStreamController =
@@ -131,7 +133,6 @@ class _LoadingLoginService {
 
   dispose() {
     _cargaPerfilesStreamController.close();
-    _cargaConfiguracionesStreamController.close();
     _cargarLotesStreamController.close();
     _loadingLoginStreamController.close();
     _primerInicioStreamController.close();

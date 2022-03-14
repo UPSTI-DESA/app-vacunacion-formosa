@@ -35,7 +35,7 @@ class _VacunasDosisProvider {
     if (resp[0].id_sysvacu05 != '') {
       return resp;
     } else {
-      return 0;
+      return resp;
     }
   }
 }
