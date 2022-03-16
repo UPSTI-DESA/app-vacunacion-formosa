@@ -39,6 +39,7 @@ class InsertRegistros {
     this.nombreEsquema,
     this.nombreDosis,
     this.nombreLote,
+    this.fecha_aplicacion,
   });
 
   String? id_flxcore03;
@@ -77,6 +78,7 @@ class InsertRegistros {
   String? nombreEsquema;
   String? nombreDosis;
   String? nombreLote;
+  String? fecha_aplicacion;
 
   Map<String, dynamic> toJson() => {
         "id_flxcore03": id_flxcore03,
@@ -102,6 +104,7 @@ class InsertRegistros {
         "sysdesa10_nombre_tutor": sysdesa10_nombre_tutor,
         "sysdesa10_dni_tutor": sysdesa10_dni_tutor,
         "sysdesa10_sexo_tutor": sysdesa10_sexo_tutor,
+        "fecha_aplicacion": fecha_aplicacion,
         //  "id_sysdesa06": id_sysdesa06,
       };
 }

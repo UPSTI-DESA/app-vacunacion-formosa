@@ -161,9 +161,13 @@ class _VacunasPageState extends State<VacunasPage> {
                     containerTutor(),
 
                     containerPasos(),
+
                     SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+
                     containerProgressBar(),
+
                     SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+
                     pasos == 7 ? botonRegistrarVacunacion() : Container(),
 
                     BotonCustom(
@@ -667,11 +671,9 @@ class _VacunasPageState extends State<VacunasPage> {
                                     loadingLoginService.cargaPerfil(true);
                                     listaLotes!.clear();
                                     setState(() {
-                                      _selectLote = null;
-                                      _selectCondicion = null;
+                                      _selectVacunas = null;
                                       _selectPerfil = perfilesVacunacionService
                                           .listaPerfilesVacunacion![index];
-                                      _selectVacunas = null;
                                     });
                                     final tempLista = await vacunasxPerfiles
                                         .obtenerVacunasxPerfilesProviders(
@@ -915,14 +917,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                 listaLotes!
                                                                     .clear();
                                                                 setState(() {
-                                                                  _selectLote =
-                                                                      null;
                                                                   _selectCondicion =
                                                                       null;
                                                                   _selectVacunas =
                                                                       vacunasxPerfilService
                                                                               .listavacunasxPerfil![
                                                                           index];
+                                                                  controladorBusqueda
+                                                                      .clear();
                                                                 });
                                                                 final tempLista = await vacunasCondicion.obtenerCondicionesProviders(
                                                                     _selectVacunas!
@@ -1020,14 +1022,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                 listaLotes!
                                                                     .clear();
                                                                 setState(() {
-                                                                  _selectLote =
-                                                                      null;
                                                                   _selectCondicion =
                                                                       null;
                                                                   _selectVacunas =
                                                                       vacunasxPerfilService
                                                                               .listavacunasxPerfilBusqueda![
                                                                           index];
+                                                                  controladorBusqueda
+                                                                      .clear();
                                                                 });
                                                                 final tempLista = await vacunasCondicion.obtenerCondicionesProviders(
                                                                     _selectVacunas!
@@ -1248,13 +1250,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                 listaEsquemas!
                                                                     .clear();
                                                                 setState(() {
-                                                                  _selectLote =
+                                                                  _selectEsquema =
                                                                       null;
-
                                                                   _selectCondicion =
                                                                       vacunasCondicionService
                                                                               .listaVacunasCondicion![
                                                                           index];
+                                                                  controladorBusquedaCondicion
+                                                                      .clear();
                                                                 });
                                                                 //  TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
                                                                 final tempLista = await vacunasEsquemaProvider.obtenerEsquemasProviders(
@@ -1351,14 +1354,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                 listaEsquemas!
                                                                     .clear();
                                                                 setState(() {
-                                                                  _selectLote =
-                                                                      null;
                                                                   _selectEsquema =
                                                                       null;
                                                                   _selectEsquema =
                                                                       vacunasEsquemaService
                                                                               .listavacunasEsquema![
                                                                           index];
+                                                                  controladorBusquedaCondicion
+                                                                      .clear();
                                                                 });
                                                                 final tempLista = await vacunasEsquemaProvider.obtenerEsquemasProviders(
                                                                     _selectVacunas!
@@ -1573,14 +1576,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                 listaLotes!
                                                                     .clear();
                                                                 setState(() {
-                                                                  _selectLote =
-                                                                      null;
-                                                                  _selectEsquema =
+                                                                  _selectDosis =
                                                                       null;
                                                                   _selectEsquema =
                                                                       vacunasEsquemaService
                                                                               .listavacunasEsquema![
                                                                           index];
+                                                                  controladorBusquedaEsquema
+                                                                      .clear();
                                                                 });
                                                                 //    TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
                                                                 final tempLista = await vacunasDosisProvider.obtenerDosisProviders(
@@ -1679,14 +1682,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                 listaLotes!
                                                                     .clear();
                                                                 setState(() {
-                                                                  _selectLote =
-                                                                      null;
-                                                                  _selectEsquema =
+                                                                  _selectDosis =
                                                                       null;
                                                                   _selectEsquema =
                                                                       vacunasEsquemaService
                                                                               .listavacunasEsquema![
                                                                           index];
+                                                                  controladorBusquedaEsquema
+                                                                      .clear();
                                                                 });
                                                                 final tempLista = await vacunasDosisProvider.obtenerDosisProviders(
                                                                     _selectVacunas!
@@ -1798,6 +1801,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                 ),
                               ),
                               Container(
+                                  width: MediaQuery.of(context).size.width,
                                   padding: EdgeInsets.all(
                                       MediaQuery.of(context).size.width * 0.05),
                                   decoration: BoxDecoration(
@@ -1916,18 +1920,20 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           })
                                                         };
                                                 },
-                                                child: Chip(
-                                                  backgroundColor:
-                                                      SisVacuColor.verceleste,
-                                                  label: Text(
-                                                      vacunasDosisService
-                                                          .listaVacunasDosis![
-                                                              index]
-                                                          .sysvacu05_nombre!),
+                                                child: Center(
+                                                  child: Chip(
+                                                    backgroundColor:
+                                                        SisVacuColor.verceleste,
+                                                    label: Text(
+                                                        vacunasDosisService
+                                                            .listaVacunasDosis![
+                                                                index]
+                                                            .sysvacu05_nombre!),
 
-                                                  // leading: const Icon(
-                                                  //     Icons
-                                                  //         .medical_services_outlined),
+                                                    // leading: const Icon(
+                                                    //     Icons
+                                                    //         .medical_services_outlined),
+                                                  ),
                                                 ),
                                               );
                                             },
@@ -2084,26 +2090,58 @@ class _VacunasPageState extends State<VacunasPage> {
   Widget containerProgressBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: StepProgressIndicator(
-        totalSteps: 6,
-        currentStep: pasos - 1,
-        size: 36,
-        selectedColor: SisVacuColor.verceleste!,
-        unselectedColor: Colors.black.withOpacity(.7),
-        customStep: (index, color, _) => color != Colors.black.withOpacity(.7)
-            ? Container(
-                color: color,
-                child: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                ),
-              )
-            : Container(
-                color: color,
-                child: const Icon(
-                  Icons.remove,
-                ),
-              ),
+      child: Column(
+        children: [
+          Text(
+            'Si lo desea, toque el paso que quiere modificar',
+            style: TextStyle(color: Colors.black.withOpacity(.7)),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * .01,
+          ),
+          StepProgressIndicator(
+            totalSteps: 6,
+            currentStep: pasos - 1,
+            size: 36,
+            selectedColor: SisVacuColor.verceleste!,
+            unselectedColor: Colors.black.withOpacity(.7),
+            customStep: (index, color, _) =>
+                color != Colors.black.withOpacity(.7)
+                    ? GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            pasos = index + 1;
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: color,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text((index + 1).toString()),
+                              const Icon(
+                                Icons.check_sharp,
+                                color: Colors.white,
+                                size: 15,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: color,
+                        ),
+                        child: const Icon(
+                          Icons.remove,
+                        ),
+                      ),
+          ),
+        ],
       ),
     );
   }
@@ -2321,7 +2359,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                   sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad, //DatosExtras que no se envian, SOlo para vista
 
                                                   //     nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
-
+                                                  fecha_aplicacion: DateTime.now().toString(),
                                                   sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
                                                   vacunador_registrador: registradorService.registrador!.flxcore03_dni == vacunadorService.vacunador!.id_sysdesa12 ? '1' : '0',
                                                   sysdesa10_apellido_tutor: tutorService.tutor!.sysdesa10_apellido_tutor,
@@ -2462,6 +2500,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                           sysdesa10_sexo:
                                               beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
                                           sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
+                                          fecha_aplicacion: DateTime.now().toString(),
+
                                           //DatosExtras que no se envian, SOlo para vista
                                           //   nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
                                           sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,

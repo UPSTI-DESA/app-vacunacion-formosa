@@ -165,68 +165,59 @@ class _LoginFormulario extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(
           top: MediaQuery.of(context).size.height * 0.15,
-          bottom: MediaQuery.of(context).size.height * 0.05),
+          bottom: MediaQuery.of(context).size.height * 0.01),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
-            child: Column(
-              children: <Widget>[
-                FadeInDownBig(
-                  from: 40,
-                  child: Image(
-                    image: const AssetImage('assets/logo/VacunApp2.png'),
-                    fit: BoxFit.cover,
-                    //height: MediaQuery.of(context).size.height * 0.2,
-                    width: MediaQuery.of(context).size.width * .55,
-                  ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.12),
-                FadeInLeft(
-                  from: 40,
-                  delay: const Duration(milliseconds: 1100),
-                  child: Text('Escanee su D.N.I. para continuar',
-                      style: GoogleFonts.nunito(
-                        textStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.022,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 2.0),
-                      )),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                ElasticIn(
-                  delay: const Duration(milliseconds: 1500),
-                  child: EscanerDni(
-                    'Registrador',
-                    'Escanear',
-                    'Escane el dni para verificar su identidad',
-                    iconBool: false,
-                    anchoValor: MediaQuery.of(context).size.width * 0.1,
-                  ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: FadeInLeft(
-                    from: 40,
-                    delay: const Duration(milliseconds: 1100),
-                    child: Text(
-                        'Para uso interno, del ministerio de desarrollo humano',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.nunito(
-                          textStyle: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.height * 0.018,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 2.0),
-                        )),
-                  ),
-                ),
-              ],
+          FadeInDownBig(
+            from: 40,
+            child: Image(
+              image: const AssetImage('assets/logo/VacunApp2.png'),
+              fit: BoxFit.cover,
+              //height: MediaQuery.of(context).size.height * 0.2,
+              width: MediaQuery.of(context).size.width * .55,
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+          FadeInLeft(
+            from: 40,
+            delay: const Duration(milliseconds: 1100),
+            child: Text('Escanee su D.N.I. para continuar',
+                style: GoogleFonts.nunito(
+                  textStyle: TextStyle(
+                      color: Colors.black87,
+                      fontSize: MediaQuery.of(context).size.height * 0.022,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 2.0),
+                )),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+          ElasticIn(
+            delay: const Duration(milliseconds: 1500),
+            child: EscanerDni(
+              'Registrador',
+              'Escanear',
+              'Escane el dni para verificar su identidad',
+              iconBool: false,
+              anchoValor: MediaQuery.of(context).size.width * 0.1,
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: FadeInLeft(
+              from: 40,
+              delay: const Duration(milliseconds: 1100),
+              child: Text(
+                  'Para uso interno, del ministerio de desarrollo humano',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.nunito(
+                    textStyle: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * 0.018,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2.0),
+                  )),
             ),
           ),
           Align(
