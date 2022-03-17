@@ -9,7 +9,7 @@ class InsertRegistros {
   List<InsertRegistros> items = [];
   InsertRegistros({
     this.id_flxcore03, //Cargador
-    this.id_sysvacu03, //Vacuna
+    this.id_sysvacu04, //Vacuna
     this.id_sysofic01, //EFector
     this.id_sysdesa18,
     this.id_sysdesa12,
@@ -25,9 +25,6 @@ class InsertRegistros {
     this.sysdesa10_edad,
     this.sysdesa10_fecha_nacimiento,
     this.vacunador_registrador,
-    this.vacunaCondicon,
-    this.vacunaDosis,
-    this.vacunaEsquema,
     this.codigo_mensaje,
     this.mensaje,
     this.sysdesa10_apellido_tutor,
@@ -43,7 +40,7 @@ class InsertRegistros {
   });
 
   String? id_flxcore03;
-  String? id_sysvacu03;
+  String? id_sysvacu04;
   String? id_sysofic01;
   String? id_sysdesa12;
   String? id_sysdesa18;
@@ -65,10 +62,6 @@ class InsertRegistros {
   String? sysdesa10_nombre_tutor;
   String? sysdesa10_dni_tutor;
   String? sysdesa10_sexo_tutor;
-  //DATOS Vacuna
-  String? vacunaCondicon;
-  String? vacunaEsquema;
-  String? vacunaDosis;
   String? codigo_mensaje;
   String? mensaje;
 
@@ -82,7 +75,7 @@ class InsertRegistros {
 
   Map<String, dynamic> toJson() => {
         "id_flxcore03": id_flxcore03,
-        "id_sysvacu03": id_sysvacu03,
+        "id_sysvacu04": id_sysvacu04,
         "id_sysofic01": id_sysofic01,
         "id_sysdesa18": id_sysdesa18,
         "id_sysdesa12": id_sysdesa12,

@@ -22,7 +22,7 @@ class LoginBody extends StatefulWidget {
 
 class _LoginBodyState extends State<LoginBody> {
   //Cambiar este Valor cada vez que se vuelve a Buildear, tanto aqui como en el SV
-  final String versionApp = '1.0.0'; //Version Actual de la APP
+  final String versionApp = '3.0.0'; //Version Actual de la APP
   final String nombreApp =
       'Sistema de vacunación general'; //Nombre de la APP enviamos
 

@@ -24,12 +24,18 @@ class ConfirmarDatos extends StatefulWidget {
 class _ConfirmarDatosState extends State<ConfirmarDatos> {
   late DateTime fechaSeleccionada;
   late bool habilitarCircular;
+  late bool mostrarBeneficiario;
+  late bool mostrarTutor;
+  late bool mostrarVacuna;
 
   @override
   void initState() {
     habilitarCircular = false;
     super.initState();
     fechaSeleccionada = DateTime.now();
+    mostrarBeneficiario = false;
+    mostrarTutor = false;
+    mostrarVacuna = true;
   }
 
   @override
@@ -130,138 +136,36 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                           children: [
                             FadeInUpBig(
                               from: 25,
-                              child: Text(
-                                'Datos Beneficiario',
-                                style: GoogleFonts.barlow(
-                                    textStyle: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20)),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Datos Beneficiario',
+                                    style: GoogleFonts.barlow(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 20)),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          mostrarBeneficiario
+                                              ? mostrarBeneficiario = false
+                                              : mostrarBeneficiario = true;
+                                        });
+                                      },
+                                      icon: mostrarBeneficiario
+                                          ? const Icon(Icons
+                                              .keyboard_arrow_down_outlined)
+                                          : const Icon(Icons
+                                              .keyboard_arrow_right_outlined))
+                                ],
                               ),
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.05),
-                            Row(
-                              children: [
-                                Text('Nombre: ',
-                                    style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                    ),
-                                    textAlign: TextAlign.center),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.sysdesa10_nombre!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            Row(
-                              children: [
-                                Text('Apellido: ',
-                                    style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                    ),
-                                    textAlign: TextAlign.center),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.sysdesa10_apellido!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            Row(
-                              children: [
-                                Text('D.N.I.: ',
-                                    style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                    ),
-                                    textAlign: TextAlign.center),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.sysdesa10_dni!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    tutorService.existeTutor
-                        ? tutorService.tutor!.sysdesa10_dni_tutor == ''
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                    right: MediaQuery.of(context).size.width *
-                                        0.02,
-                                    left: MediaQuery.of(context).size.width *
-                                        0.02),
-                                child: Container(),
-                              )
-                            : Padding(
-                                padding: EdgeInsets.only(
-                                    right: MediaQuery.of(context).size.width *
-                                        0.02,
-                                    left: MediaQuery.of(context).size.width *
-                                        0.02),
-                                child: Container(
-                                  padding: EdgeInsets.all(
-                                      MediaQuery.of(context).size.width * 0.05),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      color: Colors.white),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                            mostrarBeneficiario
+                                ? Column(
                                     children: [
-                                      FadeInUpBig(
-                                        from: 25,
-                                        child: Text(
-                                          'Datos del Tutor',
-                                          style: GoogleFonts.barlow(
-                                              textStyle: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 20)),
-                                        ),
-                                      ),
                                       SizedBox(
                                           height: MediaQuery.of(context)
                                                   .size
@@ -282,7 +186,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               child: Text(
                                                   insertRegistroService
                                                       .registro!
-                                                      .sysdesa10_nombre_tutor!,
+                                                      .sysdesa10_nombre!,
                                                   style: GoogleFonts.nunito(
                                                     textStyle: const TextStyle(
                                                         fontWeight:
@@ -314,7 +218,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               child: Text(
                                                   insertRegistroService
                                                       .registro!
-                                                      .sysdesa10_apellido_tutor!,
+                                                      .sysdesa10_apellido!,
                                                   style: GoogleFonts.nunito(
                                                     textStyle: const TextStyle(
                                                         fontWeight:
@@ -345,8 +249,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               scrollDirection: Axis.horizontal,
                                               child: Text(
                                                   insertRegistroService
-                                                      .registro!
-                                                      .sysdesa10_dni_tutor!,
+                                                      .registro!.sysdesa10_dni!,
                                                   style: GoogleFonts.nunito(
                                                     textStyle: const TextStyle(
                                                         fontWeight:
@@ -359,8 +262,232 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                         ],
                                       ),
                                     ],
+                                  )
+                                : Container()
+                          ],
+                        ),
+                      ),
+                    ),
+                    tutorService.existeTutor
+                        ? tutorService.tutor!.sysdesa10_dni_tutor == ''
+                            ? Padding(
+                                padding: EdgeInsets.only(
+                                    right: MediaQuery.of(context).size.width *
+                                        0.02,
+                                    left: MediaQuery.of(context).size.width *
+                                        0.02),
+                                child: Container(),
+                              )
+                            : Column(
+                                children: [
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right:
+                                            MediaQuery.of(context).size.width *
+                                                0.02,
+                                        left:
+                                            MediaQuery.of(context).size.width *
+                                                0.02),
+                                    child: Container(
+                                      padding: EdgeInsets.all(
+                                          MediaQuery.of(context).size.width *
+                                              0.05),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          color: Colors.white),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          FadeInUpBig(
+                                            from: 25,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Datos del Tutor',
+                                                  style: GoogleFonts.barlow(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 20)),
+                                                ),
+                                                IconButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        mostrarTutor
+                                                            ? mostrarTutor =
+                                                                false
+                                                            : mostrarTutor =
+                                                                true;
+                                                      });
+                                                    },
+                                                    icon: mostrarTutor
+                                                        ? const Icon(Icons
+                                                            .keyboard_arrow_down_outlined)
+                                                        : const Icon(Icons
+                                                            .keyboard_arrow_right_outlined))
+                                              ],
+                                            ),
+                                          ),
+                                          mostrarTutor
+                                              ? Column(
+                                                  children: [
+                                                    SizedBox(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.05),
+                                                    Row(
+                                                      children: [
+                                                        Text('Nombre: ',
+                                                            style: GoogleFonts
+                                                                .nunito(
+                                                              textStyle: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      16.0),
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        Expanded(
+                                                          child:
+                                                              SingleChildScrollView(
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            child: Text(
+                                                                insertRegistroService
+                                                                    .registro!
+                                                                    .sysdesa10_nombre_tutor!,
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .nunito(
+                                                                  textStyle: const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      fontSize:
+                                                                          16.0),
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.02),
+                                                    Row(
+                                                      children: [
+                                                        Text('Apellido: ',
+                                                            style: GoogleFonts
+                                                                .nunito(
+                                                              textStyle: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      16.0),
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        Expanded(
+                                                          child:
+                                                              SingleChildScrollView(
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            child: Text(
+                                                                insertRegistroService
+                                                                    .registro!
+                                                                    .sysdesa10_apellido_tutor!,
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .nunito(
+                                                                  textStyle: const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      fontSize:
+                                                                          16.0),
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.02),
+                                                    Row(
+                                                      children: [
+                                                        Text('D.N.I.: ',
+                                                            style: GoogleFonts
+                                                                .nunito(
+                                                              textStyle: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      16.0),
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        Expanded(
+                                                          child:
+                                                              SingleChildScrollView(
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            child: Text(
+                                                                insertRegistroService
+                                                                    .registro!
+                                                                    .sysdesa10_dni_tutor!,
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .nunito(
+                                                                  textStyle: const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      fontSize:
+                                                                          16.0),
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                )
+                                              : Container()
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               )
                         : Padding(
                             padding: EdgeInsets.only(
@@ -384,182 +511,227 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                           children: [
                             FadeInUpBig(
                               from: 25,
-                              child: Text(
-                                'Datos Vacunas',
-                                style: GoogleFonts.barlow(
-                                    textStyle: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20)),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Datos Vacunas',
+                                    style: GoogleFonts.barlow(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 20)),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          mostrarVacuna
+                                              ? mostrarVacuna = false
+                                              : mostrarVacuna = true;
+                                        });
+                                      },
+                                      icon: mostrarVacuna
+                                          ? const Icon(Icons
+                                              .keyboard_arrow_down_outlined)
+                                          : const Icon(Icons
+                                              .keyboard_arrow_right_outlined))
+                                ],
                               ),
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.05),
-                            Row(
-                              children: [
-                                Text('Vacuna: ',
-                                    style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                    ),
-                                    textAlign: TextAlign.start),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.nombreVacuna!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.start),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            Row(
-                              children: [
-                                Text('Condicion: ',
-                                    style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                    ),
-                                    textAlign: TextAlign.start),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.nombreCondicion!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            Row(
-                              children: [
-                                Text('Esquema: ',
-                                    style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                    ),
-                                    textAlign: TextAlign.start),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.nombreEsquema!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            Row(
-                              children: [
-                                Text('Dosis: ',
-                                    style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                    ),
-                                    textAlign: TextAlign.start),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.nombreDosis!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            Row(
-                              children: [
-                                Text('Lote: ',
-                                    style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                    ),
-                                    textAlign: TextAlign.center),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        insertRegistroService
-                                            .registro!.nombreLote!,
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.center),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.width * 0.02),
-                            Row(
-                              children: [
-                                Text('Fecha de Aplicación: ',
-                                    style: GoogleFonts.nunito(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0),
-                                    ),
-                                    textAlign: TextAlign.start),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                        DateFormat('dd - MM - yyyy')
-                                            .format(fechaSeleccionada),
-                                        style: GoogleFonts.nunito(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16.0),
-                                        ),
-                                        textAlign: TextAlign.start),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            mostrarVacuna
+                                ? Column(
+                                    children: [
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.05),
+                                      Row(
+                                        children: [
+                                          Text('Vacuna: ',
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0),
+                                              ),
+                                              textAlign: TextAlign.start),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                  insertRegistroService
+                                                      .registro!.nombreVacuna!,
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
+                                                  textAlign: TextAlign.start),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      Row(
+                                        children: [
+                                          Text('Condicion: ',
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0),
+                                              ),
+                                              textAlign: TextAlign.start),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                  insertRegistroService
+                                                      .registro!
+                                                      .nombreCondicion!,
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
+                                                  textAlign: TextAlign.center),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      Row(
+                                        children: [
+                                          Text('Esquema: ',
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0),
+                                              ),
+                                              textAlign: TextAlign.start),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                  insertRegistroService
+                                                      .registro!.nombreEsquema!,
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
+                                                  textAlign: TextAlign.center),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      Row(
+                                        children: [
+                                          Text('Dosis: ',
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0),
+                                              ),
+                                              textAlign: TextAlign.start),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                  insertRegistroService
+                                                      .registro!.nombreDosis!,
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
+                                                  textAlign: TextAlign.center),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      Row(
+                                        children: [
+                                          Text('Lote: ',
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0),
+                                              ),
+                                              textAlign: TextAlign.center),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                  insertRegistroService
+                                                      .registro!.nombreLote!,
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
+                                                  textAlign: TextAlign.center),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.02),
+                                      Row(
+                                        children: [
+                                          Text('Fecha de Aplicación: ',
+                                              style: GoogleFonts.nunito(
+                                                textStyle: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.0),
+                                              ),
+                                              textAlign: TextAlign.start),
+                                          Expanded(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                  DateFormat('dd - MM - yyyy')
+                                                      .format(
+                                                          fechaSeleccionada),
+                                                  style: GoogleFonts.nunito(
+                                                    textStyle: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16.0),
+                                                  ),
+                                                  textAlign: TextAlign.start),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                : Container()
                           ],
                         ),
                       ),
@@ -568,12 +740,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                     BotonCustom(
                         text: 'Registrar Vacunación',
                         onPressed: () {
-                          vacunasxPerfilService.eliminarListaVacunasxPerfil();
-                          perfilesVacunacionService.eliminarListaPerfiles();
-                          notificacionesDosisService.eliminarListaDosis();
-                          vacunasConfiguracionService
-                              .eliminarListaVacunasConfiguracion();
-                          vacunasLotesService.eliminarListaVacunasLotes();
+                          // vacunasxPerfilService.eliminarListaVacunasxPerfil();
+                          // perfilesVacunacionService.eliminarListaPerfiles();
+                          // notificacionesDosisService.eliminarListaDosis();
+                          // vacunasConfiguracionService
+                          //     .eliminarListaVacunasConfiguracion();
+                          // vacunasLotesService.eliminarListaVacunasLotes();
                           enviarDatos(context);
                         }),
                     BotonCustom(
@@ -621,6 +793,14 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     },
                                   ));
                         }),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Si desea cambiar la fecha de aplicación, seleccione el calendario',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.black.withOpacity(.7)),
+                      ),
+                    )
                   ],
                 ),
                 habilitarCircular

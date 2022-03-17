@@ -922,6 +922,11 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                   controladorBusqueda
                                                                       .clear();
                                                                 });
+                                                                // final comprobarLotes =
+                                                                //     await lotesVacunaProvider
+                                                                //         .validarLotes(
+                                                                //             _selectVacunas!.id_sysvacu04);
+
                                                                 final tempLista = await vacunasCondicion.obtenerCondicionesProviders(
                                                                     _selectVacunas!
                                                                         .id_sysvacu04,
@@ -2332,18 +2337,16 @@ class _VacunasPageState extends State<VacunasPage> {
                                                       .sysvacu05_nombre,
                                                   nombreLote: _selectLote!
                                                       .sysdesa18_lote,
-                                                  // id_sysvacu03:
-                                                  //     _selectConfigVacuna!
-                                                  // .id_sysvacu03, //Obligatorio
+                                                  id_sysvacu04: _selectVacunas!
+                                                      .id_sysvacu04, //Obligatorio
                                                   sysdesa10_apellido: beneficiarioService
                                                       .beneficiario!
                                                       .sysdesa10_apellido, //Obligatorio
-                                                  sysdesa10_cadena_dni: beneficiarioService
-                                                      .beneficiario!
-                                                      .sysdesa10_cadena_dni, //Solo con Escaner
-                                                  sysdesa10_dni: beneficiarioService
-                                                      .beneficiario!
-                                                      .sysdesa10_dni, //Obligatorio
+                                                  sysdesa10_cadena_dni:
+                                                      beneficiarioService
+                                                          .beneficiario!
+                                                          .sysdesa10_cadena_dni, //Solo con Escaner
+                                                  sysdesa10_dni: beneficiarioService.beneficiario!.sysdesa10_dni, //Obligatorio
                                                   sysdesa10_nombre: beneficiarioService.beneficiario!.sysdesa10_nombre, //Obligatorio
                                                   sysdesa10_nro_tramite: beneficiarioService.beneficiario!.sysdesa10_nro_tramite, //Solo con Escaner
                                                   sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
@@ -2461,6 +2464,12 @@ class _VacunasPageState extends State<VacunasPage> {
                                               .id_sysdesa18, //Obligatorio
                                           id_sysofic01: registradorService
                                               .registrador!.rela_sysofic01,
+                                          id_sysvacu01:
+                                              _selectCondicion!.id_sysvacu01!,
+                                          id_sysvacu02:
+                                              _selectEsquema!.id_sysvacu02!,
+                                          id_sysvacu05:
+                                              _selectDosis!.id_sysvacu05!,
                                           nombreVacuna:
                                               _selectVacunas!.sysvacu04_nombre,
                                           nombreCondicion: _selectCondicion!
@@ -2471,8 +2480,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                               _selectDosis!.sysvacu05_nombre,
                                           nombreLote: _selectLote!
                                               .sysdesa18_lote, //Obligatorio
-                                          // id_sysvacu03: _selectConfigVacuna!
-                                          //     .id_sysvacu03, //Obligatorio
+                                          id_sysvacu04: _selectVacunas!
+                                              .id_sysvacu04, //Obligatorio
                                           sysdesa10_apellido: beneficiarioService
                                               .beneficiario!
                                               .sysdesa10_apellido, //Obligatorio
@@ -2488,8 +2497,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                           sysdesa10_nro_tramite: beneficiarioService
                                               .beneficiario!
                                               .sysdesa10_nro_tramite, //Solo con Escaner
-                                          sysdesa10_sexo:
-                                              beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
+                                          sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
                                           sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
                                           fecha_aplicacion: DateTime.now().toString(),
 

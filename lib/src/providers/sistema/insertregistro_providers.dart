@@ -14,7 +14,7 @@ class _InsertRegistro {
     final url = Uri(
         scheme: scheme,
         host: host,
-        path: urlInRegVacu,
+        path: urlPruebaInsert,
         queryParameters: {'insertvacunado': registro});
     // ignore: unused_local_variable
     final cargarRegistro = await procesarRespuestaUri(url);
