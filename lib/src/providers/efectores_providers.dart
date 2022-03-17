@@ -4,7 +4,7 @@ import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'dart:convert';
 
-import 'package:sistema_vacunacion/src/services/efectores_servide.dart';
+import 'package:sistema_vacunacion/src/services/efectores_service.dart';
 
 class _EfectorsProviders {
   Future<List<Efectores>> procesarRespuestaDos(Uri url) async {

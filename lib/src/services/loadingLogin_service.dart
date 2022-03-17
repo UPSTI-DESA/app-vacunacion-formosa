@@ -5,7 +5,6 @@ class _LoadingLoginService {
   bool? _loading = false;
   bool? _primerInicio = true;
   bool? _loadingPerfil = true;
-  bool? _loadingConfiguracion = true;
   bool? _loadingLotes = true;
   bool? _loadingCondicion = true;
   bool? _loadingEsquema = true;

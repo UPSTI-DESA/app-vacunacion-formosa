@@ -5,18 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
-import 'package:sistema_vacunacion/src/models/vacunas/vacunas_dosis_model.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/providers/vacunas/vacunas_dosis_provider.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/services/vacunas_dosis_service.dart';
-import 'package:sistema_vacunacion/src/services/vacunas_service.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
-import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class VacunasPage extends StatefulWidget {
   const VacunasPage({
@@ -894,8 +890,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
                                                         isAlwaysShown: true,
-                                                        radius:
-                                                            Radius.circular(20),
+                                                        radius: const Radius
+                                                            .circular(20),
                                                         controller:
                                                             vacunaScrollController,
                                                         child: ListView.builder(
@@ -1003,8 +999,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
                                                         isAlwaysShown: true,
-                                                        radius:
-                                                            Radius.circular(20),
+                                                        radius: const Radius
+                                                            .circular(20),
                                                         child: ListView.builder(
                                                           physics:
                                                               const BouncingScrollPhysics(),
@@ -1225,8 +1221,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
                                                         isAlwaysShown: true,
-                                                        radius:
-                                                            Radius.circular(20),
+                                                        radius: const Radius
+                                                            .circular(20),
                                                         controller:
                                                             vacunaScrollController,
                                                         child: ListView.builder(
@@ -1259,7 +1255,6 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                   controladorBusquedaCondicion
                                                                       .clear();
                                                                 });
-                                                                //  TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
                                                                 final tempLista = await vacunasEsquemaProvider.obtenerEsquemasProviders(
                                                                     _selectVacunas!
                                                                         .id_sysvacu04!,
@@ -1334,8 +1329,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
                                                         isAlwaysShown: true,
-                                                        radius:
-                                                            Radius.circular(20),
+                                                        radius: const Radius
+                                                            .circular(20),
                                                         child: ListView.builder(
                                                           physics:
                                                               const BouncingScrollPhysics(),
@@ -1350,7 +1345,6 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                   int index) {
                                                             return InkWell(
                                                               onTap: () async {
-                                                                //    TODO CARGAR ESQUEMA
                                                                 listaEsquemas!
                                                                     .clear();
                                                                 setState(() {
@@ -1553,8 +1547,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
                                                         isAlwaysShown: true,
-                                                        radius:
-                                                            Radius.circular(20),
+                                                        radius: const Radius
+                                                            .circular(20),
                                                         controller:
                                                             esquemaScrollController,
                                                         child: ListView.builder(
@@ -1585,7 +1579,6 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                   controladorBusquedaEsquema
                                                                       .clear();
                                                                 });
-                                                                //    TODO CARGAR ESQUEMAS / SIGUIENTE COMBO;
                                                                 final tempLista = await vacunasDosisProvider.obtenerDosisProviders(
                                                                     _selectVacunas!
                                                                         .id_sysvacu04!,
@@ -1661,8 +1654,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
                                                         isAlwaysShown: true,
-                                                        radius:
-                                                            Radius.circular(20),
+                                                        radius: const Radius
+                                                            .circular(20),
                                                         child: ListView.builder(
                                                           physics:
                                                               const BouncingScrollPhysics(),
@@ -1677,8 +1670,6 @@ class _VacunasPageState extends State<VacunasPage> {
                                                                   int index) {
                                                             return InkWell(
                                                               onTap: () async {
-                                                                /// TODO CARGAR ESQUEMA
-
                                                                 listaLotes!
                                                                     .clear();
                                                                 setState(() {
@@ -1826,7 +1817,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                         child: RawScrollbar(
                                           thumbColor: SisVacuColor.verceleste,
                                           isAlwaysShown: true,
-                                          radius: Radius.circular(20),
+                                          radius: const Radius.circular(20),
                                           controller: dosisScrollController,
                                           child: ListView.separated(
                                             separatorBuilder:
@@ -2052,7 +2043,7 @@ class _VacunasPageState extends State<VacunasPage> {
 
   Widget containerVerificar() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Container(
         padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
         width: MediaQuery.of(context).size.width,

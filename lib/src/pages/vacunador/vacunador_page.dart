@@ -7,11 +7,8 @@ import 'package:responsive_builder/responsive_builder.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
-import 'package:sistema_vacunacion/src/providers/efectores_providers.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/efectores_servide.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 import '../pages.dart';

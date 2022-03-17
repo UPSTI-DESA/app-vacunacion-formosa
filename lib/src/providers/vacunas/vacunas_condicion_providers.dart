@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/vacunas/vacunas_condicion_model.dart';
 import 'dart:convert';
-import 'package:sistema_vacunacion/src/services/vacunas_condicion_service.dart';
 
 class _VacunasCondicion {
   Future<List<VacunasCondicion>> procesarRespuestaDos(Uri url) async {

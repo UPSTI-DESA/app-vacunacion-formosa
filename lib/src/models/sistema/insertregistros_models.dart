@@ -105,6 +105,5 @@ class InsertRegistros {
         "sysdesa10_dni_tutor": sysdesa10_dni_tutor,
         "sysdesa10_sexo_tutor": sysdesa10_sexo_tutor,
         "fecha_aplicacion": fecha_aplicacion,
-        //  "id_sysdesa06": id_sysdesa06,
       };
 }

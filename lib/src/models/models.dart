@@ -17,3 +17,4 @@ export 'package:sistema_vacunacion/src/models/vacunados/cantidadvacunados_models
 export 'package:sistema_vacunacion/src/models/tutor_models.dart';
 export 'package:sistema_vacunacion/src/models/vacunas/vacunas_condicion_model.dart';
 export 'package:sistema_vacunacion/src/models/vacunas/vacunas_esquema_model.dart';
+export 'package:sistema_vacunacion/src/models/vacunas/vacunas_dosis_model.dart';

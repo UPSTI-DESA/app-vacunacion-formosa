@@ -13,3 +13,5 @@ export 'package:sistema_vacunacion/src/providers/sistema/validarversion_provider
 export 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
 export 'package:sistema_vacunacion/src/providers/vacunas/vacunas_esquema_providers.dart';
 export 'package:sistema_vacunacion/src/providers/vacunas/vacunas_condicion_providers.dart';
+export 'package:sistema_vacunacion/src/providers/vacunas/vacunas_dosis_provider.dart';
+export 'package:sistema_vacunacion/src/providers/efectores_providers.dart';

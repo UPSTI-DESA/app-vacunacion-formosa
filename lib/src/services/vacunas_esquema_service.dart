@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:sistema_vacunacion/src/models/vacunas/vacunas_esquema_model.dart';
-import 'package:sistema_vacunacion/src/models/vacunas/vacunas_esquema_model.dart';
 
 class _VacunasEsquemaService {
   VacunasEsquema? _vacunasEsquema;

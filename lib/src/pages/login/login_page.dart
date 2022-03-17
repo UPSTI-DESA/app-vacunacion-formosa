@@ -4,9 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sistema_vacunacion/src/config/appsize_config.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/loadingLogin_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 import 'package:url_launcher/url_launcher.dart';
