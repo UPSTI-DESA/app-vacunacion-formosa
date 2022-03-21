@@ -1,4 +1,4 @@
-package com.example.sistema_vacunacion
+package com.upsti.sistema_vacunacion
 
 import io.flutter.embedding.android.FlutterActivity
 

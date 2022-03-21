@@ -145,7 +145,7 @@ class _LoginBodyState extends State<LoginBody> {
 //Funcion para redirigir al Link de Descarga de la Ultima Aplicacion Disponible
   _launchURL() async {
     const url =
-        'https://drive.google.com/drive/u/0/folders/1Ia3CGOuCSbnpgt_4qNOGKlzkzc4FvuO4';
+        'https://dh.formosa.gob.ar/modulos/webservice/php/version_3_0/v3.0.0.apk';
     await launch(url);
   }
 }
