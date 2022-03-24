@@ -1195,7 +1195,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                       InputBorder.none,
                                                   border: InputBorder.none,
                                                   hintText:
-                                                      'Buscar Condicion...',
+                                                      'Buscar Condición...',
                                                 ),
                                                 focusNode: focusNode,
                                                 onChanged: (value) {
@@ -2185,7 +2185,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                     DialogoAlerta(
                                       envioFuncion2: false,
                                       envioFuncion1: false,
-                                      tituloAlerta: 'Informacion',
+                                      tituloAlerta: 'Información',
                                       descripcionAlerta:
                                           'Registre al tutor mediante el escaneo del codigo de barras, o ingresando manualmente el numero de D.N.I.',
                                       textoBotonAlerta: 'Listo',
@@ -2629,7 +2629,7 @@ class _VacunasPageState extends State<VacunasPage> {
               envioFuncion1: true,
               tituloAlerta: 'ATENCIÓN',
               descripcionAlerta:
-                  'Seguro que desea salir? debera logearse nuevamente',
+                  'Seguro que desea salir? deberá logearse nuevamente',
               textoBotonAlerta: 'SI',
               textoBotonAlerta2: 'NO',
               funcion1: () => Navigator.of(context).pop(true),

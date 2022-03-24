@@ -554,7 +554,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                       DialogoAlerta(
                                         envioFuncion2: false,
                                         envioFuncion1: false,
-                                        tituloAlerta: 'Informacion',
+                                        tituloAlerta: 'Información',
                                         descripcionAlerta:
                                             'Registre al vacunador mediante el escaneo del codigo de barras, o ingresando manualmente el numero de D.N.I.',
                                         textoBotonAlerta: 'Listo',
@@ -709,7 +709,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
               envioFuncion1: true,
               tituloAlerta: 'ATENCIÓN',
               descripcionAlerta:
-                  'Seguro que desea salir? debera logearse nuevamente',
+                  'Seguro que desea salir? deberá logearse nuevamente',
               textoBotonAlerta: 'SI',
               textoBotonAlerta2: 'NO',
               funcion1: () => Navigator.of(context).pop(true),

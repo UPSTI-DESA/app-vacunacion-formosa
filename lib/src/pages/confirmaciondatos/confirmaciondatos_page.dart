@@ -579,7 +579,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               0.02),
                                       Row(
                                         children: [
-                                          Text('Condicion: ',
+                                          Text('Condición: ',
                                               style: GoogleFonts.nunito(
                                                 textStyle: const TextStyle(
                                                     fontWeight: FontWeight.w600,
@@ -834,6 +834,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
   enviarDatos(BuildContext context2) async {
     setState(() {
       habilitarCircular = true;
+      tutorService.tutor != null ? tutorService.eliminarTutor() : null;
     });
     insertRegistroService.registro!.fecha_aplicacion !=
             fechaSeleccionada.toString()
@@ -874,7 +875,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                       MaterialPageRoute(
                           builder: (context) => const BusquedaBeneficiario()),
                       (Route<dynamic> route) => false),
-                  tituloAlerta: 'Informacion',
+                  tituloAlerta: 'Información',
                   descripcionAlerta: mensaje[0].mensaje,
                   textoBotonAlerta: 'Listo',
                   color: Colors.green,

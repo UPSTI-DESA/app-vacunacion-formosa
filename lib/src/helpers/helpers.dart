@@ -11,7 +11,7 @@ Future<bool> onWillPop(BuildContext context) async {
             envioFuncion1: true,
             tituloAlerta: 'ATENCIÓN',
             descripcionAlerta:
-                'Seguro que desea salir? debera logearse nuevamente',
+                'Seguro que desea salir? deberá logearse nuevamente',
             textoBotonAlerta: 'SI',
             textoBotonAlerta2: 'NO',
             funcion1: () => Navigator.of(context).pop(true),

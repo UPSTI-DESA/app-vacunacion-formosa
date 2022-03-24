@@ -299,7 +299,7 @@ class _EscanerDniState extends State<EscanerDni> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Informacion Importante'),
+            title: const Text('Información Importante'),
             content: Text(mensaje),
             actions: <Widget>[
               TextButton(
@@ -387,7 +387,7 @@ class _EscanerDniState extends State<EscanerDni> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Informacion incorrecta'),
+            title: const Text('Información incorrecta'),
             content: Text(mensaje),
             actions: <Widget>[
               TextButton(

@@ -130,7 +130,7 @@ class _LoginBodyState extends State<LoginBody> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Informacion Importante'),
+            title: const Text('Información Importante'),
             content: Text(mensaje),
             actions: <Widget>[
               TextButton(
