@@ -490,7 +490,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
         : notificacionesDosisService.cargarRegistro(NotificacionesDosis());
     //Provider.of<ModeloNotificacion>(context, listen: false).numero = ;
 
-    datosBeneficiario == 0
+    datosBeneficiario[0].codigo_mensaje == '0'
         ? showDialog(
             context: context,
             builder: (BuildContext context) => DialogoAlerta(
@@ -504,8 +504,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                         (Route<dynamic> route) => false);
                   },
                   tituloAlerta: 'Hubo un Error',
-                  descripcionAlerta:
-                      'El D.N.I. o Sexo de la persona es incorrecto, verifique y vuelva a intentarlo',
+                  descripcionAlerta: datosBeneficiario[0].mensaje,
                   textoBotonAlerta: 'Listo',
                   color: Colors.red,
                   icon: Icon(
