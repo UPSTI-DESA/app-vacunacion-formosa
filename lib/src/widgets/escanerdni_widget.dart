@@ -177,15 +177,14 @@ class _EscanerDniState extends State<EscanerDni> {
         capturarTipoDni('Vacunador', cantidadPosiciones);
         final respUsuario =
             await vacunadorProviders.validarVacunador(dniPersona);
-        if (respUsuario == 0) {
+        if (respUsuario[0].codigo_mensaje == '0') {
           showDialog(
               context: context,
               builder: (BuildContext context) => DialogoAlerta(
                     envioFuncion2: false,
                     envioFuncion1: false,
                     tituloAlerta: 'Error',
-                    descripcionAlerta:
-                        'Hubo un problema al escanear el D.N.I. intente nuevamente o pruebe otro metodo de ingreso.',
+                    descripcionAlerta: respUsuario[0].mensaje,
                     textoBotonAlerta: 'Listo',
                     color: Colors.red,
                     icon: Icon(

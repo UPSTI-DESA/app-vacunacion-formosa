@@ -652,15 +652,14 @@ class _VacunadorPageState extends State<VacunadorPage> {
   verificarEscencialText(String dni) async {
     final respUsuario = await vacunadorProviders.validarVacunador(dni);
 
-    if (respUsuario == 0) {
+    if (respUsuario[0].codigo_mensaje == '0') {
       showDialog(
           context: context,
           builder: (BuildContext context) => DialogoAlerta(
                 envioFuncion2: false,
                 envioFuncion1: false,
                 tituloAlerta: 'Error',
-                descripcionAlerta:
-                    'Puede que no esté habilitado como vacunador, pruebe nuevamente el escaneo, cambie el modo de ingreso o asignese el usuario vacunador en el sistema de gestión.',
+                descripcionAlerta: respUsuario[0].mensaje,
                 textoBotonAlerta: 'Listo',
                 color: Colors.red,
                 icon: Icon(

@@ -2588,15 +2588,14 @@ class _VacunasPageState extends State<VacunasPage> {
     //Cargo Datos de Beneficiario en Singleton, y envio parametros EDAD + DNI para recibir la lista de VACUNAS
     final datosBeneficiario = await beneficiarioProviders
         .obtenerDatosBeneficiario('', dni, sexoPersona);
-    datosBeneficiario == 0
+    datosBeneficiario[0].codigo_mensaje == '0'
         ? showDialog(
             context: _scaffoldKey.currentContext!,
             builder: (BuildContext context) => DialogoAlerta(
                   envioFuncion2: false,
                   envioFuncion1: false,
                   tituloAlerta: 'Hubo un Error',
-                  descripcionAlerta:
-                      'El D.N.I. o Sexo de la persona es incorrecto, verifique y vuelva a intentarlo',
+                  descripcionAlerta: datosBeneficiario[0].mensaje,
                   textoBotonAlerta: 'Listo',
                   color: Colors.red,
                   icon: Icon(
