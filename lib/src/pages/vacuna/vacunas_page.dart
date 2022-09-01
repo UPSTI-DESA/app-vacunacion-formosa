@@ -68,7 +68,7 @@ class _VacunasPageState extends State<VacunasPage> {
   void initState() {
     fotoBeneficiario = base64.decode(uribeneficiario.split(',').last);
     mostrarBeneficiario = false;
-    mostrarTutor = false;
+    mostrarTutor = tutorService.existeTutor;
     pasos = 1;
     listaCondiciones = [];
     listaEsquemas = [];
@@ -188,6 +188,11 @@ class _VacunasPageState extends State<VacunasPage> {
                                     funcion2: () => Navigator.of(context).pop(),
                                     envioFuncion1: true,
                                     funcion1: () {
+                                      setState(() {
+                                        tutorService.tutor != null
+                                            ? tutorService.eliminarTutor()
+                                            : null;
+                                      });
                                       vacunasxPerfilService
                                           .eliminarListaVacunasxPerfil();
                                       perfilesVacunacionService
@@ -437,7 +442,7 @@ class _VacunasPageState extends State<VacunasPage> {
     return StreamBuilder(
       stream: tutorService.tutorStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
+        return tutorService.existeTutor
             ? Column(
                 children: [
                   Padding(

@@ -21,9 +21,8 @@ class _TutorService {
   }
 
   void eliminarTutor() {
-    _tutor = null;
-
     _tutorStreamController.add(_tutor!);
+    _tutor = null;
   }
 
   dispose() {

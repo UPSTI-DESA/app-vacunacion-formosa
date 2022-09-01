@@ -770,6 +770,11 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                     funcion2: () => Navigator.of(context).pop(),
                                     envioFuncion1: true,
                                     funcion1: () {
+                                      setState(() {
+                                        tutorService.tutor != null
+                                            ? tutorService.eliminarTutor()
+                                            : null;
+                                      });
                                       vacunasxPerfilService
                                           .eliminarListaVacunasxPerfil();
                                       perfilesVacunacionService
@@ -782,8 +787,8 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
 
                                       notificacionesDosisService
                                           .eliminarListaDosis();
-                                      insertRegistroService
-                                          .cargarRegistro(InsertRegistros());
+                                      // insertRegistroService
+                                      //     .cargarRegistro(InsertRegistros());
                                       Navigator.pushAndRemoveUntil(
                                           context,
                                           MaterialPageRoute(
@@ -834,7 +839,6 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
   enviarDatos(BuildContext context2) async {
     setState(() {
       habilitarCircular = true;
-      tutorService.tutor != null ? tutorService.eliminarTutor() : null;
     });
     insertRegistroService.registro!.fecha_aplicacion !=
             fechaSeleccionada.toString()
@@ -870,11 +874,18 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
             builder: (BuildContext context) => DialogoAlerta(
                   envioFuncion2: true,
                   envioFuncion1: true,
-                  funcion1: () => Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const BusquedaBeneficiario()),
-                      (Route<dynamic> route) => false),
+                  funcion1: () {
+                    setState(() {
+                      tutorService.tutor != null
+                          ? tutorService.eliminarTutor()
+                          : null;
+                    });
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const BusquedaBeneficiario()),
+                        (Route<dynamic> route) => false);
+                  },
                   textoBotonAlerta2: 'Aplicar otra',
                   funcion2: () => Navigator.pushAndRemoveUntil(
                       context,
