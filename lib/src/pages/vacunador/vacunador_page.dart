@@ -29,14 +29,18 @@ class _VacunadorPageState extends State<VacunadorPage> {
   bool estadoVacunador = false;
   bool? animacionNombreVacunado;
   bool? mismoVacunador;
+  bool? esTerreno;
   bool? switchContainer;
   String? stringVacunador;
+  String? stringTerreno;
 
   @override
   void initState() {
     mismoVacunador = true;
+    esTerreno = true;
     animacionNombreVacunado = false;
     switchContainer = false;
+    stringVacunador = 'No';
     stringVacunador = 'No';
     cargarEfectoresService(registradorService.registrador!.flxcore03_dni!);
     super.initState();
@@ -456,6 +460,85 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                         ),
                                       );
                               })),
+                      FadeIn(
+                          duration: const Duration(milliseconds: 800),
+                          child: StreamBuilder(
+                              stream: vacunadorService.vacunadorStream,
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<Vacunador?> snapshot) {
+                                return snapshot.hasData
+                                    ? Container()
+                                    : Padding(
+                                        padding: EdgeInsets.only(
+                                            right: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.1,
+                                            left: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.1),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              'Es en terreno?',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Si',
+                                                  style: GoogleFonts.nunito(
+                                                      color: !esTerreno!
+                                                          ? Colors.black87
+                                                          : Colors.grey[300],
+                                                      fontWeight: !esTerreno!
+                                                          ? FontWeight.w700
+                                                          : FontWeight.w100),
+                                                ),
+                                                Switch(
+                                                    activeColor:
+                                                        SisVacuColor.red,
+                                                    inactiveTrackColor:
+                                                        SisVacuColor
+                                                            .azulFormosa,
+                                                    inactiveThumbColor:
+                                                        SisVacuColor
+                                                            .azulFormosa,
+                                                    value: esTerreno!,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        esTerreno = value;
+                                                        esTerreno!
+                                                            ? stringTerreno =
+                                                                'Si'
+                                                            : stringTerreno =
+                                                                'No';
+                                                      });
+                                                    }),
+                                                Text(
+                                                  'No',
+                                                  style: GoogleFonts.nunito(
+                                                      color: esTerreno!
+                                                          ? Colors.black87
+                                                          : Colors.grey[300],
+                                                      fontWeight: esTerreno!
+                                                          ? FontWeight.w700
+                                                          : FontWeight.w100),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                              })),
+
                       const SizedBox(
                         height: 20.0,
                       ),
