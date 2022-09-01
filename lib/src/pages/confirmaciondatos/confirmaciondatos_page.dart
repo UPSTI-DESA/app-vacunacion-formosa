@@ -868,17 +868,24 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
         : showDialog(
             context: context,
             builder: (BuildContext context) => DialogoAlerta(
-                  envioFuncion2: false,
+                  envioFuncion2: true,
                   envioFuncion1: true,
                   funcion1: () => Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const BusquedaBeneficiario()),
                       (Route<dynamic> route) => false),
+                  textoBotonAlerta2: 'Aplicar otra',
+                  funcion2: () => Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const VacunasPage()),
+                      (Route<dynamic> route) => false),
                   tituloAlerta: 'Información',
                   descripcionAlerta: mensaje[0].mensaje,
                   textoBotonAlerta: 'Listo',
                   color: Colors.green,
+                  boton2color: Colors.green,
                   icon: const Icon(
                     Icons.check_circle,
                     size: 40.0,

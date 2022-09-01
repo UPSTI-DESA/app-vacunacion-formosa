@@ -11,25 +11,27 @@ class DialogoAlerta extends StatelessWidget {
   final Image? image;
   final Icon icon;
   final Color? color;
+  final Color? boton2color;
   final Function? funcion1;
   final Function? funcion2;
   final bool envioFuncion1;
   final bool envioFuncion2;
 
-  const DialogoAlerta({
-    Key? key,
-    required this.tituloAlerta,
-    required this.descripcionAlerta,
-    required this.textoBotonAlerta,
-    this.image,
-    required this.icon,
-    required this.color,
-    this.funcion1,
-    required this.envioFuncion1,
-    this.funcion2,
-    required this.envioFuncion2,
-    this.textoBotonAlerta2,
-  }) : super(key: key);
+  const DialogoAlerta(
+      {Key? key,
+      required this.tituloAlerta,
+      required this.descripcionAlerta,
+      required this.textoBotonAlerta,
+      this.image,
+      required this.icon,
+      required this.color,
+      this.funcion1,
+      required this.envioFuncion1,
+      this.funcion2,
+      required this.envioFuncion2,
+      this.textoBotonAlerta2,
+      this.boton2color})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -96,7 +98,7 @@ class DialogoAlerta extends StatelessWidget {
                             textoBotonAlerta2!,
                             style: GoogleFonts.nunito(
                                 fontWeight: FontWeight.w800,
-                                color: SisVacuColor.red),
+                                color: boton2color ?? SisVacuColor.red),
                           ),
                         ))
                     : Container(),
