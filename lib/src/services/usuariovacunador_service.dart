@@ -13,6 +13,18 @@ class _VacunadorService {
 
   Stream<Vacunador?> get vacunadorStream => _vacunadorStreamController.stream;
 
+  int _enTerreno = 0;
+
+  final StreamController<int> _esTerrenoStreamController =
+      StreamController<int>.broadcast();
+
+  Stream<int?> get esTerrenoStream => _esTerrenoStreamController.stream;
+
+  void cargarTerreno(int esEnTerreno) {
+    _enTerreno = esEnTerreno;
+    _esTerrenoStreamController.add(_enTerreno);
+  }
+
   void cargarVacunador(Vacunador? vacunador) {
     _vacunador = vacunador;
     _vacunadorStreamController.add(vacunador);
@@ -25,6 +37,7 @@ class _VacunadorService {
 
   dispose() {
     _vacunadorStreamController.close();
+    _esTerrenoStreamController.close();
   }
 }
 
