@@ -10,3 +10,8 @@ export 'package:sistema_vacunacion/src/providers/vacunados/vacunadoscant_provide
 export 'package:sistema_vacunacion/src/providers/sistema/notificaciones_providers.dart';
 export 'package:sistema_vacunacion/src/providers/sistema/insertregistro_providers.dart';
 export 'package:sistema_vacunacion/src/providers/sistema/validarversion_providers.dart';
+export 'package:sistema_vacunacion/src/providers/vacunas/perfilesvacunacion_providers.dart';
+export 'package:sistema_vacunacion/src/providers/vacunas/vacunas_esquema_providers.dart';
+export 'package:sistema_vacunacion/src/providers/vacunas/vacunas_condicion_providers.dart';
+export 'package:sistema_vacunacion/src/providers/vacunas/vacunas_dosis_provider.dart';
+export 'package:sistema_vacunacion/src/providers/efectores_providers.dart';

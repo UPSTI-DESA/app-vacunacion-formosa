@@ -7,7 +7,6 @@ import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 import '../pages.dart';
@@ -491,7 +490,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
         : notificacionesDosisService.cargarRegistro(NotificacionesDosis());
     //Provider.of<ModeloNotificacion>(context, listen: false).numero = ;
 
-    datosBeneficiario == 0
+    datosBeneficiario[0].codigo_mensaje == '0'
         ? showDialog(
             context: context,
             builder: (BuildContext context) => DialogoAlerta(
@@ -505,8 +504,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                         (Route<dynamic> route) => false);
                   },
                   tituloAlerta: 'Hubo un Error',
-                  descripcionAlerta:
-                      'El D.N.I. o Sexo de la persona es incorrecto, verifique y vuelva a intentarlo',
+                  descripcionAlerta: datosBeneficiario[0].mensaje,
                   textoBotonAlerta: 'Listo',
                   color: Colors.red,
                   icon: Icon(
@@ -552,7 +550,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
               envioFuncion1: true,
               tituloAlerta: 'ATENCIÓN',
               descripcionAlerta:
-                  'Seguro que desea salir? debera logearse nuevamente',
+                  'Seguro que desea salir? deberá logearse nuevamente',
               textoBotonAlerta: 'SI',
               textoBotonAlerta2: 'NO',
               funcion1: () => Navigator.of(context).pop(true),

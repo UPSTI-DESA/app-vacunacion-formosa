@@ -36,11 +36,9 @@ class _BeneficiarioProviders {
 
     final List<Beneficiario> resp = await procesarRespuestaDos(url);
     if (resp[0].sysdesa10_dni != '') {
-      //Si tiene Valores devuelve una Lista de Tipo Usuarios
       return resp;
     } else {
-      //Si no tiene valores devuelve simplemente 0
-      return 0;
+      return resp;
     }
   }
 }

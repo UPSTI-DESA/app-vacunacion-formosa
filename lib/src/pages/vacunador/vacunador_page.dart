@@ -7,11 +7,8 @@ import 'package:responsive_builder/responsive_builder.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
-import 'package:sistema_vacunacion/src/providers/efectores_providers.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/efectores_servide.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 import '../pages.dart';
@@ -557,7 +554,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                       DialogoAlerta(
                                         envioFuncion2: false,
                                         envioFuncion1: false,
-                                        tituloAlerta: 'Informacion',
+                                        tituloAlerta: 'Información',
                                         descripcionAlerta:
                                             'Registre al vacunador mediante el escaneo del codigo de barras, o ingresando manualmente el numero de D.N.I.',
                                         textoBotonAlerta: 'Listo',
@@ -655,15 +652,14 @@ class _VacunadorPageState extends State<VacunadorPage> {
   verificarEscencialText(String dni) async {
     final respUsuario = await vacunadorProviders.validarVacunador(dni);
 
-    if (respUsuario == 0) {
+    if (respUsuario[0].codigo_mensaje == '0') {
       showDialog(
           context: context,
           builder: (BuildContext context) => DialogoAlerta(
                 envioFuncion2: false,
                 envioFuncion1: false,
                 tituloAlerta: 'Error',
-                descripcionAlerta:
-                    'Puede que no esté habilitado como vacunador, pruebe nuevamente el escaneo, cambie el modo de ingreso o asignese el usuario vacunador en el sistema de gestión.',
+                descripcionAlerta: respUsuario[0].mensaje,
                 textoBotonAlerta: 'Listo',
                 color: Colors.red,
                 icon: Icon(
@@ -712,7 +708,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
               envioFuncion1: true,
               tituloAlerta: 'ATENCIÓN',
               descripcionAlerta:
-                  'Seguro que desea salir? debera logearse nuevamente',
+                  'Seguro que desea salir? deberá logearse nuevamente',
               textoBotonAlerta: 'SI',
               textoBotonAlerta2: 'NO',
               funcion1: () => Navigator.of(context).pop(true),

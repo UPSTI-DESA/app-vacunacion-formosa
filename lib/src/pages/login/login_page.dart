@@ -4,9 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sistema_vacunacion/src/config/appsize_config.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/loadingLogin_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -24,7 +22,7 @@ class LoginBody extends StatefulWidget {
 
 class _LoginBodyState extends State<LoginBody> {
   //Cambiar este Valor cada vez que se vuelve a Buildear, tanto aqui como en el SV
-  final String versionApp = '1.0.0'; //Version Actual de la APP
+  final String versionApp = '3.0.0'; //Version Actual de la APP
   final String nombreApp =
       'Sistema de vacunación general'; //Nombre de la APP enviamos
 
@@ -132,7 +130,7 @@ class _LoginBodyState extends State<LoginBody> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Informacion Importante'),
+            title: const Text('Información Importante'),
             content: Text(mensaje),
             actions: <Widget>[
               TextButton(
@@ -147,7 +145,7 @@ class _LoginBodyState extends State<LoginBody> {
 //Funcion para redirigir al Link de Descarga de la Ultima Aplicacion Disponible
   _launchURL() async {
     const url =
-        'https://drive.google.com/drive/u/0/folders/1Ia3CGOuCSbnpgt_4qNOGKlzkzc4FvuO4';
+        'https://dh.formosa.gob.ar/modulos/webservice/php/version_3_0/v3.0.0.apk';
     await launch(url);
   }
 }
@@ -165,68 +163,59 @@ class _LoginFormulario extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(
           top: MediaQuery.of(context).size.height * 0.15,
-          bottom: MediaQuery.of(context).size.height * 0.05),
+          bottom: MediaQuery.of(context).size.height * 0.01),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
-            child: Column(
-              children: <Widget>[
-                FadeInDownBig(
-                  from: 40,
-                  child: Image(
-                    image: const AssetImage('assets/logo/VacunApp2.png'),
-                    fit: BoxFit.cover,
-                    //height: MediaQuery.of(context).size.height * 0.2,
-                    width: MediaQuery.of(context).size.width * .55,
-                  ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.12),
-                FadeInLeft(
-                  from: 40,
-                  delay: const Duration(milliseconds: 1100),
-                  child: Text('Escanee su D.N.I. para continuar',
-                      style: GoogleFonts.nunito(
-                        textStyle: TextStyle(
-                            color: Colors.black87,
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.022,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 2.0),
-                      )),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                ElasticIn(
-                  delay: const Duration(milliseconds: 1500),
-                  child: EscanerDni(
-                    'Registrador',
-                    'Escanear',
-                    'Escane el dni para verificar su identidad',
-                    iconBool: false,
-                    anchoValor: MediaQuery.of(context).size.width * 0.1,
-                  ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.width * 0.05),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: FadeInLeft(
-                    from: 40,
-                    delay: const Duration(milliseconds: 1100),
-                    child: Text(
-                        'Para uso interno, del ministerio de desarrollo humano',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.nunito(
-                          textStyle: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.height * 0.018,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 2.0),
-                        )),
-                  ),
-                ),
-              ],
+          FadeInDownBig(
+            from: 40,
+            child: Image(
+              image: const AssetImage('assets/logo/VacunApp2.png'),
+              fit: BoxFit.cover,
+              //height: MediaQuery.of(context).size.height * 0.2,
+              width: MediaQuery.of(context).size.width * .55,
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+          FadeInLeft(
+            from: 40,
+            delay: const Duration(milliseconds: 1100),
+            child: Text('Escanee su D.N.I. para continuar',
+                style: GoogleFonts.nunito(
+                  textStyle: TextStyle(
+                      color: Colors.black87,
+                      fontSize: MediaQuery.of(context).size.height * 0.022,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 2.0),
+                )),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+          ElasticIn(
+            delay: const Duration(milliseconds: 1500),
+            child: EscanerDni(
+              'Registrador',
+              'Escanear',
+              'Escane el dni para verificar su identidad',
+              iconBool: false,
+              anchoValor: MediaQuery.of(context).size.width * 0.1,
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: FadeInLeft(
+              from: 40,
+              delay: const Duration(milliseconds: 1100),
+              child: Text(
+                  'Para uso interno, del ministerio de desarrollo humano',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.nunito(
+                    textStyle: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height * 0.018,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2.0),
+                  )),
             ),
           ),
           Align(

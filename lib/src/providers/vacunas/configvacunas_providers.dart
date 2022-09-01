@@ -37,7 +37,7 @@ class _ConfiguracionVacunaProviders {
     if (resp.isNotEmpty) {
       return resp;
     } else {
-      return 0;
+      return resp;
     }
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 
 List<NotificacionesDosis> notificacionDosisFromJson(String str) =>
@@ -10,36 +12,24 @@ String notificacionDosisToJson(List<NotificacionesDosis> data) =>
 class NotificacionesDosis {
   List<NotificacionesDosis> items = [];
   NotificacionesDosis(
-      {
-      // ignore: non_constant_identifier_names
-      this.sysvacu04_nombre,
-      // ignore: non_constant_identifier_names
+      {this.sysvacu04_nombre,
       this.sysvacu05_nombre,
-      // ignore: non_constant_identifier_names
       this.sysdesa10_fecha_aplicacion,
-      // ignore: non_constant_identifier_names
       this.fecha_proxima_dosis,
-      // ignore: non_constant_identifier_names
       this.dias_transcurridos,
-      // ignore: non_constant_identifier_names
+      this.sysdesa18_lote,
       this.sysvacu03_tiempo_interdosis,
-      // ignore: non_constant_identifier_names
       this.codigo_mensaje,
       this.mensaje});
 
-  // ignore: non_constant_identifier_names
   String? sysvacu04_nombre;
-  // ignore: non_constant_identifier_names
   String? sysvacu05_nombre;
-  // ignore: non_constant_identifier_names
   String? sysdesa10_fecha_aplicacion;
-  // ignore: non_constant_identifier_names
   String? fecha_proxima_dosis;
-  // ignore: non_constant_identifier_names
   String? dias_transcurridos;
-  // ignore: non_constant_identifier_names
+
+  String? sysdesa18_lote;
   String? sysvacu03_tiempo_interdosis;
-  // ignore: non_constant_identifier_names
   String? codigo_mensaje;
   String? mensaje;
 
@@ -50,6 +40,7 @@ class NotificacionesDosis {
         sysdesa10_fecha_aplicacion: json["sysdesa10_fecha_aplicacion"],
         fecha_proxima_dosis: json["fecha_proxima_dosis"],
         dias_transcurridos: json["dias_transcurridos"],
+        sysdesa18_lote: json["sysdesa18_lote"],
         sysvacu03_tiempo_interdosis: json["sysvacu03_tiempo_interdosis"],
         codigo_mensaje: json["codigo_mensaje"],
         mensaje: json["mensaje"],
@@ -61,6 +52,7 @@ class NotificacionesDosis {
     sysdesa10_fecha_aplicacion = json["sysdesa10_fecha_aplicacion"];
     fecha_proxima_dosis = json["fecha_proxima_dosis"];
     dias_transcurridos = json["dias_transcurridos"];
+    sysdesa18_lote = json["sysdesa18_lote"];
     sysvacu03_tiempo_interdosis = json["sysvacu03_tiempo_interdosis"];
     codigo_mensaje = json["codigo_mensaje"];
     mensaje = json["mensaje"];
@@ -73,6 +65,7 @@ class NotificacionesDosis {
         sysdesa10_fecha_aplicacion: sysdesa10_fecha_aplicacion,
         fecha_proxima_dosis: fecha_proxima_dosis,
         dias_transcurridos: dias_transcurridos,
+        sysdesa18_lote: sysdesa18_lote,
         sysvacu03_tiempo_interdosis: sysvacu03_tiempo_interdosis,
         codigo_mensaje: codigo_mensaje,
         mensaje: mensaje,

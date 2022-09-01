@@ -32,7 +32,7 @@ class _VacunadorProviders {
       return resp;
     } else {
       //Si no tiene valores devuelve simplemente 0
-      return 0;
+      return resp;
     }
   }
 }

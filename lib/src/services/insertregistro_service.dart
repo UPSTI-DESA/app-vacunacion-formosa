@@ -20,6 +20,11 @@ class _InsertRegistroService {
     _registroStreamController.add(registro);
   }
 
+  void agregarFecha(DateTime fechaDeCarga) {
+    _registro!.fecha_aplicacion = fechaDeCarga.toString();
+    _registroStreamController.add(_registro!);
+  }
+
   dispose() {
     _registroStreamController.close();
   }

@@ -9,7 +9,6 @@ import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/loadingLogin_service.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -178,15 +177,14 @@ class _EscanerDniState extends State<EscanerDni> {
         capturarTipoDni('Vacunador', cantidadPosiciones);
         final respUsuario =
             await vacunadorProviders.validarVacunador(dniPersona);
-        if (respUsuario == 0) {
+        if (respUsuario[0].codigo_mensaje == '0') {
           showDialog(
               context: context,
               builder: (BuildContext context) => DialogoAlerta(
                     envioFuncion2: false,
                     envioFuncion1: false,
                     tituloAlerta: 'Error',
-                    descripcionAlerta:
-                        'Hubo un problema al escanear el D.N.I. intente nuevamente o pruebe otro metodo de ingreso.',
+                    descripcionAlerta: respUsuario[0].mensaje,
                     textoBotonAlerta: 'Listo',
                     color: Colors.red,
                     icon: Icon(
@@ -300,7 +298,7 @@ class _EscanerDniState extends State<EscanerDni> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Informacion Importante'),
+            title: const Text('Información Importante'),
             content: Text(mensaje),
             actions: <Widget>[
               TextButton(
@@ -388,7 +386,7 @@ class _EscanerDniState extends State<EscanerDni> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Informacion incorrecta'),
+            title: const Text('Información incorrecta'),
             content: Text(mensaje),
             actions: <Widget>[
               TextButton(
