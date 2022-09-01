@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 
@@ -516,10 +518,20 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                                       setState(() {
                                                         esTerreno = value;
                                                         esTerreno!
-                                                            ? stringTerreno =
-                                                                'Si'
-                                                            : stringTerreno =
-                                                                'No';
+                                                            ? {
+                                                                vacunadorService
+                                                                    .cargarTerreno(
+                                                                        0),
+                                                                stringTerreno =
+                                                                    'Si'
+                                                              }
+                                                            : {
+                                                                vacunadorService
+                                                                    .cargarTerreno(
+                                                                        1),
+                                                                stringTerreno =
+                                                                    'No'
+                                                              };
                                                       });
                                                     }),
                                                 Text(

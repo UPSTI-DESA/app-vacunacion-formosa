@@ -15,6 +15,8 @@ class _VacunadorService {
 
   int _enTerreno = 0;
 
+  int get esEnTerreno => _enTerreno;
+
   final StreamController<int> _esTerrenoStreamController =
       StreamController<int>.broadcast();
 

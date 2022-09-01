@@ -2313,7 +2313,6 @@ class _VacunasPageState extends State<VacunasPage> {
                                   ? _selectLote != null
                                       // ignore: unnecessary_statements
                                       ? {
-                                          //colocar si es en terreno
                                           insertRegistroService.cargarRegistro(
                                               InsertRegistros(
                                                   id_flxcore03: registradorService
@@ -2357,7 +2356,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                                   sysdesa10_nro_tramite: beneficiarioService.beneficiario!.sysdesa10_nro_tramite, //Solo con Escaner
                                                   sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
                                                   sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad, //DatosExtras que no se envian, SOlo para vista
-
+                                                  //Es en terreno
+                                                  sysdesa10_terreno: vacunadorService.esEnTerreno,
                                                   //     nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,
                                                   fecha_aplicacion: DateTime.now().toString(),
                                                   sysdesa10_fecha_nacimiento: beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
@@ -2458,7 +2458,6 @@ class _VacunasPageState extends State<VacunasPage> {
                           ? _selectLote != null
                               // ignore: unnecessary_statements
                               ? {
-                                  //Colocar si es en terreno
                                   insertRegistroService.cargarRegistro(
                                       InsertRegistros(
                                           id_flxcore03: registradorService
@@ -2507,6 +2506,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                           sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo, //Obligatorio
                                           sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
                                           fecha_aplicacion: DateTime.now().toString(),
+                                          //Es en terreno
+                                          sysdesa10_terreno: vacunadorService.esEnTerreno,
 
                                           //DatosExtras que no se envian, SOlo para vista
                                           //   nombreConfiguracion: _selectConfigVacuna!.sysvacu05_nombre! + '-' + _selectConfigVacuna!.sysvacu01_descripcion! + '-' + _selectConfigVacuna!.sysvacu02_descripcion!,

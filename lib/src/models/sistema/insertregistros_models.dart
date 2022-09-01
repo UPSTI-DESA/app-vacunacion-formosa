@@ -5,40 +5,39 @@ import 'dart:convert';
 String insertRegistrosToJson(List<InsertRegistros?> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x!.toJson())));
 
-//agregar campo es en terreno
 class InsertRegistros {
   List<InsertRegistros> items = [];
-  InsertRegistros({
-    this.id_flxcore03, //Cargador
-    this.id_sysvacu04, //Vacuna
-    this.id_sysofic01, //EFector
-    this.id_sysdesa18,
-    this.id_sysdesa12,
-    this.id_sysvacu01,
-    this.id_sysvacu02,
-    this.id_sysvacu05,
-    this.sysdesa10_nombre,
-    this.sysdesa10_apellido,
-    this.sysdesa10_dni,
-    this.sysdesa10_sexo,
-    this.sysdesa10_nro_tramite,
-    this.sysdesa10_cadena_dni,
-    this.sysdesa10_edad,
-    this.sysdesa10_fecha_nacimiento,
-    this.vacunador_registrador,
-    this.codigo_mensaje,
-    this.mensaje,
-    this.sysdesa10_apellido_tutor,
-    this.sysdesa10_nombre_tutor,
-    this.sysdesa10_dni_tutor,
-    this.sysdesa10_sexo_tutor,
-    this.nombreVacuna,
-    this.nombreCondicion,
-    this.nombreEsquema,
-    this.nombreDosis,
-    this.nombreLote,
-    this.fecha_aplicacion,
-  });
+  InsertRegistros(
+      {this.id_flxcore03, //Cargador
+      this.id_sysvacu04, //Vacuna
+      this.id_sysofic01, //EFector
+      this.id_sysdesa18,
+      this.id_sysdesa12,
+      this.id_sysvacu01,
+      this.id_sysvacu02,
+      this.id_sysvacu05,
+      this.sysdesa10_nombre,
+      this.sysdesa10_apellido,
+      this.sysdesa10_dni,
+      this.sysdesa10_sexo,
+      this.sysdesa10_nro_tramite,
+      this.sysdesa10_cadena_dni,
+      this.sysdesa10_edad,
+      this.sysdesa10_fecha_nacimiento,
+      this.vacunador_registrador,
+      this.codigo_mensaje,
+      this.mensaje,
+      this.sysdesa10_apellido_tutor,
+      this.sysdesa10_nombre_tutor,
+      this.sysdesa10_dni_tutor,
+      this.sysdesa10_sexo_tutor,
+      this.nombreVacuna,
+      this.nombreCondicion,
+      this.nombreEsquema,
+      this.nombreDosis,
+      this.nombreLote,
+      this.fecha_aplicacion,
+      this.sysdesa10_terreno});
 
   String? id_flxcore03;
   String? id_sysvacu04;
@@ -65,6 +64,8 @@ class InsertRegistros {
   String? sysdesa10_sexo_tutor;
   String? codigo_mensaje;
   String? mensaje;
+  //Terreno
+  int? sysdesa10_terreno;
 
   //Datos que no se envian
   String? nombreVacuna;
@@ -99,5 +100,6 @@ class InsertRegistros {
         "sysdesa10_dni_tutor": sysdesa10_dni_tutor,
         "sysdesa10_sexo_tutor": sysdesa10_sexo_tutor,
         "fecha_aplicacion": fecha_aplicacion,
+        "sysdesa10_terreno": sysdesa10_terreno,
       };
 }
