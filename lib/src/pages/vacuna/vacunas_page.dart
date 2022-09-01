@@ -2313,6 +2313,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                   ? _selectLote != null
                                       // ignore: unnecessary_statements
                                       ? {
+                                          //colocar si es en terreno
                                           insertRegistroService.cargarRegistro(
                                               InsertRegistros(
                                                   id_flxcore03: registradorService
@@ -2457,6 +2458,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           ? _selectLote != null
                               // ignore: unnecessary_statements
                               ? {
+                                  //Colocar si es en terreno
                                   insertRegistroService.cargarRegistro(
                                       InsertRegistros(
                                           id_flxcore03: registradorService
