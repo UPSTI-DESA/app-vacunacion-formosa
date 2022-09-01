@@ -5,6 +5,7 @@ import 'dart:convert';
 String insertRegistrosToJson(List<InsertRegistros?> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x!.toJson())));
 
+//agregar campo es en terreno
 class InsertRegistros {
   List<InsertRegistros> items = [];
   InsertRegistros({
