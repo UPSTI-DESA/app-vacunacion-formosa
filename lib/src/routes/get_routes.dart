@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
+import 'package:sistema_vacunacion/src/pages/pruebas/insertDataBase.dart';
 
 Route<dynamic> getRutas(RouteSettings settings) {
   switch (settings.name) {
@@ -23,6 +24,9 @@ Route<dynamic> getRutas(RouteSettings settings) {
 
     case ConfirmarDatos.nombreRuta:
       return _contruirRuta(settings, const ConfirmarDatos(), 4);
+
+    case PruebaInsert.nombreRuta:
+      return _contruirRuta(settings, const PruebaInsert(), 4);
 
     default:
       return _contruirRuta(settings, const LoginBody(), 4);

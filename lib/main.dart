@@ -3,26 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
+import 'package:sistema_vacunacion/src/helpers/database_helper.dart';
 import 'package:sistema_vacunacion/src/services/enviroment_service.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'src/pages/pages.dart';
 
+final dbHelper = DatabaseHelper();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _buildReleaseErrorWidgetBuilder();
   AppConfig appconfig = AppConfig(enviroment: 'PROD');
   enviromentService.cargarEnviroment(appconfig);
-  final database = openDatabase(
-    join(await getDatabasesPath(), 'vacunacion_database.db'),
-    onCreate: (db, version) {
-      return db.execute(
-        "CREATE TABLE perfiles(id INTEGER PRIMARY KEY, id_sysvacu12 TEXT, sysvacu12_descripcion TEXT)",
-      );
-    },
-    version: 1,
-  );
-
+  await dbHelper.init();
   runApp(const MyApp());
 }
 

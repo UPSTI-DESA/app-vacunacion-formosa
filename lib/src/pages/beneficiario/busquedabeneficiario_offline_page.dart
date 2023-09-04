@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
+import 'package:sistema_vacunacion/src/pages/pruebas/insertDataBase.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 import '../pages.dart';
 
@@ -68,7 +69,7 @@ class _BusquedaBeneficiarioOfflineState
       onWillPop: onWillPop,
       child: Scaffold(
         key: _scaffoldKey,
-        drawer: const BodyDrawer(),
+        //  drawer: const BodyDrawer(),
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: SisVacuColor.vercelesteCuaternario,
@@ -464,7 +465,7 @@ class _BusquedaBeneficiarioOfflineState
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const BusquedaBeneficiarioOffline()),
+                                      const VacunasPageOffline()),
                               (Route<dynamic> route) => false);
                         },
                       )),
