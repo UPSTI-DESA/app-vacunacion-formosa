@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 VacunasDosis vacunasDosisFromJson(String str) =>
     VacunasDosis.fromJson(json.decode(str));
@@ -31,8 +32,8 @@ class VacunasDosis {
 
   factory VacunasDosis.fromJson(Map<String, dynamic> json) => VacunasDosis(
         id_sysvacu05: json["id_sysvacu05"],
-        sysvacu05_nombre: json["sysvacu05_nombre"],
-        sysvacu05_orden: json["sysvacu05_orden"],
+        sysvacu05_nombre: fixEncoding(json["sysvacu05_nombre"]),
+        sysvacu05_orden: fixEncoding(json["sysvacu05_orden"]),
         sysvacu05_cod_sisa: json["sysvacu05_cod_sisa"],
         sysvacu05_esquema: json["sysvacu05_esquema"],
         sysvacu05_orden_numerico: json["sysvacu05_orden_numerico"],
@@ -42,8 +43,8 @@ class VacunasDosis {
 
   VacunasDosis.fromJsonMap(Map<String, dynamic> json) {
     id_sysvacu05 = json["id_sysvacu05"];
-    sysvacu05_nombre = json["sysvacu05_nombre"];
-    sysvacu05_orden = json["sysvacu05_orden"];
+    sysvacu05_nombre = fixEncoding(json["sysvacu05_nombre"]);
+    sysvacu05_orden = fixEncoding(json["sysvacu05_orden"]);
     sysvacu05_cod_sisa = json["sysvacu05_cod_sisa"];
     sysvacu05_esquema = json["sysvacu05_esquema"];
     sysvacu05_orden_numerico = json["sysvacu05_orden_numerico"];

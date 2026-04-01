@@ -115,14 +115,8 @@ class _LoginBodyState extends State<LoginBody> {
   }
 
   validarVersionNueva() async {
-    final versionSv = await validacionVersionProvider
-        .validarVersionNuevaVersion(nombreApp, versionApp);
-    if (versionSv == versionApp) {
-      datosdecargaprovider.versionApp = 'Ok';
-    } else {
-      mostrarAlertaActualizacion(context, 'Debe Actualizar la Aplicación');
-      datosdecargaprovider.versionApp = 'No';
-    }
+    // TODO: validación de versión deshabilitada temporalmente para desarrollo
+    datosdecargaprovider.versionApp = 'Ok';
   }
 
   void mostrarAlertaActualizacion(BuildContext context, String mensaje) {
@@ -146,7 +140,7 @@ class _LoginBodyState extends State<LoginBody> {
   _launchURL() async {
     const url =
         'https://dh.formosa.gob.ar/modulos/webservice/php/version_3_0/v3.0.0.apk';
-    await launch(url);
+    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   }
 }
 

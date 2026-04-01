@@ -59,8 +59,11 @@ class _VacunadorPageState extends State<VacunadorPage> {
   Widget build(BuildContext context) {
     return SafeArea(
         top: false,
-        child: WillPopScope(
-          onWillPop: onWillPop,
+        child: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (!didPop) onWillPop();
+          },
           child: Scaffold(
             backgroundColor: SisVacuColor.white,
             appBar: AppBar(
@@ -141,7 +144,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                                 ));
                                       },
                                       icon: Icon(
-                                        FontAwesomeIcons.infoCircle,
+                                        FontAwesomeIcons.circleInfo,
                                         color:
                                             SisVacuColor.vercelesteCuaternario,
                                       ),
@@ -227,7 +230,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                                                   leading:
                                                                       FaIcon(
                                                                     FontAwesomeIcons
-                                                                        .hospitalAlt,
+                                                                        .hospital,
                                                                     size: 20,
                                                                     color: SisVacuColor
                                                                         .vercelesteCuaternario,
@@ -279,7 +282,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                             padding: const EdgeInsets.only(
                                                 right: 15.0, left: 15.0),
                                             child: FaIcon(
-                                                FontAwesomeIcons.hospitalAlt,
+                                                FontAwesomeIcons.hospital,
                                                 size: getValueForScreenType(
                                                     context: context,
                                                     mobile: 18),
@@ -648,7 +651,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                       ));
                             },
                             icon: Icon(
-                              FontAwesomeIcons.infoCircle,
+                              FontAwesomeIcons.circleInfo,
                               color: SisVacuColor.vercelesteCuaternario,
                             ),
                             iconSize: 25,

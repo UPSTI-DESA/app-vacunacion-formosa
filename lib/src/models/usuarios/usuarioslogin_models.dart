@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 List<Usuarios> usuariosFromJson(String str) =>
     List<Usuarios>.from(json.decode(str).map((x) => Usuarios.fromJson(x)));
@@ -42,9 +43,9 @@ class Usuarios {
   factory Usuarios.fromJson(Map<String, dynamic> json) => Usuarios(
         id_flxcore03: json["id_flxcore03"],
         flxcore03_dni: json["flxcore03_dni"],
-        flxcore03_nombre: json["flxcore03_nombre"],
+        flxcore03_nombre: fixEncoding(json["flxcore03_nombre"]),
         rela_sysofic01: json["rela_sysofic01"],
-        sysofic01_descripcion: json["sysofic01_descripcion"],
+        sysofic01_descripcion: fixEncoding(json["sysofic01_descripcion"]),
         codigo_mensaje: json["codigo_mensaje"],
         mensaje: json["mensaje"],
       );
@@ -52,9 +53,9 @@ class Usuarios {
   Usuarios.fromJsonMap(Map<String, dynamic> json) {
     id_flxcore03 = json["id_flxcore03"];
     flxcore03_dni = json["flxcore03_dni"];
-    flxcore03_nombre = json["flxcore03_nombre"];
+    flxcore03_nombre = fixEncoding(json["flxcore03_nombre"]);
     rela_sysofic01 = json["rela_sysofic01"];
-    sysofic01_descripcion = json["sysofic01_descripcion"];
+    sysofic01_descripcion = fixEncoding(json["sysofic01_descripcion"]);
     codigo_mensaje = json["codigo_mensaje"];
     mensaje = json["mensaje"];
   }

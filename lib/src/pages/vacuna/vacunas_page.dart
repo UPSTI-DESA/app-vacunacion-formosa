@@ -102,8 +102,11 @@ class _VacunasPageState extends State<VacunasPage> {
   Widget build(BuildContext context) {
     ScrollController generalScroll = ScrollController();
 
-    return WillPopScope(
-      onWillPop: onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) onWillPop();
+      },
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -112,8 +115,22 @@ class _VacunasPageState extends State<VacunasPage> {
                 onTap: () {
                   showModalBottomSheet(
                       context: context,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16)),
+                      ),
                       builder: (BuildContext context) {
-                        return vacunasAplicadas();
+                        return DraggableScrollableSheet(
+                          initialChildSize: 0.5,
+                          minChildSize: 0.3,
+                          maxChildSize: 0.95,
+                          expand: false,
+                          builder: (context, scrollController) {
+                            return vacunasAplicadas(
+                                scrollController: scrollController);
+                          },
+                        );
                       });
                 },
                 child: FaIcon(FontAwesomeIcons.hospitalUser,
@@ -139,7 +156,7 @@ class _VacunasPageState extends State<VacunasPage> {
             const EncabezadoWave(),
             RawScrollbar(
               thumbColor: SisVacuColor.verceleste,
-              isAlwaysShown: true,
+              thumbVisibility: true,
               radius: const Radius.circular(20),
               thickness: 5,
               controller: generalScroll,
@@ -247,12 +264,19 @@ class _VacunasPageState extends State<VacunasPage> {
     }
   }
 
-  Widget vacunasAplicadas() {
+  Widget vacunasAplicadas({ScrollController? scrollController}) {
     return Column(
       children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height * .01,
+        const SizedBox(height: 8),
+        Container(
+          width: 40,
+          height: 4,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(2),
+          ),
         ),
+        const SizedBox(height: 12),
         Text(
           'Vacunas Aplicadas',
           style: GoogleFonts.nunito(
@@ -260,39 +284,43 @@ class _VacunasPageState extends State<VacunasPage> {
                 const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
           ),
         ),
-        StreamBuilder(
-          stream: notificacionesDosisService.listaDosisAplicadasStream,
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            return notificacionesDosisService.listaDosisAplicadas.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount:
-                        notificacionesDosisService.listaDosisAplicadas.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        title: Text(notificacionesDosisService
-                                .listaDosisAplicadas[index].sysvacu05_nombre! +
-                            ' - ' +
-                            notificacionesDosisService
-                                .listaDosisAplicadas[index].sysvacu04_nombre!),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Lote: - ' +
-                                notificacionesDosisService
-                                    .listaDosisAplicadas[index]
-                                    .sysdesa18_lote!),
-                            Text('Fecha de Aplicación: - ' +
-                                notificacionesDosisService
-                                    .listaDosisAplicadas[index]
-                                    .sysdesa10_fecha_aplicacion!),
-                          ],
-                        ),
-                      );
-                    },
-                  )
-                : const Text('No posee dosis aplicadas');
-          },
+        const SizedBox(height: 8),
+        Expanded(
+          child: StreamBuilder(
+            stream: notificacionesDosisService.listaDosisAplicadasStream,
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              return notificacionesDosisService.listaDosisAplicadas.isNotEmpty
+                  ? ListView.builder(
+                      controller: scrollController,
+                      itemCount: notificacionesDosisService
+                          .listaDosisAplicadas.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          title: Text(notificacionesDosisService
+                                  .listaDosisAplicadas[index]
+                                  .sysvacu05_nombre! +
+                              ' - ' +
+                              notificacionesDosisService
+                                  .listaDosisAplicadas[index].sysvacu04_nombre!),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Lote: - ' +
+                                  notificacionesDosisService
+                                      .listaDosisAplicadas[index]
+                                      .sysdesa18_lote!),
+                              Text('Fecha de Aplicación: - ' +
+                                  notificacionesDosisService
+                                      .listaDosisAplicadas[index]
+                                      .sysdesa10_fecha_aplicacion!),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  : const Center(child: Text('No posee dosis aplicadas'));
+            },
+          ),
         ),
       ],
     );
@@ -822,6 +850,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                       ],
                                       color: Colors.white),
                                   child: StreamBuilder(
+                                    stream: null,
                                     builder: (BuildContext context,
                                         AsyncSnapshot<dynamic> snapshot) {
                                       return Column(
@@ -889,7 +918,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
-                                                        isAlwaysShown: true,
+                                                        thumbVisibility: true,
                                                         radius: const Radius
                                                             .circular(20),
                                                         controller:
@@ -1003,7 +1032,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
-                                                        isAlwaysShown: true,
+                                                        thumbVisibility: true,
                                                         radius: const Radius
                                                             .circular(20),
                                                         child: ListView.builder(
@@ -1156,6 +1185,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                       ],
                                       color: Colors.white),
                                   child: StreamBuilder(
+                                    stream: null,
                                     builder: (BuildContext context,
                                         AsyncSnapshot<dynamic> snapshot) {
                                       return Column(
@@ -1225,7 +1255,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
-                                                        isAlwaysShown: true,
+                                                        thumbVisibility: true,
                                                         radius: const Radius
                                                             .circular(20),
                                                         controller:
@@ -1333,7 +1363,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
-                                                        isAlwaysShown: true,
+                                                        thumbVisibility: true,
                                                         radius: const Radius
                                                             .circular(20),
                                                         child: ListView.builder(
@@ -1483,6 +1513,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                       ],
                                       color: Colors.white),
                                   child: StreamBuilder(
+                                    stream: null,
                                     builder: (BuildContext context,
                                         AsyncSnapshot<dynamic> snapshot) {
                                       return Column(
@@ -1551,7 +1582,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
-                                                        isAlwaysShown: true,
+                                                        thumbVisibility: true,
                                                         radius: const Radius
                                                             .circular(20),
                                                         controller:
@@ -1658,7 +1689,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                       child: RawScrollbar(
                                                         thumbColor: SisVacuColor
                                                             .verceleste,
-                                                        isAlwaysShown: true,
+                                                        thumbVisibility: true,
                                                         radius: const Radius
                                                             .circular(20),
                                                         child: ListView.builder(
@@ -1821,7 +1852,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                 .1,
                                         child: RawScrollbar(
                                           thumbColor: SisVacuColor.verceleste,
-                                          isAlwaysShown: true,
+                                          thumbVisibility: true,
                                           radius: const Radius.circular(20),
                                           controller: dosisScrollController,
                                           child: ListView.separated(
@@ -1995,7 +2026,7 @@ class _VacunasPageState extends State<VacunasPage> {
                         height: MediaQuery.of(context).size.height * .1,
                         child: RawScrollbar(
                           thumbColor: SisVacuColor.verceleste,
-                          isAlwaysShown: true,
+                          thumbVisibility: true,
                           radius: const Radius.circular(20),
                           controller: lotesScrollController,
                           child: ListView.separated(
@@ -2195,7 +2226,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                     ));
                           },
                           icon: Icon(
-                            FontAwesomeIcons.infoCircle,
+                            FontAwesomeIcons.circleInfo,
                             color: SisVacuColor.vercelesteCuaternario,
                           ),
                           iconSize: 25,

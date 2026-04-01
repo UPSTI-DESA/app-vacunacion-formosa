@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 List<NotificacionesDosis> notificacionDosisFromJson(String str) =>
     List<NotificacionesDosis>.from(
@@ -35,24 +36,24 @@ class NotificacionesDosis {
 
   factory NotificacionesDosis.fromJson(Map<String, dynamic> json) =>
       NotificacionesDosis(
-        sysvacu04_nombre: json["sysvacu04_nombre"],
-        sysvacu05_nombre: json["sysvacu05_nombre"],
+        sysvacu04_nombre: fixEncoding(json["sysvacu04_nombre"]),
+        sysvacu05_nombre: fixEncoding(json["sysvacu05_nombre"]),
         sysdesa10_fecha_aplicacion: json["sysdesa10_fecha_aplicacion"],
         fecha_proxima_dosis: json["fecha_proxima_dosis"],
         dias_transcurridos: json["dias_transcurridos"],
-        sysdesa18_lote: json["sysdesa18_lote"],
+        sysdesa18_lote: fixEncoding(json["sysdesa18_lote"]),
         sysvacu03_tiempo_interdosis: json["sysvacu03_tiempo_interdosis"],
         codigo_mensaje: json["codigo_mensaje"],
         mensaje: json["mensaje"],
       );
 
   NotificacionesDosis.fromJsonMap(Map<String, dynamic> json) {
-    sysvacu04_nombre = json["sysvacu04_nombre"];
-    sysvacu05_nombre = json["sysvacu05_nombre"];
+    sysvacu04_nombre = fixEncoding(json["sysvacu04_nombre"]);
+    sysvacu05_nombre = fixEncoding(json["sysvacu05_nombre"]);
     sysdesa10_fecha_aplicacion = json["sysdesa10_fecha_aplicacion"];
     fecha_proxima_dosis = json["fecha_proxima_dosis"];
     dias_transcurridos = json["dias_transcurridos"];
-    sysdesa18_lote = json["sysdesa18_lote"];
+    sysdesa18_lote = fixEncoding(json["sysdesa18_lote"]);
     sysvacu03_tiempo_interdosis = json["sysvacu03_tiempo_interdosis"];
     codigo_mensaje = json["codigo_mensaje"];
     mensaje = json["mensaje"];

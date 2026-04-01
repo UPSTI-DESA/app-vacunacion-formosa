@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 List<Vacunador> vacunadorFromJson(String str) =>
     List<Vacunador>.from(json.decode(str).map((x) => Vacunador.fromJson(x)));
@@ -35,7 +36,7 @@ class Vacunador {
   factory Vacunador.fromJson(Map<String, dynamic> json) => Vacunador(
         id_sysdesa12: json["id_sysdesa12"],
         sysdesa06_nro_documento: json["sysdesa06_nro_documento"],
-        sysdesa06_nombre: json["sysdesa06_nombre"],
+        sysdesa06_nombre: fixEncoding(json["sysdesa06_nombre"]),
         codigo_mensaje: json["codigo_mensaje"],
         mensaje: json["mensaje"],
       );
@@ -43,7 +44,7 @@ class Vacunador {
   Vacunador.fromJsonMap(Map<String, dynamic> json) {
     id_sysdesa12 = json["id_sysdesa12"];
     sysdesa06_nro_documento = json["sysdesa06_nro_documento"];
-    sysdesa06_nombre = json["sysdesa06_nombre"];
+    sysdesa06_nombre = fixEncoding(json["sysdesa06_nombre"]);
     codigo_mensaje = json["codigo_mensaje"];
     mensaje = json["mensaje"];
   }

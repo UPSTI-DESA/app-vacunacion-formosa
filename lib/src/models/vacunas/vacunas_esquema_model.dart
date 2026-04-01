@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 VacunasEsquema vacunasEsquemaFromJson(String str) =>
     VacunasEsquema.fromJson(json.decode(str));
@@ -30,7 +31,7 @@ class VacunasEsquema {
   factory VacunasEsquema.fromJson(Map<String, dynamic> json) => VacunasEsquema(
         id_sysvacu02: json["id_sysvacu02"],
         sysvacu02_codigo: json["sysvacu02_codigo"],
-        sysvacu02_descripcion: json["sysvacu02_descripcion"],
+        sysvacu02_descripcion: fixEncoding(json["sysvacu02_descripcion"]),
         sysvacu02_limite_min: json["sysvacu02_limite_min"],
         sysvacu02_limite_max: json["sysvacu02_limite_max"],
         codigo_mensaje: json["codigo_mensaje"],
@@ -40,7 +41,7 @@ class VacunasEsquema {
   VacunasEsquema.fromJsonMap(Map<String, dynamic> json) {
     id_sysvacu02 = json["id_sysvacu02"];
     sysvacu02_codigo = json["sysvacu02_codigo"];
-    sysvacu02_descripcion = json["sysvacu02_descripcion"];
+    sysvacu02_descripcion = fixEncoding(json["sysvacu02_descripcion"]);
     sysvacu02_limite_min = json["sysvacu02_limite_min"];
     sysvacu02_limite_max = json["sysvacu02_limite_max"];
     codigo_mensaje = json["codigo_mensaje"];

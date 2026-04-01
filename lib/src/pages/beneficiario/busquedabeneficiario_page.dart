@@ -57,8 +57,11 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
       _incrementoVacunados();
     }
 
-    return WillPopScope(
-      onWillPop: onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) onWillPop();
+      },
       child: Scaffold(
         drawer: const BodyDrawer(),
         appBar: AppBar(
@@ -164,7 +167,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                         ));
                                               },
                                               icon: Icon(
-                                                FontAwesomeIcons.infoCircle,
+                                                FontAwesomeIcons.circleInfo,
                                                 color: SisVacuColor
                                                     .vercelesteCuaternario,
                                               ),

@@ -314,7 +314,7 @@ class _EscanerDniState extends State<EscanerDni> {
   _launchURL() async {
     const url =
         'https://drive.google.com/drive/u/0/folders/1Ia3CGOuCSbnpgt_4qNOGKlzkzc4FvuO4';
-    await launch(url);
+    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   }
 
   capturarTipoDni(String tipoEscaneo, int cantidadPosiciones) {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 List<Beneficiario> infoBeneficiarioFromJson(String str) =>
     List<Beneficiario>.from(
@@ -63,8 +64,8 @@ class Beneficiario {
   // ignore: non_constant_identifier_names
 
   factory Beneficiario.fromJson(Map<String, dynamic> json) => Beneficiario(
-        sysdesa10_apellido: json["sysdesa10_apellido"],
-        sysdesa10_nombre: json["sysdesa10_nombre"],
+        sysdesa10_apellido: fixEncoding(json["sysdesa10_apellido"]),
+        sysdesa10_nombre: fixEncoding(json["sysdesa10_nombre"]),
         sysdesa10_cuil: json["sysdesa10_cuil"],
         sysdesa10_dni: json["sysdesa10_dni"],
         sysdesa10_sexo: json["sysdesa10_sexo"],
@@ -77,8 +78,8 @@ class Beneficiario {
         foto_beneficiario: json["foto_beneficiario"],
       );
   Beneficiario.fromJsonMap(Map<String, dynamic> json) {
-    sysdesa10_apellido = json["sysdesa10_apellido"];
-    sysdesa10_nombre = json["sysdesa10_nombre"];
+    sysdesa10_apellido = fixEncoding(json["sysdesa10_apellido"]);
+    sysdesa10_nombre = fixEncoding(json["sysdesa10_nombre"]);
     sysdesa10_cuil = json["sysdesa10_cuil"];
     sysdesa10_dni = json["sysdesa10_dni"];
     sysdesa10_sexo = json["sysdesa10_sexo"];

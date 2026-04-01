@@ -12,7 +12,7 @@ class _InfoVacunasProviders {
     try {
       final resp = await http.get(url);
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(resp.body);
+        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
         final informacion =
             InfoVacunas.fromJsonList(decodedData['vacunas_configuradas']);
         return informacion.items;
@@ -28,7 +28,7 @@ class _InfoVacunasProviders {
   Future<List<InfoVacunas>> obtenerRespuestaVacunas(Uri url) async {
     final resp = await http.get(url);
     if (resp.statusCode == 200) {
-      final decodedData = json.decode(resp.body);
+      final decodedData = json.decode(utf8.decode(resp.bodyBytes));
       final vacunas =
           InfoVacunas.fromJsonList(decodedData['vacunas_configuradas']);
       return vacunas.items;

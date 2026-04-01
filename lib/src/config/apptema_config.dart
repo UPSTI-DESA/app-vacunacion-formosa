@@ -33,10 +33,10 @@ class SisVacuTheme {
         floatingActionButtonTheme:
             FloatingActionButtonThemeData(backgroundColor: vercelestePrimario),
         textTheme: const TextTheme(
-          bodyText1: TextStyle(),
-          bodyText2: TextStyle(),
-          subtitle1: TextStyle(),
-          subtitle2: TextStyle(),
+          bodyLarge: TextStyle(),
+          bodyMedium: TextStyle(),
+          titleMedium: TextStyle(),
+          titleSmall: TextStyle(),
         ).apply(
           bodyColor: black,
           displayColor: white,
@@ -44,22 +44,18 @@ class SisVacuTheme {
         buttonTheme: ButtonThemeData(
           buttonColor: verdefuerte,
         ),
-        errorColor: primaryRed,
-        // inputDecorationTheme: InputDecorationTheme(
-        //   enabledBorder: UnderlineInputBorder(
-        //     borderSide: BorderSide(
-        //       color: verdefuerte!,
-        //     ),
-        //   ),
-        //   errorStyle: TextStyle(color: primaryRed),
-        // ),
-        backgroundColor: white,
         scaffoldBackgroundColor: white,
         // fontFamily: GoogleFonts.nunito().toString(),
         pageTransitionsTheme: const PageTransitionsTheme(builders: {
           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
         }),
+        colorScheme: ColorScheme.light(
+          background: white ?? Colors.white,
+          error: primaryRed ?? Colors.red,
+          primary: vercelesteCuaternario ?? const Color(0xff00D1ED),
+          secondary: verdefuerte ?? const Color.fromRGBO(118, 214, 203, 1),
+        ),
       );
 
   final int? id;

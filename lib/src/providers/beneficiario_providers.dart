@@ -10,7 +10,7 @@ class _BeneficiarioProviders {
     try {
       final resp = await http.get(url);
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(resp.body);
+        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
         final beneficiario =
             Beneficiario.fromJsonList(decodedData['beneficiario']);
         return beneficiario.items;

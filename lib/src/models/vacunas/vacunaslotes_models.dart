@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 List<Lotes> lotesVacunasFromJson(String str) =>
     List<Lotes>.from(json.decode(str).map((x) => Lotes.fromJson(x)));
@@ -42,20 +43,20 @@ class Lotes {
 
   factory Lotes.fromJson(Map<String, dynamic> json) => Lotes(
         id_sysdesa18: json["id_sysdesa18"],
-        sysdesa18_lote: json["sysdesa18_lote"],
+        sysdesa18_lote: fixEncoding(json["sysdesa18_lote"]),
         sysdesa18_cantidad_actual: json["sysdesa18_cantidad_actual"],
         sysdesa18_fecha_vencimiento: json["sysdesa18_fecha_vencimiento"],
-        sysvacu02_descripcion: json["sysvacu02_descripcion"],
+        sysvacu02_descripcion: fixEncoding(json["sysvacu02_descripcion"]),
         codigo_mensaje: json["codigo_mensaje"],
         mensaje: json["mensaje"],
       );
 
   Lotes.fromJsonMap(Map<String, dynamic> json) {
     id_sysdesa18 = json["id_sysdesa18"];
-    sysdesa18_lote = json["sysdesa18_lote"];
+    sysdesa18_lote = fixEncoding(json["sysdesa18_lote"]);
     sysdesa18_cantidad_actual = json["sysdesa18_cantidad_actual"];
     sysdesa18_fecha_vencimiento = json["sysdesa18_fecha_vencimiento"];
-    sysvacu02_descripcion = json["sysvacu02_descripcion"];
+    sysvacu02_descripcion = fixEncoding(json["sysvacu02_descripcion"]);
     codigo_mensaje = json["codigo_mensaje"];
     mensaje = json["mensaje"];
   }

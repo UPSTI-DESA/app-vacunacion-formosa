@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 List<ConfiVacuna> confiVacunasFromJson(String str) => List<ConfiVacuna>.from(
     json.decode(str).map((x) => ConfiVacuna.fromJson(x)));
@@ -46,10 +47,10 @@ class ConfiVacuna {
 
   factory ConfiVacuna.fromJson(Map<String, dynamic> json) => ConfiVacuna(
         id_sysvacu03: json["id_sysvacu03"],
-        sysvacu01_descripcion: json["sysvacu01_descripcion"],
-        sysvacu02_descripcion: json["sysvacu02_descripcion"],
-        sysvacu05_nombre: json["sysvacu05_nombre"],
-        sysvacu06_denominacion: json["sysvacu06_denominacion"],
+        sysvacu01_descripcion: fixEncoding(json["sysvacu01_descripcion"]),
+        sysvacu02_descripcion: fixEncoding(json["sysvacu02_descripcion"]),
+        sysvacu05_nombre: fixEncoding(json["sysvacu05_nombre"]),
+        sysvacu06_denominacion: fixEncoding(json["sysvacu06_denominacion"]),
         sysvacu05_orden: json["sysvacu05_orden"],
         codigo_mensaje: json["codigo_mensaje"],
         mensaje: json["mensaje"],
@@ -57,10 +58,10 @@ class ConfiVacuna {
 
   ConfiVacuna.fromJsonMap(Map<String, dynamic> json) {
     id_sysvacu03 = json["id_sysvacu03"];
-    sysvacu01_descripcion = json["sysvacu01_descripcion"];
-    sysvacu02_descripcion = json["sysvacu02_descripcion"];
-    sysvacu05_nombre = json["sysvacu05_nombre"];
-    sysvacu06_denominacion = json["sysvacu06_denominacion"];
+    sysvacu01_descripcion = fixEncoding(json["sysvacu01_descripcion"]);
+    sysvacu02_descripcion = fixEncoding(json["sysvacu02_descripcion"]);
+    sysvacu05_nombre = fixEncoding(json["sysvacu05_nombre"]);
+    sysvacu06_denominacion = fixEncoding(json["sysvacu06_denominacion"]);
     sysvacu05_orden = json["sysvacu05_orden"];
     codigo_mensaje = json["codigo_mensaje"];
     mensaje = json["mensaje"];

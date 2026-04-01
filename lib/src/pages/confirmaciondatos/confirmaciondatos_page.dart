@@ -50,7 +50,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                 EdgeInsets.only(left: MediaQuery.of(context).size.width * .08),
             child: FloatingActionButton(
               heroTag: "calendario",
-              child: Icon(FontAwesomeIcons.calendarAlt,
+              child: Icon(FontAwesomeIcons.calendarDays,
                   size: getValueForScreenType(context: context, mobile: 18)),
               mini: true,
               onPressed: () async {

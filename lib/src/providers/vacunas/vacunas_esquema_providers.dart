@@ -12,7 +12,7 @@ class _VacunasEsquemaProvider {
     try {
       final resp = await http.get(url);
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(resp.body);
+        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
         final esquemas =
             VacunasEsquema.fromJsonList(decodedData['esquema_vacunas']);
         return esquemas.items;

@@ -24,9 +24,12 @@ class _InsertRegistro {
   // ignore: missing_return
   Future<List<MensajeServidor>> procesarRespuestaUri(Uri uri) async {
     try {
-      final resp = await http.post(uri);
+      final resp = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+      );
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(resp.body);
+        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
         final mensaje = MensajeServidor.fromJsonList(decodedData['mensajes']);
         return mensaje.items;
       }
@@ -39,9 +42,12 @@ class _InsertRegistro {
 
   Future<List<MensajeServidor>?> procesarRespuestaConExepciones(Uri uri) async {
     try {
-      final resp = await http.post(uri);
+      final resp = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+      );
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(resp.body);
+        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
         final mensaje = MensajeServidor.fromJsonList(decodedData['mensajes']);
         return mensaje.items;
       }

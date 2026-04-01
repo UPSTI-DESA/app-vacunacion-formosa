@@ -90,7 +90,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                   children: [
                     ListTile(
                         leading: Icon(
-                          FontAwesomeIcons.solidEdit,
+                          FontAwesomeIcons.solidPenToSquare,
                           color: SisVacuColor.vercelesteCuaternario,
                           size: MediaQuery.of(context).size.width / 20.0,
                         ),
@@ -222,6 +222,6 @@ class _BodyDrawerState extends State<BodyDrawer> {
   _launchPDF() async {
     const url =
         'https://drive.google.com/file/d/1qD3x3xvzmIVuJlR_UtMzdX619A4F7gAz/view?usp=sharing';
-    await launch(url);
+    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   }
 }

@@ -11,7 +11,7 @@ class _VacunasxPerfiles {
     try {
       final resp = await http.get(url);
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(resp.body);
+        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
         final vacunas =
             VacunasxPerfil.fromJsonList(decodedData['vacunas_configuradas']);
         return vacunas.items;

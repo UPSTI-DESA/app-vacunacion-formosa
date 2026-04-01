@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 VacunasCondicion vacunasCondicionFromJson(String str) =>
     VacunasCondicion.fromJson(json.decode(str));
@@ -32,9 +33,9 @@ class VacunasCondicion {
       VacunasCondicion(
         id_sysvacu01: json["id_sysvacu01"],
         sysvacu01_codigo: json["sysvacu01_codigo"],
-        sysvacu01_descripcion: json["sysvacu01_descripcion"],
+        sysvacu01_descripcion: fixEncoding(json["sysvacu01_descripcion"]),
         sysvacu01_orden: json["sysvacu01_orden"],
-        sysvacu01_abreviatura: json["sysvacu01_abreviatura"],
+        sysvacu01_abreviatura: fixEncoding(json["sysvacu01_abreviatura"]),
         codigo_mensaje: json["codigo_mensaje"],
         mensaje: json["mensaje"],
       );
@@ -42,9 +43,9 @@ class VacunasCondicion {
   VacunasCondicion.fromJsonMap(Map<String, dynamic> json) {
     id_sysvacu01 = json["id_sysvacu01"];
     sysvacu01_codigo = json["sysvacu01_codigo"];
-    sysvacu01_descripcion = json["sysvacu01_descripcion"];
+    sysvacu01_descripcion = fixEncoding(json["sysvacu01_descripcion"]);
     sysvacu01_orden = json["sysvacu01_orden"];
-    sysvacu01_abreviatura = json["sysvacu01_abreviatura"];
+    sysvacu01_abreviatura = fixEncoding(json["sysvacu01_abreviatura"]);
     codigo_mensaje = json["codigo_mensaje"];
     mensaje = json["mensaje"];
   }
