@@ -1,9 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 
 import 'package:sistema_vacunacion/src/models/models.dart';
@@ -11,7 +10,6 @@ import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class EscanerDni extends StatefulWidget {
   final String textoAyuda;
@@ -71,21 +69,18 @@ class _EscanerDniState extends State<EscanerDni> {
   }
 
   Future<void> scanBarcodeNormal() async {
-    String barcodeScanRes;
+    final String? barcodeScanRes = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (context) => const _ScannerPage()),
+    );
 
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          "#ff6666", "Cancelar", true, ScanMode.BARCODE);
-    } on PlatformException {
-      barcodeScanRes = 'No se puede procesar.';
-    }
     if (!mounted) return;
-
-    //CAPTURO EL RESULTADO DEL ESCANER Y CON LA FUNCION SPLIT ELIMINO LOS @ Y SEPARO CADA PARTE EN UN ARRAY
-    //PARA ASI, LUEGO PODER ACCEDER A ELLAS
+    if (barcodeScanRes == null) {
+      loadingLoginService.cargarEstado(false);
+      return;
+    }
 
     setState(() {
-      // _scanBarcode = barcodeScanRes;
       conSplit = barcodeScanRes.split('@');
       scanBarcode = conSplit.toString();
     });
@@ -95,7 +90,6 @@ class _EscanerDniState extends State<EscanerDni> {
     switch (widget.tipoEscaneo) {
       case 'Registrador':
         capturarTipoDni('Registrador', cantidadPosiciones);
-        //final respUsuario = await usuariosProviers.validarUsuarios(dniPersona);
         final respUsuario =
             await usuariosProviers.validarUsuariosNuevo(dniPersona);
         if (respUsuario[0].flxcore03_dni == '') {
@@ -118,16 +112,14 @@ class _EscanerDniState extends State<EscanerDni> {
           loadingLoginService.cargarEstado(false);
         } else {
           if (respUsuario[0].sysofic01_descripcion != null) {
-            //Singleton Registrador
             registradorService.cargarRegistrador(respUsuario[0]);
             if (datosdecargaprovider.versionApp == 'Ok') {
               Future.delayed(const Duration(milliseconds: 1000), () {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        // ignore: missing_required_param
                         builder: (context) => VacunadorPage(
-                              infoCargador: respUsuario, //agrege
+                              infoCargador: respUsuario,
                             )),
                     (Route<dynamic> route) => false);
               });
@@ -214,8 +206,6 @@ class _EscanerDniState extends State<EscanerDni> {
 
       default:
     }
-
-    //identificarNTramite();
   }
 
   void mostrarVerificacionPersonaporEscaner() {
@@ -268,23 +258,17 @@ class _EscanerDniState extends State<EscanerDni> {
   }
 
   obtenerDatosBeneficiario(String? dni) async {
-    //Provider con Datos del Beneficiario
-    //Cargo Datos de Beneficiario en Singleton, y envio parametros EDAD + DNI para recibir la lista de VACUNAS
-
     final datosBeneficiario = await beneficiarioProviders
         .obtenerDatosBeneficiario(codigodebarras, dni, sexoPersona);
     setState(() {
       beneficiarioService.cargarBeneficiario(datosBeneficiario[0]);
     });
-    //Recuperamos la lista de Vacunas
 
     final notificaciones =
         await notificacionesProvider.validarNotificaciones(dni, sexoPersona);
     notificaciones[0].codigo_mensaje == '1'
-        // ignore: unnecessary_statements
         ? {
             notificacionesDosisService.cargarListaDosis(notificaciones),
-            //Provider.of<ModeloNotificacion>(context, listen: false).numero = 1
           }
         : notificacionesDosisService.cargarRegistro(NotificacionesDosis());
     Navigator.pushAndRemoveUntil(
@@ -293,32 +277,7 @@ class _EscanerDniState extends State<EscanerDni> {
         (Route<dynamic> route) => false);
   }
 
-  void mostrarAlertaActualizacion(BuildContext context, String mensaje) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Información Importante'),
-            content: Text(mensaje),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: _launchURL,
-              )
-            ],
-          );
-        });
-  }
-
-//Funcion para redirigir al Link de Descarga de la Ultima Aplicacion Disponible
-  _launchURL() async {
-    const url =
-        'https://drive.google.com/drive/u/0/folders/1Ia3CGOuCSbnpgt_4qNOGKlzkzc4FvuO4';
-    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-  }
-
   capturarTipoDni(String tipoEscaneo, int cantidadPosiciones) {
-//Si la cantidad de posiciones es 8 Significa que es el DNI NUEVO
     if (cantidadPosiciones == 8) {
       setState(() {
         nombrePersona = conSplit[2];
@@ -327,56 +286,26 @@ class _EscanerDniState extends State<EscanerDni> {
         sexoPersona = conSplit[3];
         numeroTramite = conSplit[0];
         codigodebarras = conSplit.toString();
-        // if (tipoEscaneo == 'Beneficiario') {
-        //   // beneficiarioService.cargarBeneficiario(Beneficiario(
-        //   //     dni: conSplit[4].replaceAll(' ', ''),
-        //   //     nombre: conSplit[1] + ' ' + conSplit[2],
-        //   //     codigoBarras: conSplit.toString(),
-        //   //     numeroTramite: conSplit[0],
-        //   //     sexoPersona: conSplit[3]));
-        // }
       });
     } else if (cantidadPosiciones == 17) {
-      //Si la cantidad de posiciones es 17 la persona posee DNI VIEJO
       setState(() {
         nombrePersona = conSplit[5];
         apellidoPersona = conSplit[4];
         dniPersona = conSplit[1];
-        dniPersona = dniPersona!
-            .replaceAll(' ', ''); //Elimino espacios que contiene el DNI
+        dniPersona = dniPersona!.replaceAll(' ', '');
         sexoPersona = conSplit[8];
         numeroTramite = conSplit[10];
         codigodebarras = conSplit.toString();
-
-        // if (tipoEscaneo == 'Beneficiario') {
-        //   beneficiarioService.cargarBeneficiario(Beneficiario(
-        //       dni: conSplit[1].replaceAll(' ', ''),
-        //       nombre: conSplit[4] + ' ' + conSplit[5],
-        //       codigoBarras: conSplit.toString(),
-        //       numeroTramite: conSplit[10],
-        //       sexoPersona: conSplit[8]));
-        // }
       });
     } else if (cantidadPosiciones == 9) {
-      //Si la cantidad de posiciones es 9 la persona posee DNI NUEVO BIS
       setState(() {
         nombrePersona = conSplit[2];
         apellidoPersona = conSplit[1];
         dniPersona = conSplit[4];
-        dniPersona = dniPersona!
-            .replaceAll(' ', ''); //Elimino espacios que contiene el DNI
+        dniPersona = dniPersona!.replaceAll(' ', '');
         sexoPersona = conSplit[3];
         numeroTramite = conSplit[0];
         codigodebarras = conSplit.toString();
-
-        // if (tipoEscaneo == 'Beneficiario') {
-        //   beneficiarioService.cargarBeneficiario(Beneficiario(
-        //       dni: conSplit[4].replaceAll(' ', ''),
-        //       nombre: conSplit[1] + ' ' + conSplit[2],
-        //       codigoBarras: conSplit.toString(),
-        //       numeroTramite: conSplit[0],
-        //       sexoPersona: conSplit[3]));
-        // }
       });
     }
   }
@@ -396,5 +325,39 @@ class _EscanerDniState extends State<EscanerDni> {
             ],
           );
         });
+  }
+}
+
+class _ScannerPage extends StatefulWidget {
+  const _ScannerPage();
+
+  @override
+  State<_ScannerPage> createState() => _ScannerPageState();
+}
+
+class _ScannerPageState extends State<_ScannerPage> {
+  bool _hasPopped = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Escanear DNI'),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+      ),
+      body: MobileScanner(
+        onDetect: (capture) {
+          if (_hasPopped) return;
+          final barcodes = capture.barcodes;
+          if (barcodes.isEmpty) return;
+          final rawValue = barcodes.first.rawValue;
+          if (rawValue != null) {
+            _hasPopped = true;
+            Navigator.of(context).pop(rawValue);
+          }
+        },
+      ),
+    );
   }
 }
