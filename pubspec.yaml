@@ -41,7 +41,7 @@ dependencies:
   http: ^1.2.0
   responsive_builder: ^0.7.1
   shared_preferences: ^2.2.0
-  intl: ^0.18.1
+  intl: ^0.20.2
   font_awesome_flutter: ^10.9.0
   google_fonts: ^6.0.0
   loading_indicator: ^3.1.1

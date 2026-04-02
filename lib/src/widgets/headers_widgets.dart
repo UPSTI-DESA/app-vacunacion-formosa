@@ -34,7 +34,7 @@ class _EncabezadoWavePainter extends CustomPainter {
 
     //Propiedades
     lapiz.color = SisVacuColor.vercelesteCuaternario!
-        .withOpacity(0.25); //Color.fromRGBO(19, 44, 74, 1);
+        .withValues(alpha: 0.25); //Color.fromRGBO(19, 44, 74, 1);
     lapiz.style = PaintingStyle.fill;
     lapiz.strokeWidth = 0.5;
 
@@ -110,7 +110,7 @@ class _EncabezadoDosPainter extends CustomPainter {
 
     //Propiedades
     lapiz.color = SisVacuColor.verceleste!
-        .withOpacity(0.6); //Color.fromRGBO(19, 44, 74, 1);
+        .withValues(alpha: 0.6); //Color.fromRGBO(19, 44, 74, 1);
     lapiz.style = PaintingStyle.fill;
     lapiz.strokeWidth = 20;
 

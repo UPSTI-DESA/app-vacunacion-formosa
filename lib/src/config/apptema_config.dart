@@ -51,7 +51,7 @@ class SisVacuTheme {
           TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
         }),
         colorScheme: ColorScheme.light(
-          background: white ?? Colors.white,
+          surface: white ?? Colors.white,
           error: primaryRed ?? Colors.red,
           primary: vercelesteCuaternario ?? const Color(0xff00D1ED),
           secondary: verdefuerte ?? const Color.fromRGBO(118, 214, 203, 1),

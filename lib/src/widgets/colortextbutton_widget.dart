@@ -28,7 +28,7 @@ class ColorTextButton extends StatelessWidget {
         // splashColor: Colors.blueAccent,
         // color: SisVacuColor.verdefuerte,
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color?>(color),
+          backgroundColor: WidgetStateProperty.all<Color?>(color),
         ),
         onPressed: onPressed,
         child: Row(

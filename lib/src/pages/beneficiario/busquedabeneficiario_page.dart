@@ -59,7 +59,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) onWillPop();
       },
       child: Scaffold(
@@ -114,7 +114,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                       boxShadow: <BoxShadow>[
                                         BoxShadow(
                                             color:
-                                                Colors.black.withOpacity(0.08),
+                                                Colors.black.withValues(alpha: 0.08),
                                             offset: const Offset(0, 5),
                                             blurRadius: 5)
                                       ],
@@ -230,7 +230,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                   borderRadius: BorderRadius.circular(8.0),
                                   boxShadow: <BoxShadow>[
                                     BoxShadow(
-                                        color: Colors.black.withOpacity(0.08),
+                                        color: Colors.black.withValues(alpha: 0.08),
                                         offset: const Offset(0, 5),
                                         blurRadius: 5)
                                   ],
@@ -327,7 +327,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                                 : FontWeight.w100),
                                       ),
                                       Switch(
-                                          activeColor: Colors.blue,
+                                          activeThumbColor: Colors.blue,
                                           inactiveTrackColor: Colors.pink,
                                           inactiveThumbColor: Colors.pink,
                                           value: genero,
@@ -440,7 +440,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                                 !modo ? FontWeight.w700 : FontWeight.w100),
                       ),
                       Switch(
-                          activeColor: SisVacuColor.azulFormosa,
+                          activeThumbColor: SisVacuColor.azulFormosa,
                           inactiveTrackColor: SisVacuColor.azulFormosa,
                           inactiveThumbColor: SisVacuColor.azulFormosa,
                           value: modo,
@@ -644,7 +644,7 @@ class _CantidadVacunadosState extends State<CantidadVacunados> {
                     height: MediaQuery.of(context).size.height * 0.12,
                     decoration: BoxDecoration(
                         color: SisVacuColor.vercelesteCuaternario!
-                            .withOpacity(0.5),
+                            .withValues(alpha: 0.5),
                         shape: BoxShape.circle),
                   ),
                 ),

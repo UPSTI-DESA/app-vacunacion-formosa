@@ -88,7 +88,7 @@ class _LoginBodyState extends State<LoginBody> {
                 ? Container(
                     height: double.infinity,
                     width: double.infinity,
-                    color: Colors.black.withOpacity(.7),
+                    color: Colors.black.withValues(alpha: .7),
                     child: const Center(child: LoadingEstrellas()))
                 : loadingLoginService.getEstadoPrimerInicioState!
                     ? Container()
@@ -102,7 +102,7 @@ class _LoginBodyState extends State<LoginBody> {
                               ? Container(
                                   height: double.infinity,
                                   width: double.infinity,
-                                  color: Colors.black.withOpacity(.7),
+                                  color: Colors.black.withValues(alpha: .7),
                                   child:
                                       const Center(child: LoadingEstrellas()))
                               : Container();

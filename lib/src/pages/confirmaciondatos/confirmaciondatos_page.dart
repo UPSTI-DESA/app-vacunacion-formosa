@@ -798,7 +798,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                       child: Text(
                         'Si desea cambiar la fecha de aplicación, seleccione el calendario',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.black.withOpacity(.7)),
+                        style: TextStyle(color: Colors.black.withValues(alpha: .7)),
                       ),
                     )
                   ],
@@ -807,12 +807,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                     ? Container(
                         height: size.height,
                         width: size.width,
-                        color: Colors.black.withOpacity(0.8),
-                        child: Center(
+                        color: Colors.black.withValues(alpha: 0.8),
+                        child: const Center(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               CircularProgressIndicator(),
                               Text(
                                 'Espere porfavor...',

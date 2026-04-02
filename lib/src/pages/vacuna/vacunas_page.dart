@@ -104,7 +104,7 @@ class _VacunasPageState extends State<VacunasPage> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (!didPop) onWillPop();
       },
       child: Scaffold(
@@ -135,7 +135,7 @@ class _VacunasPageState extends State<VacunasPage> {
                 },
                 child: FaIcon(FontAwesomeIcons.hospitalUser,
                     size: getValueForScreenType(context: context, mobile: 20),
-                    color: SisVacuColor.white!.withOpacity(1.0))),
+                    color: SisVacuColor.white!.withValues(alpha: 1.0))),
           ),
           centerTitle: true,
           backgroundColor: SisVacuColor.vercelesteCuaternario,
@@ -337,7 +337,7 @@ class _VacunasPageState extends State<VacunasPage> {
             borderRadius: BorderRadius.circular(8.0),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
+                  color: Colors.black.withValues(alpha: 0.08),
                   offset: const Offset(0, 5),
                   blurRadius: 5)
             ],
@@ -479,7 +479,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           borderRadius: BorderRadius.circular(8.0),
                           boxShadow: <BoxShadow>[
                             BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
+                                color: Colors.black.withValues(alpha: 0.08),
                                 offset: const Offset(0, 5),
                                 blurRadius: 5)
                           ],
@@ -664,7 +664,7 @@ class _VacunasPageState extends State<VacunasPage> {
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         offset: const Offset(0, 5),
                         blurRadius: 5)
                   ],
@@ -759,7 +759,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                             ? <BoxShadow>[
                                                 BoxShadow(
                                                     color: Colors.black
-                                                        .withOpacity(0.1),
+                                                        .withValues(alpha: 0.1),
                                                     offset: const Offset(0, 5),
                                                     blurRadius: 5)
                                               ]
@@ -770,9 +770,9 @@ class _VacunasPageState extends State<VacunasPage> {
                                                     index]
                                             ? SisVacuColor
                                                 .vercelesteCuaternario!
-                                                .withOpacity(.75)
+                                                .withValues(alpha: .75)
                                             : SisVacuColor.white!
-                                                .withOpacity(.5),
+                                                .withValues(alpha: .5),
                                         borderRadius:
                                             BorderRadius.circular(15)),
                                     //height: MediaQuery.of(context).size.height * .2,
@@ -844,7 +844,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                       boxShadow: <BoxShadow>[
                                         BoxShadow(
                                             color:
-                                                Colors.black.withOpacity(0.08),
+                                                Colors.black.withValues(alpha: 0.08),
                                             offset: const Offset(0, 5),
                                             blurRadius: 5)
                                       ],
@@ -869,7 +869,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                 boxShadow: <BoxShadow>[
                                                   BoxShadow(
                                                       color: Colors.black
-                                                          .withOpacity(0.05),
+                                                          .withValues(alpha: 0.05),
                                                       offset:
                                                           const Offset(0, 5),
                                                       blurRadius: 5)
@@ -1179,7 +1179,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                       boxShadow: <BoxShadow>[
                                         BoxShadow(
                                             color:
-                                                Colors.black.withOpacity(0.08),
+                                                Colors.black.withValues(alpha: 0.08),
                                             offset: const Offset(0, 5),
                                             blurRadius: 5)
                                       ],
@@ -1204,7 +1204,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                 boxShadow: <BoxShadow>[
                                                   BoxShadow(
                                                       color: Colors.black
-                                                          .withOpacity(0.05),
+                                                          .withValues(alpha: 0.05),
                                                       offset:
                                                           const Offset(0, 5),
                                                       blurRadius: 5)
@@ -1507,7 +1507,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                       boxShadow: <BoxShadow>[
                                         BoxShadow(
                                             color:
-                                                Colors.black.withOpacity(0.08),
+                                                Colors.black.withValues(alpha: 0.08),
                                             offset: const Offset(0, 5),
                                             blurRadius: 5)
                                       ],
@@ -1532,7 +1532,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                 boxShadow: <BoxShadow>[
                                                   BoxShadow(
                                                       color: Colors.black
-                                                          .withOpacity(0.05),
+                                                          .withValues(alpha: 0.05),
                                                       offset:
                                                           const Offset(0, 5),
                                                       blurRadius: 5)
@@ -1836,7 +1836,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                       boxShadow: <BoxShadow>[
                                         BoxShadow(
                                             color:
-                                                Colors.black.withOpacity(0.08),
+                                                Colors.black.withValues(alpha: 0.08),
                                             offset: const Offset(0, 5),
                                             blurRadius: 5)
                                       ],
@@ -1998,7 +1998,7 @@ class _VacunasPageState extends State<VacunasPage> {
                       borderRadius: BorderRadius.circular(8.0),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
+                            color: Colors.black.withValues(alpha: 0.08),
                             offset: const Offset(0, 5),
                             blurRadius: 5)
                       ],
@@ -2087,7 +2087,7 @@ class _VacunasPageState extends State<VacunasPage> {
             borderRadius: BorderRadius.circular(8.0),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
+                  color: Colors.black.withValues(alpha: 0.08),
                   offset: const Offset(0, 5),
                   blurRadius: 5)
             ],
@@ -2121,7 +2121,7 @@ class _VacunasPageState extends State<VacunasPage> {
         children: [
           Text(
             'Si lo desea, toque el paso que quiere modificar',
-            style: TextStyle(color: Colors.black.withOpacity(.7)),
+            style: TextStyle(color: Colors.black.withValues(alpha: .7)),
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height * .01,
@@ -2131,9 +2131,9 @@ class _VacunasPageState extends State<VacunasPage> {
             currentStep: pasos - 1,
             size: 36,
             selectedColor: SisVacuColor.verceleste!,
-            unselectedColor: Colors.black.withOpacity(.7),
+            unselectedColor: Colors.black.withValues(alpha: .7),
             customStep: (index, color, _) =>
-                color != Colors.black.withOpacity(.7)
+                color != Colors.black.withValues(alpha: .7)
                     ? GestureDetector(
                         onTap: () {
                           setState(() {
@@ -2185,7 +2185,7 @@ class _VacunasPageState extends State<VacunasPage> {
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         offset: const Offset(0, 5),
                         blurRadius: 5)
                   ],
@@ -2268,7 +2268,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                 !genero ? FontWeight.w700 : FontWeight.w100),
                       ),
                       Switch(
-                          activeColor: Colors.blue,
+                          activeThumbColor: Colors.blue,
                           inactiveTrackColor: Colors.pink,
                           inactiveThumbColor: Colors.pink,
                           value: genero,

@@ -61,7 +61,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
         top: false,
         child: PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (!didPop) onWillPop();
           },
           child: Scaffold(
@@ -106,7 +106,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                 color: Colors.white,
                                 boxShadow: <BoxShadow>[
                                   BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: Colors.black.withValues(alpha: 0.05),
                                       offset: const Offset(0, 5),
                                       blurRadius: 5)
                                 ]),
@@ -239,8 +239,8 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                                                       InkWell(
                                                                     highlightColor: SisVacuColor
                                                                         .vercelestePrimario!
-                                                                        .withOpacity(
-                                                                            0.3),
+                                                                        .withValues(
+                                                                            alpha: 0.3),
                                                                     onTap: () {
                                                                       registradorService
                                                                           .editarEfectorUsuario(
@@ -426,7 +426,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                                                   .w100),
                                                 ),
                                                 Switch(
-                                                    activeColor:
+                                                    activeThumbColor:
                                                         SisVacuColor.red,
                                                     inactiveTrackColor:
                                                         SisVacuColor
@@ -506,7 +506,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                                                           : FontWeight.w100),
                                                 ),
                                                 Switch(
-                                                    activeColor:
+                                                    activeThumbColor:
                                                         SisVacuColor.red,
                                                     inactiveTrackColor:
                                                         SisVacuColor
@@ -615,7 +615,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                       color: Colors.white,
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             offset: const Offset(0, 5),
                             blurRadius: 5)
                       ]),
@@ -757,7 +757,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
       controladorDni.clear();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           elevation: 2.0,
-          backgroundColor: SisVacuColor.red!.withOpacity(0.7),
+          backgroundColor: SisVacuColor.red!.withValues(alpha: 0.7),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(milliseconds: 1500),
           content: Text(
