@@ -23,17 +23,37 @@ class _PerfilesVacunacionProviders {
     throw 'Ocurrio un error';
   }
 
-  Future obtenerDatosPerfilesVacunacion(String? rela) async {
+  /// Siempre actualiza el servicio para que la UI no quede en carga infinita.
+  Future<void> obtenerDatosPerfilesVacunacion(String? rela) async {
     final url =
         Uri(scheme: scheme, host: host, path: urlPerfiVacu, queryParameters: {
       'rela_flxcore03': rela,
     });
 
-    final List<PerfilesVacunacion> resp = await procesarRespuestaDos(url);
-    if (resp[0].codigo_mensaje != '0') {
-      return perfilesVacunacionService.cargarlistaPerfilesVacunacion(resp);
-    } else {
-      return resp;
+    try {
+      final List<PerfilesVacunacion> resp = await procesarRespuestaDos(url);
+      if (resp.isEmpty) {
+        perfilesVacunacionService.cargarlistaPerfilesVacunacion([]);
+        return;
+      }
+      // Mismo criterio que en vacunas: codigo_mensaje "0" indica error del backend.
+      if (resp.first.codigo_mensaje == '0') {
+        final texto = resp.first.mensaje?.trim();
+        perfilesVacunacionService.cargarlistaPerfilesVacunacion(
+          [],
+          mensajeSiListaVacia: (texto != null && texto.isNotEmpty)
+              ? texto
+              : 'No se pudieron obtener los perfiles de vacunaci\u00F3n.',
+        );
+        return;
+      }
+      perfilesVacunacionService.cargarlistaPerfilesVacunacion(resp);
+    } catch (_) {
+      perfilesVacunacionService.cargarlistaPerfilesVacunacion(
+        [],
+        mensajeSiListaVacia:
+            'No se pudo conectar con el servidor. Revise su conexi\u00F3n e intente de nuevo.',
+      );
     }
   }
 }

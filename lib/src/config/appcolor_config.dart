@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'config.dart';
 
 class SisVacuColor {
-  static SisVacuTheme theme = SisVacuTheme.defaultTheme;
+  /// Paleta de marca (claro); los fondos y textos deben preferir [Theme.of(context).colorScheme].
+  static SisVacuTheme theme = SisVacuTheme.light;
 
   static Color? get primaryGreen => theme.primaryGreen;
   static Color? get primaryRed => theme.primaryRed;

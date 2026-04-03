@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
+
 List<ValidaVacunacionTxt> valVacunasTXTFromJson(String str) =>
     List<ValidaVacunacionTxt>.from(
         json.decode(str).map((x) => ValidaVacunacionTxt.fromJson(x)));
@@ -47,21 +49,21 @@ class ValidaVacunacionTxt {
       ValidaVacunacionTxt(
         sysdesa10_dni: json["sysdesa10_dni"],
         sysdesa10_nro_tramite: json["sysdesa10_nro_tramite"],
-        sysdesa10_nombre: json["sysdesa10_nombre"],
-        sysdesa10_apellido: json["sysdesa10_apellido"],
+        sysdesa10_nombre: fixEncoding(json["sysdesa10_nombre"]),
+        sysdesa10_apellido: fixEncoding(json["sysdesa10_apellido"]),
         sysdesa10_sexo: json["sysdesa10_sexo"],
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   ValidaVacunacionTxt.fromJsonMap(Map<String, dynamic> json) {
     sysdesa10_dni = json["sysdesa10_dni"];
     sysdesa10_nro_tramite = json["sysdesa10_nro_tramite"];
-    sysdesa10_nombre = json["sysdesa10_nombre"];
-    sysdesa10_apellido = json["sysdesa10_apellido"];
+    sysdesa10_nombre = fixEncoding(json["sysdesa10_nombre"]);
+    sysdesa10_apellido = fixEncoding(json["sysdesa10_apellido"]);
     sysdesa10_sexo = json["sysdesa10_sexo"];
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

@@ -38,7 +38,7 @@ class Vacunador {
         sysdesa06_nro_documento: json["sysdesa06_nro_documento"],
         sysdesa06_nombre: fixEncoding(json["sysdesa06_nombre"]),
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   Vacunador.fromJsonMap(Map<String, dynamic> json) {
@@ -46,7 +46,7 @@ class Vacunador {
     sysdesa06_nro_documento = json["sysdesa06_nro_documento"];
     sysdesa06_nombre = fixEncoding(json["sysdesa06_nombre"]);
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

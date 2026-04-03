@@ -8,7 +8,7 @@ import 'package:sistema_vacunacion/src/models/models.dart';
 class _UsuariosProviders {
   Future<List<Usuarios>> procesarRespuestaDos(Uri url) async {
     try {
-      final resp = await http.get(url);
+      final resp = await http.get(url).timeout(const Duration(seconds: 30));
 
       if (resp.statusCode == 200) {
         final decodedData = json.decode(utf8.decode(resp.bodyBytes));
@@ -20,7 +20,7 @@ class _UsuariosProviders {
       throw "Hubo un error $e";
     }
 
-    throw 'Hubo un error global mas jodido';
+    throw 'Hubo un error';
   }
 
   Future validarUsuarios(String dni) async {
@@ -30,11 +30,12 @@ class _UsuariosProviders {
     });
 
     final List<Usuarios> resp = await procesarRespuestaDos(url);
-    if (resp[0].flxcore03_dni != '') {
-      return resp;
-    } else {
-      return resp;
-    }
+
+    // Guard: la API siempre devuelve al menos 1 item.
+    // flxcore03_dni vacio indica usuario no encontrado (manejado por el llamador).
+    if (resp.isEmpty) throw 'No se encontraron datos del usuario.';
+
+    return resp;
   }
 
   Future validarUsuariosNuevo(String? dni) async {
@@ -47,6 +48,10 @@ class _UsuariosProviders {
         });
 
     final List<Usuarios> resp = await procesarRespuestaDos(url);
+
+    // Guard: el llamador (escanerdni_widget) accede directamente a resp[0].
+    if (resp.isEmpty) throw 'No se encontraron datos del usuario.';
+
     return resp;
   }
 }

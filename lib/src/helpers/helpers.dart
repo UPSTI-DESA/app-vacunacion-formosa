@@ -17,10 +17,10 @@ Future<bool> onWillPop(BuildContext context) async {
             funcion1: () => Navigator.of(context).pop(true),
             funcion2: () => Navigator.of(context).pop(false),
             color: Colors.red,
-            icon: Icon(
+            icon: const Icon(
               Icons.new_releases_outlined,
               size: 40.0,
-              color: Colors.grey[50],
+              color: Colors.white,
             ),
           ));
   return mensajeExit ?? false;

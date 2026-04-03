@@ -20,7 +20,7 @@ class VacunadorPage extends StatefulWidget {
   const VacunadorPage({Key? key, required this.infoCargador}) : super(key: key);
 
   @override
-  _VacunadorPageState createState() => _VacunadorPageState();
+  State<VacunadorPage> createState() => _VacunadorPageState();
 }
 
 class _VacunadorPageState extends State<VacunadorPage> {
@@ -41,7 +41,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
     animacionNombreVacunado = false;
     switchContainer = false;
     stringVacunador = 'No';
-    stringVacunador = 'No';
+    stringTerreno = 'No';
     cargarEfectoresService(registradorService.registrador!.flxcore03_dni!);
     super.initState();
     controladorDni = TextEditingController();
@@ -57,659 +57,614 @@ class _VacunadorPageState extends State<VacunadorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        top: false,
-        child: PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (didPop, result) {
-            if (!didPop) onWillPop();
-          },
-          child: Scaffold(
-            backgroundColor: SisVacuColor.white,
-            appBar: AppBar(
-              centerTitle: true,
-              backgroundColor: SisVacuColor.vercelesteCuaternario,
-              title: FadeInLeftBig(
-                from: 50,
-                child: Text(
-                  'Sistema de Vacunación',
-                  style: GoogleFonts.nunito(
-                    textStyle: TextStyle(
-                        fontWeight: FontWeight.w400, color: SisVacuColor.white),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            drawer: const BodyDrawer(),
-            body: Stack(
-              children: [
-                const EncabezadoWave(),
-                SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      FadeIn(
-                        duration: const Duration(milliseconds: 800),
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              right: MediaQuery.of(context).size.width * 0.02,
-                              left: MediaQuery.of(context).size.width * 0.02),
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                top: 5.0, right: 10.0, left: 15.0, bottom: 5.0),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                                color: Colors.white,
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
-                                      offset: const Offset(0, 5),
-                                      blurRadius: 5)
-                                ]),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Equipo de trabajo',
-                                      style: GoogleFonts.barlow(
-                                          textStyle: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 20)),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) =>
-                                                DialogoAlerta(
-                                                  envioFuncion2: false,
-                                                  envioFuncion1: false,
-                                                  tituloAlerta:
-                                                      'Información Adicional',
-                                                  descripcionAlerta:
-                                                      'Seleccione el switch si es la misma persona que registra y realiza la vacunación.\nDe ser necesario, cambie el efector haciendo click en el icono',
-                                                  textoBotonAlerta: 'Listo',
-                                                  color: SisVacuColor
-                                                      .vercelesteCuaternario,
-                                                  icon: Icon(Icons.info,
-                                                      size: 40.0,
-                                                      color: Colors.grey[50]),
-                                                ));
-                                      },
-                                      icon: Icon(
-                                        FontAwesomeIcons.circleInfo,
-                                        color:
-                                            SisVacuColor.vercelesteCuaternario,
-                                      ),
-                                      iconSize: 25,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                    height: MediaQuery.of(context).size.width *
-                                        0.05),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Container(
-                                          padding:
-                                              const EdgeInsets.only(right: 5.0),
-                                          child: StreamBuilder(
-                                            stream: registradorService
-                                                .registradorStream,
-                                            builder: (BuildContext context,
-                                                AsyncSnapshot<dynamic>
-                                                    snapshot) {
-                                              return Text(
-                                                registradorService.registrador!
-                                                    .sysofic01_descripcion!,
-                                                style: GoogleFonts.nunito(),
-                                                textAlign: TextAlign.center,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    InkWell(
-                                        onTap: () {
-                                          showModalBottomSheet(
-                                              useRootNavigator: true,
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return StreamBuilder(
-                                                    stream: efectoresService
-                                                        .listaEfectoresStream,
-                                                    builder: (BuildContext
-                                                            context,
-                                                        AsyncSnapshot<dynamic>
-                                                            snapshot) {
-                                                      return Column(
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Text(
-                                                              'Efectores',
-                                                              style: GoogleFonts.nunito(
-                                                                  letterSpacing:
-                                                                      1.5,
-                                                                  fontSize: 22,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: ListView
-                                                                .builder(
-                                                              physics:
-                                                                  const BouncingScrollPhysics(),
-                                                              shrinkWrap: true,
-                                                              itemCount:
-                                                                  efectoresService
-                                                                      .listaEfectores!
-                                                                      .length,
-                                                              itemBuilder:
-                                                                  (BuildContext
-                                                                          context,
-                                                                      int index) {
-                                                                return ListTile(
-                                                                  leading:
-                                                                      FaIcon(
-                                                                    FontAwesomeIcons
-                                                                        .hospital,
-                                                                    size: 20,
-                                                                    color: SisVacuColor
-                                                                        .vercelesteCuaternario,
-                                                                  ),
-                                                                  title:
-                                                                      InkWell(
-                                                                    highlightColor: SisVacuColor
-                                                                        .vercelestePrimario!
-                                                                        .withValues(
-                                                                            alpha: 0.3),
-                                                                    onTap: () {
-                                                                      registradorService
-                                                                          .editarEfectorUsuario(
-                                                                              efectoresService.listaEfectores![index]);
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop(
-                                                                              context);
-                                                                    },
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding:
-                                                                          const EdgeInsets.all(
-                                                                              8.0),
-                                                                      child:
-                                                                          Text(
-                                                                        efectoresService
-                                                                            .listaEfectores![index]
-                                                                            .sysofic01Descripcion!,
-                                                                        style: GoogleFonts.nunito(
-                                                                            fontWeight:
-                                                                                FontWeight.w600),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    });
-                                              });
-                                        },
-                                        child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 15.0, left: 15.0),
-                                            child: FaIcon(
-                                                FontAwesomeIcons.hospital,
-                                                size: getValueForScreenType(
-                                                    context: context,
-                                                    mobile: 18),
-                                                color: SisVacuColor
-                                                    .vercelesteCuaternario))),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10.0,
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Registrador: ',
-                                      style: GoogleFonts.nunito(
-                                        textStyle: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Expanded(
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Text(
-                                          registradorService
-                                              .registrador!.flxcore03_nombre!
-                                              .toUpperCase(),
-                                          style: GoogleFonts.nunito(),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10.0,
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Vacunador: ',
-                                      style: GoogleFonts.nunito(
-                                        textStyle: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    StreamBuilder(
-                                      stream: vacunadorService.vacunadorStream,
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<Vacunador?> snapshot) {
-                                        return snapshot.hasData
-                                            ? Expanded(
-                                                child: SingleChildScrollView(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  child: Text(
-                                                    vacunadorService.vacunador!
-                                                        .sysdesa06_nombre!,
-                                                    style: GoogleFonts.nunito(),
-                                                  ),
-                                                ),
-                                              )
-                                            : Text(
-                                                mismoVacunador!
-                                                    ? 'Falta Asignar'
-                                                    : registradorService
-                                                        .registrador!
-                                                        .flxcore03_nombre!,
-                                                style: GoogleFonts.nunito(
-                                                  textStyle: TextStyle(
-                                                      fontWeight:
-                                                          mismoVacunador!
-                                                              ? FontWeight.w800
-                                                              : FontWeight.w500,
-                                                      color: mismoVacunador!
-                                                          ? Colors.red
-                                                          : SisVacuColor.black,
-                                                      letterSpacing:
-                                                          mismoVacunador!
-                                                              ? 3.0
-                                                              : 0.0),
-                                                ));
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 20.0,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      FadeIn(
-                          duration: const Duration(milliseconds: 800),
-                          child: StreamBuilder(
-                              stream: vacunadorService.vacunadorStream,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<Vacunador?> snapshot) {
-                                return snapshot.hasData
-                                    ? Container()
-                                    : Padding(
-                                        padding: EdgeInsets.only(
-                                            right: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.02,
-                                            left: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.02),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            const Text(
-                                              'Es el mismo vacunador?',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 16),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Si',
-                                                  style: GoogleFonts.nunito(
-                                                      color: !mismoVacunador!
-                                                          ? Colors.black87
-                                                          : Colors.grey[300],
-                                                      fontWeight:
-                                                          !mismoVacunador!
-                                                              ? FontWeight.w700
-                                                              : FontWeight
-                                                                  .w100),
-                                                ),
-                                                Switch(
-                                                    activeThumbColor:
-                                                        SisVacuColor.red,
-                                                    inactiveTrackColor:
-                                                        SisVacuColor
-                                                            .azulFormosa,
-                                                    inactiveThumbColor:
-                                                        SisVacuColor
-                                                            .azulFormosa,
-                                                    value: mismoVacunador!,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        mismoVacunador = value;
-                                                        mismoVacunador!
-                                                            ? stringVacunador =
-                                                                'Si'
-                                                            : stringVacunador =
-                                                                'No';
-                                                      });
-                                                    }),
-                                                Text(
-                                                  'No',
-                                                  style: GoogleFonts.nunito(
-                                                      color: mismoVacunador!
-                                                          ? Colors.black87
-                                                          : Colors.grey[300],
-                                                      fontWeight:
-                                                          mismoVacunador!
-                                                              ? FontWeight.w700
-                                                              : FontWeight
-                                                                  .w100),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                              })),
-                      FadeIn(
-                          duration: const Duration(milliseconds: 800),
-                          child: StreamBuilder(
-                              stream: vacunadorService.vacunadorStream,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<Vacunador?> snapshot) {
-                                return snapshot.hasData
-                                    ? Container()
-                                    : Padding(
-                                        padding: EdgeInsets.only(
-                                            right: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.1,
-                                            left: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.1),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text(
-                                              'Es en terreno?',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 16),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  'Si',
-                                                  style: GoogleFonts.nunito(
-                                                      color: !esTerreno!
-                                                          ? Colors.black87
-                                                          : Colors.grey[300],
-                                                      fontWeight: !esTerreno!
-                                                          ? FontWeight.w700
-                                                          : FontWeight.w100),
-                                                ),
-                                                Switch(
-                                                    activeThumbColor:
-                                                        SisVacuColor.red,
-                                                    inactiveTrackColor:
-                                                        SisVacuColor
-                                                            .azulFormosa,
-                                                    inactiveThumbColor:
-                                                        SisVacuColor
-                                                            .azulFormosa,
-                                                    value: esTerreno!,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        esTerreno = value;
-                                                        esTerreno!
-                                                            ? stringTerreno =
-                                                                'Si'
-                                                            : stringTerreno =
-                                                                'No';
-                                                      });
-                                                    }),
-                                                Text(
-                                                  'No',
-                                                  style: GoogleFonts.nunito(
-                                                      color: esTerreno!
-                                                          ? Colors.black87
-                                                          : Colors.grey[300],
-                                                      fontWeight: esTerreno!
-                                                          ? FontWeight.w700
-                                                          : FontWeight.w100),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                              })),
+    final cs = Theme.of(context).colorScheme;
 
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      mismoVacunador == false
-                          ? Container()
-                          : vacunadorService.existeVacunador
-                              ? const SizedBox()
-                              : FadeIn(
-                                  duration: const Duration(milliseconds: 800),
-                                  child: _infoVacunador(context)),
-                      //Fin de Ocultar
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      ElasticIn(
-                          duration: const Duration(milliseconds: 800),
-                          child: BotonCustom(
-                              text: 'Siguiente',
-                              borderRadius: 20,
-                              onPressed: () {
-                                mismoVacunador!
-                                    ? verificarVacunador()
-                                    : {
-                                        vacunadorService.cargarVacunador(
-                                            Vacunador(
-                                                id_sysdesa12: registradorService
-                                                    .registrador!.flxcore03_dni,
-                                                sysdesa06_nombre:
-                                                    registradorService
-                                                        .registrador!
-                                                        .flxcore03_nombre,
-                                                sysdesa06_nro_documento:
-                                                    registradorService
-                                                        .registrador!
-                                                        .flxcore03_dni)),
-                                        Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const BusquedaBeneficiario()),
-                                            (Route<dynamic> route) => false),
-                                      };
-                              })),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                    ],
+    return SafeArea(
+      top: false,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) onWillPop();
+        },
+        child: Scaffold(
+          backgroundColor: cs.surface,
+          appBar: const AppBarSesion(
+            titulo: 'Equipo de trabajo',
+            fadeDesde: 50,
+          ),
+          drawer: const BodyDrawer(),
+          body: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(
+              AppEspaciado.lg,
+              AppEspaciado.md,
+              AppEspaciado.lg,
+              AppEspaciado.xl,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FadeIn(
+                  duration: const Duration(milliseconds: 600),
+                  child: _tarjetaResumenEquipo(context),
+                ),
+                const SizedBox(height: AppEspaciado.lg),
+                StreamBuilder<Vacunador?>(
+                  stream: vacunadorService.vacunadorStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) return const SizedBox.shrink();
+                    return FadeIn(
+                      duration: const Duration(milliseconds: 650),
+                      child: _tarjetaOpcionesVacunacion(context),
+                    );
+                  },
+                ),
+                const SizedBox(height: AppEspaciado.lg),
+                mismoVacunador == false
+                    ? const SizedBox.shrink()
+                    : vacunadorService.existeVacunador
+                        ? const SizedBox.shrink()
+                        : FadeIn(
+                            duration: const Duration(milliseconds: 700),
+                            child: _infoVacunador(context),
+                          ),
+                const SizedBox(height: AppEspaciado.xl),
+                ElasticIn(
+                  duration: const Duration(milliseconds: 720),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: BotonCustom(
+                      text: 'Siguiente',
+                      borderRadius: 16,
+                      onPressed: () {
+                        mismoVacunador!
+                            ? verificarVacunador()
+                            : {
+                                vacunadorService.cargarVacunador(Vacunador(
+                                    id_sysdesa12: registradorService
+                                        .registrador!.flxcore03_dni,
+                                    sysdesa06_nombre: registradorService
+                                        .registrador!.flxcore03_nombre,
+                                    sysdesa06_nro_documento: registradorService
+                                        .registrador!.flxcore03_dni)),
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const BusquedaBeneficiario()),
+                                    (Route<dynamic> route) => false),
+                              };
+                      },
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
-  Widget _infoVacunador(context) {
-    return StreamBuilder(
-      stream: vacunadorService.vacunadorStream,
-      builder: (BuildContext context, AsyncSnapshot<Vacunador?> snapshot) {
-        return vacunadorService.existeVacunador
-            ? const SizedBox()
-            : Padding(
-                padding: EdgeInsets.only(
-                    right: MediaQuery.of(context).size.width * 0.02,
-                    left: MediaQuery.of(context).size.width * 0.02),
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      top: 5.0, right: 10.0, left: 15.0, bottom: 5.0),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      color: Colors.white,
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            offset: const Offset(0, 5),
-                            blurRadius: 5)
-                      ]),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            'Registro vacunador',
-                            style: GoogleFonts.barlow(
-                                textStyle: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 20)),
-                          ),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.3),
-                          IconButton(
-                            alignment: Alignment.centerRight,
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      DialogoAlerta(
-                                        envioFuncion2: false,
-                                        envioFuncion1: false,
-                                        tituloAlerta: 'Información',
-                                        descripcionAlerta:
-                                            'Registre al vacunador mediante el escaneo del codigo de barras, o ingresando manualmente el numero de D.N.I.',
-                                        textoBotonAlerta: 'Listo',
-                                        color:
-                                            SisVacuColor.vercelesteCuaternario,
-                                        icon: Icon(Icons.info,
-                                            size: 40.0, color: Colors.grey[50]),
-                                      ));
-                            },
-                            icon: Icon(
-                              FontAwesomeIcons.circleInfo,
-                              color: SisVacuColor.vercelesteCuaternario,
-                            ),
-                            iconSize: 25,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.05),
-                      const EscanerDni(
-                        'Vacunador',
-                        'Escanear',
-                        'Escanee el D.N.I. del Vacunador',
-                        largoValor: 150,
-                      ),
-                      Column(children: [
-                        const SizedBox(
-                          height: 20.0,
-                        ),
+  Widget _etiquetaSeccion(BuildContext context, String texto) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppEspaciado.sm, top: 2),
+      child: Text(
+        texto.toUpperCase(),
+        style: GoogleFonts.nunito(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.05,
+          color: Theme.of(context)
+              .colorScheme
+              .onSurfaceVariant
+              .withValues(alpha: 0.95),
+        ),
+      ),
+    );
+  }
 
-                        CustomInput(
-                          autoFocus: true,
-                          focusNode: focusNode,
-                          icon: Icons.perm_identity,
-                          placeholder: 'D.N.I.',
-                          keyboardType: TextInputType.phone,
-                          textController: controladorDni,
-                          funcionTerminar: true,
-                          funcion: () {
-                            verificarEscencialText(controladorDni.text);
-                          },
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.03,
-                        ),
-                        // BotonCustom(
-                        //     width: 150,
-                        //     iconoBool: true,
-                        //     iconoBoton: const Icon(
-                        //       Icons.people,
-                        //       color: Colors.white,
-                        //     ),
-                        //     text: 'Verificar',
-                        //     onPressed: () {
-                        //       // FocusScope.of(context).unfocus();
-                        //     })
-                      ]),
-                      const SizedBox(
-                        height: 5.0,
+  Widget _tarjetaResumenEquipo(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppEspaciado.lg),
+      decoration: AppSuperficies.tarjeta(context).copyWith(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Resumen',
+                      style: GoogleFonts.barlow(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: cs.onSurface,
                       ),
-                    ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Efector, registrador y vacunador asignado',
+                      style: GoogleFonts.nunito(
+                        fontSize: 13,
+                        height: 1.35,
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                style: IconButton.styleFrom(
+                  backgroundColor: cs.primary.withValues(alpha: 0.12),
+                  foregroundColor: cs.primary,
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => DialogoAlerta(
+                      envioFuncion2: false,
+                      envioFuncion1: false,
+                      tituloAlerta: 'Información',
+                      descripcionAlerta:
+                          'Seleccione el interruptor si es la misma persona que registra y realiza la vacunación.\nSi corresponde, cambie el efector con el ícono del hospital.',
+                      textoBotonAlerta: 'Entendido',
+                      color: SisVacuColor.vercelesteCuaternario,
+                      icon: const Icon(Icons.info, size: 40, color: Colors.white),
+                    ),
+                  );
+                },
+                icon: const Icon(FontAwesomeIcons.circleInfo, size: 20),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppEspaciado.md),
+          _etiquetaSeccion(context, 'Establecimiento'),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: StreamBuilder(
+                  stream: registradorService.registradorStream,
+                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    return Text(
+                      registradorService.registrador!.sysofic01_descripcion!,
+                      style: GoogleFonts.nunito(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        height: 1.3,
+                        color: cs.onSurface,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Material(
+                color: cs.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => _abrirSelectorEfectores(context),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: FaIcon(
+                      FontAwesomeIcons.hospital,
+                      size: getValueForScreenType(context: context, mobile: 18),
+                      color: cs.primary,
+                    ),
                   ),
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppEspaciado.lg),
+          Divider(
+            height: 1,
+            color: cs.outlineVariant.withValues(alpha: 0.45),
+          ),
+          const SizedBox(height: AppEspaciado.lg),
+          _etiquetaSeccion(context, 'Personas'),
+          _filaPersona(
+            context,
+            etiqueta: 'Registrador',
+            valor: registradorService.registrador!.flxcore03_nombre!
+                .toUpperCase(),
+          ),
+          const SizedBox(height: AppEspaciado.md),
+          StreamBuilder<Vacunador?>(
+            stream: vacunadorService.vacunadorStream,
+            builder: (context, snapshot) {
+              final valorVacunador = snapshot.hasData
+                  ? vacunadorService.vacunador!.sysdesa06_nombre!
+                  : (mismoVacunador!
+                      ? 'Falta asignar'
+                      : registradorService.registrador!.flxcore03_nombre!);
+              final destacarPendiente =
+                  !snapshot.hasData && mismoVacunador == true;
+              return _filaPersona(
+                context,
+                etiqueta: 'Vacunador',
+                valor: valorVacunador,
+                destacarAlerta: destacarPendiente,
               );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _filaPersona(
+    BuildContext context, {
+    required String etiqueta,
+    required String valor,
+    bool destacarAlerta = false,
+  }) {
+    final cs = Theme.of(context).colorScheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 102,
+          child: Text(
+            etiqueta,
+            style: GoogleFonts.nunito(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: cs.onSurfaceVariant,
+            ),
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(
+              valor,
+              style: GoogleFonts.nunito(
+                fontSize: 15,
+                fontWeight:
+                    destacarAlerta ? FontWeight.w800 : FontWeight.w500,
+                letterSpacing: destacarAlerta ? 1.2 : 0,
+                color: destacarAlerta ? cs.error : cs.onSurface,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _tarjetaOpcionesVacunacion(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppEspaciado.md),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHigh.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: cs.outlineVariant.withValues(alpha: 0.42),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Opciones de sesión',
+            style: GoogleFonts.nunito(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.6,
+              color: cs.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AppEspaciado.md),
+          _filaSwitch(
+            context,
+            titulo: '¿Es el mismo vacunador?',
+            valor: mismoVacunador!,
+            onChanged: (v) {
+              setState(() {
+                mismoVacunador = v;
+                stringVacunador = v ? 'Si' : 'No';
+              });
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppEspaciado.sm),
+            child: Divider(
+              height: 1,
+              color: cs.outlineVariant.withValues(alpha: 0.35),
+            ),
+          ),
+          _filaSwitch(
+            context,
+            titulo: '¿Es en terreno?',
+            valor: esTerreno!,
+            onChanged: (v) {
+              setState(() {
+                esTerreno = v;
+                stringTerreno = v ? 'Si' : 'No';
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _filaSwitch(
+    BuildContext context, {
+    required String titulo,
+    required bool valor,
+    required ValueChanged<bool> onChanged,
+  }) {
+    final cs = Theme.of(context).colorScheme;
+    final apagado = cs.onSurface.withValues(alpha: 0.38);
+
+    return Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: Text(
+            titulo,
+            style: GoogleFonts.nunito(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              height: 1.25,
+              color: cs.onSurface,
+            ),
+          ),
+        ),
+        Text(
+          'Sí',
+          style: GoogleFonts.nunito(
+            fontSize: 14,
+            fontWeight: valor ? FontWeight.w800 : FontWeight.w400,
+            color: valor ? cs.onSurface : apagado,
+          ),
+        ),
+        Switch(
+          value: valor,
+          onChanged: onChanged,
+        ),
+        Text(
+          'No',
+          style: GoogleFonts.nunito(
+            fontSize: 14,
+            fontWeight: !valor ? FontWeight.w800 : FontWeight.w400,
+            color: !valor ? cs.onSurface : apagado,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _abrirSelectorEfectores(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    showModalBottomSheet<void>(
+      useRootNavigator: true,
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.55,
+          minChildSize: 0.35,
+          maxChildSize: 0.92,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: cs.surface,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: cs.shadow.withValues(alpha: 0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 10),
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: cs.outlineVariant.withValues(alpha: 0.65),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppEspaciado.lg,
+                      AppEspaciado.lg,
+                      AppEspaciado.lg,
+                      AppEspaciado.sm,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.local_hospital_rounded, color: cs.primary),
+                        const SizedBox(width: AppEspaciado.sm),
+                        Text(
+                          'Efectores',
+                          style: GoogleFonts.nunito(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: cs.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: StreamBuilder(
+                      stream: efectoresService.listaEfectoresStream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot) {
+                        return ListView.builder(
+                          controller: scrollController,
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.only(bottom: AppEspaciado.xl),
+                          itemCount:
+                              efectoresService.listaEfectores?.length ?? 0,
+                          itemBuilder: (BuildContext context, int index) {
+                            final item =
+                                efectoresService.listaEfectores![index];
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor:
+                                    cs.primary.withValues(alpha: 0.12),
+                                child: FaIcon(
+                                  FontAwesomeIcons.hospital,
+                                  size: 18,
+                                  color: cs.primary,
+                                ),
+                              ),
+                              title: Text(
+                                item.sysofic01Descripcion!,
+                                style: GoogleFonts.nunito(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              onTap: () {
+                                registradorService
+                                    .editarEfectorUsuario(item);
+                                Navigator.of(context).pop();
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }
 
-  Future verificarVacunador() async {
+  Widget _infoVacunador(BuildContext context) {
+    return StreamBuilder<Vacunador?>(
+      stream: vacunadorService.vacunadorStream,
+      builder: (BuildContext context, AsyncSnapshot<Vacunador?> snapshot) {
+        if (vacunadorService.existeVacunador) {
+          return const SizedBox.shrink();
+        }
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppEspaciado.lg),
+          decoration: AppSuperficies.tarjeta(context).copyWith(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Registro del vacunador',
+                          style: GoogleFonts.barlow(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Escanee el código o ingrese el D.N.I.',
+                          style: GoogleFonts.nunito(
+                            fontSize: 13,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    style: IconButton.styleFrom(
+                      backgroundColor: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.12),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => DialogoAlerta(
+                          envioFuncion2: false,
+                          envioFuncion1: false,
+                          tituloAlerta: 'Información',
+                          descripcionAlerta:
+                              'Registre al vacunador escaneando el código de barras del D.N.I. o ingresando el número manualmente.',
+                          textoBotonAlerta: 'Listo',
+                          color: SisVacuColor.vercelesteCuaternario,
+                          icon: const Icon(Icons.info,
+                              size: 40, color: Colors.white),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      FontAwesomeIcons.circleInfo,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppEspaciado.lg),
+              EscanerDni(
+                'Vacunador',
+                'Escanear',
+                'Escanee el D.N.I. del Vacunador',
+                largoValor: 150,
+              ),
+              const SizedBox(height: AppEspaciado.lg),
+              CustomInput(
+                autoFocus: true,
+                focusNode: focusNode,
+                icon: Icons.perm_identity,
+                placeholder: 'D.N.I.',
+                keyboardType: TextInputType.phone,
+                textController: controladorDni,
+                funcionTerminar: true,
+                funcion: () {
+                  verificarEscencialText(controladorDni.text);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> verificarVacunador() async {
     if (vacunadorService.existeVacunador) {
       Navigator.pushAndRemoveUntil(
           context,
@@ -723,19 +678,19 @@ class _VacunadorPageState extends State<VacunadorPage> {
                 envioFuncion1: false,
                 tituloAlerta: 'ATENCIÓN',
                 descripcionAlerta:
-                    'Escanee o Ingrese manualmente el D.N.I. del vacunador',
+                    'Escanee o ingrese manualmente el D.N.I. del vacunador',
                 textoBotonAlerta: 'Listo',
                 color: Colors.red,
-                icon: Icon(
+                icon: const Icon(
                   Icons.new_releases_outlined,
-                  size: 40.0,
-                  color: Colors.grey[50],
+                  size: 40,
+                  color: Colors.white,
                 ),
               ));
     }
   }
 
-  verificarEscencialText(String dni) async {
+  Future<void> verificarEscencialText(String dni) async {
     final respUsuario = await vacunadorProviders.validarVacunador(dni);
 
     if (respUsuario[0].codigo_mensaje == '0') {
@@ -748,10 +703,10 @@ class _VacunadorPageState extends State<VacunadorPage> {
                 descripcionAlerta: respUsuario[0].mensaje,
                 textoBotonAlerta: 'Listo',
                 color: Colors.red,
-                icon: Icon(
+                icon: const Icon(
                   Icons.new_releases_outlined,
-                  size: 40.0,
-                  color: Colors.grey[50],
+                  size: 40,
+                  color: Colors.white,
                 ),
               ));
       controladorDni.clear();
@@ -763,8 +718,8 @@ class _VacunadorPageState extends State<VacunadorPage> {
           content: Text(
             ':(',
             style: GoogleFonts.nunito(
-                textStyle: TextStyle(
-                    fontWeight: FontWeight.w600, color: SisVacuColor.white)),
+                textStyle: const TextStyle(
+                    fontWeight: FontWeight.w600, color: Colors.white)),
           )));
     } else {
       setState(() {
@@ -778,10 +733,10 @@ class _VacunadorPageState extends State<VacunadorPage> {
           behavior: SnackBarBehavior.floating,
           duration: const Duration(milliseconds: 2500),
           content: Text(
-            'Se agrego al vacunador ',
+            'Se agregó al vacunador',
             style: GoogleFonts.nunito(
-                textStyle: TextStyle(
-                    fontWeight: FontWeight.w600, color: SisVacuColor.white)),
+                textStyle: const TextStyle(
+                    fontWeight: FontWeight.w600, color: Colors.white)),
           )));
     }
   }
@@ -794,22 +749,22 @@ class _VacunadorPageState extends State<VacunadorPage> {
               envioFuncion1: true,
               tituloAlerta: 'ATENCIÓN',
               descripcionAlerta:
-                  'Seguro que desea salir? deberá logearse nuevamente',
-              textoBotonAlerta: 'SI',
+                  '¿Seguro que desea salir? Deberá iniciar sesión nuevamente',
+              textoBotonAlerta: 'SÍ',
               textoBotonAlerta2: 'NO',
               funcion1: () => Navigator.of(context).pop(true),
               funcion2: () => Navigator.of(context).pop(false),
               color: Colors.red,
-              icon: Icon(
+              icon: const Icon(
                 Icons.new_releases_outlined,
-                size: 40.0,
-                color: Colors.grey[50],
+                size: 40,
+                color: Colors.white,
               ),
             ));
     return mensajeExit ?? false;
   }
 
-  cargarEfectoresService(String dni) async {
+  void cargarEfectoresService(String dni) {
     efectoresProviders.obtenerDatosEfectores(dni);
   }
 }

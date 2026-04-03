@@ -88,27 +88,15 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                         icon: Icon(
                           Icons.info,
                           size: 40.0,
-                          color: SisVacuColor.grey,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ));
             },
           ),
         ],
       ),
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: SisVacuColor.vercelesteCuaternario,
-        title: FadeInLeftBig(
-          from: 50,
-          child: Text(
-            'Sistema de Vacunación',
-            style: GoogleFonts.nunito(
-              textStyle: const TextStyle(
-                  fontWeight: FontWeight.w400, color: Colors.white),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
+      appBar: const AppBarSesion(
+        titulo: 'Confirmar datos',
       ),
       body: Stack(
         children: [
@@ -128,9 +116,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                       child: Container(
                         padding: EdgeInsets.all(
                             MediaQuery.of(context).size.width * 0.05),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            color: Colors.white),
+                        decoration: AppSuperficies.tarjeta(context),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -296,10 +282,8 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                       padding: EdgeInsets.all(
                                           MediaQuery.of(context).size.width *
                                               0.05),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          color: Colors.white),
+                                      decoration:
+                                          AppSuperficies.tarjeta(context),
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceAround,
@@ -503,9 +487,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                       child: Container(
                         padding: EdgeInsets.all(
                             MediaQuery.of(context).size.width * 0.05),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            color: Colors.white),
+                        decoration: AppSuperficies.tarjeta(context),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -748,57 +730,89 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                           // vacunasLotesService.eliminarListaVacunasLotes();
                           enviarDatos(context);
                         }),
-                    BotonCustom(
-                        text: 'Cancelar Registro',
-                        color: SisVacuColor.red,
-                        onPressed: () {
-                          showDialog(
+                    Builder(
+                      builder: (context) {
+                        final cs = Theme.of(context).colorScheme;
+                        return OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: cs.error,
+                            side: BorderSide(
+                              color: cs.error.withValues(alpha: 0.72),
+                              width: 1.5,
+                            ),
+                            minimumSize: const Size.fromHeight(50),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          icon: Icon(
+                            Icons.cancel_outlined,
+                            size: 22,
+                            color: cs.error,
+                          ),
+                          label: Text(
+                            'Cancelar registro',
+                            style: GoogleFonts.nunito(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          onPressed: () {
+                            showDialog(
                               context: context,
                               builder: (BuildContext context) => DialogoAlerta(
-                                    tituloAlerta: "Atención",
-                                    descripcionAlerta:
-                                        '¿Estas seguro que deseas cancelar el registro?',
-                                    textoBotonAlerta: 'Aceptar',
-                                    textoBotonAlerta2: 'Cancelar',
-                                    icon: Icon(
-                                      Icons.info,
-                                      size: 40,
-                                      color: SisVacuColor.white,
+                                tituloAlerta: 'Atenci\u00F3n',
+                                descripcionAlerta:
+                                    '\u00BFConfirma cancelar el registro? Se perder\u00E1n los datos no guardados.',
+                                textoBotonAlerta: 'S\u00ED, cancelar',
+                                textoBotonAlerta2: 'Volver',
+                                icon: const Icon(
+                                  Icons.warning_amber_rounded,
+                                  size: 28,
+                                ),
+                                color: cs.error,
+                                envioFuncion2: true,
+                                funcion2: () => Navigator.of(context).pop(),
+                                envioFuncion1: true,
+                                funcion1: () {
+                                  vacunasxPerfilService
+                                      .eliminarListaVacunasxPerfil();
+                                  perfilesVacunacionService
+                                      .eliminarListaPerfiles();
+                                  vacunasConfiguracionService
+                                      .eliminarListaVacunasConfiguracion();
+                                  vacunasLotesService
+                                      .eliminarListaVacunasLotes();
+                                  notificacionesDosisService
+                                      .eliminarListaDosis();
+                                  insertRegistroService
+                                      .cargarRegistro(InsertRegistros());
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const BusquedaBeneficiario(),
                                     ),
-                                    color: Colors.red,
-                                    envioFuncion2: true,
-                                    funcion2: () => Navigator.of(context).pop(),
-                                    envioFuncion1: true,
-                                    funcion1: () {
-                                      vacunasxPerfilService
-                                          .eliminarListaVacunasxPerfil();
-                                      perfilesVacunacionService
-                                          .eliminarListaPerfiles();
-
-                                      vacunasConfiguracionService
-                                          .eliminarListaVacunasConfiguracion();
-                                      vacunasLotesService
-                                          .eliminarListaVacunasLotes();
-
-                                      notificacionesDosisService
-                                          .eliminarListaDosis();
-                                      insertRegistroService
-                                          .cargarRegistro(InsertRegistros());
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const BusquedaBeneficiario()),
-                                          (Route<dynamic> route) => false);
-                                    },
-                                  ));
-                        }),
+                                    (Route<dynamic> route) => false,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         'Si desea cambiar la fecha de aplicación, seleccione el calendario',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.black.withValues(alpha: .7)),
+                        style: TextStyle(
+                            color: AppSuperficies.textoSecundario(context)),
                       ),
                     )
                   ],
@@ -807,7 +821,10 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                     ? Container(
                         height: size.height,
                         width: size.width,
-                        color: Colors.black.withValues(alpha: 0.8),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .scrim
+                            .withValues(alpha: 0.82),
                         child: const Center(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -859,10 +876,10 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                   descripcionAlerta: mensaje[0].mensaje,
                   textoBotonAlerta: 'Reintentar',
                   color: Colors.red,
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.error,
                     size: 40.0,
-                    color: Colors.grey[50],
+                    color: Colors.white,
                   ),
                 ))
         : showDialog(

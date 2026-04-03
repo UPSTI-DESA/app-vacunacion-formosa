@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sistema_vacunacion/src/config/config.dart';
 
 class TitulosContainerPage extends StatelessWidget {
   final String? title;
@@ -28,8 +27,10 @@ class TitulosContainerPage extends StatelessWidget {
               Text(
                 title!,
                 style: GoogleFonts.barlow(
-                    textStyle: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 20)),
+                  textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
               ),
             ],
           ),
@@ -37,7 +38,7 @@ class TitulosContainerPage extends StatelessWidget {
         FadeInDownBig(
           from: 25,
           child: Divider(
-            color: SisVacuColor.vercelesteTerciario,
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.45),
             thickness: widthThickness,
           ),
         ),

@@ -23,7 +23,9 @@ class _BeneficiariorService {
 
   void eliminarBeneficiario() {
     _beneficiario = null;
-    _beneficiarioStreamController.add(_beneficiario!);
+    // El StreamController es de tipo Beneficiario? (nullable), por lo que
+    // se agrega null directamente en lugar de forzar _beneficiario! que era null.
+    _beneficiarioStreamController.add(null);
   }
 
   dispose() {

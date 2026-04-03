@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
+
 List<ValidaVacunacion> validacionVacunaFromJson(String str) =>
     List<ValidaVacunacion>.from(
         json.decode(str).map((x) => ValidaVacunacion.fromJson(x)));
@@ -59,30 +61,30 @@ class ValidaVacunacion {
   factory ValidaVacunacion.fromJson(Map<String, dynamic> json) =>
       ValidaVacunacion(
         id_sysdesa10: json["id_sysdesa10"],
-        sysdesa10_mensaje: json["sysdesa10_mensaje"],
-        sysvacu04_nombre: json["sysvacu04_nombre"],
-        sysvacu05_nombre: json["sysvacu05_nombre"],
+        sysdesa10_mensaje: fixEncoding(json["sysdesa10_mensaje"]),
+        sysvacu04_nombre: fixEncoding(json["sysvacu04_nombre"]),
+        sysvacu05_nombre: fixEncoding(json["sysvacu05_nombre"]),
         sysdesa10_fecha_aplicacion: json["sysdesa10_fecha_aplicacion"],
         cumplen_veintiun_dias: json["cumplen_veintiun_dias"],
         fecha_proxima_dosis: json["fecha_proxima_dosis"],
         dias_transcurridos: json["dias_transcurridos"],
         faltan_dias_proxima_aplicacion: json["faltan_dias_proxima_aplicacion"],
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   ValidaVacunacion.fromJsonMap(Map<String, dynamic> json) {
     id_sysdesa10 = json["id_sysdesa10"];
-    sysdesa10_mensaje = json["sysdesa10_mensaje"];
-    sysvacu04_nombre = json["sysvacu04_nombre"];
-    sysvacu05_nombre = json["sysvacu05_nombre"];
+    sysdesa10_mensaje = fixEncoding(json["sysdesa10_mensaje"]);
+    sysvacu04_nombre = fixEncoding(json["sysvacu04_nombre"]);
+    sysvacu05_nombre = fixEncoding(json["sysvacu05_nombre"]);
     sysdesa10_fecha_aplicacion = json["sysdesa10_fecha_aplicacion"];
     cumplen_veintiun_dias = json["cumplen_veintiun_dias"];
     fecha_proxima_dosis = json["fecha_proxima_dosis"];
     dias_transcurridos = json["dias_transcurridos"];
     faltan_dias_proxima_aplicacion = json["faltan_dias_proxima_aplicacion"];
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

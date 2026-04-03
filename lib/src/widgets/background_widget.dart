@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:sistema_vacunacion/src/config/config.dart';
 
 class BackgroundHeader extends StatelessWidget {
   final Widget? child;
@@ -61,7 +60,7 @@ class BackgroundHeader extends StatelessWidget {
         Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          color: SisVacuColor.white,
+          color: Theme.of(context).colorScheme.surface,
         ),
       ],
     );

@@ -33,14 +33,14 @@ class InfoVacunas {
         id_sysvacu04: json["id_sysvacu04"],
         sysvacu04_nombre: fixEncoding(json["sysvacu04_nombre"]),
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   InfoVacunas.fromJsonMap(Map<String, dynamic> json) {
     id_sysvacu04 = json["id_sysvacu04"];
     sysvacu04_nombre = fixEncoding(json["sysvacu04_nombre"]);
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

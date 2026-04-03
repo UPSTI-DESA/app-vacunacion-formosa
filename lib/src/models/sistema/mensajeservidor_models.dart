@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
+
 List<MensajeServidor> mensajeServidorFromJson(String str) =>
     List<MensajeServidor>.from(
         json.decode(str).map((x) => MensajeServidor.fromJson(x)));
@@ -30,7 +32,7 @@ class MensajeServidor {
 
   MensajeServidor.fromJsonMap(Map<String, dynamic> json) {
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

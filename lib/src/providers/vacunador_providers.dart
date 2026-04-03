@@ -7,7 +7,7 @@ import 'dart:convert';
 class _VacunadorProviders {
   Future<List<Vacunador>> procesarRespuestaDos(Uri url) async {
     try {
-      final resp = await http.get(url);
+      final resp = await http.get(url).timeout(const Duration(seconds: 30));
       if (resp.statusCode == 200) {
         final decodedData = json.decode(utf8.decode(resp.bodyBytes));
         final vacunador = Vacunador.fromJsonList(decodedData['vacunador']);
@@ -17,7 +17,7 @@ class _VacunadorProviders {
       throw "Hubo un error $e";
     }
 
-    throw 'Hubo un error global mas jodido';
+    throw 'Hubo un error';
   }
 
   Future validarVacunador(String? dni) async {
@@ -27,13 +27,12 @@ class _VacunadorProviders {
     });
 
     final List<Vacunador> resp = await procesarRespuestaDos(url);
-    if (resp[0].id_sysdesa12 != '') {
-      //Si tiene Valores devuelve una Lista de Tipo Usuarios
-      return resp;
-    } else {
-      //Si no tiene valores devuelve simplemente 0
-      return resp;
-    }
+
+    // Guard: respuesta vacia es inesperada — la API retorna al menos 1 item.
+    // codigo_mensaje == '0' indica error de validacion (vacunador no encontrado).
+    if (resp.isEmpty) throw 'No se encontraron datos del vacunador.';
+
+    return resp;
   }
 }
 

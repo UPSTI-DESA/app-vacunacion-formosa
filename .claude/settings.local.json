@@ -15,7 +15,19 @@
       "Bash(sed -i '' 's/FontAwesomeIcons\\\\.calendarAlt/FontAwesomeIcons.calendarDays/g' /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib/src/pages/confirmaciondatos/confirmaciondatos_page.dart)",
       "Bash(sed -i '' 's/FontAwesomeIcons\\\\.solidEdit/FontAwesomeIcons.solidPenToSquare/g' /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib/src/pages/drawer/drawer_page.dart)",
       "Bash(sed -i '' 's/FontAwesomeIcons\\\\.infoCircle/FontAwesomeIcons.circleInfo/g' /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib/src/pages/vacuna/vacunas_page.dart)",
-      "Bash(sed -i '' 's/FontAwesomeIcons\\\\.infoCircle/FontAwesomeIcons.circleInfo/g; s/FontAwesomeIcons\\\\.hospitalAlt/FontAwesomeIcons.hospital/g' /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib/src/pages/vacunador/vacunador_page.dart)"
+      "Bash(sed -i '' 's/FontAwesomeIcons\\\\.infoCircle/FontAwesomeIcons.circleInfo/g; s/FontAwesomeIcons\\\\.hospitalAlt/FontAwesomeIcons.hospital/g' /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib/src/pages/vacunador/vacunador_page.dart)",
+      "Bash(grep -v \"^$\")",
+      "Bash(flutter doctor:*)",
+      "Bash(rsync -a ~/.pub-cache/hosted/pub.dev/flutter_barcode_scanner-2.0.0/ /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/packages/flutter_barcode_scanner/)",
+      "WebSearch",
+      "WebFetch(domain:pub.dev)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:scanbot.io)",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(grep -n \"loading_indicator\\\\|Roulette\" /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib/src/widgets/*.dart)",
+      "Bash(find /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib -name \"*.dart\" -exec wc -l {} +)",
+      "Bash(grep -r \"^class.*Widget\\\\|^class.*extends State\" /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib/src/pages/*.dart)"
     ]
   }
 }

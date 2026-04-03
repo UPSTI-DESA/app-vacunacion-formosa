@@ -41,7 +41,12 @@ class ColorTextButton extends StatelessWidget {
             Text(
               text,
               style: TextStyle(
-                color: Colors.black,
+                color: color != null
+                    ? (ThemeData.estimateBrightnessForColor(color!) ==
+                            Brightness.dark
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurface)
+                    : Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 1.3,
                 fontSize: MediaQuery.of(context).size.width * 0.04,
                 fontWeight: FontWeight.bold,

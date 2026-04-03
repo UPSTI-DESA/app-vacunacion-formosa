@@ -53,7 +53,7 @@ class ConfiVacuna {
         sysvacu06_denominacion: fixEncoding(json["sysvacu06_denominacion"]),
         sysvacu05_orden: json["sysvacu05_orden"],
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   ConfiVacuna.fromJsonMap(Map<String, dynamic> json) {
@@ -64,7 +64,7 @@ class ConfiVacuna {
     sysvacu06_denominacion = fixEncoding(json["sysvacu06_denominacion"]);
     sysvacu05_orden = json["sysvacu05_orden"];
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

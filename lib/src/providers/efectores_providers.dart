@@ -9,7 +9,7 @@ import 'package:sistema_vacunacion/src/services/efectores_service.dart';
 class _EfectorsProviders {
   Future<List<Efectores>> procesarRespuestaDos(Uri url) async {
     try {
-      final resp = await http.get(url);
+      final resp = await http.get(url).timeout(const Duration(seconds: 30));
       if (resp.statusCode == 200) {
         final decodedData = json.decode(utf8.decode(resp.bodyBytes));
         final efectores = Efectores.fromJsonList(decodedData['usuario']);
@@ -29,6 +29,13 @@ class _EfectorsProviders {
     });
 
     final List<Efectores> resp = await procesarRespuestaDos(url);
+
+    // Guard: respuesta vacia es inesperada — la API retorna al menos 1 item.
+    if (resp.isEmpty) throw 'No se encontraron efectores para el usuario.';
+
+    // Si el DNI tiene valor: carga la lista en el servicio y retorna.
+    // Si el DNI es vacio: la API indico que no hay efectores — retorna la lista
+    // con el item de error para que el llamador lo maneje.
     if (resp[0].flxcore03Dni != '') {
       return efectoresService.cargarListaEfectores(resp);
     } else {

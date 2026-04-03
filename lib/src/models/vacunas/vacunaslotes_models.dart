@@ -48,7 +48,7 @@ class Lotes {
         sysdesa18_fecha_vencimiento: json["sysdesa18_fecha_vencimiento"],
         sysvacu02_descripcion: fixEncoding(json["sysvacu02_descripcion"]),
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   Lotes.fromJsonMap(Map<String, dynamic> json) {
@@ -58,7 +58,7 @@ class Lotes {
     sysdesa18_fecha_vencimiento = json["sysdesa18_fecha_vencimiento"];
     sysvacu02_descripcion = fixEncoding(json["sysvacu02_descripcion"]);
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

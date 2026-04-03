@@ -6,11 +6,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 
 import 'package:sistema_vacunacion/src/services/enviroment_service.dart';
+import 'package:sistema_vacunacion/src/services/tema_app_service.dart';
 
 import 'src/pages/pages.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await temaAppService.inicializar();
   _buildReleaseErrorWidgetBuilder();
   AppConfig appconfig = AppConfig(enviroment: 'DEV');
   enviromentService.cargarEnviroment(appconfig);
@@ -39,7 +41,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildMaterialApp();
+    return ListenableBuilder(
+      listenable: temaAppService,
+      builder: (context, _) {
+        return _buildMaterialApp();
+      },
+    );
   }
 
   MaterialApp _buildMaterialApp() {
@@ -51,7 +58,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner:
           enviromentService.envState!.enviroment == 'DEV' ? true : false,
       initialRoute: LoginBody.nombreRuta,
-      theme: SisVacuColor.theme.theme,
+      theme: SisVacuTheme.light.theme,
+      darkTheme: SisVacuTheme.light.temaOscuro,
+      themeMode: temaAppService.modoTema,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

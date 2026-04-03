@@ -35,7 +35,7 @@ class VacunasEsquema {
         sysvacu02_limite_min: json["sysvacu02_limite_min"],
         sysvacu02_limite_max: json["sysvacu02_limite_max"],
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   VacunasEsquema.fromJsonMap(Map<String, dynamic> json) {
@@ -45,7 +45,7 @@ class VacunasEsquema {
     sysvacu02_limite_min = json["sysvacu02_limite_min"];
     sysvacu02_limite_max = json["sysvacu02_limite_max"];
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String, dynamic> toJson() => {

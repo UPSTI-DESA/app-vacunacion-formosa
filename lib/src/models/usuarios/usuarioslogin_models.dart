@@ -47,7 +47,7 @@ class Usuarios {
         rela_sysofic01: json["rela_sysofic01"],
         sysofic01_descripcion: fixEncoding(json["sysofic01_descripcion"]),
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   Usuarios.fromJsonMap(Map<String, dynamic> json) {
@@ -57,7 +57,7 @@ class Usuarios {
     rela_sysofic01 = json["rela_sysofic01"];
     sysofic01_descripcion = fixEncoding(json["sysofic01_descripcion"]);
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

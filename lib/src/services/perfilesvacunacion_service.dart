@@ -26,6 +26,11 @@ class _PerfilesVacunacionrService {
   List<PerfilesVacunacion>? get listaPerfilesVacunacion =>
       _listaPerfilesVacunacion;
 
+  /// Mensaje cuando la lista quedó vacía por error de API o sin datos (para la UI).
+  String? _mensajeListaPerfilesVacia;
+
+  String? get mensajeListaPerfilesVacia => _mensajeListaPerfilesVacia;
+
   bool get existelistaPerfilesVacunacion =>
       (_listaPerfilesVacunacion!.isNotEmpty) ? true : false;
 
@@ -38,14 +43,20 @@ class _PerfilesVacunacionrService {
   }
 
   void cargarlistaPerfilesVacunacion(
-      List<PerfilesVacunacion> listaPerfilesVacunacion) {
+    List<PerfilesVacunacion> listaPerfilesVacunacion, {
+    String? mensajeSiListaVacia,
+  }) {
     _listaPerfilesVacunacion = listaPerfilesVacunacion;
+    _mensajeListaPerfilesVacia = listaPerfilesVacunacion.isEmpty
+        ? mensajeSiListaVacia
+        : null;
     _listaPerfilesVacunacionStreamController.add(listaPerfilesVacunacion);
   }
 
   void eliminarListaPerfiles() {
     List<PerfilesVacunacion> vacio = [];
     _listaPerfilesVacunacion = vacio;
+    _mensajeListaPerfilesVacia = null;
     _listaPerfilesVacunacionStreamController.add(vacio);
   }
 

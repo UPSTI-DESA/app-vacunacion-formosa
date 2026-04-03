@@ -8,7 +8,9 @@ class _BeneficiarioProviders {
   // ignore: missing_return
   Future<List<Beneficiario>> procesarRespuestaDos(Uri url) async {
     try {
-      final resp = await http.get(url);
+      // Timeout de 30 segundos: evita que la app quede colgada indefinidamente
+      // si el servidor no responde. TimeoutException es capturada por el catch.
+      final resp = await http.get(url).timeout(const Duration(seconds: 30));
       if (resp.statusCode == 200) {
         final decodedData = json.decode(utf8.decode(resp.bodyBytes));
         final beneficiario =
@@ -35,11 +37,12 @@ class _BeneficiarioProviders {
         });
 
     final List<Beneficiario> resp = await procesarRespuestaDos(url);
-    if (resp[0].sysdesa10_dni != '') {
-      return resp;
-    } else {
-      return resp;
-    }
+
+    // Guard: la API siempre devuelve al menos 1 item (con campos vacios si no
+    // encuentra datos). Si llega vacio es una respuesta inesperada del servidor.
+    if (resp.isEmpty) throw 'No se encontraron datos para el beneficiario.';
+
+    return resp;
   }
 }
 

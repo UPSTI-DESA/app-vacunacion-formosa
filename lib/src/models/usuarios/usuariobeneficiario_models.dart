@@ -74,7 +74,7 @@ class Beneficiario {
         sysdesa10_edad: json["sysdesa10_edad"],
         sysdesa10_cadena_dni: json["sysdesa10_cadena_dni"],
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
         foto_beneficiario: json["foto_beneficiario"],
       );
   Beneficiario.fromJsonMap(Map<String, dynamic> json) {
@@ -88,7 +88,7 @@ class Beneficiario {
     sysdesa10_edad = json["sysdesa10_edad"];
     sysdesa10_cadena_dni = json["sysdesa10_cadena_dni"];
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
     foto_beneficiario = json["foto_beneficiario"];
   }
   Map<dynamic, dynamic> toJson() => {

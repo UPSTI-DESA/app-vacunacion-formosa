@@ -44,7 +44,7 @@ class NotificacionesDosis {
         sysdesa18_lote: fixEncoding(json["sysdesa18_lote"]),
         sysvacu03_tiempo_interdosis: json["sysvacu03_tiempo_interdosis"],
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   NotificacionesDosis.fromJsonMap(Map<String, dynamic> json) {
@@ -56,7 +56,7 @@ class NotificacionesDosis {
     sysdesa18_lote = fixEncoding(json["sysdesa18_lote"]);
     sysvacu03_tiempo_interdosis = json["sysvacu03_tiempo_interdosis"];
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

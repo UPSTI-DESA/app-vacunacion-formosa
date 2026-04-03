@@ -35,12 +35,14 @@ class CustomInput extends StatelessWidget {
           right: MediaQuery.of(context).size.width * 0.04,
           left: MediaQuery.of(context).size.width * 0.04),
       decoration: BoxDecoration(
-          color: Colors.white,
-          // color: Colors.blueGrey[50],
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(20),
           boxShadow: <BoxShadow>[
             BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: Theme.of(context)
+                    .colorScheme
+                    .shadow
+                    .withValues(alpha: 0.08),
                 offset: const Offset(0, 5),
                 blurRadius: 5)
           ]),

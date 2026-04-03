@@ -1,3 +1,4 @@
+export 'package:sistema_vacunacion/src/widgets/app_bar_sesion_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/alertadialogo_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/background_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/backgrounddos_widget.dart';
@@ -9,4 +10,5 @@ export 'package:sistema_vacunacion/src/widgets/custom_input_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/new_boton_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/loading_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
+export 'package:sistema_vacunacion/src/widgets/marca_cabecera_gradiente_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/loading_x_tiempo_widget.dart';

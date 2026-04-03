@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
+
 List<CantidadVacunados> cantidadVacunadosFromJson(String str) =>
     List<CantidadVacunados>.from(
         json.decode(str).map((x) => CantidadVacunados.fromJson(x)));
@@ -35,14 +37,14 @@ class CantidadVacunados {
         id_sysdesa12: json["id_sysdesa12"],
         cantidad_aplicaciones: json["cantidad_aplicaciones"],
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   CantidadVacunados.fromJsonMap(Map<String, dynamic> json) {
     id_sysdesa12 = json["id_sysdesa12"];
     cantidad_aplicaciones = json["cantidad_aplicaciones"];
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

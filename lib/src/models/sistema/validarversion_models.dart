@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
+
 List<Version> versionFromJson(String str) =>
     List<Version>.from(json.decode(str).map((x) => Version.fromJson(x)));
 
@@ -37,20 +39,20 @@ class Version {
 
   factory Version.fromJson(Map<String, dynamic> json) => Version(
         id_sysappl01: json["id_sysappl01"],
-        sysappl01_nombre: json["sysappl01_nombre"],
+        sysappl01_nombre: fixEncoding(json["sysappl01_nombre"]),
         sysappl01_version: json["sysappl01_version"],
         sysappl01_fecha_actualizacion: json["sysappl01_fecha_actualizacion"],
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   Version.fromJsonMap(Map<String, dynamic> json) {
     id_sysappl01 = json["id_sysappl01"];
-    sysappl01_nombre = json["sysappl01_nombre"];
+    sysappl01_nombre = fixEncoding(json["sysappl01_nombre"]);
     sysappl01_version = json["sysappl01_version"];
     sysappl01_fecha_actualizacion = json["sysappl01_fecha_actualizacion"];
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String?, dynamic> toJson() => {

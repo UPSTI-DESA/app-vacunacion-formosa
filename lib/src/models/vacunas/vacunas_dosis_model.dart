@@ -38,7 +38,7 @@ class VacunasDosis {
         sysvacu05_esquema: json["sysvacu05_esquema"],
         sysvacu05_orden_numerico: json["sysvacu05_orden_numerico"],
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   VacunasDosis.fromJsonMap(Map<String, dynamic> json) {
@@ -49,7 +49,7 @@ class VacunasDosis {
     sysvacu05_esquema = json["sysvacu05_esquema"];
     sysvacu05_orden_numerico = json["sysvacu05_orden_numerico"];
     codigo_mensaje = json["codigo_mensaje"];
-    mensaje = json["mensaje"];
+    mensaje = fixEncoding(json["mensaje"]);
   }
 
   Map<String, dynamic> toJson() => {

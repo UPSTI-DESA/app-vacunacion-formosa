@@ -1,4 +1,5 @@
 export 'package:sistema_vacunacion/src/services/enviroment_service.dart';
+export 'package:sistema_vacunacion/src/services/tema_app_service.dart';
 export 'package:sistema_vacunacion/src/services/usuarioregistrador_service.dart';
 export 'package:sistema_vacunacion/src/services/usuariovacunador_service.dart';
 export 'package:sistema_vacunacion/src/services/usuariobeneficiario_service.dart';

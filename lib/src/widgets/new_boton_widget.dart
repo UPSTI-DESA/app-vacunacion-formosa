@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sistema_vacunacion/src/config/config.dart';
 
 class BotonCustom extends StatelessWidget {
   final String text;
@@ -26,11 +25,17 @@ class BotonCustom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color fondo = color ?? Theme.of(context).colorScheme.primary;
+    final Color textoIcono =
+        ThemeData.estimateBrightnessForColor(fondo) == Brightness.dark
+            ? Colors.white
+            : const Color(0xFF0D1B1E);
+
     return MaterialButton(
       onPressed: onPressed,
       child: Container(
         decoration: BoxDecoration(
-            color: color ?? SisVacuColor.vercelesteCuaternario,
+            color: fondo,
             borderRadius: BorderRadius.circular(borderRadius ?? 32)),
         width: width ?? double.infinity,
         height: height ?? 40,
@@ -38,15 +43,20 @@ class BotonCustom extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              iconoBool! ? iconoBoton! : Container(),
+              iconoBool!
+                  ? IconTheme(
+                      data: IconThemeData(color: textoIcono, size: 24),
+                      child: iconoBoton!,
+                    )
+                  : Container(),
               const SizedBox(
                 width: 10.0,
               ),
               Text(text,
                   style: GoogleFonts.nunito(
-                      textStyle: const TextStyle(
+                      textStyle: TextStyle(
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: textoIcono,
                           fontSize: 18))),
             ],
           ),
