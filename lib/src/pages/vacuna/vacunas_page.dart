@@ -1,17 +1,12 @@
-import 'dart:typed_data';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:responsive_builder/responsive_builder.dart';
-
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/pages/vacuna/vacunas_ui_helpers.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
-import 'package:sistema_vacunacion/src/utils/imagen_base64_util.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class VacunasPage extends StatefulWidget {
@@ -57,8 +52,6 @@ class _VacunasPageState extends State<VacunasPage> {
   String? dniTutor;
   String? sexoTutor;
 
-  Uint8List? fotoBeneficiario;
-  bool _fotoDecodificando = false;
   bool _recargandoPerfiles = false;
 
   final ScrollController _generalScroll = ScrollController();
@@ -68,8 +61,6 @@ class _VacunasPageState extends State<VacunasPage> {
   final ScrollController _scrollVacunas = ScrollController();
   final ScrollController _scrollCondiciones = ScrollController();
   final ScrollController _scrollEsquemas = ScrollController();
-  final ScrollController _scrollDosis = ScrollController();
-  final ScrollController _scrollLotes = ScrollController();
 
   @override
   void initState() {
@@ -87,19 +78,6 @@ class _VacunasPageState extends State<VacunasPage> {
     genero = false;
     focusNode = FocusNode();
     cargarPerfilesService(registradorService.registrador!.id_flxcore03!);
-    _iniciarDecodificacionFotoBeneficiario();
-  }
-
-  Future<void> _iniciarDecodificacionFotoBeneficiario() async {
-    final raw = beneficiarioService.beneficiario?.foto_beneficiario;
-    if (raw == null || raw.trim().isEmpty) return;
-    setState(() => _fotoDecodificando = true);
-    final bytes = await decodificarImagenBase64Async(raw);
-    if (!mounted) return;
-    setState(() {
-      _fotoDecodificando = false;
-      fotoBeneficiario = bytes;
-    });
   }
 
   @override
@@ -108,8 +86,6 @@ class _VacunasPageState extends State<VacunasPage> {
     _scrollVacunas.dispose();
     _scrollCondiciones.dispose();
     _scrollEsquemas.dispose();
-    _scrollDosis.dispose();
-    _scrollLotes.dispose();
     focusNode.dispose();
     controladorDni.dispose();
     controladorBusqueda.dispose();
@@ -126,6 +102,7 @@ class _VacunasPageState extends State<VacunasPage> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
 
     return PopScope(
       canPop: false,
@@ -140,8 +117,8 @@ class _VacunasPageState extends State<VacunasPage> {
           leading: Center(
             child: IconButton(
               style: IconButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.white.withValues(alpha: 0.2),
+                foregroundColor: cs.onPrimary,
+                backgroundColor: cs.onPrimary.withValues(alpha: 0.2),
               ),
               tooltip: 'Historial de dosis aplicadas',
               onPressed: () {
@@ -150,7 +127,8 @@ class _VacunasPageState extends State<VacunasPage> {
                     isScrollControlled: true,
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20)),
+                        top: Radius.circular(AppEspaciado.radioCampo),
+                      ),
                     ),
                     builder: (BuildContext context) {
                       return DraggableScrollableSheet(
@@ -165,9 +143,9 @@ class _VacunasPageState extends State<VacunasPage> {
                       );
                     });
               },
-              icon: FaIcon(
+              icon: const FaIcon(
                 FontAwesomeIcons.hospitalUser,
-                size: getValueForScreenType(context: context, mobile: 20),
+                size: 20,
               ),
             ),
           ),
@@ -175,7 +153,7 @@ class _VacunasPageState extends State<VacunasPage> {
         body: RawScrollbar(
           thumbColor: cs.primary.withValues(alpha: 0.42),
           thumbVisibility: true,
-          radius: const Radius.circular(12),
+          radius: const Radius.circular(AppEspaciado.radioBoton),
           thickness: 6,
           controller: _generalScroll,
           child: SingleChildScrollView(
@@ -183,7 +161,7 @@ class _VacunasPageState extends State<VacunasPage> {
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(
               AppEspaciado.lg,
-              AppEspaciado.md,
+              AppEspaciado.sm,
               AppEspaciado.lg,
               AppEspaciado.xl,
             ),
@@ -191,52 +169,44 @@ class _VacunasPageState extends State<VacunasPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const VacunasEncabezadoPagina(),
-                const SizedBox(height: AppEspaciado.xl),
-                containerBeneficiario(),
-                const SizedBox(height: AppEspaciado.md),
-                containerTutor(),
-                const SizedBox(height: AppEspaciado.xl),
+                const SizedBox(height: AppEspaciado.sm),
                 VacunasPanelFlujo(
                   pasoActual: pasos,
                   onIrAPaso: (p) => setState(() => pasos = p),
                   child: containerPasos(),
+                ),
+                const SizedBox(height: AppEspaciado.md),
+                containerBeneficiario(),
+                const SizedBox(height: AppEspaciado.sm),
+                containerTutor(),
+                const SizedBox(height: AppEspaciado.sm),
+                const ResumenSesionVacunacion(
+                  compendio: true,
+                  colapsable: true,
+                  expandidoInicial: false,
                 ),
                 const SizedBox(height: AppEspaciado.xl),
                 if (pasos == 7) botonRegistrarVacunacion(),
                 Padding(
                   padding: const EdgeInsets.only(top: AppEspaciado.md),
                   child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: cs.error,
-                      side: BorderSide(
-                        color: cs.error.withValues(alpha: 0.72),
-                        width: 1.5,
-                      ),
-                      minimumSize: const Size.fromHeight(50),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 14,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    icon: Icon(Icons.cancel_outlined, size: 22, color: cs.error),
+                    style: AppBotones.estiloOutlinedPeligro(cs),
+                    icon: const Icon(Icons.cancel_outlined, size: 22),
                     label: Text(
                       'Cancelar registro',
-                      style: GoogleFonts.nunito(
+                      style: AppBotones.etiquetaBoton(
+                        tt,
                         fontSize: 15,
-                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     onPressed: () {
                       showDialog(
                         context: _scaffoldKey.currentContext!,
                         builder: (BuildContext context) => DialogoAlerta(
-                          tituloAlerta: 'Atenci\u00F3n',
+                          tituloAlerta: 'Cancelar registro',
                           descripcionAlerta:
-                              '\u00BFConfirma cancelar el registro? Se perder\u00E1n los datos no guardados.',
-                          textoBotonAlerta: 'S\u00ED, cancelar',
+                              '¿Confirma cancelar? Se perderán los datos no guardados de esta vacuna.',
+                          textoBotonAlerta: 'Sí, cancelar',
                           textoBotonAlerta2: 'Volver',
                           icon: const Icon(
                             Icons.warning_amber_rounded,
@@ -269,7 +239,7 @@ class _VacunasPageState extends State<VacunasPage> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).padding.bottom +
+                  height: MediaQuery.paddingOf(context).bottom +
                       AppEspaciado.xl,
                 ),
               ],
@@ -330,41 +300,41 @@ class _VacunasPageState extends State<VacunasPage> {
 
   Widget vacunasAplicadas({ScrollController? scrollController}) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 8),
+          const SizedBox(height: AppEspaciado.sm),
           Center(
             child: Container(
               width: 44,
-              height: 4,
+              height: AppEspaciado.xs,
               decoration: BoxDecoration(
                 color: cs.outlineVariant.withValues(alpha: 0.65),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(AppEspaciado.xs),
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppEspaciado.radioCampo),
           Text(
             'Historial de dosis',
-            style: GoogleFonts.barlow(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
+            style: bar.barlowTituloTarjeta.copyWith(
               color: cs.onSurface,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppEspaciado.xs),
           Text(
             'Beneficiario en pantalla · solo lectura',
-            style: GoogleFonts.nunito(
+            style: tt.titleSmall?.copyWith(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppSuperficies.textoSecundario(context),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppEspaciado.lg),
           Expanded(
             child: StreamBuilder(
               stream: notificacionesDosisService.listaDosisAplicadasStream,
@@ -386,7 +356,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                   .withValues(alpha: 0.55),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: BorderRadius.circular(
+                                    AppEspaciado.radioCampo),
                                 side: BorderSide(
                                   color: cs.outlineVariant
                                       .withValues(alpha: 0.38),
@@ -399,17 +370,17 @@ class _VacunasPageState extends State<VacunasPage> {
                                   children: [
                                     Text(
                                       '${d.sysvacu05_nombre!} · ${d.sysvacu04_nombre!}',
-                                      style: GoogleFonts.nunito(
+                                      style: tt.titleSmall?.copyWith(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 15,
                                         height: 1.25,
                                         color: cs.onSurface,
                                       ),
                                     ),
-                                    const SizedBox(height: 8),
+                                    const SizedBox(height: AppEspaciado.sm),
                                     Text(
                                       'Lote ${d.sysdesa18_lote!}',
-                                      style: GoogleFonts.nunito(
+                                      style: tt.bodyMedium?.copyWith(
                                         fontSize: 13,
                                         color: AppSuperficies.textoSecundario(
                                             context),
@@ -417,7 +388,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                     ),
                                     Text(
                                       'Aplicación ${d.sysdesa10_fecha_aplicacion!}',
-                                      style: GoogleFonts.nunito(
+                                      style: tt.bodyMedium?.copyWith(
                                         fontSize: 13,
                                         color: AppSuperficies.textoSecundario(
                                             context),
@@ -446,17 +417,17 @@ class _VacunasPageState extends State<VacunasPage> {
                               Text(
                                 'Sin dosis registradas',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.barlow(
+                                style: bar.barlowSubtituloTarjeta.copyWith(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                   color: cs.onSurface,
                                 ),
                               ),
-                              const SizedBox(height: 6),
+                              const SizedBox(height: AppEspaciado.sm),
                               Text(
                                 'Cuando existan aplicaciones previas, aparecerán aquí.',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.nunito(
+                                style: tt.bodyMedium?.copyWith(
                                   fontSize: 14,
                                   height: 1.35,
                                   color: AppSuperficies.textoSecundario(
@@ -475,55 +446,101 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  Widget _encabezadoTarjetaColapsable({
+  /// Tarjeta de identidad: jerarquía clara, acento lateral (patrón UI reciente / M3).
+  BoxDecoration _decoracionTarjetaIdentidadVacunas() {
+    final cs = Theme.of(context).colorScheme;
+    return BoxDecoration(
+      color: cs.surfaceContainerLowest,
+      borderRadius: BorderRadius.circular(AppEspaciado.xl),
+      border: Border.all(
+        color: cs.outlineVariant.withValues(alpha: 0.35),
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: cs.shadow.withValues(alpha: 0.08),
+          blurRadius: 22,
+          offset: const Offset(0, 10),
+          spreadRadius: -6,
+        ),
+      ],
+    );
+  }
+
+  Widget _encabezadoIdentidadColapsable({
     required IconData icono,
-    required String titulo,
-    required String subtitulo,
+    required String rol,
+    required String nombreDestacado,
+    String? lineaContexto,
     required bool expandido,
     required VoidCallback onAlternar,
   }) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
         onTap: onAlternar,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+          padding: const EdgeInsets.all(AppEspaciado.xs),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                width: 4,
+                constraints: const BoxConstraints(minHeight: 52),
                 decoration: BoxDecoration(
-                  color: cs.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppEspaciado.xs),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      cs.primary,
+                      cs.primary.withValues(alpha: 0.55),
+                    ],
+                  ),
                 ),
-                child: Icon(icono, color: cs.primary, size: 24),
               ),
               const SizedBox(width: 14),
+              Icon(icono, color: cs.primary, size: 22),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      titulo,
-                      style: GoogleFonts.barlow(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
+                      rol.toUpperCase(),
+                      style: tt.labelSmall?.copyWith(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.35,
+                        height: 1.2,
+                        color: cs.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      nombreDestacado,
+                      style: bar.barlowTituloTarjeta.copyWith(
+                        fontSize: 23,
+                        height: 1.12,
                         color: cs.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitulo,
-                      style: GoogleFonts.nunito(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.6,
-                        color: cs.onSurfaceVariant,
+                    if (lineaContexto != null &&
+                        lineaContexto.trim().isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        lineaContexto.trim(),
+                        style: tt.titleSmall?.copyWith(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          height: 1.25,
+                          color: cs.onSurfaceVariant,
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
@@ -532,6 +549,7 @@ class _VacunasPageState extends State<VacunasPage> {
                     ? Icons.expand_less_rounded
                     : Icons.expand_more_rounded,
                 color: cs.onSurfaceVariant,
+                size: 28,
               ),
             ],
           ),
@@ -540,86 +558,89 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  Widget _avatarFotoBeneficiario(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    const double radio = 44;
-    if (_fotoDecodificando) {
-      return SizedBox(
-        width: radio * 2,
-        height: radio * 2,
-        child: Center(
-          child: SizedBox(
-            width: 28,
-            height: 28,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              color: cs.primary,
-            ),
-          ),
-        ),
-      );
-    }
-    if (fotoBeneficiario != null && fotoBeneficiario!.isNotEmpty) {
-      final dpr = MediaQuery.of(context).devicePixelRatio;
-      final cacheW = (radio * 2 * dpr).round().clamp(96, 320);
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(radio),
-        child: Image.memory(
-          fotoBeneficiario!,
-          width: radio * 2,
-          height: radio * 2,
-          fit: BoxFit.cover,
-          gaplessPlayback: true,
-          cacheWidth: cacheW,
-          errorBuilder: (_, __, ___) => CircleAvatar(
-            radius: radio,
-            backgroundColor: cs.surfaceContainerHighest,
-            child: Icon(Icons.broken_image_outlined,
-                color: cs.onSurfaceVariant, size: 32),
-          ),
-        ),
-      );
-    }
-    return CircleAvatar(
-      radius: radio,
-      backgroundColor: cs.surfaceContainerHighest,
-      child: Icon(Icons.person_outline,
-          size: 36, color: cs.onSurfaceVariant),
-    );
+  /// No muestra filas con cadena vacía; [ceroEsVacio] para C.U.I.L. / trámite cuando el API manda "0".
+  bool _beneficiarioValorVisible(String? valor, {bool ceroEsVacio = false}) {
+    final t = valor?.trim() ?? '';
+    if (t.isEmpty) return false;
+    if (ceroEsVacio && t == '0') return false;
+    return true;
   }
 
-  /// Foto del tutor/responsable (mismo tamaño y estilo que el beneficiario).
-  Widget _avatarFotoTutor(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    const double radio = 44;
-    final bytes = tutorService.tutor?.fotoTutor;
-    if (bytes != null && bytes.isNotEmpty) {
-      final dpr = MediaQuery.of(context).devicePixelRatio;
-      final cacheW = (radio * 2 * dpr).round().clamp(96, 320);
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(radio),
-        child: Image.memory(
-          bytes,
-          width: radio * 2,
-          height: radio * 2,
-          fit: BoxFit.cover,
-          gaplessPlayback: true,
-          cacheWidth: cacheW,
-          errorBuilder: (_, __, ___) => CircleAvatar(
-            radius: radio,
-            backgroundColor: cs.surfaceContainerHighest,
-            child: Icon(Icons.broken_image_outlined,
-                color: cs.onSurfaceVariant, size: 32),
+  List<Widget> _filasDetalleBeneficiario(BuildContext context, Beneficiario b) {
+    final filas = <Widget>[];
+    void agregar(String etiqueta, String? valor, {bool ceroEsVacio = false}) {
+      if (!_beneficiarioValorVisible(valor, ceroEsVacio: ceroEsVacio)) return;
+      filas.add(_filaDatoBeneficiario(etiqueta, valor!.trim()));
+    }
+
+    agregar('Nombre', b.sysdesa10_nombre);
+    agregar('Apellido', b.sysdesa10_apellido);
+    agregar('D.N.I.', b.sysdesa10_dni);
+    final sexoRaw = b.sysdesa10_sexo?.trim();
+    if (sexoRaw != null && sexoRaw.isNotEmpty) {
+      agregar('Sexo registrado', _sexoRegistradoLegible(sexoRaw));
+    }
+    final fnDni = beneficiarioService.fechaNacimientoDesdePdf417Escaneado;
+    if (fnDni != null && fnDni.trim().isNotEmpty) {
+      filas.add(_filaDatoBeneficiario('Fecha de nacimiento', fnDni.trim()));
+    } else {
+      agregar('Fecha de nacimiento', b.sysdesa10_fecha_nacimiento);
+    }
+    final edadDni = beneficiarioService.edadAniosDesdePdf417Escaneado;
+    if (edadDni != null && edadDni.trim().isNotEmpty) {
+      filas.add(_filaDatoBeneficiario('Edad', '${edadDni.trim()} años'));
+    } else if (_beneficiarioValorVisible(b.sysdesa10_edad)) {
+      filas.add(_filaDatoBeneficiario(
+        'Edad',
+        '${b.sysdesa10_edad!.trim()} años',
+      ));
+    }
+    agregar('C.U.I.L.', b.sysdesa10_cuil, ceroEsVacio: true);
+    agregar('N.º de trámite', b.sysdesa10_nro_tramite, ceroEsVacio: true);
+
+    if (filas.isEmpty) {
+      filas.add(
+        Text(
+          'Sin datos de identificación',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontSize: 14,
+            height: 1.35,
+            color: AppSuperficies.textoSecundario(context),
           ),
         ),
       );
     }
-    return CircleAvatar(
-      radius: radio,
-      backgroundColor: cs.surfaceContainerHighest,
-      child: Icon(Icons.family_restroom_outlined,
-          size: 36, color: cs.onSurfaceVariant),
-    );
+    return filas;
+  }
+
+  List<Widget> _filasDetalleTutor(BuildContext context, Tutor t) {
+    final filas = <Widget>[];
+    void agregar(String etiqueta, String? valor) {
+      if (!_beneficiarioValorVisible(valor)) return;
+      filas.add(_filaDatoBeneficiario(etiqueta, valor!.trim()));
+    }
+
+    agregar('Nombre', t.sysdesa10_nombre_tutor);
+    agregar('Apellido', t.sysdesa10_apellido_tutor);
+    agregar('D.N.I.', t.sysdesa10_dni_tutor);
+    final sexoRaw = t.sysdesa10_sexo_tutor?.trim();
+    if (sexoRaw != null && sexoRaw.isNotEmpty) {
+      agregar('Sexo registrado', _sexoRegistradoLegible(sexoRaw));
+    }
+
+    if (filas.isEmpty) {
+      filas.add(
+        Text(
+          'Sin datos del tutor',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontSize: 14,
+            height: 1.35,
+            color: AppSuperficies.textoSecundario(context),
+          ),
+        ),
+      );
+    }
+    return filas;
   }
 
   String _sexoRegistradoLegible(String? codigo) {
@@ -635,56 +656,66 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget containerBeneficiario() {
+    final b = beneficiarioService.beneficiario;
+    if (b == null) {
+      return const SizedBox.shrink();
+    }
+    final nombre = b.sysdesa10_nombre?.trim() ?? '';
+    final apellido = b.sysdesa10_apellido?.trim() ?? '';
+    final resumen = [nombre, apellido].where((s) => s.isNotEmpty).join(' ');
+    final nombreTarjeta = resumen.isNotEmpty
+        ? resumen
+        : 'Sin nombre en el registro';
+    final dni = b.sysdesa10_dni?.trim() ?? '';
+    final lineaCtx =
+        dni.isNotEmpty ? 'Documento $dni' : 'Persona que recibirá la dosis';
+
+    final cs = Theme.of(context).colorScheme;
+    final filasDetalle = _filasDetalleBeneficiario(context, b);
+    final bloquesDetalle = <Widget>[];
+    for (var i = 0; i < filasDetalle.length; i++) {
+      if (i > 0) bloquesDetalle.add(const SizedBox(height: 10));
+      bloquesDetalle.add(filasDetalle[i]);
+    }
+
     return Container(
-      padding: const EdgeInsets.all(AppEspaciado.lg),
-      decoration: AppSuperficies.tarjeta(context, radio: 22),
+      clipBehavior: Clip.antiAlias,
+      decoration: _decoracionTarjetaIdentidadVacunas(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FadeInUpBig(
-            from: 16,
-            duration: const Duration(milliseconds: 420),
-            child: _encabezadoTarjetaColapsable(
-              icono: Icons.badge_outlined,
-              titulo: 'Beneficiario',
-              subtitulo: 'Persona que recibirá la dosis',
-              expandido: mostrarBeneficiario!,
-              onAlternar: () {
-                setState(() {
-                  mostrarBeneficiario = !mostrarBeneficiario!;
-                });
-              },
+            from: 14,
+            duration: const Duration(milliseconds: 380),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 18, 14, 12),
+              child: _encabezadoIdentidadColapsable(
+                icono: Icons.badge_outlined,
+                rol: 'Beneficiario',
+                nombreDestacado: nombreTarjeta,
+                lineaContexto: lineaCtx,
+                expandido: mostrarBeneficiario!,
+                onAlternar: () {
+                  setState(() {
+                    mostrarBeneficiario = !mostrarBeneficiario!;
+                  });
+                },
+              ),
             ),
           ),
           if (mostrarBeneficiario!)
             Padding(
-              padding: const EdgeInsets.only(top: AppEspaciado.md),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _avatarFotoBeneficiario(context),
-                  const SizedBox(width: AppEspaciado.lg),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _filaDatoBeneficiario(
-                          'Nombre',
-                          beneficiarioService.beneficiario!.sysdesa10_nombre!,
-                        ),
-                        const SizedBox(height: AppEspaciado.sm),
-                        _filaDatoBeneficiario(
-                          'Apellido',
-                          beneficiarioService.beneficiario!.sysdesa10_apellido!,
-                        ),
-                        const SizedBox(height: AppEspaciado.sm),
-                        _filaDatoBeneficiario(
-                          'D.N.I.',
-                          beneficiarioService.beneficiario!.sysdesa10_dni!,
-                        ),
-                      ],
-                    ),
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: cs.outlineVariant.withValues(alpha: 0.35),
                   ),
+                  const SizedBox(height: 14),
+                  ...bloquesDetalle,
                 ],
               ),
             ),
@@ -694,30 +725,52 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget _filaDatoBeneficiario(String etiqueta, String valor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          etiqueta,
-          style: GoogleFonts.nunito(
-            textStyle: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-              color: AppSuperficies.textoSecundario(context),
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppEspaciado.lg,
+        vertical: AppEspaciado.md + AppEspaciado.xs,
+      ),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHigh.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(AppEspaciado.lg),
+        border: Border.all(
+          color: cs.outlineVariant.withValues(alpha: 0.28),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 12,
+            child: Text(
+              etiqueta,
+              style: tt.labelLarge?.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
+                height: 1.3,
+                color: AppSuperficies.textoSecundario(context),
+              ),
             ),
           ),
-        ),
-        Text(
-          valor,
-          style: GoogleFonts.nunito(
-            textStyle: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface,
+          Expanded(
+            flex: 15,
+            child: Text(
+              valor,
+              textAlign: TextAlign.end,
+              style: tt.titleSmall?.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                height: 1.35,
+                color: cs.onSurface,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -731,7 +784,7 @@ class _VacunasPageState extends State<VacunasPage> {
     return RawScrollbar(
       thumbVisibility: true,
       thickness: 5,
-      radius: const Radius.circular(12),
+      radius: const Radius.circular(AppEspaciado.radioBoton),
       thumbColor: cs.primary.withValues(alpha: 0.42),
       controller: controller,
       child: child,
@@ -745,6 +798,7 @@ class _VacunasPageState extends State<VacunasPage> {
     required VoidCallback onTap,
   }) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
       child: Material(
@@ -752,7 +806,7 @@ class _VacunasPageState extends State<VacunasPage> {
             ? cs.primaryContainer.withValues(alpha: 0.5)
             : cs.surfaceContainerHighest.withValues(alpha: 0.42),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppEspaciado.lg),
           side: BorderSide(
             color: seleccionado
                 ? cs.primary
@@ -761,7 +815,7 @@ class _VacunasPageState extends State<VacunasPage> {
           ),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppEspaciado.lg),
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -776,7 +830,7 @@ class _VacunasPageState extends State<VacunasPage> {
                     children: [
                       Text(
                         titulo,
-                        style: GoogleFonts.nunito(
+                        style: tt.titleSmall?.copyWith(
                           fontWeight: seleccionado
                               ? FontWeight.w800
                               : FontWeight.w600,
@@ -786,10 +840,10 @@ class _VacunasPageState extends State<VacunasPage> {
                         ),
                       ),
                       if (subtitulo != null) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppEspaciado.xs),
                         Text(
                           subtitulo,
-                          style: GoogleFonts.nunito(
+                          style: tt.bodySmall?.copyWith(
                             fontSize: 12,
                             color: AppSuperficies.textoSecundario(context),
                           ),
@@ -812,128 +866,117 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  Widget _capsulaHorizontal({
-    required String texto,
-    required bool seleccionado,
-    required VoidCallback onTap,
-  }) {
-    final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.only(right: AppEspaciado.sm),
-      child: Material(
-        color: seleccionado
-            ? cs.primaryContainer.withValues(alpha: 0.65)
-            : cs.surfaceContainerHigh.withValues(alpha: 0.5),
-        shape: StadiumBorder(
-          side: BorderSide(
-            color: seleccionado
-                ? cs.primary
-                : cs.outlineVariant.withValues(alpha: 0.45),
-            width: seleccionado ? 2 : 1,
-          ),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(28),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Text(
-              texto,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.nunito(
-                fontWeight: seleccionado ? FontWeight.w800 : FontWeight.w600,
-                fontSize: 13,
-                color: seleccionado ? cs.onPrimaryContainer : cs.onSurface,
+  /// Tutor dado de alta con D.N.I. (no basta con un objeto vacío del servicio).
+  bool _tutorTieneDocumentoCargado(Tutor? t) {
+    if (t == null) return false;
+    final dni = t.sysdesa10_dni_tutor?.trim() ?? '';
+    return dni.isNotEmpty;
+  }
+
+  /// Tarjeta colapsable del tutor ya validado (solo datos).
+  Widget _columnaTarjetaTutor(Tutor tut) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Builder(
+          builder: (context) {
+            final n = tut.sysdesa10_nombre_tutor?.trim() ?? '';
+            final a = tut.sysdesa10_apellido_tutor?.trim() ?? '';
+            final sub = [n, a].where((s) => s.isNotEmpty).join(' ');
+            final nombreTutor =
+                sub.isNotEmpty ? sub : 'Sin nombre en el registro';
+            final dniT = tut.sysdesa10_dni_tutor?.trim() ?? '';
+            final lineaTutor =
+                dniT.isNotEmpty ? 'Documento $dniT' : 'Tutor o responsable';
+            final cs = Theme.of(context).colorScheme;
+            final filasT = _filasDetalleTutor(context, tut);
+            final bloquesT = <Widget>[];
+            for (var i = 0; i < filasT.length; i++) {
+              if (i > 0) {
+                bloquesT.add(const SizedBox(height: 10));
+              }
+              bloquesT.add(filasT[i]);
+            }
+            return Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: _decoracionTarjetaIdentidadVacunas(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FadeInUpBig(
+                    from: 14,
+                    duration: const Duration(milliseconds: 380),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(18, 18, 14, 12),
+                      child: _encabezadoIdentidadColapsable(
+                        icono: Icons.family_restroom_outlined,
+                        rol: 'Tutor o responsable',
+                        nombreDestacado: nombreTutor,
+                        lineaContexto: lineaTutor,
+                        expandido: mostrarTutor!,
+                        onAlternar: () {
+                          setState(() {
+                            mostrarTutor = !mostrarTutor!;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  if (mostrarTutor!)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: cs.outlineVariant.withValues(alpha: 0.35),
+                          ),
+                          const SizedBox(height: 14),
+                          ...bloquesT,
+                        ],
+                      ),
+                    ),
+                ],
               ),
-            ),
-          ),
+            );
+          },
         ),
-      ),
+        const SizedBox(height: AppEspaciado.lg),
+      ],
     );
   }
 
+  /// Menor o edad desconocida: **siempre** se muestra el formulario aunque ya haya
+  /// un tutor en memoria (evita que un D.N.I. residual oculte el registro).
   Widget containerTutor() {
-    return StreamBuilder(
+    if (beneficiarioService.beneficiario == null) {
+      return const SizedBox.shrink();
+    }
+    return StreamBuilder<Tutor?>(
       stream: tutorService.tutorStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(AppEspaciado.lg),
-                    decoration: AppSuperficies.tarjeta(context, radio: 22),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        FadeInUpBig(
-                          from: 16,
-                          duration: const Duration(milliseconds: 420),
-                          child: _encabezadoTarjetaColapsable(
-                            icono: Icons.family_restroom_outlined,
-                            titulo: 'Tutor o responsable',
-                            subtitulo: 'Requerido si el beneficiario es menor',
-                            expandido: mostrarTutor!,
-                            onAlternar: () {
-                              setState(() {
-                                mostrarTutor = !mostrarTutor!;
-                              });
-                            },
-                          ),
-                        ),
-                        if (mostrarTutor!)
-                          Padding(
-                            padding: const EdgeInsets.only(top: AppEspaciado.md),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _avatarFotoTutor(context),
-                                const SizedBox(width: AppEspaciado.lg),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      _filaDatoBeneficiario(
-                                        'Nombre',
-                                        tutorService.tutor!
-                                                .sysdesa10_nombre_tutor ??
-                                            '—',
-                                      ),
-                                      const SizedBox(height: AppEspaciado.sm),
-                                      _filaDatoBeneficiario(
-                                        'Apellido',
-                                        tutorService.tutor!
-                                                .sysdesa10_apellido_tutor ??
-                                            '—',
-                                      ),
-                                      const SizedBox(height: AppEspaciado.sm),
-                                      _filaDatoBeneficiario(
-                                        'D.N.I.',
-                                        tutorService
-                                                .tutor!.sysdesa10_dni_tutor ??
-                                            '—',
-                                      ),
-                                      const SizedBox(height: AppEspaciado.sm),
-                                      _filaDatoBeneficiario(
-                                        'Sexo registrado',
-                                        _sexoRegistradoLegible(
-                                          tutorService
-                                              .tutor!.sysdesa10_sexo_tutor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppEspaciado.lg),
-                ],
-              )
-            : verificarEdad(context);
+      builder: (BuildContext context, AsyncSnapshot<Tutor?> snapshot) {
+        final tut = snapshot.data ?? tutorService.tutor;
+        final requiereRegistroTutor = _beneficiarioRequierePanelTutor();
+
+        if (!requiereRegistroTutor) {
+          if (tut != null && _tutorTieneDocumentoCargado(tut)) {
+            return _columnaTarjetaTutor(tut);
+          }
+          return const SizedBox.shrink();
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (tut != null && _tutorTieneDocumentoCargado(tut)) ...[
+              _columnaTarjetaTutor(tut),
+              const SizedBox(height: AppEspaciado.md),
+            ],
+            _panelRegistroTutorMenor(context),
+          ],
+        );
       },
     );
   }
@@ -941,22 +984,23 @@ class _VacunasPageState extends State<VacunasPage> {
   /// Sin perfiles: mensaje claro y reintentar.
   Widget _vacunasPaso1SinPerfiles() {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     final detalle = perfilesVacunacionService.mensajeListaPerfilesVacia;
     final texto = detalle ??
-        'No hay perfiles de vacunaci\u00F3n asignados a su usuario en este momento. '
+        'No hay perfiles de vacunación asignados a su usuario en este momento. '
             'Si cree que es un error, contacte a su supervisor o intente cargar de nuevo.';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const VacunasTituloSeccionPaso(
           etiqueta: 'PASO 1',
-          titulo: 'Perfil de vacunaci\u00F3n',
+          titulo: 'Perfil de vacunación',
           subtitulo:
-              'Elija el contexto del registro (campa\u00F1a o estrategia).',
+              'Elija el contexto del registro (campaña o estrategia).',
         ),
         Container(
           padding: const EdgeInsets.all(AppEspaciado.lg),
-          decoration: AppSuperficies.tarjeta(context, radio: 22),
+          decoration: AppSuperficies.tarjeta(context, radio: AppEspaciado.radioCampo),
           child: Column(
             children: [
               Icon(
@@ -968,7 +1012,7 @@ class _VacunasPageState extends State<VacunasPage> {
               Text(
                 texto,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.nunito(
+                style: tt.bodyLarge?.copyWith(
                   fontSize: 15,
                   height: 1.4,
                   color: Theme.of(context).colorScheme.onSurface,
@@ -976,17 +1020,12 @@ class _VacunasPageState extends State<VacunasPage> {
               ),
               const SizedBox(height: AppEspaciado.lg),
               FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
+                style: AppBotones.estiloFilledIconCta(),
                 onPressed: _recargandoPerfiles ? null : _reintentarCargaPerfiles,
                 icon: const Icon(Icons.refresh_rounded, size: 22),
                 label: Text(
                   'Reintentar carga',
-                  style: GoogleFonts.nunito(fontWeight: FontWeight.w700),
+                  style: AppBotones.etiquetaBoton(tt),
                 ),
               ),
             ],
@@ -1026,80 +1065,56 @@ class _VacunasPageState extends State<VacunasPage> {
           children: [
             const VacunasTituloSeccionPaso(
               etiqueta: 'PASO 1',
-              titulo: 'Perfil de vacunaci\u00F3n',
+              titulo: 'Perfil de vacunación',
               subtitulo:
-                  'Elija el contexto del registro (campa\u00F1a o estrategia).',
+                  'Elija el contexto del registro (campaña o estrategia).',
             ),
-            SizedBox(
-              height: 124,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  reverse: true,
-                  itemCount: lista.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final perfil = lista[index];
-                    final sel = _selectPerfil == perfil;
-                    return _capsulaHorizontal(
-                      texto: perfil.sysvacu12_descripcion!,
-                      seleccionado: sel,
-                      onTap: () async {
-                        loadingLoginService.cargaPerfil(true);
-                        listaLotes!.clear();
-                        setState(() {
-                          _selectVacunas = null;
-                          _selectPerfil = perfil;
-                        });
-                        final tempLista = await vacunasxPerfiles
-                            .obtenerVacunasxPerfilesProviders(
-                          _selectPerfil!.id_sysvacu12,
-                          beneficiarioService.beneficiario!.sysdesa10_dni,
-                          beneficiarioService.beneficiario!.sysdesa10_sexo,
-                        );
-                        tempLista != null
-                            ? tempLista[0].codigo_mensaje == "0"
-                                ? showDialog(
-                                    context: _scaffoldKey.currentContext!,
-                                    builder: (BuildContext context) {
-                                      return DialogoAlerta(
-                                          envioFuncion2: false,
-                                          envioFuncion1: false,
-                                          tituloAlerta: 'ATENCIÓN!',
-                                          descripcionAlerta:
-                                              tempLista[0].mensaje,
-                                          textoBotonAlerta: 'Listo',
-                                          icon: const Icon(
-                                            Icons.error_outline,
-                                            size: 40,
-                                          ),
-                                          color: Colors.red);
-                                    })
-                                : {
-                                    loadingLoginService.getCargaPerfilState!
-                                        ? mostrarLoadingEstrellasXTiempo(
-                                            context, 850)
-                                        : () {},
-                                    loadingLoginService.cargaPerfil(false)
-                                  }
-                            : {
-                                loadingLoginService.getCargaPerfilState!
-                                    ? {
-                                        mostrarLoadingEstrellasXTiempo(
-                                            context, 850),
-                                      }
-                                    : () {},
-                                loadingLoginService.cargaPerfil(false),
-                                setState(() {
-                                  pasos++;
-                                })
-                              };
-                      },
+            Wrap(
+              spacing: AppEspaciado.sm,
+              runSpacing: AppEspaciado.sm,
+              children: lista.map((perfil) {
+                return FilterChip(
+                  label: Text(perfil.sysvacu12_descripcion!),
+                  selected: _selectPerfil == perfil,
+                  showCheckmark: true,
+                  onSelected: (_) async {
+                    loadingLoginService.cargaPerfil(true);
+                    listaLotes!.clear();
+                    setState(() {
+                      _selectVacunas = null;
+                      _selectPerfil = perfil;
+                    });
+                    final tempLista = await vacunasxPerfiles
+                        .obtenerVacunasxPerfilesProviders(
+                      _selectPerfil!.id_sysvacu12,
+                      beneficiarioService.beneficiario!.sysdesa10_dni,
+                      beneficiarioService.beneficiario!.sysdesa10_sexo,
                     );
+                    if (!mounted) return;
+                    if (tempLista != null &&
+                        tempLista[0].codigo_mensaje == "0") {
+                      showDialog(
+                        context: _scaffoldKey.currentContext!,
+                        builder: (dialogCtx) => DialogoAlerta(
+                          envioFuncion2: false,
+                          envioFuncion1: false,
+                          tituloAlerta:
+                              'No se pudieron cargar las vacunas del perfil',
+                          descripcionAlerta: tempLista[0].mensaje,
+                          textoBotonAlerta: 'Listo',
+                          icon: const Icon(Icons.error_outline, size: 40),
+                          color: Theme.of(dialogCtx).colorScheme.error,
+                        ),
+                      );
+                    } else {
+                      loadingLoginService.cargaPerfil(false);
+                      if (tempLista == null) {
+                        setState(() => pasos++);
+                      }
+                    }
                   },
-                ),
-              ),
+                );
+              }).toList(),
             ),
           ],
         );
@@ -1119,22 +1134,29 @@ class _VacunasPageState extends State<VacunasPage> {
       _selectVacunas = v;
       controladorBusqueda.clear();
     });
+    final ben = beneficiarioService.beneficiario!;
+    final edadEscaneo = beneficiarioService.edadAniosDesdePdf417Escaneado?.trim();
+    final edadParam = (edadEscaneo != null && edadEscaneo.isNotEmpty)
+        ? edadEscaneo
+        : (ben.sysdesa10_edad?.trim().isNotEmpty == true
+            ? ben.sysdesa10_edad!.trim()
+            : '');
     final tempLista = await vacunasCondicion.obtenerCondicionesProviders(
       _selectVacunas!.id_sysvacu04,
-      beneficiarioService.beneficiario!.sysdesa10_edad!,
+      edadParam.isNotEmpty ? edadParam : ben.sysdesa10_edad,
     );
     if (!mounted) return;
     if (tempLista[0].codigo_mensaje == "0") {
       showDialog(
         context: _scaffoldKey.currentContext!,
-        builder: (_) => DialogoAlerta(
+        builder: (dialogCtx) => DialogoAlerta(
           envioFuncion2: false,
           envioFuncion1: false,
-          tituloAlerta: 'ATENCIÓN!',
+          tituloAlerta: 'No se pudieron cargar las condiciones',
           descripcionAlerta: tempLista[0].mensaje,
           textoBotonAlerta: 'Listo',
           icon: const Icon(Icons.error_outline, size: 40),
-          color: Colors.red,
+          color: Theme.of(dialogCtx).colorScheme.error,
         ),
       );
     } else {
@@ -1167,14 +1189,14 @@ class _VacunasPageState extends State<VacunasPage> {
     if (tempLista[0].codigo_mensaje == "0") {
       showDialog(
         context: _scaffoldKey.currentContext!,
-        builder: (_) => DialogoAlerta(
+        builder: (dialogCtx) => DialogoAlerta(
           envioFuncion2: false,
           envioFuncion1: false,
-          tituloAlerta: 'ATENCIÓN!',
+          tituloAlerta: 'No se pudieron cargar los esquemas',
           descripcionAlerta: tempLista[0].mensaje,
           textoBotonAlerta: 'Listo',
           icon: const Icon(Icons.error_outline, size: 40),
-          color: Colors.red,
+          color: Theme.of(dialogCtx).colorScheme.error,
         ),
       );
     } else {
@@ -1207,14 +1229,14 @@ class _VacunasPageState extends State<VacunasPage> {
     if (tempLista[0].codigo_mensaje == "0") {
       showDialog(
         context: _scaffoldKey.currentContext!,
-        builder: (_) => DialogoAlerta(
+        builder: (dialogCtx) => DialogoAlerta(
           envioFuncion2: false,
           envioFuncion1: false,
-          tituloAlerta: 'ATENCIÓN!',
+          tituloAlerta: 'No se pudieron cargar las dosis',
           descripcionAlerta: tempLista[0].mensaje,
           textoBotonAlerta: 'Listo',
           icon: const Icon(Icons.error_outline, size: 40),
-          color: Colors.red,
+          color: Theme.of(dialogCtx).colorScheme.error,
         ),
       );
     } else {
@@ -1270,7 +1292,10 @@ class _VacunasPageState extends State<VacunasPage> {
                                           focusedBorder: InputBorder.none,
                                           border: InputBorder.none,
                                           hintText: 'Buscar vacuna…',
-                                          hintStyle: GoogleFonts.nunito(
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
                                             fontSize: 15,
                                             color: AppSuperficies.textoSecundario(
                                                 context),
@@ -1413,7 +1438,10 @@ class _VacunasPageState extends State<VacunasPage> {
                                           focusedBorder: InputBorder.none,
                                           border: InputBorder.none,
                                           hintText: 'Buscar condición…',
-                                          hintStyle: GoogleFonts.nunito(
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
                                             fontSize: 15,
                                             color: AppSuperficies.textoSecundario(
                                                 context),
@@ -1552,7 +1580,10 @@ class _VacunasPageState extends State<VacunasPage> {
                                           focusedBorder: InputBorder.none,
                                           border: InputBorder.none,
                                           hintText: 'Buscar esquema…',
-                                          hintStyle: GoogleFonts.nunito(
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
                                             fontSize: 15,
                                             color: AppSuperficies.textoSecundario(
                                                 context),
@@ -1673,80 +1704,167 @@ class _VacunasPageState extends State<VacunasPage> {
                               subtitulo:
                                   'Número o tipo de dosis según el esquema elegido.',
                             ),
-                            SizedBox(
-                              height: 120,
-                              child: _scrollbarConTema(
-                                controller: _scrollDosis,
-                                child: ListView.separated(
-                                  scrollDirection: Axis.horizontal,
-                                  controller: _scrollDosis,
-                                  physics: const BouncingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  separatorBuilder: (_, __) =>
-                                      const SizedBox(width: AppEspaciado.sm),
-                                  itemCount: vacunasDosisService
-                                      .listaVacunasDosis!.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    final d = vacunasDosisService
-                                        .listaVacunasDosis![index];
-                                    return _capsulaHorizontal(
-                                      texto: d.sysvacu05_nombre!,
-                                      seleccionado: _selectDosis == d,
-                                      onTap: () async {
-                                        loadingLoginService.getLoadingDosisState!
-                                            ? mostrarLoadingEstrellasXTiempo(
-                                                context, 800)
-                                            : () {};
+                            Wrap(
+                              spacing: AppEspaciado.sm,
+                              runSpacing: AppEspaciado.sm,
+                              children: vacunasDosisService.listaVacunasDosis!
+                                  .map((d) => FilterChip(
+                                        label: Text(d.sysvacu05_nombre!),
+                                        selected: _selectDosis == d,
+                                        showCheckmark: true,
+                                        onSelected: (_) async {
                                         loadingLoginService.cargaLotes(false);
                                         listaLotes!.clear();
                                         setState(() {
                                           _selectLote = null;
                                           _selectDosis = d;
                                         });
-                                        final tempLista =
-                                            await lotesVacunaProvider.validarLotes(
-                                                _selectVacunas!.id_sysvacu04);
-                                        tempLista[0].codigo_mensaje == "0"
-                                            ? showDialog(
-                                                context: _scaffoldKey
-                                                    .currentContext!,
-                                                builder: (BuildContext context) {
-                                                  return DialogoAlerta(
-                                                      envioFuncion2: false,
-                                                      envioFuncion1: false,
-                                                      tituloAlerta: 'ATENCIÓN!',
-                                                      descripcionAlerta:
-                                                          tempLista[0].mensaje,
-                                                      textoBotonAlerta: 'Listo',
-                                                      icon: const Icon(
-                                                        Icons.error_outline,
-                                                        size: 40,
-                                                      ),
-                                                      color: Colors.red);
-                                                })
-                                            : {
-                                                loadingLoginService
-                                                        .getCargaLotesState!
-                                                    ? mostrarLoadingEstrellasXTiempo(
-                                                        context, 800)
-                                                    : () {},
+                                        try {
+                                          final tempLista =
+                                              await lotesVacunaProvider
+                                                  .validarLotes(
+                                                      _selectVacunas!
+                                                          .id_sysvacu04);
+                                          if (!mounted) return;
+                                          if (tempLista.isEmpty) {
+                                            showDialog(
+                                              context: _scaffoldKey
+                                                  .currentContext!,
+                                              builder: (dialogCtx) =>
+                                                  DialogoAlerta(
+                                                envioFuncion2: true,
+                                                envioFuncion1: true,
+                                                tituloAlerta:
+                                                    'Sin lotes disponibles',
+                                                descripcionAlerta:
+                                                    'No hay lotes registrados para esta vacuna. Seleccione otra dosis o cambie la vacuna.',
+                                                textoBotonAlerta:
+                                                    'Cambiar vacuna',
+                                                textoBotonAlerta2:
+                                                    'Cambiar dosis',
+                                                funcion1: () {
+                                                  Navigator.of(dialogCtx)
+                                                      .pop();
+                                                  setState(() {
+                                                    pasos = 2;
+                                                    _selectCondicion = null;
+                                                    _selectEsquema = null;
+                                                    _selectDosis = null;
+                                                    _selectLote = null;
+                                                    listaLotes!.clear();
+                                                  });
+                                                },
+                                                funcion2: () => Navigator.of(
+                                                        dialogCtx)
+                                                    .pop(),
+                                                icon: const Icon(
+                                                  Icons.inventory_2_outlined,
+                                                  size: 40,
+                                                ),
+                                                color: Theme.of(dialogCtx)
+                                                    .colorScheme
+                                                    .tertiary,
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                          if (tempLista[0].codigo_mensaje ==
+                                              "0") {
+                                            showDialog(
+                                              context: _scaffoldKey
+                                                  .currentContext!,
+                                              builder: (dialogCtx) =>
+                                                  DialogoAlerta(
+                                                envioFuncion2: true,
+                                                envioFuncion1: true,
+                                                tituloAlerta:
+                                                    'No se pudieron cargar los lotes',
+                                                descripcionAlerta:
+                                                    tempLista[0].mensaje ??
+                                                        'Intente con otra dosis o cambie la vacuna.',
+                                                textoBotonAlerta:
+                                                    'Cambiar vacuna',
+                                                textoBotonAlerta2: 'Reintentar',
+                                                funcion1: () {
+                                                  Navigator.of(dialogCtx)
+                                                      .pop();
+                                                  setState(() {
+                                                    pasos = 2;
+                                                    _selectCondicion = null;
+                                                    _selectEsquema = null;
+                                                    _selectDosis = null;
+                                                    _selectLote = null;
+                                                    listaLotes!.clear();
+                                                  });
+                                                },
+                                                funcion2: () => Navigator.of(
+                                                        dialogCtx)
+                                                    .pop(),
+                                                icon: const Icon(
+                                                  Icons.error_outline,
+                                                  size: 40,
+                                                ),
+                                                color: Theme.of(dialogCtx)
+                                                    .colorScheme
+                                                    .error,
+                                              ),
+                                            );
+                                          } else {
+                                            if (loadingLoginService
+                                                .getCargaLotesState!) {
+                                              mostrarLoadingEstrellasXTiempo(
+                                                  context, 800);
+                                            }
+                                            setState(() {
+                                              listaLotes = tempLista;
+                                              vacunasLotesService
+                                                  .cargarListaVacunasLotes(
+                                                      tempLista);
+                                            });
+                                            loadingLoginService.cargaLotes(
+                                                false);
+                                            setState(() => pasos++);
+                                          }
+                                        } catch (_) {
+                                          if (!mounted) return;
+                                          showDialog(
+                                            context:
+                                                _scaffoldKey.currentContext!,
+                                            builder: (dialogCtx) =>
+                                                DialogoAlerta(
+                                              envioFuncion2: true,
+                                              envioFuncion1: true,
+                                              tituloAlerta: 'Error de conexión',
+                                              descripcionAlerta:
+                                                  'No se pudieron obtener los lotes. Revise la conexión o cambie la vacuna.',
+                                              textoBotonAlerta: 'Cambiar vacuna',
+                                              textoBotonAlerta2: 'Cerrar',
+                                              funcion1: () {
+                                                Navigator.of(dialogCtx).pop();
                                                 setState(() {
-                                                  listaLotes = tempLista;
-                                                  vacunasLotesService
-                                                      .cargarListaVacunasLotes(
-                                                          tempLista);
-                                                }),
-                                                loadingLoginService
-                                                    .cargaLotes(false),
-                                                setState(() {
-                                                  pasos++;
-                                                })
-                                              };
+                                                  pasos = 2;
+                                                  _selectCondicion = null;
+                                                  _selectEsquema = null;
+                                                  _selectDosis = null;
+                                                  _selectLote = null;
+                                                  listaLotes!.clear();
+                                                });
+                                              },
+                                              funcion2: () =>
+                                                  Navigator.of(dialogCtx).pop(),
+                                              color: Theme.of(dialogCtx)
+                                                  .colorScheme
+                                                  .error,
+                                              icon: const Icon(
+                                                Icons.wifi_off_rounded,
+                                                size: 40,
+                                              ),
+                                            ),
+                                          );
+                                        }
                                       },
-                                    );
-                                  },
-                                ),
-                              ),
+                                    ))
+                                  .toList(),
                             ),
                           ],
                         )
@@ -1762,7 +1880,7 @@ class _VacunasPageState extends State<VacunasPage> {
       stream: vacunasLotesService.listaVacunasLotesStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return vacunasLotesService.listavacunasLotes!.isEmpty
-            ? Container()
+            ? _sinLotesDisponibles()
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -1772,40 +1890,23 @@ class _VacunasPageState extends State<VacunasPage> {
                     subtitulo:
                         'Seleccione el lote disponible para registrar la aplicación.',
                   ),
-                  SizedBox(
-                    height: 120,
-                    child: _scrollbarConTema(
-                      controller: _scrollLotes,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        controller: _scrollLotes,
-                        physics: const BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(width: AppEspaciado.sm),
-                        itemCount:
-                            vacunasLotesService.listavacunasLotes!.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final lote =
-                              vacunasLotesService.listavacunasLotes![index];
-                          return _capsulaHorizontal(
-                            texto: lote.sysdesa18_lote!,
-                            seleccionado: _selectLote == lote,
-                            onTap: () async {
-                              loadingLoginService.getLoadingVerificarState!
-                                  ? mostrarLoadingEstrellasXTiempo(
-                                      context, 800)
-                                  : () {};
-                              loadingLoginService.cargarVerificar(false);
-                              setState(() {
-                                _selectLote = lote;
-                                pasos++;
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ),
+                  Wrap(
+                    spacing: AppEspaciado.sm,
+                    runSpacing: AppEspaciado.sm,
+                    children: vacunasLotesService.listavacunasLotes!
+                        .map((lote) => FilterChip(
+                              label: Text(lote.sysdesa18_lote!),
+                              selected: _selectLote == lote,
+                              showCheckmark: true,
+                              onSelected: (_) {
+                                loadingLoginService.cargarVerificar(false);
+                                setState(() {
+                                  _selectLote = lote;
+                                  pasos++;
+                                });
+                              },
+                            ))
+                        .toList(),
                   ),
                 ],
               );
@@ -1813,54 +1914,211 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  Widget containerVerificar() {
+  Widget _sinLotesDisponibles() {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const VacunasTituloSeccionPaso(
-          etiqueta: 'PASO 7',
-          titulo: 'Listo para revisar',
+          etiqueta: 'PASO 6',
+          titulo: 'Sin lotes disponibles',
           subtitulo:
-              'Los datos están completos. Use el botón inferior para pasar a la pantalla de confirmación.',
+              'No hay lotes registrados para la vacuna seleccionada.',
         ),
         Container(
           padding: const EdgeInsets.all(AppEspaciado.xl),
           decoration: BoxDecoration(
-            color: cs.primaryContainer.withValues(alpha: 0.35),
-            borderRadius: BorderRadius.circular(20),
+            color: cs.errorContainer.withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
             border: Border.all(
-              color: cs.primary.withValues(alpha: 0.28),
-            ),
+                color: cs.error.withValues(alpha: 0.3)),
           ),
           child: Column(
             children: [
-              Icon(
-                Icons.verified_outlined,
-                size: 56,
-                color: cs.primary,
-              ),
+              Icon(Icons.inventory_2_outlined,
+                  size: 48, color: cs.error),
               const SizedBox(height: AppEspaciado.md),
               Text(
-                'Esquema completo',
+                'Sin lotes registrados',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.barlow(
-                  fontSize: 20,
+                style: tt.titleMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: cs.onSurface,
                 ),
               ),
               const SizedBox(height: AppEspaciado.sm),
               Text(
-                'Revise bien la selección antes de confirmar. Desde el paso anterior puede corregir cualquier dato.',
+                'No hay lotes disponibles para esta vacuna. Puede cambiar la dosis o volver a seleccionar otra vacuna.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.nunito(
+                style: tt.bodyMedium?.copyWith(
                   fontSize: 14,
                   height: 1.4,
-                  fontWeight: FontWeight.w500,
                   color: AppSuperficies.textoSecundario(context),
                 ),
               ),
+              const SizedBox(height: AppEspaciado.lg),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => setState(() => pasos = 5),
+                    icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                    label: const Text('Cambiar dosis'),
+                  ),
+                  const SizedBox(width: AppEspaciado.md),
+                  OutlinedButton.icon(
+                    onPressed: () => setState(() => pasos = 2),
+                    icon: const Icon(Icons.vaccines_outlined, size: 18),
+                    label: const Text('Cambiar vacuna'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget containerVerificar() {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
+    Widget filaResumen(
+        String etiqueta, String? valor, int paso, IconData icono) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppEspaciado.md, vertical: AppEspaciado.sm),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: cs.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icono, size: 18, color: cs.onSurfaceVariant),
+            ),
+            const SizedBox(width: AppEspaciado.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    etiqueta,
+                    style: tt.labelSmall?.copyWith(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                      color: AppSuperficies.textoSecundario(context),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    valor?.isNotEmpty == true ? valor! : '—',
+                    style: tt.bodyMedium?.copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurface,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: cs.primary,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppEspaciado.sm, vertical: 4),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              onPressed: () => setState(() => pasos = paso),
+              child: Text(
+                'Cambiar',
+                style: tt.labelSmall?.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: cs.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const VacunasTituloSeccionPaso(
+          etiqueta: 'PASO 7',
+          titulo: 'Revisar selección',
+          subtitulo:
+              'Confirme los datos antes de continuar. Toque "Cambiar" en cualquier fila para corregir.',
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerLow.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+            border: Border.all(
+                color: cs.outlineVariant.withValues(alpha: 0.45)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              filaResumen('Perfil',
+                  _selectPerfil?.sysvacu12_descripcion, 1,
+                  Icons.assignment_ind_outlined),
+              Divider(
+                  height: 1,
+                  thickness: 1,
+                  indent: AppEspaciado.md,
+                  endIndent: AppEspaciado.md,
+                  color: cs.outlineVariant.withValues(alpha: 0.35)),
+              filaResumen('Vacuna',
+                  _selectVacunas?.sysvacu04_nombre, 2,
+                  Icons.vaccines_outlined),
+              Divider(
+                  height: 1,
+                  thickness: 1,
+                  indent: AppEspaciado.md,
+                  endIndent: AppEspaciado.md,
+                  color: cs.outlineVariant.withValues(alpha: 0.35)),
+              filaResumen('Condición',
+                  _selectCondicion?.sysvacu01_descripcion, 3,
+                  Icons.health_and_safety_outlined),
+              Divider(
+                  height: 1,
+                  thickness: 1,
+                  indent: AppEspaciado.md,
+                  endIndent: AppEspaciado.md,
+                  color: cs.outlineVariant.withValues(alpha: 0.35)),
+              filaResumen('Esquema',
+                  _selectEsquema?.sysvacu02_descripcion, 4,
+                  Icons.account_tree_outlined),
+              Divider(
+                  height: 1,
+                  thickness: 1,
+                  indent: AppEspaciado.md,
+                  endIndent: AppEspaciado.md,
+                  color: cs.outlineVariant.withValues(alpha: 0.35)),
+              filaResumen('Dosis',
+                  _selectDosis?.sysvacu05_nombre, 5,
+                  Icons.numbers_outlined),
+              Divider(
+                  height: 1,
+                  thickness: 1,
+                  indent: AppEspaciado.md,
+                  endIndent: AppEspaciado.md,
+                  color: cs.outlineVariant.withValues(alpha: 0.35)),
+              filaResumen('Lote',
+                  _selectLote?.sysdesa18_lote, 6,
+                  Icons.inventory_2_outlined),
             ],
           ),
         ),
@@ -1870,6 +2128,7 @@ class _VacunasPageState extends State<VacunasPage> {
 
   Widget _campoDniTutorRegistro() {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     return Container(
       decoration: AppSuperficies.campoBusqueda(context),
       child: TextField(
@@ -1879,7 +2138,7 @@ class _VacunasPageState extends State<VacunasPage> {
         maxLength: 8,
         focusNode: focusNode,
         onEditingComplete: () => focusNode.unfocus(),
-        style: GoogleFonts.nunito(fontSize: 16, color: cs.onSurface),
+        style: tt.titleMedium?.copyWith(fontSize: 16, color: cs.onSurface),
         decoration: InputDecoration(
           counterText: '',
           prefixIcon: Icon(
@@ -1887,7 +2146,7 @@ class _VacunasPageState extends State<VacunasPage> {
             color: cs.onSurfaceVariant,
           ),
           hintText: 'D.N.I.',
-          hintStyle: GoogleFonts.nunito(
+          hintStyle: tt.bodyLarge?.copyWith(
             fontSize: 15,
             color: AppSuperficies.textoSecundario(context),
           ),
@@ -1900,15 +2159,30 @@ class _VacunasPageState extends State<VacunasPage> {
 
   Widget _switchSexoTutorRegistro() {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final suave = cs.onSurface.withValues(alpha: 0.5);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Sexo',
-          style: GoogleFonts.nunito(
+          style: tt.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
             fontSize: 13,
             color: AppSuperficies.textoSecundario(context),
+          ),
+        ),
+        const SizedBox(height: AppEspaciado.xs),
+        Text(
+          genero
+              ? 'Sexo del tutor: Masculino (M)'
+              : 'Sexo del tutor: Femenino (F)',
+          style: tt.bodyMedium?.copyWith(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: cs.primary,
+            height: 1.2,
           ),
         ),
         const SizedBox(height: AppEspaciado.sm),
@@ -1917,11 +2191,9 @@ class _VacunasPageState extends State<VacunasPage> {
           children: [
             Text(
               'Femenino',
-              style: GoogleFonts.nunito(
-                color: !genero
-                    ? cs.onSurface
-                    : cs.onSurface.withValues(alpha: 0.38),
-                fontWeight: !genero ? FontWeight.w700 : FontWeight.w100,
+              style: tt.bodyLarge?.copyWith(
+                color: !genero ? cs.onSurface : suave,
+                fontWeight: !genero ? FontWeight.w800 : FontWeight.w500,
               ),
             ),
             Switch(
@@ -1935,11 +2207,9 @@ class _VacunasPageState extends State<VacunasPage> {
             ),
             Text(
               'Masculino',
-              style: GoogleFonts.nunito(
-                color: genero
-                    ? cs.onSurface
-                    : cs.onSurface.withValues(alpha: 0.38),
-                fontWeight: genero ? FontWeight.w700 : FontWeight.w100,
+              style: tt.bodyLarge?.copyWith(
+                color: genero ? cs.onSurface : suave,
+                fontWeight: genero ? FontWeight.w800 : FontWeight.w500,
               ),
             ),
           ],
@@ -1948,130 +2218,209 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  Widget verificarEdad(BuildContext context) {
+  /// Edad numérica desde el WS (`8`, `"12"`, `"8 años"`, etc.).
+  /// Valores &gt; 120 se ignoran (a veces mandan año de nacimiento en el campo edad).
+  int? _edadNumericaBeneficiario(String? raw) {
+    if (raw == null) return null;
+    final s = raw.toString().trim();
+    if (s.isEmpty) return null;
+    int? v = int.tryParse(s);
+    if (v == null) {
+      final m = RegExp(r'(\d+)').firstMatch(s);
+      if (m != null) v = int.tryParse(m.group(1)!);
+    }
+    if (v == null || v > 120) return null;
+    return v;
+  }
+
+  /// Años cumplidos desde fecha de nacimiento si el campo edad no viene o no parsea.
+  int? _edadAniosDesdeFechaNacimiento(String? raw) {
+    if (raw == null) return null;
+    final s = raw.toString().trim();
+    if (s.isEmpty) return null;
+    DateTime? dt;
+    if (RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(s)) {
+      dt = DateTime.tryParse(s.substring(0, s.length >= 10 ? 10 : s.length));
+    }
+    if (dt == null) {
+      final m = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{4})').firstMatch(s);
+      if (m != null) {
+        final d = int.tryParse(m.group(1)!);
+        final mo = int.tryParse(m.group(2)!);
+        final y = int.tryParse(m.group(3)!);
+        if (d != null && mo != null && y != null) {
+          dt = DateTime(y, mo, d);
+        }
+      }
+    }
+    if (dt == null) return null;
+    final ahora = DateTime.now();
+    var anios = ahora.year - dt.year;
+    if (ahora.month < dt.month ||
+        (ahora.month == dt.month && ahora.day < dt.day)) {
+      anios--;
+    }
+    return anios;
+  }
+
+  /// Panel tutor: primero edad del **DNI escaneado**; si no hay (búsqueda manual), datos del API.
+  bool _beneficiarioRequierePanelTutor() {
+    final b = beneficiarioService.beneficiario;
+    if (b == null) return false;
+    final eScan = beneficiarioService.edadAniosDesdePdf417Escaneado?.trim();
+    if (eScan != null && eScan.isNotEmpty) {
+      final n = int.tryParse(eScan);
+      if (n != null) return n < 18;
+    }
+    final c = _edadNumericaBeneficiario(b.sysdesa10_edad);
+    final f = _edadAniosDesdeFechaNacimiento(b.sysdesa10_fecha_nacimiento);
+    if (c != null && c < 18) return true;
+    if (f != null && f < 18) return true;
+    if (c == null && f == null) return true;
+    return false;
+  }
+
+  bool _beneficiarioSinDatoEdadParseable() {
+    final esc = beneficiarioService.edadAniosDesdePdf417Escaneado?.trim();
+    if (esc != null && esc.isNotEmpty) return false;
+    final b = beneficiarioService.beneficiario;
+    if (b == null) return true;
+    final c = _edadNumericaBeneficiario(b.sysdesa10_edad);
+    final f = _edadAniosDesdeFechaNacimiento(b.sysdesa10_fecha_nacimiento);
+    return c == null && f == null;
+  }
+
+  /// Formulario escanear / D.N.I. / sexo del tutor (solo invocar si es menor o sin edad).
+  Widget _panelRegistroTutorMenor(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final edadStr = beneficiarioService.beneficiario!.sysdesa10_edad;
-    if (edadStr == null || edadStr.trim().isEmpty) {
-      return const SizedBox.shrink();
-    }
-    final edad = int.tryParse(edadStr.trim());
-    if (edad == null) {
-      return const SizedBox.shrink();
-    }
-    return edad < 18
-        ? FadeInUpBig(
-            from: 14,
-            duration: const Duration(milliseconds: 400),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppEspaciado.lg),
-              decoration: AppSuperficies.tarjeta(context, radio: 22),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: VacunasTituloSeccionPaso(
-                          etiqueta: 'MENOR DE EDAD',
-                          titulo: 'Registrar tutor o responsable',
-                          subtitulo:
-                              'Reverso del D.N.I. con la c\u00E1mara o datos abajo.',
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: 'Informaci\u00F3n',
-                        onPressed: () {
-                          showDialog(
-                            context: _scaffoldKey.currentContext!,
-                            builder: (BuildContext context) => DialogoAlerta(
-                              envioFuncion2: false,
-                              envioFuncion1: false,
-                              tituloAlerta: 'Informaci\u00F3n',
-                              descripcionAlerta:
-                                  'Escanee el reverso del D.N.I. o ingrese n\u00FAmero y sexo como en el documento.',
-                              textoBotonAlerta: 'Listo',
-                              color: cs.primary,
-                              icon: const Icon(
-                                Icons.info_outline_rounded,
-                                size: 40,
-                                color: Colors.white,
-                              ),
-                            ),
-                          );
-                        },
-                        icon: Icon(
+    final tt = Theme.of(context).textTheme;
+    final sinDatoEdad = _beneficiarioSinDatoEdadParseable();
+    return FadeInUpBig(
+      from: 14,
+      duration: const Duration(milliseconds: 400),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppEspaciado.lg),
+        decoration: AppSuperficies.tarjeta(context, radio: AppEspaciado.radioCampo),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (sinDatoEdad) ...[
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: cs.primaryContainer.withValues(alpha: 0.45),
+                  borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppEspaciado.md),
+                  child: Text(
+                    'No se recibió la edad desde el servidor. Si el '
+                    'beneficiario es menor, cargue al tutor o responsable; '
+                    'si es mayor, puede ignorar este bloque.',
+                    style: tt.bodyMedium?.copyWith(
+                      fontSize: 13,
+                      height: 1.35,
+                      color: cs.onPrimaryContainer,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppEspaciado.md),
+            ],
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Expanded(
+                  child: VacunasTituloSeccionPaso(
+                    etiqueta: 'MENOR DE EDAD',
+                    titulo: 'Registrar tutor o responsable',
+                    subtitulo:
+                        'Reverso del D.N.I. con la cámara o datos abajo.',
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Ayuda: registrar tutor o responsable',
+                  style: AppBotones.estiloIconoAyuda(cs),
+                  onPressed: () {
+                    showDialog(
+                      context: _scaffoldKey.currentContext!,
+                      builder: (BuildContext context) => DialogoAlerta(
+                        envioFuncion2: false,
+                        envioFuncion1: false,
+                        tituloAlerta: 'Información',
+                        descripcionAlerta:
+                            'Escanee el código del D.N.I. (frente o reverso según la tarjeta) o ingrese número y sexo como en el documento.',
+                        textoBotonAlerta: 'Listo',
+                        color: cs.primary,
+                        icon: const Icon(
                           Icons.info_outline_rounded,
-                          color: cs.primary,
+                          size: 40,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: AppEspaciado.md),
-                  SizedBox(
-                    width: double.infinity,
-                    child: EscanerDni(
-                      'Tutor',
-                      'Escanear',
-                      'Escanee el D.N.I. del Tutor',
-                      anchoValor: 52,
-                    ),
-                  ),
-                  const SizedBox(height: AppEspaciado.lg),
-                  _campoDniTutorRegistro(),
-                  const SizedBox(height: AppEspaciado.lg),
-                  _switchSexoTutorRegistro(),
-                  const SizedBox(height: AppEspaciado.lg),
-                  FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 14,
-                      ),
-                    ),
-                    onPressed: () {
-                      if (controladorDni.text.length >= 7) {
-                        obtenerDatosBeneficiario(
-                          context,
-                          controladorDni.text,
-                          sexoTutor!,
-                        );
-                      } else {
-                        showDialog(
-                          context: _scaffoldKey.currentContext!,
-                          builder: (BuildContext context) => DialogoAlerta(
-                            envioFuncion2: false,
-                            envioFuncion1: false,
-                            tituloAlerta: 'Datos incompletos',
-                            descripcionAlerta:
-                                'D.N.I. de al menos 7 d\u00EDgitos y sexo indicados.',
-                            textoBotonAlerta: 'Listo',
-                            color: Colors.red,
-                            icon: const Icon(
-                              Icons.error_outline_rounded,
-                              size: 40,
-                              color: Colors.white,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.verified_user_outlined, size: 22),
-                    label: Text(
-                      'Verificar',
-                      style: GoogleFonts.nunito(fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ],
+                    );
+                  },
+                  icon: const Icon(Icons.info_outline_rounded),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppEspaciado.md),
+            const SizedBox(
+              width: double.infinity,
+              child: EscanerDni(
+                'Tutor',
+                'Escanear',
+                'Escanee el D.N.I. del Tutor',
+                anchoValor: 52,
               ),
             ),
-          )
-        : const SizedBox.shrink();
+            const SizedBox(height: AppEspaciado.lg),
+            _campoDniTutorRegistro(),
+            const SizedBox(height: AppEspaciado.lg),
+            _switchSexoTutorRegistro(),
+            const SizedBox(height: AppEspaciado.lg),
+            FilledButton.icon(
+              style: AppBotones.estiloFilledIconCta(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppEspaciado.radioCampo,
+                  vertical: AppEspaciado.md + AppEspaciado.xs,
+                ),
+              ),
+              onPressed: () async {
+                if (controladorDni.text.length >= 7) {
+                  await obtenerDatosBeneficiario(
+                    context,
+                    controladorDni.text,
+                    sexoTutor!,
+                  );
+                } else {
+                  showDialog(
+                    context: _scaffoldKey.currentContext!,
+                    builder: (BuildContext dialogCtx) => DialogoAlerta(
+                      envioFuncion2: false,
+                      envioFuncion1: false,
+                      tituloAlerta: 'Datos incompletos',
+                      descripcionAlerta:
+                          'D.N.I. de al menos 7 dígitos y sexo indicados.',
+                      textoBotonAlerta: 'Listo',
+                      color: Theme.of(dialogCtx).colorScheme.error,
+                      icon: const Icon(
+                        Icons.error_outline_rounded,
+                        size: 40,
+                      ),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.verified_user_outlined, size: 22),
+              label: Text(
+                'Verificar',
+                style: AppBotones.etiquetaBoton(tt),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   /// Valida que todos los datos necesarios estén presentes antes de registrar.
@@ -2080,24 +2429,21 @@ class _VacunasPageState extends State<VacunasPage> {
     if (beneficiarioService.beneficiario!.sysdesa10_dni == '') {
       return 'Hubo un error con el Beneficiario';
     }
-    final esMenor =
-        int.parse(beneficiarioService.beneficiario!.sysdesa10_edad!) < 18;
-    if (esMenor &&
-        (!tutorService.existeTutor ||
-            tutorService.tutor!.sysdesa10_dni_tutor == '')) {
+    if (_beneficiarioRequierePanelTutor() && !tutorService.existeTutor) {
       return 'El beneficiario es menor de edad. Debe cargar los datos del Tutor';
     }
-    if (_selectVacunas == null) return 'Debe Seleccionar una Vacuna';
-    if (_selectCondicion == null) return 'Debe Seleccionar una Configuración';
-    if (_selectLote == null) return 'Debe Seleccionar un Lote';
+    if (_selectVacunas == null) return 'Debe seleccionar una Vacuna';
+    if (_selectCondicion == null) return 'Debe seleccionar una Condición';
+    if (_selectEsquema == null) return 'Debe seleccionar un Esquema';
+    if (_selectDosis == null) return 'Debe seleccionar una Dosis';
+    if (_selectLote == null) return 'Debe seleccionar un Lote';
     return null;
   }
 
   /// Construye el objeto InsertRegistros con o sin datos de tutor según edad.
   InsertRegistros _construirRegistro() {
-    final esMenor =
-        int.parse(beneficiarioService.beneficiario!.sysdesa10_edad!) < 18;
-    final conTutor = esMenor && tutorService.existeTutor;
+    final conTutor =
+        _beneficiarioRequierePanelTutor() && tutorService.existeTutor;
     return InsertRegistros(
       id_flxcore03: registradorService.registrador!.id_flxcore03,
       id_sysdesa12: vacunadorService.vacunador!.id_sysdesa12,
@@ -2129,6 +2475,9 @@ class _VacunasPageState extends State<VacunasPage> {
                   vacunadorService.vacunador!.id_sysdesa12
               ? '1'
               : '0',
+      // Incluido en el POST; el backend debe leerlo cuando esté disponible.
+      vacunacion_en_terreno:
+          sesionEquipoVacunacionService.enTerreno ? '1' : '0',
       sysdesa10_apellido_tutor:
           conTutor ? tutorService.tutor!.sysdesa10_apellido_tutor : '',
       sysdesa10_dni_tutor:
@@ -2141,29 +2490,31 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget botonRegistrarVacunacion() {
+    final tt = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
       child: FilledButton(
         style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(54),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+          minimumSize: const Size.fromHeight(48),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppEspaciado.xl,
+            vertical: AppEspaciado.lg,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          shape: AppBotones.forma,
         ),
         onPressed: () {
           final error = _validarDatosRegistro();
           if (error != null) {
             showDialog(
               context: _scaffoldKey.currentContext!,
-              builder: (_) => DialogoAlerta(
+              builder: (dialogCtx) => DialogoAlerta(
                 envioFuncion2: false,
                 envioFuncion1: false,
-                tituloAlerta: 'ATENCIÓN!',
+                tituloAlerta: 'Faltan datos para continuar',
                 descripcionAlerta: error,
                 textoBotonAlerta: 'Listo',
                 icon: const Icon(Icons.error_outline, size: 40),
-                color: Colors.red,
+                color: Theme.of(dialogCtx).colorScheme.error,
               ),
             );
             return;
@@ -2177,52 +2528,70 @@ class _VacunasPageState extends State<VacunasPage> {
         },
         child: Text(
           'Continuar a confirmación',
-          style: GoogleFonts.nunito(
-            textStyle: const TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 16,
-            ),
+          style: AppBotones.etiquetaBoton(
+            tt,
+            base: tt.titleMedium,
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),
     );
   }
 
-  obtenerDatosBeneficiario(
-      BuildContext context1, String dni, String sexoPersona) async {
-    //Provider con Datos del Beneficiario
-    //Cargo Datos de Beneficiario en Singleton, y envio parametros EDAD + DNI para recibir la lista de VACUNAS
-    final datosBeneficiario = await beneficiarioProviders
-        .obtenerDatosBeneficiario('', dni, sexoPersona);
-    datosBeneficiario[0].codigo_mensaje == '0'
-        ? showDialog(
-            context: _scaffoldKey.currentContext!,
-            builder: (BuildContext context) => DialogoAlerta(
-                  envioFuncion2: false,
-                  envioFuncion1: false,
-                  tituloAlerta: 'Hubo un Error',
-                  descripcionAlerta: datosBeneficiario[0].mensaje,
-                  textoBotonAlerta: 'Listo',
-                  color: Colors.red,
-                  icon: const Icon(
-                    Icons.error,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                ))
-        : confirmarTutor(datosBeneficiario[0]);
+  /// Carga tutor desde padrón (mismo servicio que beneficiario).
+  Future<void> obtenerDatosBeneficiario(
+    BuildContext context1,
+    String dni,
+    String sexoPersona,
+  ) async {
+    try {
+      final datosBeneficiario = await beneficiarioProviders
+          .obtenerDatosBeneficiario('', dni, sexoPersona);
+      if (!mounted) return;
+      if (datosBeneficiario[0].codigo_mensaje == '0') {
+        await showDialog<void>(
+          context: _scaffoldKey.currentContext!,
+          builder: (BuildContext dialogCtx) => DialogoAlerta(
+            envioFuncion2: false,
+            envioFuncion1: false,
+            tituloAlerta: 'No se pudo validar al tutor',
+            descripcionAlerta: datosBeneficiario[0].mensaje,
+            textoBotonAlerta: 'Listo',
+            color: Theme.of(dialogCtx).colorScheme.error,
+            icon: const Icon(
+              Icons.error_outline,
+              size: 40,
+            ),
+          ),
+        );
+        return;
+      }
+      confirmarTutor(datosBeneficiario[0]);
+    } catch (_) {
+      if (!mounted) return;
+      await showDialog<void>(
+        context: _scaffoldKey.currentContext!,
+        builder: (BuildContext dialogCtx) => DialogoAlerta(
+          envioFuncion2: false,
+          envioFuncion1: false,
+          tituloAlerta: 'Sin conexión',
+          descripcionAlerta:
+              'No se pudieron obtener los datos del tutor. Revise la red e intente de nuevo.',
+          textoBotonAlerta: 'Listo',
+          color: Theme.of(dialogCtx).colorScheme.error,
+          icon: const Icon(
+            Icons.wifi_off_rounded,
+            size: 40,
+          ),
+        ),
+      );
+    }
   }
 
-  Future<void> confirmarTutor(Beneficiario tutor) async {
-    final bytes = await decodificarImagenBase64Async(tutor.foto_beneficiario);
-    final Tutor tutorS = Tutor(
-        sysdesa10_apellido_tutor: tutor.sysdesa10_apellido,
-        sysdesa10_nombre_tutor: tutor.sysdesa10_nombre,
-        sysdesa10_dni_tutor: tutor.sysdesa10_dni,
-        sysdesa10_sexo_tutor: tutor.sysdesa10_sexo,
-        fotoTutor: bytes);
+  void confirmarTutor(Beneficiario tutor) {
     setState(() {
-      tutorService.cargarTutor(tutorS);
+      tutorService.cargarTutor(Tutor.desdeBeneficiario(tutor));
     });
   }
 
@@ -2232,18 +2601,17 @@ class _VacunasPageState extends State<VacunasPage> {
         builder: (context) => DialogoAlerta(
               envioFuncion2: true,
               envioFuncion1: true,
-              tituloAlerta: 'ATENCIÓN',
+              tituloAlerta: '¿Cerrar sesión?',
               descripcionAlerta:
-                  'Seguro que desea salir? deberá logearse nuevamente',
-              textoBotonAlerta: 'SI',
-              textoBotonAlerta2: 'NO',
+                  'Si sale, deberá iniciar sesión otra vez escaneando su documento.',
+              textoBotonAlerta: 'Sí, salir',
+              textoBotonAlerta2: 'No',
               funcion1: () => Navigator.of(context).pop(true),
               funcion2: () => Navigator.of(context).pop(false),
-              color: Colors.red,
+              color: Theme.of(context).colorScheme.error,
               icon: const Icon(
                 Icons.new_releases_outlined,
                 size: 40.0,
-                color: Colors.white,
               ),
             ));
     return mensajeExit ?? false;

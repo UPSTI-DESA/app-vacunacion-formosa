@@ -6,14 +6,20 @@ class _TutorService {
   Tutor? _tutor;
 
   // ignore: close_sinks
-  final StreamController<Tutor> _tutorStreamController =
-      StreamController<Tutor>.broadcast();
+  final StreamController<Tutor?> _tutorStreamController =
+      StreamController<Tutor?>.broadcast();
 
   Tutor? get tutor => _tutor;
 
-  bool get existeTutor => (_tutor != null) ? true : false;
+  /// Solo cuenta si hay documento: un [Tutor] vacío no debe bloquear el alta de tutor.
+  bool get existeTutor {
+    final t = _tutor;
+    if (t == null) return false;
+    final dni = t.sysdesa10_dni_tutor?.trim() ?? '';
+    return dni.isNotEmpty;
+  }
 
-  Stream<Tutor> get tutorStream => _tutorStreamController.stream;
+  Stream<Tutor?> get tutorStream => _tutorStreamController.stream;
 
   void cargarTutor(Tutor tutor) {
     _tutor = tutor;
@@ -22,8 +28,7 @@ class _TutorService {
 
   void eliminarTutor() {
     _tutor = null;
-
-    _tutorStreamController.add(_tutor!);
+    _tutorStreamController.add(null);
   }
 
   dispose() {

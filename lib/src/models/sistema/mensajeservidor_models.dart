@@ -27,7 +27,7 @@ class MensajeServidor {
   factory MensajeServidor.fromJson(Map<String, dynamic> json) =>
       MensajeServidor(
         codigo_mensaje: json["codigo_mensaje"],
-        mensaje: json["mensaje"],
+        mensaje: fixEncoding(json["mensaje"]),
       );
 
   MensajeServidor.fromJsonMap(Map<String, dynamic> json) {

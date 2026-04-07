@@ -9,8 +9,12 @@ class AppEspaciado {
   static const double xl = 24;
   static const double xxl = 32;
 
-  /// Radio habitual de tarjetas y contenedores.
-  static const double radioTarjeta = 8;
+  /// Radio habitual de tarjetas y contenedores ([CardTheme], bloques tipo tarjeta).
+  static const double radioTarjeta = 14;
+
+  /// Radio único para botones (Filled, Outlined, Elevated, [BotonCustom]).
+  /// Evita mezclar 8/14/16/32 en la misma app.
+  static const double radioBoton = 12;
 
   /// Radio de campos tipo “pill”.
   static const double radioCampo = 20;

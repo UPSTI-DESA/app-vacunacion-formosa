@@ -39,9 +39,12 @@ class _VacunasporPerfiles {
       _listavacunasxperfilStreamController.stream;
 
   void cargarListaVacunasxPerfil(List<VacunasxPerfil> listavacunasxPerfil) {
-    _listavacunasxperfil = listavacunasxPerfil;
-    _listavacunasxperfilStreamController.add(listavacunasxPerfil);
-    _listavacunasxperfilBusquedaStreamController.add(listavacunasxPerfil);
+    final ordenada = List<VacunasxPerfil>.of(listavacunasxPerfil)
+      ..sort((a, b) => (a.sysvacu04_nombre ?? '')
+          .compareTo(b.sysvacu04_nombre ?? ''));
+    _listavacunasxperfil = ordenada;
+    _listavacunasxperfilStreamController.add(ordenada);
+    _listavacunasxperfilBusquedaStreamController.add(ordenada);
   }
 
   void eliminarListaVacunasxPerfil() {

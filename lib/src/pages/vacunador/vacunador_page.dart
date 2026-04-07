@@ -1,18 +1,30 @@
-import 'package:animate_do/animate_do.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:responsive_builder/responsive_builder.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/utils/dni_input_utils.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 import '../pages.dart';
 
+/// Equipo de trabajo / vacunador.
+///
+/// **Pila frente al teclado (IME)** — cada capa suma; documentado para depurar jank:
+/// 1. Android: `windowSoftInputMode` en el manifest (`adjustPan` vs `adjustResize`).
+/// 2. [Scaffold.resizeToAvoidBottomInset]: aquí `false` para leer [MediaQuery.viewInsetsOf]
+///    en el scroll y no dejar que el body consuma el inset de forma opaca al hijo.
+/// 3. [_ScrollConPaddingTeclado]: `viewInsetsOf` + [Transform.translate] (evita animar
+///    padding del scroll y relayoutear toda la columna por frame).
+/// 4. [CustomInput] / [TextField.scrollPadding]: margen al hacer scroll al foco.
+///
+/// El [Scaffold] de Material sigue consultando [MediaQuery] en su propio `build`; es
+/// limitación del framework, no solo de esta pantalla.
 class VacunadorPage extends StatefulWidget {
   static const String nombreRuta = 'VacunadorEstablecimiento';
   final List<Usuarios?> infoCargador;
@@ -24,35 +36,74 @@ class VacunadorPage extends StatefulWidget {
 }
 
 class _VacunadorPageState extends State<VacunadorPage> {
-  late TextEditingController controladorDni;
-  late FocusNode focusNode;
-  bool estadoVacunador = false;
-  bool? animacionNombreVacunado;
-  bool? mismoVacunador;
-  bool? esTerreno;
-  bool? switchContainer;
-  String? stringVacunador;
-  String? stringTerreno;
+  late final ValueNotifier<bool> mismoVacunador;
+  late final ValueNotifier<bool> esTerreno;
+
+  /// Carga inicial de efectores (login / editar equipo).
+  bool _efectoresCargando = true;
+  String? _efectoresMensajeError;
+
+  /// Evita dos [StreamBuilder] del mismo stream: si el [Scaffold] se invalida,
+  /// no se duplica el trabajo del builder.
+  Vacunador? _vacunadorActual;
+  StreamSubscription<Vacunador?>? _suscripcionVacunador;
 
   @override
   void initState() {
-    mismoVacunador = true;
-    esTerreno = true;
-    animacionNombreVacunado = false;
-    switchContainer = false;
-    stringVacunador = 'No';
-    stringTerreno = 'No';
-    cargarEfectoresService(registradorService.registrador!.flxcore03_dni!);
     super.initState();
-    controladorDni = TextEditingController();
-    focusNode = FocusNode();
+    mismoVacunador = ValueNotifier<bool>(true);
+    esTerreno =
+        ValueNotifier<bool>(sesionEquipoVacunacionService.enTerreno);
+    _vacunadorActual = vacunadorService.vacunador;
+    _suscripcionVacunador =
+        vacunadorService.vacunadorStream.listen((Vacunador? v) {
+      if (mounted) setState(() => _vacunadorActual = v);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cargarListaEfectoresInicial();
+    });
   }
 
   @override
   void dispose() {
-    focusNode.dispose();
-    controladorDni.dispose();
+    _suscripcionVacunador?.cancel();
+    sesionEquipoVacunacionService.establecerEnTerreno(esTerreno.value);
+    mismoVacunador.dispose();
+    esTerreno.dispose();
     super.dispose();
+  }
+
+  Future<void> _cargarListaEfectoresInicial() async {
+    if (!mounted) return;
+    setState(() {
+      _efectoresCargando = true;
+      _efectoresMensajeError = null;
+    });
+    try {
+      final String dni = registradorService.registrador!.flxcore03_dni!;
+      await efectoresProviders.obtenerDatosEfectores(dni);
+      if (!mounted) return;
+      final List<Efectores>? lista = efectoresService.listaEfectores;
+      if (lista == null || lista.isEmpty) {
+        setState(() {
+          _efectoresMensajeError =
+              'No hay establecimientos disponibles para su usuario.';
+          _efectoresCargando = false;
+        });
+        return;
+      }
+      setState(() {
+        _efectoresMensajeError = null;
+        _efectoresCargando = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _efectoresMensajeError =
+            'No se pudieron cargar los establecimientos. Revise la conexión.';
+        _efectoresCargando = false;
+      });
+    }
   }
 
   @override
@@ -68,77 +119,86 @@ class _VacunadorPageState extends State<VacunadorPage> {
         },
         child: Scaffold(
           backgroundColor: cs.surface,
+          // Ver doc en [VacunadorPage]: inset lo maneja [_ScrollConPaddingTeclado], no el resize del body.
+          resizeToAvoidBottomInset: false,
           appBar: const AppBarSesion(
             titulo: 'Equipo de trabajo',
-            fadeDesde: 50,
           ),
           drawer: const BodyDrawer(),
-          body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(
-              AppEspaciado.lg,
-              AppEspaciado.md,
-              AppEspaciado.lg,
-              AppEspaciado.xl,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                FadeIn(
-                  duration: const Duration(milliseconds: 600),
-                  child: _tarjetaResumenEquipo(context),
-                ),
-                const SizedBox(height: AppEspaciado.lg),
-                StreamBuilder<Vacunador?>(
-                  stream: vacunadorService.vacunadorStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) return const SizedBox.shrink();
-                    return FadeIn(
-                      duration: const Duration(milliseconds: 650),
+          body: _ScrollConPaddingTeclado(
+            child: RepaintBoundary(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  RepaintBoundary(
+                    child: _tarjetaResumenEquipo(
+                      context,
+                      _vacunadorActual != null,
+                    ),
+                  ),
+                  const SizedBox(height: AppEspaciado.lg),
+                  if (_vacunadorActual == null) ...[
+                    RepaintBoundary(
                       child: _tarjetaOpcionesVacunacion(context),
-                    );
-                  },
-                ),
-                const SizedBox(height: AppEspaciado.lg),
-                mismoVacunador == false
-                    ? const SizedBox.shrink()
-                    : vacunadorService.existeVacunador
-                        ? const SizedBox.shrink()
-                        : FadeIn(
-                            duration: const Duration(milliseconds: 700),
-                            child: _infoVacunador(context),
-                          ),
-                const SizedBox(height: AppEspaciado.xl),
-                ElasticIn(
-                  duration: const Duration(milliseconds: 720),
-                  child: Padding(
+                    ),
+                    const SizedBox(height: AppEspaciado.lg),
+                  ],
+                  ValueListenableBuilder<bool>(
+                    valueListenable: mismoVacunador,
+                    builder: (context, esMismo, _) {
+                      final hayVacunador = _vacunadorActual != null;
+                      if (!esMismo || hayVacunador) {
+                        return const SizedBox.shrink();
+                      }
+                      return RepaintBoundary(
+                        child: _RegistroVacunadorPanel(
+                          onValidarDni: verificarEscencialText,
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: AppEspaciado.xl),
+                  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: BotonCustom(
-                      text: 'Siguiente',
-                      borderRadius: 16,
-                      onPressed: () {
-                        mismoVacunador!
-                            ? verificarVacunador()
-                            : {
-                                vacunadorService.cargarVacunador(Vacunador(
-                                    id_sysdesa12: registradorService
-                                        .registrador!.flxcore03_dni,
-                                    sysdesa06_nombre: registradorService
-                                        .registrador!.flxcore03_nombre,
-                                    sysdesa06_nro_documento: registradorService
-                                        .registrador!.flxcore03_dni)),
-                                Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const BusquedaBeneficiario()),
-                                    (Route<dynamic> route) => false),
-                              };
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: mismoVacunador,
+                      builder: (context, esMismoVacunador, _) {
+                        final hayV = _vacunadorActual != null;
+                        final puedeAvanzar = !esMismoVacunador || hayV;
+                        return BotonCustom(
+                          text: puedeAvanzar
+                              ? 'Siguiente'
+                              : 'Asigná al vacunador para continuar',
+                          enabled: puedeAvanzar,
+                          onPressed: () {
+                            if (!puedeAvanzar) return;
+                            if (esMismoVacunador) {
+                              verificarVacunador();
+                            } else {
+                              vacunadorService.cargarVacunador(Vacunador(
+                                id_sysdesa12:
+                                    registradorService.registrador!.flxcore03_dni,
+                                sysdesa06_nombre: registradorService
+                                    .registrador!.flxcore03_nombre,
+                                sysdesa06_nro_documento: registradorService
+                                    .registrador!.flxcore03_dni,
+                              ));
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BusquedaBeneficiario(),
+                                ),
+                                (Route<dynamic> route) => false,
+                              );
+                            }
+                          },
+                        );
                       },
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -147,25 +207,26 @@ class _VacunadorPageState extends State<VacunadorPage> {
   }
 
   Widget _etiquetaSeccion(BuildContext context, String texto) {
+    final cs = Theme.of(context).colorScheme;
+    final base = Theme.of(context).textTheme.labelSmall ?? const TextStyle();
     return Padding(
       padding: const EdgeInsets.only(bottom: AppEspaciado.sm, top: 2),
       child: Text(
         texto.toUpperCase(),
-        style: GoogleFonts.nunito(
+        style: base.copyWith(
           fontSize: 11,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.05,
-          color: Theme.of(context)
-              .colorScheme
-              .onSurfaceVariant
-              .withValues(alpha: 0.95),
+          color: cs.onSurfaceVariant.withValues(alpha: 0.95),
         ),
       ),
     );
   }
 
-  Widget _tarjetaResumenEquipo(BuildContext context) {
+  Widget _tarjetaResumenEquipo(BuildContext context, bool hayVacunador) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
 
     return Container(
       width: double.infinity,
@@ -185,16 +246,14 @@ class _VacunadorPageState extends State<VacunadorPage> {
                   children: [
                     Text(
                       'Resumen',
-                      style: GoogleFonts.barlow(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
+                      style: bar.barlowTituloTarjeta.copyWith(
                         color: cs.onSurface,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Efector, registrador y vacunador asignado',
-                      style: GoogleFonts.nunito(
+                      style: tt.bodyMedium?.copyWith(
                         fontSize: 13,
                         height: 1.35,
                         color: cs.onSurfaceVariant,
@@ -204,10 +263,8 @@ class _VacunadorPageState extends State<VacunadorPage> {
                 ),
               ),
               IconButton(
-                style: IconButton.styleFrom(
-                  backgroundColor: cs.primary.withValues(alpha: 0.12),
-                  foregroundColor: cs.primary,
-                ),
+                tooltip: 'Ayuda: vacunador, efector y modo en terreno',
+                style: AppBotones.estiloIconoAyuda(cs),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -216,29 +273,81 @@ class _VacunadorPageState extends State<VacunadorPage> {
                       envioFuncion1: false,
                       tituloAlerta: 'Información',
                       descripcionAlerta:
-                          'Seleccione el interruptor si es la misma persona que registra y realiza la vacunación.\nSi corresponde, cambie el efector con el ícono del hospital.',
+                          'Seleccione el interruptor si es la misma persona que registra y realiza la vacunación.\nSi corresponde, cambie el efector con el ícono del hospital.\n«En terreno» se guarda para el registro de cada vacuna aplicada.',
                       textoBotonAlerta: 'Entendido',
                       color: SisVacuColor.vercelesteCuaternario,
                       icon: const Icon(Icons.info, size: 40, color: Colors.white),
                     ),
                   );
                 },
-                icon: const Icon(FontAwesomeIcons.circleInfo, size: 20),
+                icon: const FaIcon(FontAwesomeIcons.circleInfo, size: 20),
               ),
             ],
           ),
+          if (_efectoresCargando) ...[
+            const SizedBox(height: AppEspaciado.sm),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                minHeight: 3,
+                backgroundColor: cs.surfaceContainerHighest,
+              ),
+            ),
+          ],
+          if (_efectoresMensajeError != null) ...[
+            const SizedBox(height: AppEspaciado.md),
+            Material(
+              color: cs.errorContainer.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
+              child: Padding(
+                padding: const EdgeInsets.all(AppEspaciado.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.wifi_off_rounded, color: cs.error, size: 22),
+                        const SizedBox(width: AppEspaciado.sm),
+                        Expanded(
+                          child: Text(
+                            _efectoresMensajeError!,
+                            style: tt.bodyMedium?.copyWith(
+                              color: cs.onErrorContainer,
+                              height: 1.35,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: _cargarListaEfectoresInicial,
+                        child: const Text('Reintentar'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: AppEspaciado.md),
           _etiquetaSeccion(context, 'Establecimiento'),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: StreamBuilder(
+                child: StreamBuilder<Usuarios?>(
                   stream: registradorService.registradorStream,
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  initialData: registradorService.registrador,
+                  builder: (context, snapshot) {
+                    final desc =
+                        registradorService.registrador?.sysofic01_descripcion ??
+                            '';
                     return Text(
-                      registradorService.registrador!.sysofic01_descripcion!,
-                      style: GoogleFonts.nunito(
+                      desc,
+                      style: tt.titleMedium?.copyWith(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         height: 1.3,
@@ -258,13 +367,32 @@ class _VacunadorPageState extends State<VacunadorPage> {
                     padding: const EdgeInsets.all(12),
                     child: FaIcon(
                       FontAwesomeIcons.hospital,
-                      size: getValueForScreenType(context: context, mobile: 18),
+                      // Tamaño fijo: sin [MediaQuery] / responsive_builder en la tarjeta (menos invalidaciones con IME).
+                      size: 18,
                       color: cs.primary,
                     ),
                   ),
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: AppEspaciado.md),
+          _etiquetaSeccion(context, 'Modalidad'),
+          ValueListenableBuilder<bool>(
+            valueListenable: esTerreno,
+            builder: (context, enTerrenoValor, _) {
+              return Text(
+                enTerrenoValor
+                    ? 'Vacunación en terreno (campaña o salida)'
+                    : 'En establecimiento fijo',
+                style: tt.bodyLarge?.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  height: 1.35,
+                  color: cs.onSurface,
+                ),
+              );
+            },
           ),
           const SizedBox(height: AppEspaciado.lg),
           Divider(
@@ -280,16 +408,15 @@ class _VacunadorPageState extends State<VacunadorPage> {
                 .toUpperCase(),
           ),
           const SizedBox(height: AppEspaciado.md),
-          StreamBuilder<Vacunador?>(
-            stream: vacunadorService.vacunadorStream,
-            builder: (context, snapshot) {
-              final valorVacunador = snapshot.hasData
+          ValueListenableBuilder<bool>(
+            valueListenable: mismoVacunador,
+            builder: (context, esMismoVacunador, _) {
+              final valorVacunador = hayVacunador
                   ? vacunadorService.vacunador!.sysdesa06_nombre!
-                  : (mismoVacunador!
+                  : (esMismoVacunador
                       ? 'Falta asignar'
                       : registradorService.registrador!.flxcore03_nombre!);
-              final destacarPendiente =
-                  !snapshot.hasData && mismoVacunador == true;
+              final destacarPendiente = !hayVacunador && esMismoVacunador;
               return _filaPersona(
                 context,
                 etiqueta: 'Vacunador',
@@ -310,6 +437,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
     bool destacarAlerta = false,
   }) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -317,7 +445,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
           width: 102,
           child: Text(
             etiqueta,
-            style: GoogleFonts.nunito(
+            style: tt.bodySmall?.copyWith(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: cs.onSurfaceVariant,
@@ -327,9 +455,10 @@ class _VacunadorPageState extends State<VacunadorPage> {
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            physics: const ClampingScrollPhysics(),
             child: Text(
               valor,
-              style: GoogleFonts.nunito(
+              style: tt.bodyLarge?.copyWith(
                 fontSize: 15,
                 fontWeight:
                     destacarAlerta ? FontWeight.w800 : FontWeight.w500,
@@ -345,6 +474,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
 
   Widget _tarjetaOpcionesVacunacion(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
@@ -361,7 +491,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
         children: [
           Text(
             'Opciones de sesión',
-            style: GoogleFonts.nunito(
+            style: tt.labelLarge?.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.6,
@@ -369,15 +499,15 @@ class _VacunadorPageState extends State<VacunadorPage> {
             ),
           ),
           const SizedBox(height: AppEspaciado.md),
-          _filaSwitch(
-            context,
-            titulo: '¿Es el mismo vacunador?',
-            valor: mismoVacunador!,
-            onChanged: (v) {
-              setState(() {
-                mismoVacunador = v;
-                stringVacunador = v ? 'Si' : 'No';
-              });
+          ValueListenableBuilder<bool>(
+            valueListenable: mismoVacunador,
+            builder: (context, valor, _) {
+              return _filaSwitch(
+                context,
+                titulo: '¿Es el mismo vacunador?',
+                valor: valor,
+                onChanged: (v) => mismoVacunador.value = v,
+              );
             },
           ),
           Padding(
@@ -387,15 +517,18 @@ class _VacunadorPageState extends State<VacunadorPage> {
               color: cs.outlineVariant.withValues(alpha: 0.35),
             ),
           ),
-          _filaSwitch(
-            context,
-            titulo: '¿Es en terreno?',
-            valor: esTerreno!,
-            onChanged: (v) {
-              setState(() {
-                esTerreno = v;
-                stringTerreno = v ? 'Si' : 'No';
-              });
+          ValueListenableBuilder<bool>(
+            valueListenable: esTerreno,
+            builder: (context, valor, _) {
+              return _filaSwitch(
+                context,
+                titulo: '¿Es en terreno?',
+                valor: valor,
+                onChanged: (v) {
+                  esTerreno.value = v;
+                  sesionEquipoVacunacionService.establecerEnTerreno(v);
+                },
+              );
             },
           ),
         ],
@@ -410,41 +543,63 @@ class _VacunadorPageState extends State<VacunadorPage> {
     required ValueChanged<bool> onChanged,
   }) {
     final cs = Theme.of(context).colorScheme;
-    final apagado = cs.onSurface.withValues(alpha: 0.38);
+    final tt = Theme.of(context).textTheme;
+    final suave = cs.onSurface.withValues(alpha: 0.5);
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          flex: 3,
-          child: Text(
-            titulo,
-            style: GoogleFonts.nunito(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              height: 1.25,
-              color: cs.onSurface,
+        Text(
+          titulo,
+          style: tt.titleSmall?.copyWith(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            height: 1.25,
+            color: cs.onSurface,
+          ),
+        ),
+        const SizedBox(height: AppEspaciado.xs),
+        Text(
+          valor ? 'Respuesta actual: Sí' : 'Respuesta actual: No',
+          style: tt.bodyMedium?.copyWith(
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+            color: cs.primary,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: AppEspaciado.sm),
+        // No — Switch — Sí: con el thumb a la izquierda = No, a la derecha = Sí.
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text(
+                'No',
+                textAlign: TextAlign.end,
+                style: tt.titleSmall?.copyWith(
+                  fontSize: 15,
+                  fontWeight: valor ? FontWeight.w500 : FontWeight.w800,
+                  color: valor ? suave : cs.onSurface,
+                ),
+              ),
             ),
-          ),
-        ),
-        Text(
-          'Sí',
-          style: GoogleFonts.nunito(
-            fontSize: 14,
-            fontWeight: valor ? FontWeight.w800 : FontWeight.w400,
-            color: valor ? cs.onSurface : apagado,
-          ),
-        ),
-        Switch(
-          value: valor,
-          onChanged: onChanged,
-        ),
-        Text(
-          'No',
-          style: GoogleFonts.nunito(
-            fontSize: 14,
-            fontWeight: !valor ? FontWeight.w800 : FontWeight.w400,
-            color: !valor ? cs.onSurface : apagado,
-          ),
+            Switch(
+              value: valor,
+              onChanged: onChanged,
+            ),
+            Expanded(
+              child: Text(
+                'Sí',
+                textAlign: TextAlign.start,
+                style: tt.titleSmall?.copyWith(
+                  fontSize: 15,
+                  fontWeight: valor ? FontWeight.w800 : FontWeight.w500,
+                  color: valor ? cs.onSurface : suave,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -452,6 +607,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
 
   void _abrirSelectorEfectores(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
 
     showModalBottomSheet<void>(
       useRootNavigator: true,
@@ -502,7 +658,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                         const SizedBox(width: AppEspaciado.sm),
                         Text(
                           'Efectores',
-                          style: GoogleFonts.nunito(
+                          style: tt.titleLarge?.copyWith(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: cs.onSurface,
@@ -512,153 +668,17 @@ class _VacunadorPageState extends State<VacunadorPage> {
                     ),
                   ),
                   Expanded(
-                    child: StreamBuilder(
-                      stream: efectoresService.listaEfectoresStream,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dynamic> snapshot) {
-                        return ListView.builder(
-                          controller: scrollController,
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.only(bottom: AppEspaciado.xl),
-                          itemCount:
-                              efectoresService.listaEfectores?.length ?? 0,
-                          itemBuilder: (BuildContext context, int index) {
-                            final item =
-                                efectoresService.listaEfectores![index];
-                            return ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor:
-                                    cs.primary.withValues(alpha: 0.12),
-                                child: FaIcon(
-                                  FontAwesomeIcons.hospital,
-                                  size: 18,
-                                  color: cs.primary,
-                                ),
-                              ),
-                              title: Text(
-                                item.sysofic01Descripcion!,
-                                style: GoogleFonts.nunito(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              onTap: () {
-                                registradorService
-                                    .editarEfectorUsuario(item);
-                                Navigator.of(context).pop();
-                              },
-                            );
-                          },
-                        );
-                      },
+                    child: _ListaEfectoresHoja(
+                      scrollController: scrollController,
+                      efectoresCargando: _efectoresCargando,
+                      mensajeError: _efectoresMensajeError,
+                      onReintentar: _cargarListaEfectoresInicial,
                     ),
                   ),
                 ],
               ),
             );
           },
-        );
-      },
-    );
-  }
-
-  Widget _infoVacunador(BuildContext context) {
-    return StreamBuilder<Vacunador?>(
-      stream: vacunadorService.vacunadorStream,
-      builder: (BuildContext context, AsyncSnapshot<Vacunador?> snapshot) {
-        if (vacunadorService.existeVacunador) {
-          return const SizedBox.shrink();
-        }
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(AppEspaciado.lg),
-          decoration: AppSuperficies.tarjeta(context).copyWith(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Registro del vacunador',
-                          style: GoogleFonts.barlow(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Escanee el código o ingrese el D.N.I.',
-                          style: GoogleFonts.nunito(
-                            fontSize: 13,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    style: IconButton.styleFrom(
-                      backgroundColor: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: 0.12),
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) => DialogoAlerta(
-                          envioFuncion2: false,
-                          envioFuncion1: false,
-                          tituloAlerta: 'Información',
-                          descripcionAlerta:
-                              'Registre al vacunador escaneando el código de barras del D.N.I. o ingresando el número manualmente.',
-                          textoBotonAlerta: 'Listo',
-                          color: SisVacuColor.vercelesteCuaternario,
-                          icon: const Icon(Icons.info,
-                              size: 40, color: Colors.white),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      FontAwesomeIcons.circleInfo,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppEspaciado.lg),
-              EscanerDni(
-                'Vacunador',
-                'Escanear',
-                'Escanee el D.N.I. del Vacunador',
-                largoValor: 150,
-              ),
-              const SizedBox(height: AppEspaciado.lg),
-              CustomInput(
-                autoFocus: true,
-                focusNode: focusNode,
-                icon: Icons.perm_identity,
-                placeholder: 'D.N.I.',
-                keyboardType: TextInputType.phone,
-                textController: controladorDni,
-                funcionTerminar: true,
-                funcion: () {
-                  verificarEscencialText(controladorDni.text);
-                },
-              ),
-            ],
-          ),
         );
       },
     );
@@ -673,71 +693,110 @@ class _VacunadorPageState extends State<VacunadorPage> {
     } else {
       showDialog(
           context: context,
-          builder: (BuildContext context) => DialogoAlerta(
+          builder: (BuildContext dialogCtx) => DialogoAlerta(
                 envioFuncion2: false,
                 envioFuncion1: false,
-                tituloAlerta: 'ATENCIÓN',
+                tituloAlerta: 'Falta el vacunador',
                 descripcionAlerta:
-                    'Escanee o ingrese manualmente el D.N.I. del vacunador',
+                    'Escanee o ingrese el D.N.I. del vacunador para continuar.',
                 textoBotonAlerta: 'Listo',
-                color: Colors.red,
+                color: Theme.of(dialogCtx).colorScheme.error,
                 icon: const Icon(
                   Icons.new_releases_outlined,
                   size: 40,
-                  color: Colors.white,
                 ),
               ));
     }
   }
 
-  Future<void> verificarEscencialText(String dni) async {
-    final respUsuario = await vacunadorProviders.validarVacunador(dni);
-
-    if (respUsuario[0].codigo_mensaje == '0') {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) => DialogoAlerta(
-                envioFuncion2: false,
-                envioFuncion1: false,
-                tituloAlerta: 'Error',
-                descripcionAlerta: respUsuario[0].mensaje,
-                textoBotonAlerta: 'Listo',
-                color: Colors.red,
-                icon: const Icon(
-                  Icons.new_releases_outlined,
-                  size: 40,
-                  color: Colors.white,
-                ),
-              ));
-      controladorDni.clear();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          elevation: 2.0,
-          backgroundColor: SisVacuColor.red!.withValues(alpha: 0.7),
+  Future<void> verificarEscencialText(
+    String dni,
+    TextEditingController controladorCampo,
+  ) async {
+    final String dniNorm = DniInputUtils.normalizar(dni);
+    if (!DniInputUtils.esDniPlausible(dniNorm)) {
+      if (!mounted) return;
+      final cs = Theme.of(context).colorScheme;
+      final tt = Theme.of(context).textTheme;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 2,
           behavior: SnackBarBehavior.floating,
-          duration: const Duration(milliseconds: 1500),
+          backgroundColor: cs.inverseSurface,
+          duration: const Duration(seconds: 3),
           content: Text(
-            ':(',
-            style: GoogleFonts.nunito(
-                textStyle: const TextStyle(
-                    fontWeight: FontWeight.w600, color: Colors.white)),
-          )));
-    } else {
-      setState(() {
-        vacunadorService.cargarVacunador(respUsuario[0]);
-        estadoVacunador = true;
-      });
-      controladorDni.clear();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          elevation: 2.0,
+            'Ingrese un D.N.I. válido (7 u 8 dígitos, sin puntos).',
+            style: tt.bodyMedium?.copyWith(
+              color: cs.onInverseSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+      return;
+    }
+
+    try {
+      final respUsuario =
+          await vacunadorProviders.validarVacunador(dniNorm);
+      if (!mounted) return;
+
+      if (respUsuario[0].codigo_mensaje == '0') {
+        controladorCampo.clear();
+        await showDialog<void>(
+          context: context,
+          builder: (BuildContext dialogCtx) => DialogoAlerta(
+            envioFuncion2: false,
+            envioFuncion1: false,
+            tituloAlerta: 'No se pudo validar',
+            descripcionAlerta: respUsuario[0].mensaje ??
+                'Revise el documento e intente de nuevo.',
+            textoBotonAlerta: 'Listo',
+            color: Theme.of(dialogCtx).colorScheme.error,
+            icon: const Icon(
+              Icons.new_releases_outlined,
+              size: 40,
+            ),
+          ),
+        );
+        return;
+      }
+
+      vacunadorService.cargarVacunador(respUsuario[0]);
+      controladorCampo.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          elevation: 2,
           backgroundColor: SisVacuColor.vercelestePrimario,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(milliseconds: 2500),
           content: Text(
-            'Se agregó al vacunador',
-            style: GoogleFonts.nunito(
-                textStyle: const TextStyle(
-                    fontWeight: FontWeight.w600, color: Colors.white)),
-          )));
+            'Vacunador asignado correctamente',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext dialogCtx) => DialogoAlerta(
+          envioFuncion2: false,
+          envioFuncion1: false,
+          tituloAlerta: 'Error de conexión',
+          descripcionAlerta:
+              'No se pudo consultar el vacunador. Revise su conexión e intente de nuevo.',
+          textoBotonAlerta: 'Listo',
+          color: Theme.of(dialogCtx).colorScheme.error,
+          icon: const Icon(
+            Icons.wifi_off_rounded,
+            size: 40,
+          ),
+        ),
+      );
     }
   }
 
@@ -747,24 +806,369 @@ class _VacunadorPageState extends State<VacunadorPage> {
         builder: (context) => DialogoAlerta(
               envioFuncion2: true,
               envioFuncion1: true,
-              tituloAlerta: 'ATENCIÓN',
+              tituloAlerta: '¿Cerrar sesión?',
               descripcionAlerta:
-                  '¿Seguro que desea salir? Deberá iniciar sesión nuevamente',
-              textoBotonAlerta: 'SÍ',
-              textoBotonAlerta2: 'NO',
+                  'Si sale, deberá iniciar sesión otra vez escaneando su documento.',
+              textoBotonAlerta: 'Sí, salir',
+              textoBotonAlerta2: 'No',
               funcion1: () => Navigator.of(context).pop(true),
               funcion2: () => Navigator.of(context).pop(false),
-              color: Colors.red,
+              color: Theme.of(context).colorScheme.error,
               icon: const Icon(
                 Icons.new_releases_outlined,
                 size: 40,
-                color: Colors.white,
               ),
             ));
     return mensajeExit ?? false;
   }
+}
 
-  void cargarEfectoresService(String dni) {
-    efectoresProviders.obtenerDatosEfectores(dni);
+/// Lista de efectores dentro del modal: carga, error con reintento o ítems.
+class _ListaEfectoresHoja extends StatefulWidget {
+  const _ListaEfectoresHoja({
+    required this.scrollController,
+    required this.efectoresCargando,
+    required this.mensajeError,
+    required this.onReintentar,
+  });
+
+  final ScrollController scrollController;
+  final bool efectoresCargando;
+  final String? mensajeError;
+  final Future<void> Function() onReintentar;
+
+  @override
+  State<_ListaEfectoresHoja> createState() => _ListaEfectoresHojaState();
+}
+
+class _ListaEfectoresHojaState extends State<_ListaEfectoresHoja> {
+  bool _reintentando = false;
+
+  List<Efectores?>? _listaInicial() {
+    final List<Efectores>? base = efectoresService.listaEfectores;
+    if (base == null) return null;
+    return List<Efectores?>.from(base);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
+    return StreamBuilder<List<Efectores?>>(
+      stream: efectoresService.listaEfectoresStream,
+      initialData: _listaInicial(),
+      builder: (context, snapshot) {
+        final lista = snapshot.data;
+        final n = lista?.length ?? 0;
+        final vacio = n == 0;
+        final cargando =
+            vacio && (widget.efectoresCargando || _reintentando);
+        final errorSinDatos = vacio &&
+            widget.mensajeError != null &&
+            !widget.efectoresCargando &&
+            !_reintentando;
+
+        if (cargando) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(height: AppEspaciado.md),
+                Text(
+                  'Obteniendo establecimientos…',
+                  style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (errorSinDatos) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.lg),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.wifi_off_rounded, size: 48, color: cs.error),
+                const SizedBox(height: AppEspaciado.md),
+                Text(
+                  widget.mensajeError!,
+                  textAlign: TextAlign.center,
+                  style: tt.bodyMedium?.copyWith(
+                    color: cs.onSurface,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: AppEspaciado.lg),
+                FilledButton.icon(
+                  onPressed: () async {
+                    setState(() => _reintentando = true);
+                    await widget.onReintentar();
+                    if (mounted) setState(() => _reintentando = false);
+                  },
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Reintentar'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          controller: widget.scrollController,
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: AppEspaciado.xl),
+          itemCount: n,
+          itemBuilder: (BuildContext context, int index) {
+            final Efectores? raw = lista![index];
+            if (raw == null) return const SizedBox.shrink();
+            final item = raw;
+            return ListTile(
+              key: ValueKey(item.relaSysofic01 ?? item.sysofic01Descripcion),
+              leading: CircleAvatar(
+                backgroundColor: cs.primary.withValues(alpha: 0.12),
+                child: FaIcon(
+                  FontAwesomeIcons.hospital,
+                  size: 18,
+                  color: cs.primary,
+                ),
+              ),
+              title: Text(
+                item.sysofic01Descripcion ?? '',
+                style: tt.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: cs.onSurface,
+                ),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              onTap: () {
+                final String nom = item.sysofic01Descripcion ?? '';
+                registradorService.editarEfectorUsuario(item);
+                final ScaffoldMessengerState? ms =
+                    ScaffoldMessenger.maybeOf(context);
+                Navigator.of(context).pop();
+                ms?.showSnackBar(
+                  SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: cs.primary,
+                    duration: const Duration(seconds: 2),
+                    content: Text(
+                      'Establecimiento: $nom',
+                      style: tt.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: cs.onPrimary,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+/// Desplaza el contenido hacia arriba con el teclado sin animar el **padding** del
+/// scroll: cambiar padding en cada frame relayoutea toda la columna (caro).
+/// [Transform.translate] solo actualiza la capa de pintura; el hijo mantiene el
+/// mismo layout. [MediaQuery.viewInsetsOf] limita rebuilds **de este** elemento al
+/// aspecto `viewInsets`, no al resto de [MediaQuery]. En Android, `adjustPan` en el
+/// manifest suele reducir métricas por animación frente a `adjustResize`.
+///
+/// No evita que el [Scaffold] padre vuelva a ejecutar su `build` si el framework lo
+/// marca por IME; solo acota el trabajo en este subárbol.
+class _ScrollConPaddingTeclado extends StatelessWidget {
+  const _ScrollConPaddingTeclado({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final inset = MediaQuery.viewInsetsOf(context).bottom;
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(
+        AppEspaciado.lg,
+        AppEspaciado.md,
+        AppEspaciado.lg,
+        AppEspaciado.xl,
+      ),
+      child: Transform.translate(
+        offset: Offset(0, -inset),
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Panel D.N.I. en estado propio: foco diferido para no competir con la transición
+/// de ruta ni el primer layout; [autoFocus] inmediato en el [TextField] se evita.
+/// El ingreso manual usa [CustomInput] (scrollPadding por defecto; ver su documentación).
+class _RegistroVacunadorPanel extends StatefulWidget {
+  const _RegistroVacunadorPanel({
+    required this.onValidarDni,
+  });
+
+  final Future<void> Function(String dni, TextEditingController controlador)
+      onValidarDni;
+
+  @override
+  State<_RegistroVacunadorPanel> createState() => _RegistroVacunadorPanelState();
+}
+
+class _RegistroVacunadorPanelState extends State<_RegistroVacunadorPanel> {
+  late final TextEditingController _controlador;
+  late final FocusNode _focus;
+
+  @override
+  void initState() {
+    super.initState();
+    _controlador = TextEditingController();
+    _focus = FocusNode();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Future<void>.delayed(const Duration(milliseconds: 480), () {
+        if (mounted) {
+          _focus.requestFocus();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controlador.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppEspaciado.lg),
+      decoration: AppSuperficies.tarjeta(context).copyWith(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Registro del vacunador',
+                      style: bar.barlowTituloTarjeta.copyWith(
+                        color: cs.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Código del frente o reverso del D.N.I., o ingreso manual',
+                      style: tt.labelLarge?.copyWith(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.8,
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                tooltip: 'Ayuda: escanear o cargar D.N.I. del vacunador',
+                style: AppBotones.estiloIconoAyuda(cs),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => DialogoAlerta(
+                      envioFuncion2: false,
+                      envioFuncion1: false,
+                      tituloAlerta: 'Información',
+                      descripcionAlerta:
+                          'Registre al vacunador con «Escanear documento» (código del frente en DNI nuevo, PDF417 del reverso en DNI anterior) o ingrese el D.N.I. sin puntos y confirme con el teclado.',
+                      textoBotonAlerta: 'Listo',
+                      color: SisVacuColor.vercelesteCuaternario,
+                      icon: const Icon(Icons.info,
+                          size: 40, color: Colors.white),
+                    ),
+                  );
+                },
+                icon: const FaIcon(FontAwesomeIcons.circleInfo, size: 20),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppEspaciado.lg),
+          Text(
+            'Escanee el código del D.N.I. del vacunador (frente o reverso según el tipo de tarjeta), igual que en el acceso inicial.',
+            textAlign: TextAlign.center,
+            style: tt.bodyMedium?.copyWith(
+              fontSize: 14,
+              height: 1.45,
+              color: cs.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AppEspaciado.xl),
+          const SizedBox(
+            width: double.infinity,
+            child: EscanerDni(
+              'Vacunador',
+              'Escanear documento',
+              'Escanee el D.N.I. del vacunador',
+              anchoValor: 44,
+            ),
+          ),
+          const SizedBox(height: AppEspaciado.xl),
+          Divider(
+            height: 1,
+            color: cs.outlineVariant.withValues(alpha: 0.45),
+          ),
+          const SizedBox(height: AppEspaciado.lg),
+          Text(
+            'Ingreso manual del D.N.I.',
+            style: bar.barlowSubtituloTarjeta.copyWith(
+              color: cs.onSurface,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Sin puntos; confirme con «Listo» del teclado.',
+            style: tt.bodyMedium?.copyWith(
+              fontSize: 13,
+              height: 1.35,
+              color: cs.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AppEspaciado.md),
+          CustomInput(
+            autoFocus: false,
+            focusNode: _focus,
+            icon: Icons.perm_identity,
+            placeholder: 'D.N.I.',
+            keyboardType: TextInputType.phone,
+            textController: _controlador,
+            funcionTerminar: true,
+            funcion: () {
+              widget.onValidarDni(_controlador.text, _controlador);
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

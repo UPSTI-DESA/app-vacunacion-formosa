@@ -1,11 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/config/appsize_config.dart';
 import 'package:sistema_vacunacion/src/providers/providers.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/utils/informacion_version_app_util.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -22,7 +21,9 @@ class LoginBody extends StatefulWidget {
 }
 
 class _LoginBodyState extends State<LoginBody> {
-  final String versionApp = '3.0.0';
+  /// Etiqueta de versión desde pubspec (solo X.Y.Z, sin +build).
+  String _etiquetaSemver = '…';
+
   final String nombreApp = 'Sistema de vacunación general';
 
   // ignore: unused_field
@@ -36,6 +37,18 @@ class _LoginBodyState extends State<LoginBody> {
   final controladorDni = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _cargarEtiquetaSemver();
+  }
+
+  Future<void> _cargarEtiquetaSemver() async {
+    final String s = await InformacionVersionApp.etiquetaSemver();
+    if (!mounted) return;
+    setState(() => _etiquetaSemver = s);
+  }
+
+  @override
   void dispose() {
     controladorDni.dispose();
     super.dispose();
@@ -46,36 +59,35 @@ class _LoginBodyState extends State<LoginBody> {
     validarVersionNueva();
     SizeConfiguracion().init(context);
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
 
     return Stack(
       children: [
         Scaffold(
           backgroundColor: cs.surface,
-          floatingActionButton:
-              enviromentService.envState!.enviroment == 'DEV'
-                  ? FloatingActionButton.extended(
-                      heroTag: 'botonDesa',
-                      icon: const Icon(Icons.perm_data_setting_sharp),
-                      backgroundColor: cs.errorContainer,
-                      foregroundColor: cs.onErrorContainer,
-                      label: const Text('DESA'),
-                      isExtended: true,
-                      tooltip: 'PARA SU USO EN DESARROLLO!',
-                      onPressed: () async {
-                        final respUsuario =
-                            await usuariosProviers.validarUsuariosNuevo(
-                                '36355149');
-                        registradorService.cargarRegistrador(respUsuario[0]);
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => VacunadorPage(
-                                    infoCargador: respUsuario,
-                                  )),
-                            (Route<dynamic> route) => false);
-                      },
-                    )
-                  : null,
+          floatingActionButton: enviromentService.envState!.enviroment == 'DEV'
+              ? FloatingActionButton.extended(
+                  heroTag: 'botonDesa',
+                  icon: const Icon(Icons.perm_data_setting_sharp),
+                  backgroundColor: cs.errorContainer,
+                  foregroundColor: cs.onErrorContainer,
+                  label: const Text('DESA'),
+                  isExtended: true,
+                  tooltip: 'PARA SU USO EN DESARROLLO!',
+                  onPressed: () async {
+                    final respUsuario =
+                        await usuariosProviers.validarUsuariosNuevo('36355149');
+                    registradorService.cargarRegistrador(respUsuario[0]);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => VacunadorPage(
+                                  infoCargador: respUsuario,
+                                )),
+                        (Route<dynamic> route) => false);
+                  },
+                )
+              : null,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -104,24 +116,58 @@ class _LoginBodyState extends State<LoginBody> {
                         const SizedBox(height: AppEspaciado.lg),
                         FadeIn(
                           delay: const Duration(milliseconds: 200),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppEspaciado.md,
-                              vertical: AppEspaciado.xs,
-                            ),
-                            decoration: BoxDecoration(
-                              color: cs.surfaceContainerHighest
-                                  .withValues(alpha: 0.75),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              'Versión $versionApp',
-                              style: GoogleFonts.nunito(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: cs.onSurfaceVariant,
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: AppEspaciado.sm,
+                            runSpacing: AppEspaciado.xs,
+                            children: <Widget>[
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppEspaciado.md,
+                                  vertical: AppEspaciado.xs,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: cs.surfaceContainerHighest
+                                      .withValues(alpha: 0.75),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  'v$_etiquetaSemver',
+                                  style: tt.labelLarge?.copyWith(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: cs.onSurfaceVariant,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Tooltip(
+                                message: 'Ver novedades de la versión',
+                                child: TextButton.icon(
+                                  onPressed: () =>
+                                      mostrarDialogoNovedadesApp(context),
+                                  icon: Icon(
+                                    Icons.article_outlined,
+                                    size: 18,
+                                    color: cs.primary,
+                                  ),
+                                  label: Text(
+                                    'Novedades',
+                                    style: tt.labelLarge?.copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                      color: cs.primary,
+                                    ),
+                                  ),
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppEspaciado.sm,
+                                    ),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: AppEspaciado.sm),
@@ -130,7 +176,7 @@ class _LoginBodyState extends State<LoginBody> {
                           child: Text(
                             'Para uso interno — Ministerio de Desarrollo Humano',
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.nunito(
+                            style: tt.bodySmall?.copyWith(
                               fontSize: 12,
                               height: 1.45,
                               fontWeight: FontWeight.w500,
@@ -186,8 +232,8 @@ class _LoginBodyState extends State<LoginBody> {
                 : loadingLoginService.getEstadoPrimerInicioState!
                     ? Container()
                     : FutureBuilder(
-                        future: Future.delayed(
-                            const Duration(milliseconds: 1000)),
+                        future:
+                            Future.delayed(const Duration(milliseconds: 1000)),
                         builder: (BuildContext context,
                             AsyncSnapshot<dynamic> snapshot) {
                           return snapshot.connectionState ==
@@ -196,8 +242,8 @@ class _LoginBodyState extends State<LoginBody> {
                                   height: double.infinity,
                                   width: double.infinity,
                                   color: cs.scrim.withValues(alpha: .72),
-                                  child: const Center(
-                                      child: LoadingEstrellas()))
+                                  child:
+                                      const Center(child: LoadingEstrellas()))
                               : Container();
                         },
                       );
@@ -212,17 +258,21 @@ class _LoginBodyState extends State<LoginBody> {
   }
 
   void mostrarAlertaActualizacion(BuildContext context, String mensaje) {
-    showDialog(
+    showDialog<void>(
         context: context,
-        builder: (context) {
+        builder: (BuildContext ctx) {
           return AlertDialog(
-            title: const Text('Información Importante'),
+            title: const Text('Actualización disponible'),
             content: Text(mensaje),
             actions: <Widget>[
               TextButton(
-                child: const Text('OK'),
+                child: const Text('Descargar APK'),
                 onPressed: _launchURL,
-              )
+              ),
+              TextButton(
+                child: const Text('Cerrar'),
+                onPressed: () => Navigator.of(ctx).pop(),
+              ),
             ],
           );
         });
@@ -242,6 +292,7 @@ class _TarjetaLoginAcceso extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     final ancho = MediaQuery.of(context).size.width;
 
     return Container(
@@ -252,15 +303,20 @@ class _TarjetaLoginAcceso extends StatelessWidget {
       ),
       child: Column(
         children: [
+          // VacunApp2.png: blancos invisibles en claro. VacunApp2_claro.png (generado
+          // con tool/generar_logo_tema_claro.py) mantiene #005661 y mapea claros a
+          // vercelesteCuaternario #009CAF (segundo tono de marca, no el mismo petróleo).
           Image.asset(
-            'assets/logo/VacunApp2.png',
+            Theme.of(context).brightness == Brightness.light
+                ? 'assets/logo/VacunApp2_claro.png'
+                : 'assets/logo/VacunApp2.png',
             fit: BoxFit.contain,
             width: ancho * 0.52,
           ),
           const SizedBox(height: AppEspaciado.xl),
           Text(
             'Acceso al sistema',
-            style: GoogleFonts.nunito(
+            style: tt.labelSmall?.copyWith(
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.15,
@@ -271,7 +327,7 @@ class _TarjetaLoginAcceso extends StatelessWidget {
           Text(
             'Escanee su D.N.I. para continuar',
             textAlign: TextAlign.center,
-            style: GoogleFonts.nunito(
+            style: tt.titleMedium?.copyWith(
               fontSize: 17,
               fontWeight: FontWeight.w700,
               height: 1.3,
@@ -280,9 +336,9 @@ class _TarjetaLoginAcceso extends StatelessWidget {
           ),
           const SizedBox(height: AppEspaciado.xs),
           Text(
-            'Use el lector del reverso del documento.',
+            'Escanee el código del frente (DNI nuevo) o el PDF417 del reverso (DNI anterior).',
             textAlign: TextAlign.center,
-            style: GoogleFonts.nunito(
+            style: tt.bodyMedium?.copyWith(
               fontSize: 13,
               height: 1.4,
               color: cs.onSurfaceVariant.withValues(alpha: 0.95),

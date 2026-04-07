@@ -5,7 +5,7 @@ class AppSuperficies {
   AppSuperficies._();
 
   /// Tarjeta estándar (radio 8) con sombra suave según brillo.
-  static BoxDecoration tarjeta(BuildContext context, {double radio = 8}) {
+  static BoxDecoration tarjeta(BuildContext context, {double radio = 14}) {
     final tema = Theme.of(context);
     final cs = tema.colorScheme;
     final sombraAlpha = tema.brightness == Brightness.dark ? 0.42 : 0.09;

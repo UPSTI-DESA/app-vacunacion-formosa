@@ -2,9 +2,7 @@ import 'package:animate_do/animate_do.dart';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:responsive_builder/responsive_builder.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
@@ -40,18 +38,22 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final mqSize = MediaQuery.sizeOf(context);
+    final bar = context.sisTipografia;
+    final tt = Theme.of(context).textTheme;
+    final estTituloSeccion =
+        bar.barlowTituloTarjeta.copyWith(fontSize: 20, fontWeight: FontWeight.w600);
+    final estDatoFila =
+        tt.bodyLarge!.copyWith(fontWeight: FontWeight.w600, fontSize: 16);
     return Scaffold(
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
-            padding:
-                EdgeInsets.only(left: MediaQuery.of(context).size.width * .08),
+            padding: const EdgeInsets.only(left: AppEspaciado.xxl),
             child: FloatingActionButton(
               heroTag: "calendario",
-              child: Icon(FontAwesomeIcons.calendarDays,
-                  size: getValueForScreenType(context: context, mobile: 18)),
+              tooltip: 'Elegir fecha de aplicación',
               mini: true,
               onPressed: () async {
                 final DateTime? fechaProvisoria = await showDatePicker(
@@ -66,13 +68,13 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                       })
                     : null;
               },
+              child: const FaIcon(FontAwesomeIcons.calendarDays, size: 20),
             ),
           ),
           FloatingActionButton(
             heroTag: "informacion",
             key: UniqueKey(),
-            child: Icon(FontAwesomeIcons.exclamation,
-                size: getValueForScreenType(context: context, mobile: 18)),
+            tooltip: 'Información antes de registrar',
             mini: true,
             onPressed: () {
               showDialog(
@@ -92,6 +94,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                         ),
                       ));
             },
+            child: const FaIcon(FontAwesomeIcons.exclamation, size: 20),
           ),
         ],
       ),
@@ -106,16 +109,19 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
               children: [
                 Column(
                   children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
+                    const SizedBox(height: AppEspaciado.md),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: AppEspaciado.sm),
+                      child: ResumenSesionVacunacion(
+                        mostrarNotaBackend: true,
+                        colapsable: false,
+                      ),
                     ),
+                    const SizedBox(height: AppEspaciado.sm),
                     Padding(
-                      padding: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.02,
-                          left: MediaQuery.of(context).size.width * 0.02),
+                      padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.sm),
                       child: Container(
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.05),
+                        padding: const EdgeInsets.all(AppEspaciado.lg),
                         decoration: AppSuperficies.tarjeta(context),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -128,12 +134,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                 children: [
                                   Text(
                                     'Datos Beneficiario',
-                                    style: GoogleFonts.barlow(
-                                        textStyle: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 20)),
+                                    style: estTituloSeccion,
                                   ),
                                   IconButton(
+                                      tooltip: mostrarBeneficiario
+                                          ? 'Ocultar datos del beneficiario'
+                                          : 'Mostrar datos del beneficiario',
                                       onPressed: () {
                                         setState(() {
                                           mostrarBeneficiario
@@ -152,19 +158,11 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                             mostrarBeneficiario
                                 ? Column(
                                     children: [
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05),
+                                      const SizedBox(height: AppEspaciado.lg),
                                       Row(
                                         children: [
                                           Text('Nombre: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
+                                              style: estDatoFila,
                                               textAlign: TextAlign.center),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -173,30 +171,17 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                   insertRegistroService
                                                       .registro!
                                                       .sysdesa10_nombre!,
-                                                  style: GoogleFonts.nunito(
-                                                    textStyle: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0),
-                                                  ),
+                                                  style: estDatoFila,
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
+                                      const SizedBox(height: AppEspaciado.sm),
                                       Row(
                                         children: [
                                           Text('Apellido: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
+                                              style: estDatoFila,
                                               textAlign: TextAlign.center),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -205,30 +190,17 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                   insertRegistroService
                                                       .registro!
                                                       .sysdesa10_apellido!,
-                                                  style: GoogleFonts.nunito(
-                                                    textStyle: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0),
-                                                  ),
+                                                  style: estDatoFila,
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
+                                      const SizedBox(height: AppEspaciado.sm),
                                       Row(
                                         children: [
                                           Text('D.N.I.: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
+                                              style: estDatoFila,
                                               textAlign: TextAlign.center),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -236,12 +208,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               child: Text(
                                                   insertRegistroService
                                                       .registro!.sysdesa10_dni!,
-                                                  style: GoogleFonts.nunito(
-                                                    textStyle: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0),
-                                                  ),
+                                                  style: estDatoFila,
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
@@ -257,31 +224,16 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                     tutorService.existeTutor
                         ? tutorService.tutor!.sysdesa10_dni_tutor == ''
                             ? Padding(
-                                padding: EdgeInsets.only(
-                                    right: MediaQuery.of(context).size.width *
-                                        0.02,
-                                    left: MediaQuery.of(context).size.width *
-                                        0.02),
+                                padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.sm),
                                 child: Container(),
                               )
                             : Column(
                                 children: [
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
+                                  const SizedBox(height: AppEspaciado.lg),
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.02,
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.02),
+                                    padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.sm),
                                     child: Container(
-                                      padding: EdgeInsets.all(
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
+                                      padding: const EdgeInsets.all(AppEspaciado.lg),
                                       decoration:
                                           AppSuperficies.tarjeta(context),
                                       child: Column(
@@ -297,15 +249,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               children: [
                                                 Text(
                                                   'Datos del Tutor',
-                                                  style: GoogleFonts.barlow(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 20)),
+                                                  style: estTituloSeccion,
                                                 ),
                                                 IconButton(
+                                                    tooltip: mostrarTutor
+                                                        ? 'Ocultar datos del tutor'
+                                                        : 'Mostrar datos del tutor',
                                                     onPressed: () {
                                                       setState(() {
                                                         mostrarTutor
@@ -326,24 +275,13 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                           mostrarTutor
                                               ? Column(
                                                   children: [
-                                                    SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.05),
+                                                    const SizedBox(
+                                                        height:
+                                                            AppEspaciado.lg),
                                                     Row(
                                                       children: [
                                                         Text('Nombre: ',
-                                                            style: GoogleFonts
-                                                                .nunito(
-                                                              textStyle: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize:
-                                                                      16.0),
-                                                            ),
+                                                            style: estDatoFila,
                                                             textAlign: TextAlign
                                                                 .center),
                                                         Expanded(
@@ -356,15 +294,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                                     .registro!
                                                                     .sysdesa10_nombre_tutor!,
                                                                 style:
-                                                                    GoogleFonts
-                                                                        .nunito(
-                                                                  textStyle: const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      fontSize:
-                                                                          16.0),
-                                                                ),
+                                                                    estDatoFila,
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center),
@@ -372,24 +302,13 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                         ),
                                                       ],
                                                     ),
-                                                    SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.02),
+                                                    const SizedBox(
+                                                        height:
+                                                            AppEspaciado.sm),
                                                     Row(
                                                       children: [
                                                         Text('Apellido: ',
-                                                            style: GoogleFonts
-                                                                .nunito(
-                                                              textStyle: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize:
-                                                                      16.0),
-                                                            ),
+                                                            style: estDatoFila,
                                                             textAlign: TextAlign
                                                                 .center),
                                                         Expanded(
@@ -402,15 +321,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                                     .registro!
                                                                     .sysdesa10_apellido_tutor!,
                                                                 style:
-                                                                    GoogleFonts
-                                                                        .nunito(
-                                                                  textStyle: const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      fontSize:
-                                                                          16.0),
-                                                                ),
+                                                                    estDatoFila,
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center),
@@ -418,24 +329,13 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                         ),
                                                       ],
                                                     ),
-                                                    SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.02),
+                                                    const SizedBox(
+                                                        height:
+                                                            AppEspaciado.sm),
                                                     Row(
                                                       children: [
                                                         Text('D.N.I.: ',
-                                                            style: GoogleFonts
-                                                                .nunito(
-                                                              textStyle: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize:
-                                                                      16.0),
-                                                            ),
+                                                            style: estDatoFila,
                                                             textAlign: TextAlign
                                                                 .center),
                                                         Expanded(
@@ -448,15 +348,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                                     .registro!
                                                                     .sysdesa10_dni_tutor!,
                                                                 style:
-                                                                    GoogleFonts
-                                                                        .nunito(
-                                                                  textStyle: const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      fontSize:
-                                                                          16.0),
-                                                                ),
+                                                                    estDatoFila,
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center),
@@ -474,19 +366,14 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                 ],
                               )
                         : Padding(
-                            padding: EdgeInsets.only(
-                                right: MediaQuery.of(context).size.width * 0.02,
-                                left: MediaQuery.of(context).size.width * 0.02),
+                            padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.sm),
                             child: Container(),
                           ),
-                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    const SizedBox(height: AppEspaciado.lg),
                     Padding(
-                      padding: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.02,
-                          left: MediaQuery.of(context).size.width * 0.02),
+                      padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.sm),
                       child: Container(
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.05),
+                        padding: const EdgeInsets.all(AppEspaciado.lg),
                         decoration: AppSuperficies.tarjeta(context),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -499,12 +386,12 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                 children: [
                                   Text(
                                     'Datos Vacunas',
-                                    style: GoogleFonts.barlow(
-                                        textStyle: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 20)),
+                                    style: estTituloSeccion,
                                   ),
                                   IconButton(
+                                      tooltip: mostrarVacuna
+                                          ? 'Ocultar datos de vacunas'
+                                          : 'Mostrar datos de vacunas',
                                       onPressed: () {
                                         setState(() {
                                           mostrarVacuna
@@ -523,19 +410,11 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                             mostrarVacuna
                                 ? Column(
                                     children: [
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.05),
+                                      const SizedBox(height: AppEspaciado.lg),
                                       Row(
                                         children: [
                                           Text('Vacuna: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
+                                              style: estDatoFila,
                                               textAlign: TextAlign.start),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -543,30 +422,17 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               child: Text(
                                                   insertRegistroService
                                                       .registro!.nombreVacuna!,
-                                                  style: GoogleFonts.nunito(
-                                                    textStyle: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0),
-                                                  ),
+                                                  style: estDatoFila,
                                                   textAlign: TextAlign.start),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
+                                      const SizedBox(height: AppEspaciado.sm),
                                       Row(
                                         children: [
                                           Text('Condición: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
+                                              style: estDatoFila,
                                               textAlign: TextAlign.start),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -575,30 +441,17 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                   insertRegistroService
                                                       .registro!
                                                       .nombreCondicion!,
-                                                  style: GoogleFonts.nunito(
-                                                    textStyle: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0),
-                                                  ),
+                                                  style: estDatoFila,
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
+                                      const SizedBox(height: AppEspaciado.sm),
                                       Row(
                                         children: [
                                           Text('Esquema: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
+                                              style: estDatoFila,
                                               textAlign: TextAlign.start),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -606,30 +459,17 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               child: Text(
                                                   insertRegistroService
                                                       .registro!.nombreEsquema!,
-                                                  style: GoogleFonts.nunito(
-                                                    textStyle: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0),
-                                                  ),
+                                                  style: estDatoFila,
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
+                                      const SizedBox(height: AppEspaciado.sm),
                                       Row(
                                         children: [
                                           Text('Dosis: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
+                                              style: estDatoFila,
                                               textAlign: TextAlign.start),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -637,30 +477,17 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               child: Text(
                                                   insertRegistroService
                                                       .registro!.nombreDosis!,
-                                                  style: GoogleFonts.nunito(
-                                                    textStyle: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0),
-                                                  ),
+                                                  style: estDatoFila,
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
+                                      const SizedBox(height: AppEspaciado.sm),
                                       Row(
                                         children: [
                                           Text('Lote: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
+                                              style: estDatoFila,
                                               textAlign: TextAlign.center),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -668,30 +495,17 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                               child: Text(
                                                   insertRegistroService
                                                       .registro!.nombreLote!,
-                                                  style: GoogleFonts.nunito(
-                                                    textStyle: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0),
-                                                  ),
+                                                  style: estDatoFila,
                                                   textAlign: TextAlign.center),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
+                                      const SizedBox(height: AppEspaciado.sm),
                                       Row(
                                         children: [
                                           Text('Fecha de Aplicación: ',
-                                              style: GoogleFonts.nunito(
-                                                textStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16.0),
-                                              ),
+                                              style: estDatoFila,
                                               textAlign: TextAlign.start),
                                           Expanded(
                                             child: SingleChildScrollView(
@@ -700,12 +514,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                                                   DateFormat('dd - MM - yyyy')
                                                       .format(
                                                           fechaSeleccionada),
-                                                  style: GoogleFonts.nunito(
-                                                    textStyle: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16.0),
-                                                  ),
+                                                  style: estDatoFila,
                                                   textAlign: TextAlign.start),
                                             ),
                                           ),
@@ -718,7 +527,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                         ),
                       ),
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.width * 0.05),
+                    const SizedBox(height: AppEspaciado.lg),
                     BotonCustom(
                         text: 'Registrar Vacunación',
                         onPressed: () {
@@ -734,41 +543,26 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                       builder: (context) {
                         final cs = Theme.of(context).colorScheme;
                         return OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: cs.error,
-                            side: BorderSide(
-                              color: cs.error.withValues(alpha: 0.72),
-                              width: 1.5,
-                            ),
-                            minimumSize: const Size.fromHeight(50),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 14,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          icon: Icon(
+                          style: AppBotones.estiloOutlinedPeligro(cs),
+                          icon: const Icon(
                             Icons.cancel_outlined,
                             size: 22,
-                            color: cs.error,
                           ),
                           label: Text(
                             'Cancelar registro',
-                            style: GoogleFonts.nunito(
+                            style: AppBotones.etiquetaBoton(
+                              tt,
                               fontSize: 15,
-                              fontWeight: FontWeight.w700,
                             ),
                           ),
                           onPressed: () {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) => DialogoAlerta(
-                                tituloAlerta: 'Atenci\u00F3n',
+                                tituloAlerta: 'Atención',
                                 descripcionAlerta:
-                                    '\u00BFConfirma cancelar el registro? Se perder\u00E1n los datos no guardados.',
-                                textoBotonAlerta: 'S\u00ED, cancelar',
+                                    '¿Confirma cancelar el registro? Se perderán los datos no guardados.',
+                                textoBotonAlerta: 'Sí, cancelar',
                                 textoBotonAlerta2: 'Volver',
                                 icon: const Icon(
                                   Icons.warning_amber_rounded,
@@ -807,7 +601,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                       },
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(AppEspaciado.md),
                       child: Text(
                         'Si desea cambiar la fecha de aplicación, seleccione el calendario',
                         textAlign: TextAlign.center,
@@ -819,22 +613,25 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                 ),
                 habilitarCircular
                     ? Container(
-                        height: size.height,
-                        width: size.width,
+                        height: mqSize.height,
+                        width: mqSize.width,
                         color: Theme.of(context)
                             .colorScheme
                             .scrim
                             .withValues(alpha: 0.82),
-                        child: const Center(
+                        child: Center(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CircularProgressIndicator(),
+                              const CircularProgressIndicator(),
                               Text(
-                                'Espere porfavor...',
-                                style: TextStyle(color: Colors.white),
-                              )
+                                'Espere, por favor…',
+                                style: tt.bodyLarge?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -848,59 +645,78 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
     );
   }
 
-  enviarDatos(BuildContext context2) async {
+  Future<void> enviarDatos(BuildContext context2) async {
     setState(() {
       habilitarCircular = true;
       tutorService.tutor != null ? tutorService.eliminarTutor() : null;
     });
-    insertRegistroService.registro!.fecha_aplicacion !=
-            fechaSeleccionada.toString()
-        ? insertRegistroService.agregarFecha(fechaSeleccionada)
-        : null;
-    final mensaje = await insertRegistroProvider.insertRegistroProd();
-    setState(() {
-      habilitarCircular = false;
-    });
-    mensaje[0].codigo_mensaje == "0"
-        ? showDialog(
-            context: context,
-            builder: (BuildContext context) => DialogoAlerta(
-                  envioFuncion2: false,
-                  envioFuncion1: false,
-                  funcion1: () => Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ConfirmarDatos()),
-                      (Route<dynamic> route) => false),
-                  tituloAlerta: 'Atención',
-                  descripcionAlerta: mensaje[0].mensaje,
-                  textoBotonAlerta: 'Reintentar',
-                  color: Colors.red,
-                  icon: const Icon(
-                    Icons.error,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                ))
-        : showDialog(
-            context: context,
-            builder: (BuildContext context) => DialogoAlerta(
-                  envioFuncion2: false,
-                  envioFuncion1: true,
-                  funcion1: () => Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const BusquedaBeneficiario()),
-                      (Route<dynamic> route) => false),
-                  tituloAlerta: 'Información',
-                  descripcionAlerta: mensaje[0].mensaje,
-                  textoBotonAlerta: 'Listo',
-                  color: Colors.green,
-                  icon: const Icon(
-                    Icons.check_circle,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                ));
+    try {
+      if (insertRegistroService.registro!.fecha_aplicacion !=
+          fechaSeleccionada.toString()) {
+        insertRegistroService.agregarFecha(fechaSeleccionada);
+      }
+      final mensaje = await insertRegistroProvider.insertRegistroProd();
+      if (!mounted) return;
+      setState(() => habilitarCircular = false);
+      if (mensaje[0].codigo_mensaje == "0") {
+        showDialog(
+          context: context,
+          builder: (BuildContext dialogCtx) => DialogoAlerta(
+            envioFuncion2: false,
+            envioFuncion1: false,
+            funcion1: () => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ConfirmarDatos()),
+                (Route<dynamic> route) => false),
+            tituloAlerta: 'Atención',
+            descripcionAlerta: mensaje[0].mensaje,
+            textoBotonAlerta: 'Reintentar',
+            color: Theme.of(dialogCtx).colorScheme.error,
+            icon: const Icon(
+              Icons.error,
+              size: 40.0,
+            ),
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext dialogCtx) => DialogoAlerta(
+            envioFuncion2: false,
+            envioFuncion1: true,
+            funcion1: () => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const BusquedaBeneficiario()),
+                (Route<dynamic> route) => false),
+            tituloAlerta: 'Información',
+            descripcionAlerta: mensaje[0].mensaje,
+            textoBotonAlerta: 'Listo',
+            color: Theme.of(dialogCtx).colorScheme.primary,
+            icon: const Icon(
+              Icons.check_circle,
+              size: 40.0,
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => habilitarCircular = false);
+      showDialog(
+        context: context,
+        builder: (dialogCtx) => DialogoAlerta(
+          envioFuncion2: false,
+          envioFuncion1: false,
+          tituloAlerta: 'Error de conexión',
+          descripcionAlerta:
+              'No se pudo registrar la vacunación. Revise la conexión a internet e intente de nuevo.',
+          textoBotonAlerta: 'Entendido',
+          color: Theme.of(dialogCtx).colorScheme.error,
+          icon: const Icon(Icons.wifi_off_rounded, size: 40),
+        ),
+      );
+    }
   }
 }

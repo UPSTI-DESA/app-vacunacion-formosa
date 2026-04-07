@@ -34,10 +34,9 @@ class ColorTextButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            iconoBool! ? iconoBoton! : Container(),
-            const SizedBox(
-              width: 10.0,
-            ),
+            if (iconoBool == true && iconoBoton != null) iconoBoton!,
+            if (iconoBool == true && iconoBoton != null)
+              const SizedBox(width: 10.0),
             Text(
               text,
               style: TextStyle(

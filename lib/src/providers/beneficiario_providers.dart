@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer' as developer;
+
 import 'package:http/http.dart' as http;
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
-import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 class _BeneficiarioProviders {
   // ignore: missing_return
@@ -12,10 +15,24 @@ class _BeneficiarioProviders {
       // si el servidor no responde. TimeoutException es capturada por el catch.
       final resp = await http.get(url).timeout(const Duration(seconds: 30));
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
-        final beneficiario =
-            Beneficiario.fromJsonList(decodedData['beneficiario']);
-        return beneficiario.items;
+        final decodedData = json.decode(decodificarRespuestaHTTP(resp.bodyBytes));
+        final listaRaw =
+            normalizarListaBeneficiarioDesdeJson(decodedData['beneficiario']);
+        if (listaRaw == null) {
+          throw 'El servidor respondió sin lista "beneficiario" válida.';
+        }
+        final contenedor = Beneficiario.fromJsonList(listaRaw);
+        final items = contenedor.items;
+        if (items.isNotEmpty) {
+          final b0 = items.first;
+          final f = b0.foto_beneficiario;
+          developer.log(
+            'codigo_mensaje=${b0.codigo_mensaje}, foto_beneficiario: '
+            '${f == null ? "null" : f.isEmpty ? "cadena vacía — sin imagen en esta respuesta" : "${f.length} caracteres"}',
+            name: 'wserv_obtener_datos_beneficiario',
+          );
+        }
+        return items;
       }
     } catch (e) {
       throw 'Ocurrio un error $e';

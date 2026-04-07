@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 
@@ -10,7 +9,8 @@ class DialogoAlerta extends StatelessWidget {
   final String? textoBotonAlerta;
   final String? textoBotonAlerta2;
   final Image? image;
-  final Icon icon;
+  /// Icono Material o Font Awesome; [IconTheme] aplica tamaño/color al hijo.
+  final Widget icon;
   final Color? color;
   final Function? funcion1;
   final Function? funcion2;
@@ -44,6 +44,8 @@ class DialogoAlerta extends StatelessWidget {
 
   Widget _cuerpo(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
     final Color acento = color ?? cs.primary;
     final bool dosBotones =
         envioFuncion2 && textoBotonAlerta2 != null && textoBotonAlerta2!.isNotEmpty;
@@ -84,9 +86,7 @@ class DialogoAlerta extends StatelessWidget {
           Text(
             tituloAlerta!,
             textAlign: TextAlign.center,
-            style: GoogleFonts.barlow(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
+            style: bar.barlowTituloTarjeta.copyWith(
               height: 1.15,
               color: cs.onSurface,
             ),
@@ -95,7 +95,7 @@ class DialogoAlerta extends StatelessWidget {
           Text(
             descripcionAlerta!,
             textAlign: TextAlign.center,
-            style: GoogleFonts.nunito(
+            style: tt.bodyLarge?.copyWith(
               fontSize: 15,
               height: 1.45,
               fontWeight: FontWeight.w500,
@@ -109,19 +109,10 @@ class DialogoAlerta extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => funcion2!(),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(48),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      side: BorderSide(
-                        color: cs.outline.withValues(alpha: 0.65),
-                      ),
-                    ),
+                    style: AppBotones.estiloOutlinedDialogo(cs),
                     child: Text(
                       textoBotonAlerta2!,
-                      style: GoogleFonts.nunito(
+                      style: tt.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                         color: cs.onSurface,
@@ -138,13 +129,11 @@ class DialogoAlerta extends StatelessWidget {
                       foregroundColor: textoSobreAcento,
                       minimumSize: const Size.fromHeight(48),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
+                      shape: AppBotones.forma,
                     ),
                     child: Text(
                       textoBotonAlerta!,
-                      style: GoogleFonts.nunito(
+                      style: tt.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                         color: textoSobreAcento,
@@ -163,13 +152,11 @@ class DialogoAlerta extends StatelessWidget {
                   backgroundColor: acento,
                   foregroundColor: textoSobreAcento,
                   minimumSize: const Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
+                  shape: AppBotones.forma,
                 ),
                 child: Text(
                   textoBotonAlerta!,
-                  style: GoogleFonts.nunito(
+                  style: tt.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
                     color: textoSobreAcento,

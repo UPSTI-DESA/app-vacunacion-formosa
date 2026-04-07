@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 
@@ -10,35 +9,33 @@ class VacunasEncabezadoPagina extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
         Text(
           'REGISTRO ACTIVO',
-          style: GoogleFonts.nunito(
+          style: tt.labelSmall?.copyWith(
             fontSize: 11,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.2,
             color: cs.primary,
           ),
         ),
-        const SizedBox(height: 6),
-        Text(
-          'Vacunación en campo',
-          style: GoogleFonts.barlow(
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-            height: 1.05,
-            color: cs.onSurface,
+        const SizedBox(width: 8),
+        Container(
+          width: 4,
+          height: 4,
+          decoration: BoxDecoration(
+            color: cs.primary.withValues(alpha: 0.4),
+            shape: BoxShape.circle,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(width: 8),
         Text(
-          'Avance paso a paso. Puede volver atrás tocando cualquier paso completado en el indicador.',
-          style: GoogleFonts.nunito(
-            fontSize: 14,
-            height: 1.4,
+          'Vacunación en campo',
+          style: tt.bodyMedium?.copyWith(
+            fontSize: 13,
             fontWeight: FontWeight.w500,
             color: AppSuperficies.textoSecundario(context),
           ),
@@ -79,6 +76,7 @@ class VacunasFlujoStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -108,25 +106,24 @@ class VacunasFlujoStepper extends StatelessWidget {
           }
 
           return Padding(
-            padding: EdgeInsets.only(right: i < _metasPasosVacunas.length - 1 ? 6 : 0),
+            padding: EdgeInsets.only(right: i < _metasPasosVacunas.length - 1 ? 4 : 0),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                // Solo retroceso o paso actual (evita saltar adelante sin datos).
                 onTap: n <= pasoActual ? () => onIrAPaso(n) : null,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(12),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                   child: SizedBox(
-                    width: 76,
+                    width: 48,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 220),
                           curve: Curves.easeOutCubic,
-                          width: 44,
-                          height: 44,
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: fondoCirculo,
@@ -134,18 +131,18 @@ class VacunasFlujoStepper extends StatelessWidget {
                             boxShadow: actual
                                 ? [
                                     BoxShadow(
-                                      color: cs.primary.withValues(alpha: 0.18),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
+                                      color: cs.primary.withValues(alpha: 0.15),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
                                     ),
                                   ]
                                 : null,
                           ),
                           child: Center(
                             child: hecho && !actual
-                                ? Icon(Icons.check_rounded, color: cs.primary, size: 22)
+                                ? Icon(Icons.check_rounded, color: cs.primary, size: 16)
                                 : Icon(meta.icono,
-                                    size: 22,
+                                    size: 16,
                                     color: actual
                                         ? cs.onPrimaryContainer
                                         : hecho
@@ -153,16 +150,16 @@ class VacunasFlujoStepper extends StatelessWidget {
                                             : cs.onSurfaceVariant),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         Text(
                           meta.etiqueta,
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.nunito(
-                            fontSize: 11,
-                            fontWeight: actual ? FontWeight.w800 : FontWeight.w600,
-                            height: 1.15,
+                          style: tt.labelSmall?.copyWith(
+                            fontSize: 10,
+                            fontWeight: actual ? FontWeight.w800 : FontWeight.w500,
+                            height: 1.1,
                             color: textoEtiqueta,
                           ),
                         ),
@@ -195,89 +192,80 @@ class VacunasPanelFlujo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     final nombrePaso = (pasoActual >= 1 &&
             pasoActual <= _metasPasosVacunas.length)
         ? _metasPasosVacunas[pasoActual - 1].etiqueta
         : '';
 
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: cs.surfaceContainerLow.withValues(alpha: 0.65),
-        border: Border.all(
-          color: cs.outlineVariant.withValues(alpha: 0.4),
-        ),
-      ),
+    return Material(
+      elevation: 3,
+      shadowColor: cs.shadow.withValues(alpha: 0.18),
+      borderRadius: BorderRadius.circular(20),
+      color: cs.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
+          // Cabecera del paso con fondo en color primario — identidad visual fuerte
+          Container(
+            decoration: BoxDecoration(
+              color: cs.primaryContainer,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
             padding: const EdgeInsets.fromLTRB(
               AppEspaciado.md,
-              AppEspaciado.lg,
-              AppEspaciado.md,
               AppEspaciado.sm,
+              AppEspaciado.md,
+              AppEspaciado.xs,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'ESQUEMA DE APLICACIÓN',
-                  style: GoogleFonts.nunito(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.1,
-                    color: cs.tertiary,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'PASO $pasoActual DE 7',
+                      style: tt.labelSmall?.copyWith(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.1,
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      width: 3,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.4),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      nombrePaso.toUpperCase(),
+                      style: tt.labelSmall?.copyWith(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.1,
+                        color: cs.primary,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Indicador de pasos',
-                  style: GoogleFonts.barlow(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: cs.onSurface,
-                  ),
+                const SizedBox(height: AppEspaciado.xs),
+                VacunasFlujoStepper(
+                  pasoActual: pasoActual,
+                  onIrAPaso: onIrAPaso,
                 ),
               ],
             ),
           ),
+          // Cuerpo del paso — superficie limpia y con espacio para respirar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.sm),
-            child: VacunasFlujoStepper(
-              pasoActual: pasoActual,
-              onIrAPaso: onIrAPaso,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppEspaciado.lg,
-              AppEspaciado.md,
-              AppEspaciado.lg,
-              AppEspaciado.sm,
-            ),
-            child: Text(
-              'Paso $pasoActual de 7 · $nombrePaso',
-              style: GoogleFonts.nunito(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: AppSuperficies.textoSecundario(context),
-              ),
-            ),
-          ),
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: cs.outlineVariant.withValues(alpha: 0.35),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppEspaciado.md,
-              AppEspaciado.lg,
-              AppEspaciado.md,
-              AppEspaciado.lg,
-            ),
+            padding: const EdgeInsets.all(AppEspaciado.lg),
             child: child,
           ),
         ],
@@ -302,41 +290,42 @@ class VacunasTituloSeccionPaso extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppEspaciado.md),
+      padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (etiqueta != null) ...[
             Text(
               etiqueta!,
-              style: GoogleFonts.nunito(
-                fontSize: 11,
+              style: tt.labelSmall?.copyWith(
+                fontSize: 10,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.1,
                 color: cs.tertiary,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
           ],
           Text(
             titulo,
-            style: GoogleFonts.barlow(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
+            style: bar.barlowTituloTarjeta.copyWith(
+              fontSize: 16,
               height: 1.1,
               color: cs.onSurface,
             ),
           ),
           if (subtitulo != null) ...[
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Text(
               subtitulo!,
-              style: GoogleFonts.nunito(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                height: 1.35,
+              style: tt.bodyMedium?.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                height: 1.3,
                 color: AppSuperficies.textoSecundario(context),
               ),
             ),

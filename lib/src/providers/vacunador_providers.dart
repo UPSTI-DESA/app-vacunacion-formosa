@@ -3,13 +3,14 @@ import 'package:http/http.dart' as http;
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 class _VacunadorProviders {
   Future<List<Vacunador>> procesarRespuestaDos(Uri url) async {
     try {
       final resp = await http.get(url).timeout(const Duration(seconds: 30));
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
+        final decodedData = json.decode(decodificarRespuestaHTTP(resp.bodyBytes));
         final vacunador = Vacunador.fromJsonList(decodedData['vacunador']);
         return vacunador.items;
       }

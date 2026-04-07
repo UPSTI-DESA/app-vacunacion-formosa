@@ -1,0 +1,399 @@
+import 'package:flutter/material.dart';
+
+import 'package:sistema_vacunacion/src/config/config.dart';
+import 'package:sistema_vacunacion/src/models/sistema/changelog_app_models.dart';
+import 'package:sistema_vacunacion/src/services/changelog_app_service.dart';
+
+/// Modal de notas de versión (estructura tipo release 2026: novedades / correcciones / mantenimiento).
+Future<void> mostrarDialogoNovedadesApp(BuildContext context) {
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext ctx) {
+      final ColorScheme cs = Theme.of(ctx).colorScheme;
+      final TextTheme tt = Theme.of(ctx).textTheme;
+      return Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 460, maxHeight: 640),
+          padding: const EdgeInsets.fromLTRB(18, 18, 10, 10),
+          decoration: AppSuperficies.tarjeta(ctx, radio: 22),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: cs.primaryContainer,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.history_edu_rounded,
+                        color: cs.onPrimaryContainer,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Notas de versión',
+                          style: tt.titleLarge?.copyWith(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
+                            color: cs.onSurface,
+                            height: 1.15,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Novedades · Correcciones · Plataforma',
+                          style: tt.labelLarge?.copyWith(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.2,
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Cerrar',
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    icon: Icon(Icons.close_rounded, color: cs.onSurfaceVariant),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: _ListaChangelogCargada(colorScheme: cs),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton.tonal(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: FilledButton.styleFrom(shape: AppBotones.forma),
+                  child: Text(
+                    'Cerrar',
+                    style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+class _ListaChangelogCargada extends StatefulWidget {
+  const _ListaChangelogCargada({required this.colorScheme});
+
+  final ColorScheme colorScheme;
+
+  @override
+  State<_ListaChangelogCargada> createState() => _ListaChangelogCargadaState();
+}
+
+class _ListaChangelogCargadaState extends State<_ListaChangelogCargada> {
+  late final Future<List<EntradaChangelogApp>> _carga =
+      ChangelogAppService.cargar();
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme cs = widget.colorScheme;
+    final tt = Theme.of(context).textTheme;
+    return FutureBuilder<List<EntradaChangelogApp>>(
+      future: _carga,
+      builder: (BuildContext context,
+          AsyncSnapshot<List<EntradaChangelogApp>> snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snap.hasError) {
+          return Center(
+            child: Text(
+              'No se pudo cargar el historial.',
+              textAlign: TextAlign.center,
+              style: tt.bodyLarge?.copyWith(
+                color: cs.error,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+        }
+        final List<EntradaChangelogApp> entradas =
+            snap.data ?? <EntradaChangelogApp>[];
+        if (entradas.isEmpty) {
+          return Center(
+            child: Text(
+              'Aún no hay entradas en el changelog.',
+              style: tt.bodyLarge?.copyWith(
+                color: cs.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+        }
+        return Scrollbar(
+          thumbVisibility: true,
+          child: ListView.separated(
+            padding: const EdgeInsets.only(right: 8, bottom: 8),
+            itemCount: entradas.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 18),
+            itemBuilder: (BuildContext context, int i) {
+              return _TarjetaRelease(entrada: entradas[i], cs: cs);
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _TarjetaRelease extends StatelessWidget {
+  const _TarjetaRelease({
+    required this.entrada,
+    required this.cs,
+  });
+
+  final EntradaChangelogApp entrada;
+  final ColorScheme cs;
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final String? fecha = entrada.fecha;
+    final String? titulo = entrada.titulo;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 14, 12, 12),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHighest.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: cs.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
+            children: <Widget>[
+              Text(
+                'v${entrada.version}',
+                style: tt.titleMedium?.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: cs.primary,
+                ),
+              ),
+              if (fecha != null && fecha.isNotEmpty)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: cs.secondaryContainer.withValues(alpha: 0.85),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    fecha,
+                    style: tt.labelSmall?.copyWith(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: cs.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          if (titulo != null && titulo.isNotEmpty) ...<Widget>[
+            const SizedBox(height: 6),
+            Text(
+              titulo,
+              style: tt.titleSmall?.copyWith(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                height: 1.3,
+                color: cs.onSurface,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          if (entrada.tieneSeccionesTipadas) ...<Widget>[
+            if (entrada.features.isNotEmpty)
+              _BloqueCategoria(
+                cs: cs,
+                titulo: 'Novedades',
+                conteo: entrada.features.length,
+                icono: Icons.auto_awesome_rounded,
+                colorAcento: cs.primary,
+                fondo: cs.primaryContainer.withValues(alpha: 0.35),
+                lineas: entrada.features,
+              ),
+            if (entrada.fixes.isNotEmpty) ...<Widget>[
+              if (entrada.features.isNotEmpty) const SizedBox(height: 12),
+              _BloqueCategoria(
+                cs: cs,
+                titulo: 'Correcciones',
+                conteo: entrada.fixes.length,
+                icono: Icons.bug_report_outlined,
+                colorAcento: cs.error,
+                fondo: cs.errorContainer.withValues(alpha: 0.45),
+                lineas: entrada.fixes,
+              ),
+            ],
+            if (entrada.maintenance.isNotEmpty) ...<Widget>[
+              if (entrada.features.isNotEmpty || entrada.fixes.isNotEmpty)
+                const SizedBox(height: 12),
+              _BloqueCategoria(
+                cs: cs,
+                titulo: 'Plataforma y mantenimiento',
+                conteo: entrada.maintenance.length,
+                icono: Icons.precision_manufacturing_outlined,
+                colorAcento: cs.tertiary,
+                fondo: cs.tertiaryContainer.withValues(alpha: 0.4),
+                lineas: entrada.maintenance,
+              ),
+            ],
+          ] else if (entrada.items.isNotEmpty)
+            _BloqueCategoria(
+              cs: cs,
+              titulo: 'Cambios',
+              conteo: entrada.items.length,
+              icono: Icons.format_list_bulleted_rounded,
+              colorAcento: cs.primary,
+              fondo: cs.surfaceContainerHighest.withValues(alpha: 0.9),
+              lineas: entrada.items,
+            )
+          else
+            Text(
+              'Sin detalle para esta versión.',
+              style: tt.bodySmall?.copyWith(
+                fontSize: 12,
+                color: cs.onSurfaceVariant,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BloqueCategoria extends StatelessWidget {
+  const _BloqueCategoria({
+    required this.cs,
+    required this.titulo,
+    required this.conteo,
+    required this.icono,
+    required this.colorAcento,
+    required this.fondo,
+    required this.lineas,
+  });
+
+  final ColorScheme cs;
+  final String titulo;
+  final int conteo;
+  final IconData icono;
+  final Color colorAcento;
+  final Color fondo;
+  final List<String> lineas;
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(12, 10, 10, 12),
+      decoration: BoxDecoration(
+        color: fondo,
+        borderRadius: BorderRadius.circular(14),
+        border: Border(
+          left: BorderSide(color: colorAcento, width: 3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(icono, size: 18, color: colorAcento),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  titulo,
+                  style: tt.titleSmall?.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: cs.onSurface,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colorAcento.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  '$conteo',
+                  style: tt.labelSmall?.copyWith(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: colorAcento,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ...lineas.map(
+            (String linea) => Padding(
+              padding: const EdgeInsets.only(bottom: 7),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 3),
+                    child: Container(
+                      width: 5,
+                      height: 5,
+                      margin: const EdgeInsets.only(right: 10, top: 2),
+                      decoration: BoxDecoration(
+                        color: colorAcento.withValues(alpha: 0.75),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      linea,
+                      style: tt.bodyMedium?.copyWith(
+                        fontSize: 12.5,
+                        height: 1.42,
+                        fontWeight: FontWeight.w500,
+                        color: cs.onSurface,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

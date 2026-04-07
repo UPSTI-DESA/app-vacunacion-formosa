@@ -1,6 +1,45 @@
 import 'dart:convert';
 import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
+/// Convierte el valor JSON del campo foto a [String] (base64, data-URI o URL).
+String? valorJsonAFotoBeneficiario(dynamic v) {
+  if (v == null) return null;
+  if (v is bool) return null;
+  if (v is String) {
+    var s = v.trim();
+    if (s.isEmpty) return null;
+    if (s.startsWith('\uFEFF')) s = s.substring(1);
+    return s;
+  }
+  final s = v.toString().trim();
+  return s.isEmpty ? null : s;
+}
+
+/// Prueba varias claves por si el backend renombra el campo.
+String? fotoBeneficiarioDesdeJson(Map<String, dynamic> json) {
+  const claves = [
+    'foto_beneficiario',
+    'fotoBeneficiario',
+    'FotoBeneficiario',
+    'foto',
+  ];
+  for (final k in claves) {
+    if (!json.containsKey(k)) continue;
+    final s = valorJsonAFotoBeneficiario(json[k]);
+    if (s != null) return s;
+  }
+  return null;
+}
+
+/// El servicio devuelve `beneficiario` como lista; si mandan un solo objeto, lo envolvemos.
+List<dynamic>? normalizarListaBeneficiarioDesdeJson(dynamic raw) {
+  if (raw == null) return null;
+  if (raw is List<dynamic>) return raw;
+  if (raw is Map<String, dynamic>) return [raw];
+  if (raw is Map) return [Map<String, dynamic>.from(raw)];
+  return null;
+}
+
 List<Beneficiario> infoBeneficiarioFromJson(String str) =>
     List<Beneficiario>.from(
         json.decode(str).map((x) => Beneficiario.fromJson(x)));
@@ -70,12 +109,12 @@ class Beneficiario {
         sysdesa10_dni: json["sysdesa10_dni"],
         sysdesa10_sexo: json["sysdesa10_sexo"],
         sysdesa10_nro_tramite: json["sysdesa10_nro_tramite"],
-        sysdesa10_fecha_nacimiento: json["sysdesa10_fecha_nacimiento"],
-        sysdesa10_edad: json["sysdesa10_edad"],
+        sysdesa10_fecha_nacimiento: json["sysdesa10_fecha_nacimiento"]?.toString(),
+        sysdesa10_edad: json["sysdesa10_edad"]?.toString(),
         sysdesa10_cadena_dni: json["sysdesa10_cadena_dni"],
         codigo_mensaje: json["codigo_mensaje"],
         mensaje: fixEncoding(json["mensaje"]),
-        foto_beneficiario: json["foto_beneficiario"],
+        foto_beneficiario: fotoBeneficiarioDesdeJson(json),
       );
   Beneficiario.fromJsonMap(Map<String, dynamic> json) {
     sysdesa10_apellido = fixEncoding(json["sysdesa10_apellido"]);
@@ -84,12 +123,12 @@ class Beneficiario {
     sysdesa10_dni = json["sysdesa10_dni"];
     sysdesa10_sexo = json["sysdesa10_sexo"];
     sysdesa10_nro_tramite = json["sysdesa10_nro_tramite"];
-    sysdesa10_fecha_nacimiento = json["sysdesa10_fecha_nacimiento"];
-    sysdesa10_edad = json["sysdesa10_edad"];
+    sysdesa10_fecha_nacimiento = json["sysdesa10_fecha_nacimiento"]?.toString();
+    sysdesa10_edad = json["sysdesa10_edad"]?.toString();
     sysdesa10_cadena_dni = json["sysdesa10_cadena_dni"];
     codigo_mensaje = json["codigo_mensaje"];
     mensaje = fixEncoding(json["mensaje"]);
-    foto_beneficiario = json["foto_beneficiario"];
+    foto_beneficiario = fotoBeneficiarioDesdeJson(json);
   }
   Map<dynamic, dynamic> toJson() => {
         sysdesa10_apellido: sysdesa10_apellido,
@@ -108,8 +147,10 @@ class Beneficiario {
   Beneficiario.fromJsonList(List<dynamic>? jsonList) {
     if (jsonList == null) return;
 
-    for (var item in jsonList) {
-      final informacion = Beneficiario.fromJsonMap(item);
+    for (final item in jsonList) {
+      if (item is! Map) continue;
+      final informacion =
+          Beneficiario.fromJsonMap(Map<String, dynamic>.from(item));
       items.add(informacion);
     }
   }

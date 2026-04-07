@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
@@ -82,6 +81,12 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
               FadeIn(
                 duration: const Duration(milliseconds: duracionAnimacion),
                 delay: const Duration(milliseconds: duracionDelay),
+                child: const ResumenSesionVacunacion(compendio: true),
+              ),
+              const SizedBox(height: AppEspaciado.lg),
+              FadeIn(
+                duration: const Duration(milliseconds: duracionAnimacion),
+                delay: const Duration(milliseconds: duracionDelay),
                 child: _tarjetaSelectorModo(context),
               ),
               const SizedBox(height: AppEspaciado.lg),
@@ -106,10 +111,10 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     );
   }
 
-  /// Conmutador Escaner / Manual (misma línea que opciones en vacunador).
   Widget _tarjetaSelectorModo(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final apagado = cs.onSurface.withValues(alpha: 0.38);
+    final tt = Theme.of(context).textTheme;
+    final suave = cs.onSurface.withValues(alpha: 0.5);
 
     return Container(
       width: double.infinity,
@@ -124,39 +129,67 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
           color: cs.outlineVariant.withValues(alpha: 0.42),
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Text(
-              'Modo escáner',
-              textAlign: TextAlign.end,
-              style: GoogleFonts.nunito(
-                fontSize: 15,
-                fontWeight: !modo ? FontWeight.w800 : FontWeight.w500,
-                color: !modo ? cs.onSurface : apagado,
-              ),
+          Text(
+            'Forma de carga del D.N.I.',
+            style: tt.labelLarge?.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.6,
+              color: cs.onSurfaceVariant,
             ),
           ),
-          Switch(
-            value: modo,
-            onChanged: (value) {
-              setState(() {
-                modo = value;
-                dniBeneficiario = '';
-                dniController.text = '';
-              });
-            },
-          ),
-          Expanded(
-            child: Text(
-              'Modo manual',
-              textAlign: TextAlign.start,
-              style: GoogleFonts.nunito(
-                fontSize: 15,
-                fontWeight: modo ? FontWeight.w800 : FontWeight.w500,
-                color: modo ? cs.onSurface : apagado,
-              ),
+          const SizedBox(height: AppEspaciado.xs),
+          Text(
+            modo
+                ? 'Modo actual: ingreso manual del número'
+                : 'Modo actual: escaneo con cámara',
+            style: tt.bodyMedium?.copyWith(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: cs.primary,
+              height: 1.2,
             ),
+          ),
+          const SizedBox(height: AppEspaciado.sm),
+          // Escanear — Switch — Manual: thumb izquierda = escanear, derecha = manual.
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Escanear',
+                  textAlign: TextAlign.end,
+                  style: tt.titleSmall?.copyWith(
+                    fontSize: 15,
+                    fontWeight: modo ? FontWeight.w500 : FontWeight.w800,
+                    color: modo ? suave : cs.onSurface,
+                  ),
+                ),
+              ),
+              Switch(
+                value: modo,
+                onChanged: (value) {
+                  setState(() {
+                    modo = value;
+                    dniBeneficiario = '';
+                    dniController.text = '';
+                  });
+                },
+              ),
+              Expanded(
+                child: Text(
+                  'Manual',
+                  textAlign: TextAlign.start,
+                  style: tt.titleSmall?.copyWith(
+                    fontSize: 15,
+                    fontWeight: modo ? FontWeight.w800 : FontWeight.w500,
+                    color: modo ? cs.onSurface : suave,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -165,6 +198,8 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
 
   Widget _tarjetaModoEscaner(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
 
     return Container(
       width: double.infinity,
@@ -184,16 +219,14 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                   children: [
                     Text(
                       'Lectura del D.N.I.',
-                      style: GoogleFonts.barlow(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
+                      style: bar.barlowTituloTarjeta.copyWith(
                         color: cs.onSurface,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Código de barras del reverso',
-                      style: GoogleFonts.nunito(
+                      'Código del documento (frente o reverso)',
+                      style: tt.labelLarge?.copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.8,
@@ -204,10 +237,8 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                 ),
               ),
               IconButton(
-                style: IconButton.styleFrom(
-                  backgroundColor: cs.primary.withValues(alpha: 0.12),
-                  foregroundColor: cs.primary,
-                ),
+                tooltip: 'Ayuda: escanear o cargar D.N.I. del beneficiario',
+                style: AppBotones.estiloIconoAyuda(cs),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -223,15 +254,15 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                     ),
                   );
                 },
-                icon: const Icon(FontAwesomeIcons.circleInfo, size: 20),
+                icon: const FaIcon(FontAwesomeIcons.circleInfo, size: 20),
               ),
             ],
           ),
           const SizedBox(height: AppEspaciado.lg),
           Text(
-            'Escanee el código de barras del reverso del documento del beneficiario.',
+            'Escanee el código del DNI del beneficiario: frente (tarjeta nueva) o PDF417 del reverso (tarjeta anterior).',
             textAlign: TextAlign.center,
-            style: GoogleFonts.nunito(
+            style: tt.bodyMedium?.copyWith(
               fontSize: 14,
               height: 1.45,
               color: cs.onSurfaceVariant,
@@ -254,6 +285,9 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
 
   Widget _tarjetaModoManual(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
+    final suave = cs.onSurface.withValues(alpha: 0.5);
 
     return Container(
       width: double.infinity,
@@ -266,16 +300,14 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
         children: [
           Text(
             'Ingreso manual',
-            style: GoogleFonts.barlow(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
+            style: bar.barlowTituloTarjeta.copyWith(
               color: cs.onSurface,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             'Documento y sexo registrados en el padrón',
-            style: GoogleFonts.nunito(
+            style: tt.bodyMedium?.copyWith(
               fontSize: 13,
               height: 1.35,
               color: cs.onSurfaceVariant,
@@ -285,7 +317,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
           Text(
             'Ingrese el D.N.I. (sin puntos) y confirme el sexo.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.nunito(
+            style: tt.bodyMedium?.copyWith(
               fontSize: 14,
               height: 1.45,
               color: cs.onSurfaceVariant,
@@ -301,7 +333,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
               keyboardType: TextInputType.number,
               maxLength: 8,
               focusNode: focusNode,
-              style: GoogleFonts.nunito(
+              style: tt.titleMedium?.copyWith(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
                 color: cs.onSurface,
@@ -310,8 +342,9 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                 counterText: '',
                 icon: Icon(Icons.badge_outlined, color: cs.primary),
                 labelText: 'D.N.I.',
-                labelStyle: GoogleFonts.nunito(color: cs.onSurfaceVariant),
-                floatingLabelStyle: GoogleFonts.nunito(color: cs.primary),
+                labelStyle: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+                floatingLabelStyle:
+                    tt.bodyMedium?.copyWith(color: cs.primary),
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 border: InputBorder.none,
@@ -328,7 +361,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
           Text(
             'Sexo',
             textAlign: TextAlign.center,
-            style: GoogleFonts.nunito(
+            style: tt.labelLarge?.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.6,
@@ -343,42 +376,56 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
             ),
             decoration: BoxDecoration(
               color: cs.surfaceContainer.withValues(alpha: 0.65),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
               border: Border.all(
                 color: cs.outlineVariant.withValues(alpha: 0.35),
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Femenino',
-                  style: GoogleFonts.nunito(
-                    color: !genero
-                        ? cs.onSurface
-                        : cs.onSurface.withValues(alpha: 0.38),
-                    fontWeight:
-                        !genero ? FontWeight.w800 : FontWeight.w400,
+                  genero
+                      ? 'Sexo elegido: Masculino (M)'
+                      : 'Sexo elegido: Femenino (F)',
+                  textAlign: TextAlign.center,
+                  style: tt.bodyMedium?.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: cs.primary,
+                    height: 1.2,
                   ),
                 ),
-                Switch(
-                  value: genero,
-                  onChanged: (value) {
-                    setState(() {
-                      genero = value;
-                      sexoBeneficiario = value ? 'M' : 'F';
-                    });
-                  },
-                ),
-                Text(
-                  'Masculino',
-                  style: GoogleFonts.nunito(
-                    color: genero
-                        ? cs.onSurface
-                        : cs.onSurface.withValues(alpha: 0.38),
-                    fontWeight:
-                        genero ? FontWeight.w800 : FontWeight.w400,
-                  ),
+                const SizedBox(height: AppEspaciado.sm),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Femenino',
+                      style: tt.bodyLarge?.copyWith(
+                        color: !genero ? cs.onSurface : suave,
+                        fontWeight:
+                            !genero ? FontWeight.w800 : FontWeight.w500,
+                      ),
+                    ),
+                    Switch(
+                      value: genero,
+                      onChanged: (value) {
+                        setState(() {
+                          genero = value;
+                          sexoBeneficiario = value ? 'M' : 'F';
+                        });
+                      },
+                    ),
+                    Text(
+                      'Masculino',
+                      style: tt.bodyLarge?.copyWith(
+                        color: genero ? cs.onSurface : suave,
+                        fontWeight:
+                            genero ? FontWeight.w800 : FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -386,7 +433,6 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
           const SizedBox(height: AppEspaciado.xl),
           BotonCustom(
             text: 'Verificar datos',
-            borderRadius: 16,
             onPressed: () {
               final dniOk = dniBeneficiario != '' &&
                   dniBeneficiario!.length >= 7 &&
@@ -417,7 +463,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                       funcion2: () => Navigator.pop(context),
                       envioFuncion1: true,
                       envioFuncion2: true,
-                      icon: const Icon(
+                      icon: const FaIcon(
                         FontAwesomeIcons.check,
                         color: Colors.white,
                       ),
@@ -428,18 +474,17 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
               } else {
                 showDialog(
                   context: context,
-                  builder: (BuildContext context) => const DialogoAlerta(
+                  builder: (BuildContext dialogCtx) => DialogoAlerta(
                     envioFuncion2: false,
                     envioFuncion1: false,
                     tituloAlerta: 'Datos incompletos',
                     descripcionAlerta:
                         'Ingrese el D.N.I. (mínimo 7 dígitos) y el sexo.',
                     textoBotonAlerta: 'Listo',
-                    color: Colors.red,
-                    icon: Icon(
+                    color: Theme.of(dialogCtx).colorScheme.error,
+                    icon: const Icon(
                       Icons.error_outline,
                       size: 40,
-                      color: Colors.white,
                     ),
                   ),
                 );
@@ -456,53 +501,84 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     String? dni,
     String? sexoPersona,
   ) async {
-    final datosBeneficiario = await beneficiarioProviders
-        .obtenerDatosBeneficiario('', dni, sexoPersona);
-    final notificaciones =
-        await notificacionesProvider.validarNotificaciones(dni, sexoPersona);
-    if (notificaciones[0].codigo_mensaje == '1') {
-      notificacionesDosisService.cargarListaDosis(notificaciones);
-    } else {
-      notificacionesDosisService.cargarRegistro(NotificacionesDosis());
-    }
-
-    if (datosBeneficiario[0].codigo_mensaje == '0') {
+    try {
+      final datosBeneficiario = await beneficiarioProviders
+          .obtenerDatosBeneficiario('', dni, sexoPersona);
+      final notificaciones =
+          await notificacionesProvider.validarNotificaciones(dni, sexoPersona);
       if (!mounted) return;
+
+      _cerrarDialogoCargaSiAbierta();
+
+      if (notificaciones[0].codigo_mensaje == '1') {
+        notificacionesDosisService.cargarListaDosis(notificaciones);
+      } else {
+        notificacionesDosisService.cargarRegistro(NotificacionesDosis());
+      }
+
+      if (datosBeneficiario[0].codigo_mensaje == '0') {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => DialogoAlerta(
+            envioFuncion2: false,
+            envioFuncion1: true,
+            funcion1: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const BusquedaBeneficiario(),
+                ),
+                (Route<dynamic> route) => false,
+              );
+            },
+            tituloAlerta: 'No se pudo continuar',
+            descripcionAlerta: datosBeneficiario[0].mensaje,
+            textoBotonAlerta: 'Listo',
+            color: Theme.of(context).colorScheme.error,
+            icon: const Icon(
+              Icons.error,
+              size: 40,
+            ),
+          ),
+        );
+        return;
+      }
+      confirmarBeneficiario(datosBeneficiario[0]);
+    } catch (_) {
+      if (!mounted) return;
+      _cerrarDialogoCargaSiAbierta();
       showDialog(
         context: context,
         builder: (BuildContext context) => DialogoAlerta(
           envioFuncion2: false,
-          envioFuncion1: true,
-          funcion1: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const BusquedaBeneficiario(),
-              ),
-              (Route<dynamic> route) => false,
-            );
-          },
-          tituloAlerta: 'No se pudo continuar',
-          descripcionAlerta: datosBeneficiario[0].mensaje,
+          envioFuncion1: false,
+          tituloAlerta: 'Sin conexión',
+          descripcionAlerta:
+              'No se pudieron obtener los datos del beneficiario. Revise la red e intente de nuevo.',
           textoBotonAlerta: 'Listo',
-          color: Colors.red,
+          color: Theme.of(context).colorScheme.error,
           icon: const Icon(
-            Icons.error,
+            Icons.wifi_off_rounded,
             size: 40,
-            color: Colors.white,
           ),
         ),
       );
-    } else {
-      confirmarBeneficiario(datosBeneficiario[0]);
     }
   }
 
-  void confirmarBeneficiario(Beneficiario? beneficiario) {
+  /// Cierra el [AlertDialog] de «Espere por favor» si sigue abierto.
+  void _cerrarDialogoCargaSiAbierta() {
+    final NavigatorState nav = Navigator.of(context, rootNavigator: true);
+    if (nav.canPop()) {
+      nav.pop();
+    }
     setState(() {
-      beneficiarioService.cargarBeneficiario(beneficiario);
+      loading = false;
     });
+  }
 
+  void confirmarBeneficiario(Beneficiario? beneficiario) {
+    beneficiarioService.cargarBeneficiario(beneficiario);
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const VacunasPage()),
@@ -518,7 +594,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
           return AlertDialog(
             title: Text(
               mensaje,
-              style: GoogleFonts.nunito(),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             content: const LinearProgressIndicator(),
           );
@@ -533,18 +609,17 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
       builder: (context) => DialogoAlerta(
         envioFuncion2: true,
         envioFuncion1: true,
-        tituloAlerta: 'ATENCIÓN',
+        tituloAlerta: '¿Cerrar sesión?',
         descripcionAlerta:
-            '¿Seguro que desea salir? Deberá iniciar sesión nuevamente',
-        textoBotonAlerta: 'SÍ',
-        textoBotonAlerta2: 'NO',
+            'Si sale, deberá iniciar sesión otra vez escaneando su documento.',
+        textoBotonAlerta: 'Sí, salir',
+        textoBotonAlerta2: 'No',
         funcion1: () => Navigator.of(context).pop(true),
         funcion2: () => Navigator.of(context).pop(false),
-        color: Colors.red,
+        color: Theme.of(context).colorScheme.error,
         icon: const Icon(
           Icons.new_releases_outlined,
           size: 40,
-          color: Colors.white,
         ),
       ),
     );
@@ -569,6 +644,7 @@ class _CantidadVacunadosState extends State<CantidadVacunados> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
 
     return FadeInUp(
       from: 16,
@@ -591,7 +667,7 @@ class _CantidadVacunadosState extends State<CantidadVacunados> {
               children: [
                 Text(
                   'Vacunaciones',
-                  style: GoogleFonts.nunito(
+                  style: tt.labelSmall?.copyWith(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.9,
@@ -600,7 +676,7 @@ class _CantidadVacunadosState extends State<CantidadVacunados> {
                 ),
                 Text(
                   'registradas',
-                  style: GoogleFonts.nunito(
+                  style: tt.labelSmall?.copyWith(
                     fontSize: 11,
                     color: cs.onSurfaceVariant.withValues(alpha: 0.85),
                   ),
@@ -641,7 +717,7 @@ class _CantidadVacunadosState extends State<CantidadVacunados> {
                     return Text(
                       cantidadVacunasService
                           .cantidadvacunados!.cantidad_aplicaciones!,
-                      style: GoogleFonts.nunito(
+                      style: tt.titleMedium?.copyWith(
                         color: cs.primary,
                         fontWeight: FontWeight.w800,
                         fontSize: getValueForScreenType(

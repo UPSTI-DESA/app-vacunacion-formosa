@@ -232,6 +232,7 @@ Valor de insertvacunado:
   "sysdesa10_edad": "35",
   "sysdesa10_fecha_nacimiento": "01/01/1990",
   "vacunador_registrador": "0",
+  "vacunacion_en_terreno": "1",
   "sysdesa10_apellido_tutor": "",
   "sysdesa10_nombre_tutor": "",
   "sysdesa10_dni_tutor": "",
@@ -242,7 +243,7 @@ Como probarlo con curl:
 
 
 curl -X POST "https://dh.formosa.gob.ar/modulos/webservice/php/version_3_0/wserv_registrar_vacuna.php" \
-  --data-urlencode 'insertvacunado={"id_flxcore03":"123","id_sysvacu04":"1","id_sysofic01":"456","id_sysdesa18":"10","id_sysdesa12":"789","id_sysvacu01":"2","id_sysvacu02":"3","id_sysvacu05":"4","sysdesa10_nombre":"NOMBRE","sysdesa10_apellido":"APELLIDO","sysdesa10_dni":"12345678","sysdesa10_sexo":"M","sysdesa10_nro_tramite":"123456789","sysdesa10_cadena_dni":"00012345678","sysdesa10_edad":"35","sysdesa10_fecha_nacimiento":"01/01/1990","vacunador_registrador":"0","sysdesa10_apellido_tutor":"","sysdesa10_nombre_tutor":"","sysdesa10_dni_tutor":"","sysdesa10_sexo_tutor":"","fecha_aplicacion":"31/03/2026"}'
+  --data-urlencode 'insertvacunado={"id_flxcore03":"123","id_sysvacu04":"1","id_sysofic01":"456","id_sysdesa18":"10","id_sysdesa12":"789","id_sysvacu01":"2","id_sysvacu02":"3","id_sysvacu05":"4","sysdesa10_nombre":"NOMBRE","sysdesa10_apellido":"APELLIDO","sysdesa10_dni":"12345678","sysdesa10_sexo":"M","sysdesa10_nro_tramite":"123456789","sysdesa10_cadena_dni":"00012345678","sysdesa10_edad":"35","sysdesa10_fecha_nacimiento":"01/01/1990","vacunador_registrador":"0","vacunacion_en_terreno":"1","sysdesa10_apellido_tutor":"","sysdesa10_nombre_tutor":"","sysdesa10_dni_tutor":"","sysdesa10_sexo_tutor":"","fecha_aplicacion":"31/03/2026"}'
 Formato de Respuesta Estandar
 Todos los endpoints responden con:
 

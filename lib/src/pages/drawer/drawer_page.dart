@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'package:intl/intl.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/drawer/components/sobrenosotros_page.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/utils/informacion_version_app_util.dart';
+import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Menú lateral con cabecera de marca, navegación clara y selector de tema (solo iconos).
@@ -108,6 +108,7 @@ class _BodyDrawerState extends State<BodyDrawer> {
                     esDestacadoSalida: true,
                     onTap: () {
                       loadingLoginService.cargarEstado(false);
+                      sesionEquipoVacunacionService.reiniciar();
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
@@ -146,6 +147,8 @@ class _CabeceraDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
     final oscuro = Theme.of(context).brightness == Brightness.dark;
 
     return Material(
@@ -210,7 +213,7 @@ class _CabeceraDrawer extends StatelessWidget {
             const SizedBox(height: AppEspaciado.lg),
             Text(
               subtituloDia,
-              style: GoogleFonts.nunito(
+              style: tt.bodySmall?.copyWith(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: Colors.white.withValues(alpha: 0.85),
@@ -220,11 +223,8 @@ class _CabeceraDrawer extends StatelessWidget {
             const SizedBox(height: AppEspaciado.xs),
             Text(
               'Bienvenido',
-              style: GoogleFonts.barlow(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+              style: bar.barlowDrawerEncabezado.copyWith(
                 color: Colors.white.withValues(alpha: 0.75),
-                letterSpacing: 2.2,
               ),
             ),
             const SizedBox(height: AppEspaciado.sm),
@@ -233,7 +233,7 @@ class _CabeceraDrawer extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.nunito(
+              style: tt.titleMedium?.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 height: 1.25,
@@ -254,18 +254,17 @@ class _EtiquetaSeccion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final base = Theme.of(context).textTheme.labelSmall ?? const TextStyle();
     return Padding(
       padding: const EdgeInsets.only(left: 4, top: 4),
       child: Text(
         texto.toUpperCase(),
-        style: GoogleFonts.nunito(
+        style: base.copyWith(
           fontSize: 11,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.1,
-          color: Theme.of(context)
-              .colorScheme
-              .onSurfaceVariant
-              .withValues(alpha: 0.9),
+          color: cs.onSurfaceVariant.withValues(alpha: 0.9),
         ),
       ),
     );
@@ -282,7 +281,7 @@ class _FilaNavegacion extends StatelessWidget {
     this.esDestacadoSalida = false,
   });
 
-  final IconData icono;
+  final FaIconData icono;
   final String titulo;
   final VoidCallback onTap;
   final Color? colorIcono;
@@ -291,6 +290,7 @@ class _FilaNavegacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
     final color = colorIcono ?? cs.primary;
 
     return Padding(
@@ -321,7 +321,7 @@ class _FilaNavegacion extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   alignment: Alignment.center,
-                  child: Icon(
+                  child: FaIcon(
                     icono,
                     size: 20,
                     color: color,
@@ -331,7 +331,7 @@ class _FilaNavegacion extends StatelessWidget {
                 Expanded(
                   child: Text(
                     titulo,
-                    style: GoogleFonts.nunito(
+                    style: tt.titleSmall?.copyWith(
                       fontSize: 16,
                       fontWeight:
                           esDestacadoSalida ? FontWeight.w600 : FontWeight.w500,
@@ -463,6 +463,8 @@ class _PieDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final oscuro = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -477,17 +479,58 @@ class _PieDrawer extends StatelessWidget {
             height: 1,
             color: cs.outlineVariant.withValues(alpha: 0.35),
           ),
-          const SizedBox(height: AppEspaciado.md),
+          const SizedBox(height: AppEspaciado.sm),
+          FutureBuilder<String>(
+            future: InformacionVersionApp.etiquetaSemver(),
+            builder: (BuildContext context, AsyncSnapshot<String> snap) {
+              final String etiqueta = snap.data ?? '…';
+              return Column(
+                children: [
+                  Text(
+                    'v$etiqueta',
+                    style: tt.labelLarge?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: cs.onSurfaceVariant,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                  Tooltip(
+                    message: 'Ver novedades de la versión',
+                    child: TextButton.icon(
+                      onPressed: () => mostrarDialogoNovedadesApp(context),
+                      icon: Icon(
+                        Icons.article_outlined,
+                        size: 18,
+                        color: cs.primary,
+                      ),
+                      label: Text(
+                        'Novedades de la versión',
+                        style: tt.labelLarge?.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: cs.primary,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppEspaciado.xs,
+                        ),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: AppEspaciado.sm),
           Image.asset(
             'assets/img/fondo/logo_polo_upsti_azul.png',
             height: 40,
             fit: BoxFit.contain,
-            color: Theme.of(context).brightness == Brightness.dark
-                ? cs.onSurface.withValues(alpha: 0.75)
-                : null,
-            colorBlendMode: Theme.of(context).brightness == Brightness.dark
-                ? BlendMode.srcIn
-                : null,
+            color: oscuro ? cs.onSurface.withValues(alpha: 0.75) : null,
+            colorBlendMode: oscuro ? BlendMode.srcIn : null,
           ),
         ],
       ),

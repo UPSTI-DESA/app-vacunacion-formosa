@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 import 'package:sistema_vacunacion/src/services/services.dart';
 
@@ -11,7 +12,7 @@ class _PerfilesVacunacionProviders {
     try {
       final resp = await http.get(url);
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
+        final decodedData = json.decode(decodificarRespuestaHTTP(resp.bodyBytes));
         final perfiles =
             PerfilesVacunacion.fromJsonList(decodedData['perfiles_vacunacion']);
         return perfiles.items;
@@ -43,7 +44,7 @@ class _PerfilesVacunacionProviders {
           [],
           mensajeSiListaVacia: (texto != null && texto.isNotEmpty)
               ? texto
-              : 'No se pudieron obtener los perfiles de vacunaci\u00F3n.',
+              : 'No se pudieron obtener los perfiles de vacunación.',
         );
         return;
       }
@@ -52,7 +53,7 @@ class _PerfilesVacunacionProviders {
       perfilesVacunacionService.cargarlistaPerfilesVacunacion(
         [],
         mensajeSiListaVacia:
-            'No se pudo conectar con el servidor. Revise su conexi\u00F3n e intente de nuevo.',
+            'No se pudo conectar con el servidor. Revise su conexión e intente de nuevo.',
       );
     }
   }

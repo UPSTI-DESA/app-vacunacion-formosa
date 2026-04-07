@@ -17,3 +17,5 @@ export 'package:sistema_vacunacion/src/services/vacunas_condicion_service.dart';
 export 'package:sistema_vacunacion/src/services/vacunas_esquema_service.dart';
 export 'package:sistema_vacunacion/src/services/vacunas_dosis_service.dart';
 export 'package:sistema_vacunacion/src/services/efectores_service.dart';
+export 'package:sistema_vacunacion/src/services/changelog_app_service.dart';
+export 'package:sistema_vacunacion/src/services/sesion_equipo_vacunacion_service.dart';

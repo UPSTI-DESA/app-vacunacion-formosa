@@ -25,6 +25,7 @@ class InsertRegistros {
     this.sysdesa10_edad,
     this.sysdesa10_fecha_nacimiento,
     this.vacunador_registrador,
+    this.vacunacion_en_terreno,
     this.codigo_mensaje,
     this.mensaje,
     this.sysdesa10_apellido_tutor,
@@ -57,6 +58,9 @@ class InsertRegistros {
   String? sysdesa10_edad;
   String? sysdesa10_fecha_nacimiento;
   String? vacunador_registrador;
+  /// [vacunacion_en_terreno] `1` = en terreno, `0` = en establecimiento (sesión equipo).
+  /// La app ya lo envía en el JSON del campo insertvacunado; persistencia en BD depende del PHP.
+  String? vacunacion_en_terreno;
   //DATOS TUTOR
   String? sysdesa10_apellido_tutor;
   String? sysdesa10_nombre_tutor;
@@ -91,6 +95,7 @@ class InsertRegistros {
         "sysdesa10_edad": sysdesa10_edad,
         "sysdesa10_fecha_nacimiento": sysdesa10_fecha_nacimiento,
         "vacunador_registrador": vacunador_registrador,
+        "vacunacion_en_terreno": vacunacion_en_terreno,
         "codigo_mensaje": codigo_mensaje,
         "mensaje": mensaje,
         "sysdesa10_apellido_tutor": sysdesa10_apellido_tutor,

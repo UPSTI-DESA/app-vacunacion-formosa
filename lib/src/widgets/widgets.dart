@@ -12,3 +12,5 @@ export 'package:sistema_vacunacion/src/widgets/loading_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';
 export 'package:sistema_vacunacion/src/widgets/marca_cabecera_gradiente_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/loading_x_tiempo_widget.dart';
+export 'package:sistema_vacunacion/src/widgets/dialogo_novedades_app_widget.dart';
+export 'package:sistema_vacunacion/src/widgets/resumen_sesion_vacunacion_widget.dart';

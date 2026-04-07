@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app_spacing_config.dart';
+import 'app_typography_extension.dart';
 
 /// Colores de marca (no cambian con el brillo; se usan en acentos y AppBar).
 class SisVacuMarca {
@@ -134,17 +136,29 @@ class SisVacuTheme {
   }
 
   ColorScheme _esquemaClaro() {
+    // Base clara + tonos surface M3 (jerarquía de capas sin depender de defaults).
     return ColorScheme.light(
       primary: vercelesteCuaternario!,
       onPrimary: Colors.white,
+      primaryContainer: const Color(0xFFB8E8EF),
+      onPrimaryContainer: const Color(0xFF003741),
       secondary: verdefuerte!,
       onSecondary: black!,
-      surface: const Color(0xFFF7F7F7),
+      surface: const Color(0xFFF5F6F8),
       onSurface: black!,
       error: primaryRed!,
       onError: Colors.white,
       tertiary: vercelesteTerciario,
       outline: borderContainers,
+    ).copyWith(
+      onSurfaceVariant: const Color(0xFF536066),
+      surfaceContainerLowest: Colors.white,
+      surfaceContainerLow: const Color(0xFFF0F2F4),
+      surfaceContainer: const Color(0xFFEAECEF),
+      surfaceContainerHigh: const Color(0xFFE2E6EA),
+      surfaceContainerHighest: const Color(0xFFDADFE4),
+      outlineVariant: const Color(0xFFC5CCD4),
+      scrim: Colors.black,
     );
   }
 
@@ -198,17 +212,29 @@ class SisVacuTheme {
       textTheme: nunito,
       appBarTheme: AppBarTheme(
         elevation: 0,
+        scrolledUnderElevation: oscuro ? 4 : 3,
+        shadowColor: Colors.black.withValues(alpha: oscuro ? 0.4 : 0.2),
+        surfaceTintColor: Colors.transparent,
         centerTitle: true,
-        backgroundColor: SisVacuMarca.vercelesteCuaternario,
-        foregroundColor: Colors.white,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
         titleTextStyle: GoogleFonts.nunito(
-          textStyle: const TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 18,
-            color: Colors.white,
+          textStyle: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+            height: 1.2,
+            letterSpacing: -0.2,
+            color: colorScheme.onPrimary,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        toolbarHeight: kToolbarHeight,
+        iconTheme: IconThemeData(color: colorScheme.onPrimary),
+        actionsIconTheme: IconThemeData(color: colorScheme.onPrimary),
       ),
       cardTheme: CardThemeData(
         elevation: oscuro ? 0 : 1,
@@ -217,21 +243,94 @@ class SisVacuTheme {
           borderRadius: BorderRadius.circular(AppEspaciado.radioTarjeta),
         ),
       ),
-      dividerTheme: DividerThemeData(
-        color: colorScheme.outline
-            .withValues(alpha: oscuro ? 0.35 : 0.45),
-        thickness: 1,
+      chipTheme: ChipThemeData(
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        selectedColor: colorScheme.primaryContainer,
+        disabledColor: colorScheme.onSurface.withValues(alpha: 0.12),
+        deleteIconColor: colorScheme.onSurfaceVariant,
+        checkmarkColor: colorScheme.primary,
+        labelStyle: nunito.labelLarge?.copyWith(
+          color: colorScheme.onSurface,
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+          height: 1.2,
+        ),
+        secondaryLabelStyle: nunito.labelLarge?.copyWith(
+          color: colorScheme.onPrimaryContainer,
+          fontWeight: FontWeight.w700,
+          fontSize: 13,
+          height: 1.2,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        side: BorderSide(
+          color: colorScheme.outline.withValues(alpha: oscuro ? 0.42 : 0.35),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: SisVacuMarca.vercelestePrimario,
-        foregroundColor: Colors.white,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        elevation: 2,
+        highlightElevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(48, 48),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(AppEspaciado.sm)),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppEspaciado.lg,
+            vertical: AppEspaciado.sm,
           ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(AppEspaciado.radioBoton)),
+          ),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          elevation: 0,
+          minimumSize: const Size(48, 48),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppEspaciado.lg,
+            vertical: AppEspaciado.sm,
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(AppEspaciado.radioBoton)),
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(48, 48),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppEspaciado.lg,
+            vertical: AppEspaciado.sm,
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(AppEspaciado.radioBoton)),
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          minimumSize: const Size(48, 48),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppEspaciado.md,
+            vertical: AppEspaciado.sm,
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(AppEspaciado.radioBoton)),
+          ),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          minimumSize: const Size(48, 48),
+          tapTargetSize: MaterialTapTargetSize.padded,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -241,6 +340,22 @@ class SisVacuTheme {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+          borderSide: BorderSide(
+            color: colorScheme.outline.withValues(alpha: oscuro ? 0.45 : 0.38),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+          borderSide: BorderSide(
+            color: colorScheme.outline.withValues(alpha: oscuro ? 0.45 : 0.35),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+          borderSide: BorderSide(
+            color: colorScheme.primary,
+            width: 2,
+          ),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppEspaciado.lg,
@@ -249,16 +364,63 @@ class SisVacuTheme {
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return SisVacuMarca.verceleste;
+          if (states.contains(WidgetState.disabled)) {
+            return colorScheme.onSurface.withValues(alpha: 0.38);
           }
-          return colorScheme.outline;
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.onPrimary;
+          }
+          // Apagado: thumb claro sobre carril más oscuro (mejor contraste que outline/track similares).
+          if (oscuro) {
+            return colorScheme.surfaceContainerHigh;
+          }
+          return colorScheme.surfaceContainerLowest;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return SisVacuMarca.verceleste.withValues(alpha: 0.45);
+          if (states.contains(WidgetState.disabled)) {
+            return colorScheme.surfaceContainerHighest.withValues(alpha: 0.45);
           }
-          return colorScheme.surfaceContainerHigh;
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.primary;
+          }
+          if (oscuro) {
+            return colorScheme.onSurface.withValues(alpha: 0.38);
+          }
+          return colorScheme.onSurface.withValues(alpha: 0.24);
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return Colors.transparent;
+          }
+          return colorScheme.onSurface.withValues(alpha: oscuro ? 0.28 : 0.2);
+        }),
+        trackOutlineWidth: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return 0.0;
+          }
+          return 1.0;
+        }),
+        // Icono en el thumb: encendido/apagado se entiende sin cambiar de widget.
+        thumbIcon: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return Icon(
+              Icons.remove_rounded,
+              size: 16,
+              color: colorScheme.onSurface.withValues(alpha: 0.38),
+            );
+          }
+          if (states.contains(WidgetState.selected)) {
+            return Icon(
+              Icons.check_rounded,
+              size: 18,
+              color: colorScheme.primary,
+            );
+          }
+          return Icon(
+            Icons.close_rounded,
+            size: 18,
+            color: colorScheme.onSurface.withValues(alpha: 0.72),
+          );
         }),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
@@ -267,13 +429,85 @@ class SisVacuTheme {
           TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
         },
       ),
-      snackBarTheme: const SnackBarThemeData(
+      snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(AppEspaciado.sm)),
+        elevation: 3,
+        backgroundColor: colorScheme.inverseSurface,
+        contentTextStyle: nunito.bodyMedium?.copyWith(
+          color: colorScheme.onInverseSurface,
+          fontWeight: FontWeight.w500,
+        ),
+        actionTextColor: colorScheme.inversePrimary,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(AppEspaciado.radioBoton)),
         ),
       ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: colorScheme.surfaceContainerHigh,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        titleTextStyle: nunito.titleLarge?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: colorScheme.onSurface,
+        ),
+        contentTextStyle: nunito.bodyLarge?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+          height: 1.4,
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: colorScheme.surfaceContainerLow,
+        surfaceTintColor: Colors.transparent,
+        elevation: 2,
+        modalBackgroundColor: colorScheme.surfaceContainerLow,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        dragHandleColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.35),
+        showDragHandle: false,
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: colorScheme.primary,
+        circularTrackColor: colorScheme.surfaceContainerHighest,
+        linearTrackColor: colorScheme.surfaceContainerHighest,
+      ),
+      listTileTheme: ListTileThemeData(
+        iconColor: colorScheme.primary,
+        textColor: colorScheme.onSurface,
+        titleTextStyle: nunito.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
+        subtitleTextStyle: nunito.bodyMedium?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      tooltipTheme: TooltipThemeData(
+        waitDuration: const Duration(milliseconds: 450),
+        decoration: BoxDecoration(
+          color: colorScheme.inverseSurface,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        textStyle: nunito.bodySmall?.copyWith(
+          color: colorScheme.onInverseSurface,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      dividerTheme: DividerThemeData(
+        color: colorScheme.outline
+            .withValues(alpha: oscuro ? 0.35 : 0.45),
+        thickness: 1,
+        space: 1,
+      ),
       bannerTheme: const MaterialBannerThemeData(),
+      extensions: <ThemeExtension<dynamic>>[
+        SisVacuTipografia.crear(),
+      ],
     );
   }
 }

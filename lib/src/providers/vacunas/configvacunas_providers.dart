@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:sistema_vacunacion/src/config/appconst_config.dart';
 
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
@@ -12,7 +13,7 @@ class _ConfiguracionVacunaProviders {
     try {
       final resp = await http.get(url);
       if (resp.statusCode == 200) {
-        final decodedData = json.decode(utf8.decode(resp.bodyBytes));
+        final decodedData = json.decode(decodificarRespuestaHTTP(resp.bodyBytes));
         final configuracionVacunas =
             ConfiVacuna.fromJsonList(decodedData['configuraciones']);
         return configuracionVacunas.items;

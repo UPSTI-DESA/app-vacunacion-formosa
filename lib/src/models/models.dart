@@ -13,6 +13,7 @@ export 'package:sistema_vacunacion/src/models/sistema/insertregistros_models.dar
 export 'package:sistema_vacunacion/src/models/sistema/notificacionesdosis_models.dart';
 export 'package:sistema_vacunacion/src/models/sistema/validarversion_models.dart';
 export 'package:sistema_vacunacion/src/models/sistema/mensajeservidor_models.dart';
+export 'package:sistema_vacunacion/src/models/sistema/changelog_app_models.dart';
 export 'package:sistema_vacunacion/src/models/vacunados/cantidadvacunados_models.dart';
 export 'package:sistema_vacunacion/src/models/tutor_models.dart';
 export 'package:sistema_vacunacion/src/models/vacunas/vacunas_condicion_model.dart';

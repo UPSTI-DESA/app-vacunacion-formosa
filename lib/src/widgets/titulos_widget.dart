@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import 'package:sistema_vacunacion/src/config/config.dart';
 
 class TitulosContainerPage extends StatelessWidget {
   final String? title;
@@ -18,6 +19,7 @@ class TitulosContainerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tl = Theme.of(context).textTheme.titleLarge;
     return Column(
       children: [
         FadeInUpBig(
@@ -26,10 +28,10 @@ class TitulosContainerPage extends StatelessWidget {
             children: [
               Text(
                 title!,
-                style: GoogleFonts.barlow(
-                  textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                style: context.sisTipografia.barlowTituloTarjeta.copyWith(
+                  fontSize: tl?.fontSize ?? 22,
+                  fontWeight: FontWeight.w600,
+                  color: colorTitle ?? Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],

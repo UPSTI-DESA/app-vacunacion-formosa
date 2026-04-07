@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 
@@ -23,6 +22,8 @@ class MarcaCabeceraGradiente extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
     final oscuro = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -65,9 +66,8 @@ class MarcaCabeceraGradiente extends StatelessWidget {
         children: [
           Text(
             titulo,
-            style: GoogleFonts.barlow(
+            style: bar.barlowTituloTarjeta.copyWith(
               fontSize: 26,
-              fontWeight: FontWeight.w700,
               color: Colors.white,
               height: 1.15,
             ),
@@ -78,7 +78,7 @@ class MarcaCabeceraGradiente extends StatelessWidget {
               subtitulo!,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.nunito(
+              style: tt.bodyMedium?.copyWith(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 height: 1.35,

@@ -779,6 +779,7 @@
           <tr><td><code class="inline">sysdesa10_edad</code></td><td>String</td><td>Edad del beneficiario</td></tr>
           <tr><td><code class="inline">sysdesa10_fecha_nacimiento</code></td><td>String</td><td>Fecha de nacimiento (dd/mm/yyyy)</td></tr>
           <tr><td><code class="inline">vacunador_registrador</code></td><td>String</td><td><code class="inline">0</code> = vacunador aplica | <code class="inline">1</code> = registrador aplica</td></tr>
+          <tr><td><code class="inline">vacunacion_en_terreno</code></td><td>String</td><td><code class="inline">1</code> = vacunación en terreno (campaña / salida) | <code class="inline">0</code> = en establecimiento fijo. Indicado en la pantalla Equipo de trabajo.</td></tr>
           <tr><td><code class="inline">sysdesa10_apellido_tutor</code></td><td>String</td><td>Apellido del tutor (menores)</td></tr>
           <tr><td><code class="inline">sysdesa10_nombre_tutor</code></td><td>String</td><td>Nombre del tutor (menores)</td></tr>
           <tr><td><code class="inline">sysdesa10_dni_tutor</code></td><td>String</td><td>DNI del tutor (menores)</td></tr>
@@ -807,6 +808,7 @@
     "sysdesa10_edad": "35",
     "sysdesa10_fecha_nacimiento": "01/01/1990",
     "vacunador_registrador": "0",
+    "vacunacion_en_terreno": "1",
     "sysdesa10_apellido_tutor": "",
     "sysdesa10_nombre_tutor": "",
     "sysdesa10_dni_tutor": "",
@@ -826,6 +828,7 @@
           <tr><td>JSON en form field</td><td>El body NO es JSON directo. Es un form con un campo llamado <code class="inline">insertvacunado</code> que contiene el JSON como string.</td></tr>
           <tr><td>Tutor opcional</td><td>Si el beneficiario es mayor, los campos de tutor pueden enviarse vacios.</td></tr>
           <tr><td>Formato de fecha</td><td>Usar <code class="inline">dd/mm/yyyy</code> (ej: <code class="inline">31/03/2026</code>).</td></tr>
+          <tr><td><code class="inline">vacunacion_en_terreno</code></td><td>La app móvil ya lo envía en el JSON (<code class="inline">1</code>/<code class="inline">0</code>). Hasta que el PHP lo persista, el valor solo queda en el cliente y en trazas de red.</td></tr>
         </table>
       </div>
     </div>
