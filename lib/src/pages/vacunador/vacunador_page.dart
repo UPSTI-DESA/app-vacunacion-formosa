@@ -52,11 +52,11 @@ class _VacunadorPageState extends State<VacunadorPage> {
   void initState() {
     super.initState();
     mismoVacunador = ValueNotifier<bool>(true);
-    esTerreno =
-        ValueNotifier<bool>(sesionEquipoVacunacionService.enTerreno);
+    esTerreno = ValueNotifier<bool>(sesionEquipoVacunacionService.enTerreno);
     _vacunadorActual = vacunadorService.vacunador;
-    _suscripcionVacunador =
-        vacunadorService.vacunadorStream.listen((Vacunador? v) {
+    _suscripcionVacunador = vacunadorService.vacunadorStream.listen((
+      Vacunador? v,
+    ) {
       if (mounted) setState(() => _vacunadorActual = v);
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -121,9 +121,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
           backgroundColor: cs.surface,
           // Ver doc en [VacunadorPage]: inset lo maneja [_ScrollConPaddingTeclado], no el resize del body.
           resizeToAvoidBottomInset: false,
-          appBar: const AppBarSesion(
-            titulo: 'Equipo de trabajo',
-          ),
+          appBar: const AppBarSesion(titulo: 'Equipo de trabajo'),
           drawer: const BodyDrawer(),
           body: _ScrollConPaddingTeclado(
             child: RepaintBoundary(
@@ -138,9 +136,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                   ),
                   const SizedBox(height: AppEspaciado.lg),
                   if (_vacunadorActual == null) ...[
-                    RepaintBoundary(
-                      child: _tarjetaOpcionesVacunacion(context),
-                    ),
+                    RepaintBoundary(child: _tarjetaOpcionesVacunacion(context)),
                     const SizedBox(height: AppEspaciado.lg),
                   ],
                   ValueListenableBuilder<bool>(
@@ -175,14 +171,19 @@ class _VacunadorPageState extends State<VacunadorPage> {
                             if (esMismoVacunador) {
                               verificarVacunador();
                             } else {
-                              vacunadorService.cargarVacunador(Vacunador(
-                                id_sysdesa12:
-                                    registradorService.registrador!.flxcore03_dni,
-                                sysdesa06_nombre: registradorService
-                                    .registrador!.flxcore03_nombre,
-                                sysdesa06_nro_documento: registradorService
-                                    .registrador!.flxcore03_dni,
-                              ));
+                              vacunadorService.cargarVacunador(
+                                Vacunador(
+                                  id_sysdesa12: registradorService
+                                      .registrador!
+                                      .flxcore03_dni,
+                                  sysdesa06_nombre: registradorService
+                                      .registrador!
+                                      .flxcore03_nombre,
+                                  sysdesa06_nro_documento: registradorService
+                                      .registrador!
+                                      .flxcore03_dni,
+                                ),
+                              );
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
@@ -231,8 +232,9 @@ class _VacunadorPageState extends State<VacunadorPage> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppEspaciado.lg),
-      decoration: AppSuperficies.tarjeta(context).copyWith(
-        borderRadius: BorderRadius.circular(20),
+      decoration: AppSuperficies.tarjetaBlanca(
+        context,
+        radio: AppEspaciado.radioCampo,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,9 +248,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                   children: [
                     Text(
                       'Resumen',
-                      style: bar.barlowTituloTarjeta.copyWith(
-                        color: cs.onSurface,
-                      ),
+                      style: bar.tituloTarjeta.copyWith(color: cs.onSurface),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -275,8 +275,12 @@ class _VacunadorPageState extends State<VacunadorPage> {
                       descripcionAlerta:
                           'Seleccione el interruptor si es la misma persona que registra y realiza la vacunación.\nSi corresponde, cambie el efector con el ícono del hospital.\n«En terreno» se guarda para el registro de cada vacuna aplicada.',
                       textoBotonAlerta: 'Entendido',
-                      color: SisVacuColor.vercelesteCuaternario,
-                      icon: const Icon(Icons.info, size: 40, color: Colors.white),
+                      color: SisVacuMarca.vercelesteCuaternario,
+                      icon: const Icon(
+                        Icons.info,
+                        size: 40,
+                        color: Colors.white,
+                      ),
                     ),
                   );
                 },
@@ -287,7 +291,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
           if (_efectoresCargando) ...[
             const SizedBox(height: AppEspaciado.sm),
             ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(AppEspaciado.xs),
               child: LinearProgressIndicator(
                 minHeight: 3,
                 backgroundColor: cs.surfaceContainerHighest,
@@ -344,7 +348,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                   builder: (context, snapshot) {
                     final desc =
                         registradorService.registrador?.sysofic01_descripcion ??
-                            '';
+                        '';
                     return Text(
                       desc,
                       style: tt.titleMedium?.copyWith(
@@ -395,10 +399,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
             },
           ),
           const SizedBox(height: AppEspaciado.lg),
-          Divider(
-            height: 1,
-            color: cs.outlineVariant.withValues(alpha: 0.45),
-          ),
+          Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.45)),
           const SizedBox(height: AppEspaciado.lg),
           _etiquetaSeccion(context, 'Personas'),
           _filaPersona(
@@ -414,8 +415,8 @@ class _VacunadorPageState extends State<VacunadorPage> {
               final valorVacunador = hayVacunador
                   ? vacunadorService.vacunador!.sysdesa06_nombre!
                   : (esMismoVacunador
-                      ? 'Falta asignar'
-                      : registradorService.registrador!.flxcore03_nombre!);
+                        ? 'Falta asignar'
+                        : registradorService.registrador!.flxcore03_nombre!);
               final destacarPendiente = !hayVacunador && esMismoVacunador;
               return _filaPersona(
                 context,
@@ -460,8 +461,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
               valor,
               style: tt.bodyLarge?.copyWith(
                 fontSize: 15,
-                fontWeight:
-                    destacarAlerta ? FontWeight.w800 : FontWeight.w500,
+                fontWeight: destacarAlerta ? FontWeight.w800 : FontWeight.w500,
                 letterSpacing: destacarAlerta ? 1.2 : 0,
                 color: destacarAlerta ? cs.error : cs.onSurface,
               ),
@@ -481,10 +481,8 @@ class _VacunadorPageState extends State<VacunadorPage> {
       padding: const EdgeInsets.all(AppEspaciado.md),
       decoration: BoxDecoration(
         color: cs.surfaceContainerHigh.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: cs.outlineVariant.withValues(alpha: 0.42),
-        ),
+        borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.42)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -584,10 +582,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                 ),
               ),
             ),
-            Switch(
-              value: valor,
-              onChanged: onChanged,
-            ),
+            Switch(value: valor, onChanged: onChanged),
             Expanded(
               child: Text(
                 'Sí',
@@ -624,8 +619,9 @@ class _VacunadorPageState extends State<VacunadorPage> {
             return Container(
               decoration: BoxDecoration(
                 color: cs.surface,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: cs.shadow.withValues(alpha: 0.2),
@@ -687,25 +683,24 @@ class _VacunadorPageState extends State<VacunadorPage> {
   Future<void> verificarVacunador() async {
     if (vacunadorService.existeVacunador) {
       Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const BusquedaBeneficiario()),
-          (Route<dynamic> route) => false);
+        context,
+        MaterialPageRoute(builder: (context) => const BusquedaBeneficiario()),
+        (Route<dynamic> route) => false,
+      );
     } else {
       showDialog(
-          context: context,
-          builder: (BuildContext dialogCtx) => DialogoAlerta(
-                envioFuncion2: false,
-                envioFuncion1: false,
-                tituloAlerta: 'Falta el vacunador',
-                descripcionAlerta:
-                    'Escanee o ingrese el D.N.I. del vacunador para continuar.',
-                textoBotonAlerta: 'Listo',
-                color: Theme.of(dialogCtx).colorScheme.error,
-                icon: const Icon(
-                  Icons.new_releases_outlined,
-                  size: 40,
-                ),
-              ));
+        context: context,
+        builder: (BuildContext dialogCtx) => DialogoAlerta(
+          envioFuncion2: false,
+          envioFuncion1: false,
+          tituloAlerta: 'Falta el vacunador',
+          descripcionAlerta:
+              'Escanee o ingrese el D.N.I. del vacunador para continuar.',
+          textoBotonAlerta: 'Listo',
+          color: Theme.of(dialogCtx).colorScheme.error,
+          icon: const Icon(Icons.new_releases_outlined, size: 40),
+        ),
+      );
     }
   }
 
@@ -737,8 +732,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
     }
 
     try {
-      final respUsuario =
-          await vacunadorProviders.validarVacunador(dniNorm);
+      final respUsuario = await vacunadorProviders.validarVacunador(dniNorm);
       if (!mounted) return;
 
       if (respUsuario[0].codigo_mensaje == '0') {
@@ -749,14 +743,12 @@ class _VacunadorPageState extends State<VacunadorPage> {
             envioFuncion2: false,
             envioFuncion1: false,
             tituloAlerta: 'No se pudo validar',
-            descripcionAlerta: respUsuario[0].mensaje ??
+            descripcionAlerta:
+                respUsuario[0].mensaje ??
                 'Revise el documento e intente de nuevo.',
             textoBotonAlerta: 'Listo',
             color: Theme.of(dialogCtx).colorScheme.error,
-            icon: const Icon(
-              Icons.new_releases_outlined,
-              size: 40,
-            ),
+            icon: const Icon(Icons.new_releases_outlined, size: 40),
           ),
         );
         return;
@@ -767,15 +759,15 @@ class _VacunadorPageState extends State<VacunadorPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           elevation: 2,
-          backgroundColor: SisVacuColor.vercelestePrimario,
+          backgroundColor: SisVacuMarca.vercelestePrimario,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(milliseconds: 2500),
           content: Text(
             'Vacunador asignado correctamente',
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
         ),
       );
@@ -791,10 +783,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
               'No se pudo consultar el vacunador. Revise su conexión e intente de nuevo.',
           textoBotonAlerta: 'Listo',
           color: Theme.of(dialogCtx).colorScheme.error,
-          icon: const Icon(
-            Icons.wifi_off_rounded,
-            size: 40,
-          ),
+          icon: const Icon(Icons.wifi_off_rounded, size: 40),
         ),
       );
     }
@@ -802,23 +791,21 @@ class _VacunadorPageState extends State<VacunadorPage> {
 
   Future<bool> onWillPop() async {
     final mensajeExit = await showDialog(
-        context: context,
-        builder: (context) => DialogoAlerta(
-              envioFuncion2: true,
-              envioFuncion1: true,
-              tituloAlerta: '¿Cerrar sesión?',
-              descripcionAlerta:
-                  'Si sale, deberá iniciar sesión otra vez escaneando su documento.',
-              textoBotonAlerta: 'Sí, salir',
-              textoBotonAlerta2: 'No',
-              funcion1: () => Navigator.of(context).pop(true),
-              funcion2: () => Navigator.of(context).pop(false),
-              color: Theme.of(context).colorScheme.error,
-              icon: const Icon(
-                Icons.new_releases_outlined,
-                size: 40,
-              ),
-            ));
+      context: context,
+      builder: (context) => DialogoAlerta(
+        envioFuncion2: true,
+        envioFuncion1: true,
+        tituloAlerta: '¿Cerrar sesión?',
+        descripcionAlerta:
+            'Si sale, deberá iniciar sesión otra vez escaneando su documento.',
+        textoBotonAlerta: 'Sí, salir',
+        textoBotonAlerta2: 'No',
+        funcion1: () => Navigator.of(context).pop(true),
+        funcion2: () => Navigator.of(context).pop(false),
+        color: Theme.of(context).colorScheme.error,
+        icon: const Icon(Icons.new_releases_outlined, size: 40),
+      ),
+    );
     return mensajeExit ?? false;
   }
 }
@@ -862,9 +849,9 @@ class _ListaEfectoresHojaState extends State<_ListaEfectoresHoja> {
         final lista = snapshot.data;
         final n = lista?.length ?? 0;
         final vacio = n == 0;
-        final cargando =
-            vacio && (widget.efectoresCargando || _reintentando);
-        final errorSinDatos = vacio &&
+        final cargando = vacio && (widget.efectoresCargando || _reintentando);
+        final errorSinDatos =
+            vacio &&
             widget.mensajeError != null &&
             !widget.efectoresCargando &&
             !_reintentando;
@@ -949,8 +936,9 @@ class _ListaEfectoresHojaState extends State<_ListaEfectoresHoja> {
               onTap: () {
                 final String nom = item.sysofic01Descripcion ?? '';
                 registradorService.editarEfectorUsuario(item);
-                final ScaffoldMessengerState? ms =
-                    ScaffoldMessenger.maybeOf(context);
+                final ScaffoldMessengerState? ms = ScaffoldMessenger.maybeOf(
+                  context,
+                );
                 Navigator.of(context).pop();
                 ms?.showSnackBar(
                   SnackBar(
@@ -1000,10 +988,7 @@ class _ScrollConPaddingTeclado extends StatelessWidget {
         AppEspaciado.lg,
         AppEspaciado.xl,
       ),
-      child: Transform.translate(
-        offset: Offset(0, -inset),
-        child: child,
-      ),
+      child: Transform.translate(offset: Offset(0, -inset), child: child),
     );
   }
 }
@@ -1012,15 +997,14 @@ class _ScrollConPaddingTeclado extends StatelessWidget {
 /// de ruta ni el primer layout; [autoFocus] inmediato en el [TextField] se evita.
 /// El ingreso manual usa [CustomInput] (scrollPadding por defecto; ver su documentación).
 class _RegistroVacunadorPanel extends StatefulWidget {
-  const _RegistroVacunadorPanel({
-    required this.onValidarDni,
-  });
+  const _RegistroVacunadorPanel({required this.onValidarDni});
 
   final Future<void> Function(String dni, TextEditingController controlador)
-      onValidarDni;
+  onValidarDni;
 
   @override
-  State<_RegistroVacunadorPanel> createState() => _RegistroVacunadorPanelState();
+  State<_RegistroVacunadorPanel> createState() =>
+      _RegistroVacunadorPanelState();
 }
 
 class _RegistroVacunadorPanelState extends State<_RegistroVacunadorPanel> {
@@ -1058,8 +1042,9 @@ class _RegistroVacunadorPanelState extends State<_RegistroVacunadorPanel> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppEspaciado.lg),
-      decoration: AppSuperficies.tarjeta(context).copyWith(
-        borderRadius: BorderRadius.circular(20),
+      decoration: AppSuperficies.tarjetaBlanca(
+        context,
+        radio: AppEspaciado.radioCampo,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1073,9 +1058,7 @@ class _RegistroVacunadorPanelState extends State<_RegistroVacunadorPanel> {
                   children: [
                     Text(
                       'Registro del vacunador',
-                      style: bar.barlowTituloTarjeta.copyWith(
-                        color: cs.onSurface,
-                      ),
+                      style: bar.tituloTarjeta.copyWith(color: cs.onSurface),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -1103,9 +1086,12 @@ class _RegistroVacunadorPanelState extends State<_RegistroVacunadorPanel> {
                       descripcionAlerta:
                           'Registre al vacunador con «Escanear documento» (código del frente en DNI nuevo, PDF417 del reverso en DNI anterior) o ingrese el D.N.I. sin puntos y confirme con el teclado.',
                       textoBotonAlerta: 'Listo',
-                      color: SisVacuColor.vercelesteCuaternario,
-                      icon: const Icon(Icons.info,
-                          size: 40, color: Colors.white),
+                      color: SisVacuMarca.vercelesteCuaternario,
+                      icon: const Icon(
+                        Icons.info,
+                        size: 40,
+                        color: Colors.white,
+                      ),
                     ),
                   );
                 },
@@ -1129,21 +1115,15 @@ class _RegistroVacunadorPanelState extends State<_RegistroVacunadorPanel> {
             child: EscanerDni(
               'Vacunador',
               'Escanear documento',
-              'Escanee el D.N.I. del vacunador',
               anchoValor: 44,
             ),
           ),
           const SizedBox(height: AppEspaciado.xl),
-          Divider(
-            height: 1,
-            color: cs.outlineVariant.withValues(alpha: 0.45),
-          ),
+          Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.45)),
           const SizedBox(height: AppEspaciado.lg),
           Text(
             'Ingreso manual del D.N.I.',
-            style: bar.barlowSubtituloTarjeta.copyWith(
-              color: cs.onSurface,
-            ),
+            style: bar.subtituloTarjeta.copyWith(color: cs.onSurface),
           ),
           const SizedBox(height: 4),
           Text(

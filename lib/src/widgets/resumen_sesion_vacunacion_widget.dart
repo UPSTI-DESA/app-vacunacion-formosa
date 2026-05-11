@@ -3,11 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/services/services.dart';
 
-/// Muestra establecimiento, modalidad (terreno / fijo) y nombre del vacunador.
-/// Útil en búsqueda de beneficiario y en confirmación antes de registrar.
-///
-/// Con [colapsable]: el usuario puede plegar la tarjeta para ganar espacio; el D.N.I.
-/// del vacunador no se muestra (el nombre alcanza para identificar la sesión).
 class ResumenSesionVacunacion extends StatefulWidget {
   const ResumenSesionVacunacion({
     Key? key,
@@ -17,16 +12,9 @@ class ResumenSesionVacunacion extends StatefulWidget {
     this.expandidoInicial = false,
   }) : super(key: key);
 
-  /// Texto aclaratorio: el campo ya viaja en el JSON; el servidor debe persistirlo.
   final bool mostrarNotaBackend;
-
-  /// Menos padding y tipografía más chica (p. ej. pantalla de búsqueda).
   final bool compendio;
-
-  /// Si es true, cabecera tocable para expandir / ocultar el detalle.
   final bool colapsable;
-
-  /// Estado inicial cuando [colapsable] es true.
   final bool expandidoInicial;
 
   @override
@@ -59,8 +47,6 @@ class _ResumenSesionVacunacionState extends State<ResumenSesionVacunacion> {
 
     final String establecimiento =
         registradorService.registrador?.sysofic01_descripcion ?? '—';
-    final String vacunadorNombre =
-        vacunadorService.vacunador?.sysdesa06_nombre ?? '—';
     final String modalidad = sesionEquipoVacunacionService.enTerreno
         ? 'En terreno (campaña o salida)'
         : 'En establecimiento fijo';
@@ -70,8 +56,9 @@ class _ResumenSesionVacunacionState extends State<ResumenSesionVacunacion> {
 
     return Container(
       width: double.infinity,
-      decoration: AppSuperficies.tarjeta(context).copyWith(
-        borderRadius: BorderRadius.circular(20),
+      decoration: AppSuperficies.tarjetaBlanca(
+        context,
+        radio: AppEspaciado.radioCampo,
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -93,13 +80,13 @@ class _ResumenSesionVacunacionState extends State<ResumenSesionVacunacion> {
                           children: [
                             Text(
                               'Sesión de vacunación',
-                              style: bar.barlowTituloTarjeta.copyWith(
+                              style: bar.tituloTarjeta.copyWith(
                                 fontSize: widget.compendio ? 19 : 22,
                                 color: cs.onSurface,
                               ),
                             ),
                             if (!_expandido) ...[
-                              const SizedBox(height: 4),
+                              const SizedBox(height: AppEspaciado.xs),
                               Text(
                                 establecimiento,
                                 maxLines: 1,
@@ -119,7 +106,7 @@ class _ResumenSesionVacunacionState extends State<ResumenSesionVacunacion> {
                             ? Icons.expand_less_rounded
                             : Icons.expand_more_rounded,
                         color: cs.primary,
-                        size: 28,
+                        size: AppTamanoIcono.mediano,
                       ),
                     ],
                   ),
@@ -140,7 +127,7 @@ class _ResumenSesionVacunacionState extends State<ResumenSesionVacunacion> {
                   if (!widget.colapsable) ...[
                     Text(
                       'Sesión de vacunación',
-                      style: bar.barlowTituloTarjeta.copyWith(
+                      style: bar.tituloTarjeta.copyWith(
                         fontSize: widget.compendio ? 19 : 22,
                         color: cs.onSurface,
                       ),
@@ -185,13 +172,6 @@ class _ResumenSesionVacunacionState extends State<ResumenSesionVacunacion> {
                     compendio: widget.compendio,
                     etiqueta: 'Modalidad',
                     valor: modalidad,
-                  ),
-                  _fila(
-                    context,
-                    anchoEtiqueta: anchoEtiqueta,
-                    compendio: widget.compendio,
-                    etiqueta: 'Vacunador',
-                    valor: vacunadorNombre,
                   ),
                   if (widget.mostrarNotaBackend) ...[
                     const SizedBox(height: AppEspaciado.md),

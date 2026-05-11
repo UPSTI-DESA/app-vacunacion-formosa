@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'widgets.dart';
+import 'package:sistema_vacunacion/src/config/config.dart';
+import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class ColorTextButton extends StatelessWidget {
   final String text;
@@ -22,33 +23,39 @@ class ColorTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final Color textColor = color != null
+        ? (ThemeData.estimateBrightnessForColor(color!) == Brightness.dark
+            ? Colors.white
+            : cs.onSurface)
+        : cs.onSurface;
+
     return BaseButton(
       ancho: anchoValor,
       child: TextButton(
-        // splashColor: Colors.blueAccent,
-        // color: SisVacuColor.verdefuerte,
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all<Color?>(color),
+        style: TextButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: textColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
+          ),
         ),
         onPressed: onPressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (iconoBool == true && iconoBoton != null) iconoBoton!,
             if (iconoBool == true && iconoBoton != null)
-              const SizedBox(width: 10.0),
+              IconTheme(
+                data: IconThemeData(color: textColor, size: AppTamanoIcono.pequeno),
+                child: iconoBoton!,
+              ),
+            if (iconoBool == true && iconoBoton != null)
+              const SizedBox(width: AppEspaciado.sm),
             Text(
               text,
-              style: TextStyle(
-                color: color != null
-                    ? (ThemeData.estimateBrightnessForColor(color!) ==
-                            Brightness.dark
-                        ? Colors.white
-                        : Theme.of(context).colorScheme.onSurface)
-                    : Theme.of(context).colorScheme.onSurface,
-                letterSpacing: 1.3,
-                fontSize: MediaQuery.of(context).size.width * 0.04,
-                fontWeight: FontWeight.bold,
+              style: AppBotones.etiquetaBoton(
+                Theme.of(context).textTheme,
+                base: Theme.of(context).textTheme.titleSmall,
               ),
             ),
           ],

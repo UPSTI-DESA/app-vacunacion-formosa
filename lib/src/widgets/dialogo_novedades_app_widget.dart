@@ -4,7 +4,6 @@ import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/sistema/changelog_app_models.dart';
 import 'package:sistema_vacunacion/src/services/changelog_app_service.dart';
 
-/// Modal de notas de versión (estructura tipo release 2026: novedades / correcciones / mantenimiento).
 Future<void> mostrarDialogoNovedadesApp(BuildContext context) {
   return showDialog<void>(
     context: context,
@@ -12,13 +11,21 @@ Future<void> mostrarDialogoNovedadesApp(BuildContext context) {
       final ColorScheme cs = Theme.of(ctx).colorScheme;
       final TextTheme tt = Theme.of(ctx).textTheme;
       return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: AppEspaciado.md,
+          vertical: AppEspaciado.lg,
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         child: Container(
           constraints: const BoxConstraints(maxWidth: 460, maxHeight: 640),
-          padding: const EdgeInsets.fromLTRB(18, 18, 10, 10),
-          decoration: AppSuperficies.tarjeta(ctx, radio: 22),
+          padding: const EdgeInsets.fromLTRB(
+            AppEspaciado.lg,
+            AppEspaciado.lg,
+            AppEspaciado.sm,
+            AppEspaciado.sm,
+          ),
+          decoration: AppSuperficies.tarjetaBlanca(ctx, radio: AppEspaciado.radioCampo),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -27,18 +34,18 @@ Future<void> mostrarDialogoNovedadesApp(BuildContext context) {
                   DecoratedBox(
                     decoration: BoxDecoration(
                       color: cs.primaryContainer,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppEspaciado.radioTarjeta),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(AppEspaciado.sm),
                       child: Icon(
                         Icons.history_edu_rounded,
                         color: cs.onPrimaryContainer,
-                        size: 24,
+                        size: AppTamanoIcono.mediano,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppEspaciado.md),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +79,7 @@ Future<void> mostrarDialogoNovedadesApp(BuildContext context) {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppEspaciado.md),
               Expanded(
                 child: _ListaChangelogCargada(colorScheme: cs),
               ),
@@ -149,7 +156,7 @@ class _ListaChangelogCargadaState extends State<_ListaChangelogCargada> {
           child: ListView.separated(
             padding: const EdgeInsets.only(right: 8, bottom: 8),
             itemCount: entradas.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 18),
+            separatorBuilder: (_, __) => const SizedBox(height: AppEspaciado.lg),
             itemBuilder: (BuildContext context, int i) {
               return _TarjetaRelease(entrada: entradas[i], cs: cs);
             },
@@ -176,10 +183,15 @@ class _TarjetaRelease extends StatelessWidget {
     final String? titulo = entrada.titulo;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(14, 14, 12, 12),
+      padding: const EdgeInsets.fromLTRB(
+        AppEspaciado.md,
+        AppEspaciado.md,
+        AppEspaciado.sm,
+        AppEspaciado.sm,
+      ),
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppEspaciado.lg),
         border: Border.all(
           color: cs.outlineVariant.withValues(alpha: 0.5),
         ),
@@ -189,8 +201,8 @@ class _TarjetaRelease extends StatelessWidget {
         children: <Widget>[
           Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8,
-            runSpacing: 4,
+            spacing: AppEspaciado.sm,
+            runSpacing: AppEspaciado.xs,
             children: <Widget>[
               Text(
                 'v${entrada.version}',
@@ -203,10 +215,10 @@ class _TarjetaRelease extends StatelessWidget {
               if (fecha != null && fecha.isNotEmpty)
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      const EdgeInsets.symmetric(horizontal: AppEspaciado.sm, vertical: 3),
                   decoration: BoxDecoration(
                     color: cs.secondaryContainer.withValues(alpha: 0.85),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AppEspaciado.sm),
                   ),
                   child: Text(
                     fecha,
@@ -220,7 +232,7 @@ class _TarjetaRelease extends StatelessWidget {
             ],
           ),
           if (titulo != null && titulo.isNotEmpty) ...<Widget>[
-            const SizedBox(height: 6),
+            const SizedBox(height: AppEspaciado.sm),
             Text(
               titulo,
               style: tt.titleSmall?.copyWith(
@@ -231,7 +243,7 @@ class _TarjetaRelease extends StatelessWidget {
               ),
             ),
           ],
-          const SizedBox(height: 12),
+          const SizedBox(height: AppEspaciado.md),
           if (entrada.tieneSeccionesTipadas) ...<Widget>[
             if (entrada.features.isNotEmpty)
               _BloqueCategoria(
@@ -244,7 +256,7 @@ class _TarjetaRelease extends StatelessWidget {
                 lineas: entrada.features,
               ),
             if (entrada.fixes.isNotEmpty) ...<Widget>[
-              if (entrada.features.isNotEmpty) const SizedBox(height: 12),
+              if (entrada.features.isNotEmpty) const SizedBox(height: AppEspaciado.md),
               _BloqueCategoria(
                 cs: cs,
                 titulo: 'Correcciones',
@@ -257,7 +269,7 @@ class _TarjetaRelease extends StatelessWidget {
             ],
             if (entrada.maintenance.isNotEmpty) ...<Widget>[
               if (entrada.features.isNotEmpty || entrada.fixes.isNotEmpty)
-                const SizedBox(height: 12),
+                const SizedBox(height: AppEspaciado.md),
               _BloqueCategoria(
                 cs: cs,
                 titulo: 'Plataforma y mantenimiento',
@@ -316,10 +328,15 @@ class _BloqueCategoria extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(12, 10, 10, 12),
+      padding: const EdgeInsets.fromLTRB(
+        AppEspaciado.md,
+        AppEspaciado.sm,
+        AppEspaciado.sm,
+        AppEspaciado.md,
+      ),
       decoration: BoxDecoration(
         color: fondo,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppEspaciado.radioTarjeta),
         border: Border(
           left: BorderSide(color: colorAcento, width: 3),
         ),
@@ -329,8 +346,8 @@ class _BloqueCategoria extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(icono, size: 18, color: colorAcento),
-              const SizedBox(width: 8),
+              Icon(icono, size: AppTamanoIcono.pequeno, color: colorAcento),
+              const SizedBox(width: AppEspaciado.sm),
               Expanded(
                 child: Text(
                   titulo,
@@ -358,7 +375,7 @@ class _BloqueCategoria extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppEspaciado.sm),
           ...lineas.map(
             (String linea) => Padding(
               padding: const EdgeInsets.only(bottom: 7),

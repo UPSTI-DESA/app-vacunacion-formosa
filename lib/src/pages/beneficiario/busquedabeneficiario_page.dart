@@ -64,9 +64,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
       child: Scaffold(
         backgroundColor: cs.surface,
         drawer: const BodyDrawer(),
-        appBar: const AppBarSesion(
-          titulo: 'Buscar beneficiario',
-        ),
+        appBar: const AppBarSesion(titulo: 'Buscar beneficiario'),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(
@@ -125,9 +123,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
       decoration: BoxDecoration(
         color: cs.surfaceContainerHigh.withValues(alpha: 0.55),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: cs.outlineVariant.withValues(alpha: 0.42),
-        ),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.42)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -204,8 +200,9 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppEspaciado.lg),
-      decoration: AppSuperficies.tarjeta(context).copyWith(
-        borderRadius: BorderRadius.circular(20),
+      decoration: AppSuperficies.tarjetaBlanca(
+        context,
+        radio: AppEspaciado.radioCampo,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -219,11 +216,11 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                   children: [
                     Text(
                       'Lectura del D.N.I.',
-                      style: bar.barlowTituloTarjeta.copyWith(
+                      style: bar.tituloTarjeta.copyWith(
                         color: cs.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 4),
+const SizedBox(height: AppEspaciado.xs),
                     Text(
                       'Código del documento (frente o reverso)',
                       style: tt.labelLarge?.copyWith(
@@ -249,18 +246,22 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                       descripcionAlerta:
                           'Si el beneficiario tiene el D.N.I., use Escanear y enfoque la cámara al código de barras. Si no lo tiene, cambie a modo manual, ingrese el número y el sexo.',
                       textoBotonAlerta: 'Entendido',
-                      color: SisVacuColor.vercelesteCuaternario,
-                      icon: const Icon(Icons.info, size: 40, color: Colors.white),
+                      color: SisVacuMarca.vercelesteCuaternario,
+                      icon: const Icon(
+                        Icons.info,
+                        size: 40,
+                        color: Colors.white,
+                      ),
                     ),
                   );
                 },
-                icon: const FaIcon(FontAwesomeIcons.circleInfo, size: 20),
+                icon: FaIcon(FontAwesomeIcons.circleInfo, size: AppTamanoIcono.pequeno),
               ),
             ],
           ),
           const SizedBox(height: AppEspaciado.lg),
           Text(
-            'Escanee el código del DNI del beneficiario: frente (tarjeta nueva) o PDF417 del reverso (tarjeta anterior).',
+            'Escanee el código del DNI del beneficiario.',
             textAlign: TextAlign.center,
             style: tt.bodyMedium?.copyWith(
               fontSize: 14,
@@ -274,7 +275,6 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
             child: EscanerDni(
               'Beneficiario',
               'Escanear documento',
-              'textoAyuda',
               anchoValor: 44,
             ),
           ),
@@ -292,17 +292,16 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppEspaciado.lg),
-      decoration: AppSuperficies.tarjeta(context).copyWith(
-        borderRadius: BorderRadius.circular(20),
+      decoration: AppSuperficies.tarjetaBlanca(
+        context,
+        radio: AppEspaciado.radioCampo,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             'Ingreso manual',
-            style: bar.barlowTituloTarjeta.copyWith(
-              color: cs.onSurface,
-            ),
+            style: bar.tituloTarjeta.copyWith(color: cs.onSurface),
           ),
           const SizedBox(height: 4),
           Text(
@@ -343,8 +342,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                 icon: Icon(Icons.badge_outlined, color: cs.primary),
                 labelText: 'D.N.I.',
                 labelStyle: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
-                floatingLabelStyle:
-                    tt.bodyMedium?.copyWith(color: cs.primary),
+                floatingLabelStyle: tt.bodyMedium?.copyWith(color: cs.primary),
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 border: InputBorder.none,
@@ -404,8 +402,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                       'Femenino',
                       style: tt.bodyLarge?.copyWith(
                         color: !genero ? cs.onSurface : suave,
-                        fontWeight:
-                            !genero ? FontWeight.w800 : FontWeight.w500,
+                        fontWeight: !genero ? FontWeight.w800 : FontWeight.w500,
                       ),
                     ),
                     Switch(
@@ -421,8 +418,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                       'Masculino',
                       style: tt.bodyLarge?.copyWith(
                         color: genero ? cs.onSurface : suave,
-                        fontWeight:
-                            genero ? FontWeight.w800 : FontWeight.w500,
+                        fontWeight: genero ? FontWeight.w800 : FontWeight.w500,
                       ),
                     ),
                   ],
@@ -434,7 +430,8 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
           BotonCustom(
             text: 'Verificar datos',
             onPressed: () {
-              final dniOk = dniBeneficiario != '' &&
+              final dniOk =
+                  dniBeneficiario != '' &&
                   dniBeneficiario!.length >= 7 &&
                   dniBeneficiario != null;
 
@@ -467,7 +464,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                         FontAwesomeIcons.check,
                         color: Colors.white,
                       ),
-                      color: SisVacuColor.vercelesteCuaternario,
+                      color: SisVacuMarca.vercelesteCuaternario,
                     );
                   },
                 );
@@ -482,10 +479,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                         'Ingrese el D.N.I. (mínimo 7 dígitos) y el sexo.',
                     textoBotonAlerta: 'Listo',
                     color: Theme.of(dialogCtx).colorScheme.error,
-                    icon: const Icon(
-                      Icons.error_outline,
-                      size: 40,
-                    ),
+                    icon: const Icon(Icons.error_outline, size: 40),
                   ),
                 );
               }
@@ -504,8 +498,10 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     try {
       final datosBeneficiario = await beneficiarioProviders
           .obtenerDatosBeneficiario('', dni, sexoPersona);
-      final notificaciones =
-          await notificacionesProvider.validarNotificaciones(dni, sexoPersona);
+      final notificaciones = await notificacionesProvider.validarNotificaciones(
+        dni,
+        sexoPersona,
+      );
       if (!mounted) return;
 
       _cerrarDialogoCargaSiAbierta();
@@ -535,10 +531,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
             descripcionAlerta: datosBeneficiario[0].mensaje,
             textoBotonAlerta: 'Listo',
             color: Theme.of(context).colorScheme.error,
-            icon: const Icon(
-              Icons.error,
-              size: 40,
-            ),
+            icon: const Icon(Icons.error, size: 40),
           ),
         );
         return;
@@ -557,10 +550,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
               'No se pudieron obtener los datos del beneficiario. Revise la red e intente de nuevo.',
           textoBotonAlerta: 'Listo',
           color: Theme.of(context).colorScheme.error,
-          icon: const Icon(
-            Icons.wifi_off_rounded,
-            size: 40,
-          ),
+          icon: const Icon(Icons.wifi_off_rounded, size: 40),
         ),
       );
     }
@@ -617,10 +607,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
         funcion1: () => Navigator.of(context).pop(true),
         funcion2: () => Navigator.of(context).pop(false),
         color: Theme.of(context).colorScheme.error,
-        icon: const Icon(
-          Icons.new_releases_outlined,
-          size: 40,
-        ),
+        icon: const Icon(Icons.new_releases_outlined, size: 40),
       ),
     );
     return mensajeExit ?? false;
@@ -654,10 +641,8 @@ class _CantidadVacunadosState extends State<CantidadVacunados> {
         padding: const EdgeInsets.all(AppEspaciado.lg),
         decoration: BoxDecoration(
           color: cs.surfaceContainerHigh.withValues(alpha: 0.45),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: cs.outlineVariant.withValues(alpha: 0.38),
-          ),
+borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.38)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -716,7 +701,8 @@ class _CantidadVacunadosState extends State<CantidadVacunados> {
                     }
                     return Text(
                       cantidadVacunasService
-                          .cantidadvacunados!.cantidad_aplicaciones!,
+                          .cantidadvacunados!
+                          .cantidad_aplicaciones!,
                       style: tt.titleMedium?.copyWith(
                         color: cs.primary,
                         fontWeight: FontWeight.w800,

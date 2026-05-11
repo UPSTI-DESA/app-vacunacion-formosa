@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 
-/// Dialogo de advertencia o informacion (M3, tarjeta 22).
 class DialogoAlerta extends StatelessWidget {
   final String? tituloAlerta;
   final String? descripcionAlerta;
   final String? textoBotonAlerta;
   final String? textoBotonAlerta2;
   final Image? image;
-  /// Icono Material o Font Awesome; [IconTheme] aplica tamaño/color al hijo.
   final Widget icon;
   final Color? color;
   final Function? funcion1;
@@ -37,7 +35,10 @@ class DialogoAlerta extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: AppEspaciado.xl,
+        vertical: AppEspaciado.xl,
+      ),
       child: _cuerpo(context),
     );
   }
@@ -65,8 +66,13 @@ class DialogoAlerta extends StatelessWidget {
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 400),
-      padding: const EdgeInsets.fromLTRB(22, 26, 22, 22),
-      decoration: AppSuperficies.tarjeta(context, radio: 22),
+      padding: const EdgeInsets.fromLTRB(
+        AppEspaciado.xl,
+        AppEspaciado.lg,
+        AppEspaciado.xl,
+        AppEspaciado.xl,
+      ),
+      decoration: AppSuperficies.tarjetaBlanca(context, radio: AppEspaciado.radioCampo),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -78,31 +84,33 @@ class DialogoAlerta extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: IconTheme(
-              data: IconThemeData(color: textoSobreAcento, size: 28),
+              data: IconThemeData(
+                color: textoSobreAcento,
+                size: AppTamanoIcono.grande,
+              ),
               child: icon,
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: AppEspaciado.lg),
           Text(
             tituloAlerta!,
             textAlign: TextAlign.center,
-            style: bar.barlowTituloTarjeta.copyWith(
+            style: bar.tituloTarjeta.copyWith(
               height: 1.15,
               color: cs.onSurface,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: AppEspaciado.sm),
           Text(
             descripcionAlerta!,
             textAlign: TextAlign.center,
             style: tt.bodyLarge?.copyWith(
-              fontSize: 15,
               height: 1.45,
               fontWeight: FontWeight.w500,
               color: AppSuperficies.textoSecundario(context),
             ),
           ),
-          const SizedBox(height: 26),
+          const SizedBox(height: AppEspaciado.xl),
           if (dosBotones)
             Row(
               children: [
@@ -110,35 +118,18 @@ class DialogoAlerta extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => funcion2!(),
                     style: AppBotones.estiloOutlinedDialogo(cs),
-                    child: Text(
-                      textoBotonAlerta2!,
-                      style: tt.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: cs.onSurface,
-                      ),
-                    ),
+                    child: Text(textoBotonAlerta2!),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppEspaciado.md),
                 Expanded(
                   child: FilledButton(
                     onPressed: accionPrimaria,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: acento,
-                      foregroundColor: textoSobreAcento,
-                      minimumSize: const Size.fromHeight(48),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      shape: AppBotones.forma,
+                    style: AppBotones.estiloFilledCta().copyWith(
+                      backgroundColor: WidgetStateProperty.all(acento),
+                      foregroundColor: WidgetStateProperty.all(textoSobreAcento),
                     ),
-                    child: Text(
-                      textoBotonAlerta!,
-                      style: tt.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: textoSobreAcento,
-                      ),
-                    ),
+                    child: Text(textoBotonAlerta!),
                   ),
                 ),
               ],
@@ -148,20 +139,11 @@ class DialogoAlerta extends StatelessWidget {
               width: double.infinity,
               child: FilledButton(
                 onPressed: accionPrimaria,
-                style: FilledButton.styleFrom(
-                  backgroundColor: acento,
-                  foregroundColor: textoSobreAcento,
-                  minimumSize: const Size.fromHeight(48),
-                  shape: AppBotones.forma,
+                style: AppBotones.estiloFilledCta().copyWith(
+                  backgroundColor: WidgetStateProperty.all(acento),
+                  foregroundColor: WidgetStateProperty.all(textoSobreAcento),
                 ),
-                child: Text(
-                  textoBotonAlerta!,
-                  style: tt.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                    color: textoSobreAcento,
-                  ),
-                ),
+                child: Text(textoBotonAlerta!),
               ),
             ),
         ],

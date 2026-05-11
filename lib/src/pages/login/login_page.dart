@@ -130,7 +130,7 @@ class _LoginBodyState extends State<LoginBody> {
                                 decoration: BoxDecoration(
                                   color: cs.surfaceContainerHighest
                                       .withValues(alpha: 0.75),
-                                  borderRadius: BorderRadius.circular(20),
+borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
                                 ),
                                 child: Text(
                                   'v$_etiquetaSemver',
@@ -148,7 +148,7 @@ class _LoginBodyState extends State<LoginBody> {
                                       mostrarDialogoNovedadesApp(context),
                                   icon: Icon(
                                     Icons.article_outlined,
-                                    size: 18,
+                                    size: AppTamanoIcono.pequeno,
                                     color: cs.primary,
                                   ),
                                   label: Text(
@@ -223,30 +223,53 @@ class _LoginBodyState extends State<LoginBody> {
         StreamBuilder(
           stream: loadingLoginService.loadingStateStream,
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            return loadingLoginService.getEstadoLoginState!
-                ? Container(
-                    height: double.infinity,
-                    width: double.infinity,
-                    color: cs.scrim.withValues(alpha: .72),
-                    child: const Center(child: LoadingEstrellas()))
-                : loadingLoginService.getEstadoPrimerInicioState!
-                    ? Container()
-                    : FutureBuilder(
-                        future:
-                            Future.delayed(const Duration(milliseconds: 1000)),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<dynamic> snapshot) {
-                          return snapshot.connectionState ==
-                                  ConnectionState.waiting
-                              ? Container(
-                                  height: double.infinity,
-                                  width: double.infinity,
-                                  color: cs.scrim.withValues(alpha: .72),
-                                  child:
-                                      const Center(child: LoadingEstrellas()))
-                              : Container();
-                        },
-                      );
+            if (loadingLoginService.getEstadoLoginState!) {
+              return Container(
+                height: double.infinity,
+                width: double.infinity,
+                color: cs.scrim.withValues(alpha: .72),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const LoadingEstrellas(),
+                      if (loadingLoginService.loadingMensaje.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Text(
+                            loadingLoginService.loadingMensaje,
+                            textAlign: TextAlign.center,
+                            style: tt.bodyMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            }
+            return loadingLoginService.getEstadoPrimerInicioState!
+                ? Container()
+                : FutureBuilder(
+                    future:
+                        Future.delayed(const Duration(milliseconds: 1000)),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      return snapshot.connectionState ==
+                              ConnectionState.waiting
+                          ? Container(
+                              height: double.infinity,
+                              width: double.infinity,
+                              color: cs.scrim.withValues(alpha: .72),
+                              child:
+                                  const Center(child: LoadingEstrellas()))
+                          : Container();
+                    },
+                  );
           },
         ),
       ],
@@ -352,7 +375,6 @@ class _TarjetaLoginAcceso extends StatelessWidget {
               child: EscanerDni(
                 'Registrador',
                 'Escanear documento',
-                'Escanee el DNI para verificar su identidad',
                 iconBool: false,
                 anchoValor: MediaQuery.of(context).size.width * 0.11,
               ),

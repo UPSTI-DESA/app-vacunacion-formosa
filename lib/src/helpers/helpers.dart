@@ -30,7 +30,7 @@ Widget titulos(BuildContext context, String titulo) {
     from: 25,
     child: Text(
       titulo,
-      style: context.sisTipografia.barlowTituloTarjeta.copyWith(
+      style: context.sisTipografia.tituloTarjeta.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 20,
         color: Theme.of(context).colorScheme.onSurface,

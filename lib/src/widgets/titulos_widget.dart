@@ -19,7 +19,8 @@ class TitulosContainerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tl = Theme.of(context).textTheme.titleLarge;
+    final cs = Theme.of(context).colorScheme;
+    final bar = context.sisTipografia;
     return Column(
       children: [
         FadeInUpBig(
@@ -28,10 +29,10 @@ class TitulosContainerPage extends StatelessWidget {
             children: [
               Text(
                 title!,
-                style: context.sisTipografia.barlowTituloTarjeta.copyWith(
-                  fontSize: tl?.fontSize ?? 22,
+                style: bar.tituloTarjeta.copyWith(
+                  fontSize: sizeTitle ?? bar.tituloTarjeta.fontSize,
                   fontWeight: FontWeight.w600,
-                  color: colorTitle ?? Theme.of(context).colorScheme.onSurface,
+                  color: colorTitle ?? cs.onSurface,
                 ),
               ),
             ],
@@ -40,7 +41,7 @@ class TitulosContainerPage extends StatelessWidget {
         FadeInDownBig(
           from: 25,
           child: Divider(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.45),
+            color: cs.primary.withValues(alpha: 0.45),
             thickness: widthThickness,
           ),
         ),

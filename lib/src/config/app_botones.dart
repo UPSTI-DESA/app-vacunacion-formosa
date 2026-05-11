@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'app_spacing_config.dart';
 
-/// Sistema unificado de botones: misma forma y roles de color (Material 3).
 class AppBotones {
   AppBotones._();
 
@@ -10,7 +9,6 @@ class AppBotones {
         borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
       );
 
-  /// Etiqueta sin color propio: hereda el `foregroundColor` del botón (mismo que el ícono).
   static TextStyle etiquetaBoton(
     TextTheme tt, {
     TextStyle? base,
@@ -29,7 +27,6 @@ class AppBotones {
     );
   }
 
-  /// Ayuda: contorno primario + ícono primario (se distingue del resto de iconos planos).
   static ButtonStyle estiloIconoAyuda(ColorScheme cs) => IconButton.styleFrom(
         minimumSize: const Size(48, 48),
         tapTargetSize: MaterialTapTargetSize.padded,
@@ -44,7 +41,6 @@ class AppBotones {
         ),
       );
 
-  /// Acción secundaria en diálogos (cancelar, volver).
   static ButtonStyle estiloOutlinedDialogo(ColorScheme cs) =>
       OutlinedButton.styleFrom(
         minimumSize: const Size.fromHeight(48),
@@ -57,7 +53,6 @@ class AppBotones {
         shape: forma,
       );
 
-  /// Cancelar flujo o acción destructiva (siempre [ColorScheme.error]).
   static ButtonStyle estiloOutlinedPeligro(ColorScheme cs) =>
       OutlinedButton.styleFrom(
         foregroundColor: cs.error,
@@ -70,14 +65,12 @@ class AppBotones {
         shape: forma,
       );
 
-  /// CTA rellena a altura fija (hereda colores del tema si no se sobrescriben).
   static ButtonStyle estiloFilledCta({double alturaMinima = 48}) =>
       FilledButton.styleFrom(
         minimumSize: Size.fromHeight(alturaMinima),
         shape: forma,
       );
 
-  /// Variante con icono + etiqueta.
   static ButtonStyle estiloFilledIconCta({
     double alturaMinima = 48,
     EdgeInsetsGeometry? padding,
@@ -88,7 +81,20 @@ class AppBotones {
         shape: forma,
       );
 
-  /// Botones sobre fondo oscuro (post-escaneo): borde claro legible.
+  static ButtonStyle estiloFilledSecundario(ColorScheme cs) =>
+      FilledButton.styleFrom(
+        minimumSize: const Size.fromHeight(48),
+        backgroundColor: cs.surfaceContainerHighest,
+        foregroundColor: cs.onSurface,
+        shape: forma,
+      );
+
+  static ButtonStyle estiloTexto(ColorScheme cs) => TextButton.styleFrom(
+        minimumSize: const Size(48, 48),
+        foregroundColor: cs.primary,
+        shape: forma,
+      );
+
   static ButtonStyle estiloOutlinedSobreOscuro() => OutlinedButton.styleFrom(
         minimumSize: const Size.fromHeight(48),
         foregroundColor: Colors.white,

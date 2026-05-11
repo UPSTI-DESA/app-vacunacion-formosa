@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 
-/// Botón de acción principal reutilizable (Material 3).
-///
-/// Usa [FilledButton] para ripple, estados deshabilitados accesibles y
-/// altura mínima táctil de 48 dp (WCAG / Material).
 class BotonCustom extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
@@ -50,7 +46,7 @@ class BotonCustom extends StatelessWidget {
             : (ThemeData.estimateBrightnessForColor(fondoActivo) ==
                     Brightness.dark
                 ? Colors.white
-                : const Color(0xFF0D1B1E)));
+                : cs.onSurface));
 
     final bool mostrarIcono = (iconoBool ?? false) && iconoBoton != null;
 
@@ -65,8 +61,8 @@ class BotonCustom extends StatelessWidget {
         shadowColor: Colors.transparent,
         minimumSize: Size(48, alto),
         padding: EdgeInsets.symmetric(
-          horizontal: mostrarIcono ? 16 : 20,
-          vertical: 10,
+          horizontal: mostrarIcono ? AppEspaciado.lg : AppEspaciado.xl,
+          vertical: AppEspaciado.sm,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
@@ -80,13 +76,11 @@ class BotonCustom extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           if (mostrarIcono) ...[
-            // Font Awesome (FaIcon) no siempre hereda el IconTheme del FilledButton;
-            // forzamos el mismo tono que el texto ([contenido]).
             IconTheme(
-              data: IconThemeData(color: contenido, size: 22),
+              data: IconThemeData(color: contenido, size: AppTamanoIcono.mediano),
               child: iconoBoton!,
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: AppEspaciado.sm),
           ],
           Flexible(
             child: Text(
@@ -97,7 +91,6 @@ class BotonCustom extends StatelessWidget {
               style: AppBotones.etiquetaBoton(
                 Theme.of(context).textTheme,
                 base: Theme.of(context).textTheme.titleMedium,
-                fontSize: 18,
               ),
             ),
           ),

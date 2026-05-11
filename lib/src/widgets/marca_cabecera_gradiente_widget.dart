@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 
-/// Franja superior con gradiente de marca (misma línea visual que el menú lateral).
 class MarcaCabeceraGradiente extends StatelessWidget {
   const MarcaCabeceraGradiente({
     Key? key,
     required this.titulo,
     this.subtitulo,
     this.alturaMinima = 148,
-    this.radioInferior = 28,
+    this.radioInferior = AppRadio.radioCabeceraGradiente,
     this.acciones,
   }) : super(key: key);
 
@@ -33,7 +32,7 @@ class MarcaCabeceraGradiente extends StatelessWidget {
         AppEspaciado.xl,
         MediaQuery.of(context).padding.top + AppEspaciado.md,
         AppEspaciado.xl,
-        AppEspaciado.xl + 8,
+        AppEspaciado.xxl,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -66,7 +65,7 @@ class MarcaCabeceraGradiente extends StatelessWidget {
         children: [
           Text(
             titulo,
-            style: bar.barlowTituloTarjeta.copyWith(
+            style: bar.tituloTarjeta.copyWith(
               fontSize: 26,
               color: Colors.white,
               height: 1.15,

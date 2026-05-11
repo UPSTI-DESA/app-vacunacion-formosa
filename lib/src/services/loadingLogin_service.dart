@@ -10,17 +10,28 @@ class _LoadingLoginService {
   bool? _loadingEsquema = true;
   bool? _loadingDosis = true;
   bool? _loadingVerificar = true;
+  String _loadingMensaje = '';
 
   final StreamController<bool> _loadingLoginStreamController =
       StreamController<bool>.broadcast();
+
+  final StreamController<String> _loadingMensajeStreamController =
+      StreamController<String>.broadcast();
 
   bool? get getEstadoLoginState => _loading;
 
   Stream<bool> get loadingStateStream => _loadingLoginStreamController.stream;
 
-  void cargarEstado(bool estado) {
-    _loading = estado;
+  Stream<String> get loadingMensajeStream => _loadingMensajeStreamController.stream;
 
+  String get loadingMensaje => _loadingMensaje;
+
+  void cargarEstado(bool estado, {String? mensaje}) {
+    _loading = estado;
+    if (mensaje != null) {
+      _loadingMensaje = mensaje;
+      _loadingMensajeStreamController.add(mensaje);
+    }
     _loadingLoginStreamController.add(estado);
   }
   //--------------- Manejo Primer Dosis -----------//
@@ -134,6 +145,7 @@ class _LoadingLoginService {
     _cargaPerfilesStreamController.close();
     _cargarLotesStreamController.close();
     _loadingLoginStreamController.close();
+    _loadingMensajeStreamController.close();
     _primerInicioStreamController.close();
   }
 }

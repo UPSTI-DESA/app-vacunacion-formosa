@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// AppBar unificada del flujo de vacunación (Material 3 + patrones de producto recientes).
-///
-/// - Barra con **esquinas inferiores redondeadas** (separación visual respecto al cuerpo).
-/// - **Sombra** y **borde** inferior suave sobre el color primario del tema.
-/// - Título tipográfico desde [ThemeData.appBarTheme].
-///
-/// No usar en [EscanerDni] (AppBar oscuro propio) ni en login (sin barra).
+import 'package:sistema_vacunacion/src/config/config.dart';
+
 class AppBarSesion extends StatelessWidget implements PreferredSizeWidget {
   const AppBarSesion({
     Key? key,
@@ -14,9 +9,6 @@ class AppBarSesion extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.actions,
   }) : super(key: key);
-
-  /// Radio inferior de la barra (bloque “flotante” sobre el contenido).
-  static const double radioEsquinasInferiores = 20;
 
   final String titulo;
   final Widget? leading;
@@ -50,7 +42,7 @@ class AppBarSesion extends StatelessWidget implements PreferredSizeWidget {
         decoration: BoxDecoration(
           color: cs.primary,
           borderRadius: const BorderRadius.vertical(
-            bottom: Radius.circular(radioEsquinasInferiores),
+            bottom: Radius.circular(AppEspaciado.radioCampo),
           ),
           boxShadow: [
             BoxShadow(

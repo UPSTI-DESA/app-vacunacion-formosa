@@ -15,17 +15,15 @@ import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class EscanerDni extends StatefulWidget {
-  final String textoAyuda;
   final String textoBoton;
-  final String tipoEscaneo; //REGISTRADOR / VACUNADOR / BENEFICIARIO
+  final String tipoEscaneo; // REGISTRADOR / VACUNADOR / BENEFICIARIO / TUTOR
   final double? anchoValor;
   final double? largoValor;
   final bool? iconBool;
 
   const EscanerDni(
     this.tipoEscaneo,
-    this.textoBoton,
-    this.textoAyuda, {
+    this.textoBoton, {
     Key? key,
     this.anchoValor,
     this.largoValor,
@@ -37,16 +35,12 @@ class EscanerDni extends StatefulWidget {
 }
 
 class _EscanerDniState extends State<EscanerDni> {
-  String scanBarcode = 'Desconocido';
-
   /// Texto exacto devuelto por el lector (PDF417); el API debe recibir esto, no `List.toString()`.
   String _cadenaPdf417Cruda = '';
   late List<String> conSplit;
-  List<String>? escaneados;
   String? nombrePersona;
   String? apellidoPersona;
   String? dniPersona;
-  String? codigo;
   String? numeroTramite;
   String? codigodebarras;
   String sexoPersona = "F";
@@ -54,8 +48,6 @@ class _EscanerDniState extends State<EscanerDni> {
   /// Desde el PDF417 (fecha nac. del DNI).
   String? _fechaNacPdf417Escaneo;
   String? _edadAniosPdf417Escaneo;
-
-  final controladorDni = TextEditingController();
 
   Future<void> _mostrarSinConexionRed() async {
     if (!mounted) return;
@@ -69,7 +61,7 @@ class _EscanerDniState extends State<EscanerDni> {
             'No se pudo contactar al servidor. Revise la red e intente de nuevo.',
         textoBotonAlerta: 'Listo',
         color: Theme.of(ctx).colorScheme.error,
-        icon: const Icon(Icons.wifi_off_rounded, size: 40),
+        icon: Icon(Icons.wifi_off_rounded, size: AppTamanoIcono.grande),
       ),
     );
   }
@@ -83,9 +75,9 @@ class _EscanerDniState extends State<EscanerDni> {
       // Tamaño fijo: no suscribir el botón a MediaQuery (teclado / rotación).
       iconoBoton: const FaIcon(
         FontAwesomeIcons.barcode,
-        size: 22,
+        size: AppTamanoIcono.mediano,
       ),
-      text: 'Escanear',
+      text: widget.textoBoton,
       onPressed: () async {
         // No activar overlay de carga durante la cámara: solo al volver y
         // consultar al servidor (Registrador / Vacunador / Tutor).
@@ -105,7 +97,7 @@ class _EscanerDniState extends State<EscanerDni> {
                   'Hubo un problema con el escaneo o con la consulta. Intente de nuevo; si continúa, contacte a soporte técnico.',
               textoBotonAlerta: 'Listo',
               color: Theme.of(ctx).colorScheme.error,
-              icon: const Icon(Icons.error_outline, size: 40),
+              icon: Icon(Icons.error_outline, size: AppTamanoIcono.grande),
             ),
           );
         }
@@ -131,10 +123,8 @@ class _EscanerDniState extends State<EscanerDni> {
       return;
     }
 
-    // Split directo sin setState — capturarTipoDni().
     _cadenaPdf417Cruda = barcodeScanRes;
     conSplit = barcodeScanRes.split('@');
-    scanBarcode = barcodeScanRes;
 
     switch (widget.tipoEscaneo) {
       case 'Registrador':
@@ -152,14 +142,14 @@ class _EscanerDniState extends State<EscanerDni> {
                     descripcionAlerta:
                         'El formato del documento no fue reconocido. Intente de nuevo.',
                     textoBotonAlerta: 'Listo',
-                    icon: const Icon(Icons.error_outline, size: 40),
+                    icon: Icon(Icons.error_outline, size: AppTamanoIcono.grande),
                     color: Theme.of(dialogCtx).colorScheme.error,
                   ));
           loadingLoginService.cargarEstado(false);
           break;
         }
 
-        loadingLoginService.cargarEstado(true);
+        loadingLoginService.cargarEstado(true, mensaje: 'Validando usuario...');
         try {
           final respUsuario =
               await usuariosProviers.validarUsuariosNuevo(dniPersona);
@@ -179,7 +169,7 @@ class _EscanerDniState extends State<EscanerDni> {
                     textoBotonAlerta: 'Listo',
                     icon: const Icon(
                       Icons.error_outline,
-                      size: 40,
+                      size: AppTamanoIcono.grande,
                     ),
                     color: Theme.of(dialogCtx).colorScheme.error);
               });
@@ -207,9 +197,9 @@ class _EscanerDniState extends State<EscanerDni> {
                         descripcionAlerta:
                             'Hay una versión nueva obligatoria. Descargue la actualización para continuar.',
                         textoBotonAlerta: 'Listo',
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.system_update_rounded,
-                          size: 40.0,
+                          size: AppTamanoIcono.grande,
                         ),
                         color: Theme.of(context).colorScheme.primary);
                   });
@@ -255,14 +245,14 @@ class _EscanerDniState extends State<EscanerDni> {
                     descripcionAlerta:
                         'El formato del documento no fue reconocido. Intente de nuevo.',
                     textoBotonAlerta: 'Listo',
-                    icon: const Icon(Icons.error_outline, size: 40),
+                    icon: Icon(Icons.error_outline, size: AppTamanoIcono.grande),
                     color: Theme.of(dialogCtx).colorScheme.error,
                   ));
           loadingLoginService.cargarEstado(false);
           break;
         }
 
-        loadingLoginService.cargarEstado(true);
+        loadingLoginService.cargarEstado(true, mensaje: 'Validando vacunador...');
         try {
           final respUsuario =
               await vacunadorProviders.validarVacunador(dniPersona);
@@ -280,10 +270,10 @@ class _EscanerDniState extends State<EscanerDni> {
                     descripcionAlerta: respUsuario[0].mensaje,
                     textoBotonAlerta: 'Listo',
                     color: Theme.of(dialogCtx).colorScheme.error,
-                    icon: const Icon(
-                      Icons.new_releases_outlined,
-                      size: 40.0,
-                    ),
+                    icon: Icon(
+                        Icons.new_releases_outlined,
+                        size: AppTamanoIcono.grande,
+                      ),
                   ));
           loadingLoginService.cargarEstado(false);
         } else {
@@ -295,7 +285,7 @@ class _EscanerDniState extends State<EscanerDni> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 behavior: SnackBarBehavior.floating,
-                backgroundColor: SisVacuColor.vercelestePrimario,
+                backgroundColor: SisVacuMarca.vercelestePrimario,
                 duration: const Duration(seconds: 2),
                 content: Text(
                   'Vacunador asignado correctamente',
@@ -317,7 +307,6 @@ class _EscanerDniState extends State<EscanerDni> {
 
       case 'Beneficiario':
         capturarTipoDni();
-        loadingLoginService.cargarEstado(false);
         if (dniPersona == null) {
           showDialog(
               context: context,
@@ -328,17 +317,47 @@ class _EscanerDniState extends State<EscanerDni> {
                     descripcionAlerta:
                         'El formato del documento no fue reconocido. Intente de nuevo.',
                     textoBotonAlerta: 'Listo',
-                    icon: const Icon(Icons.error_outline, size: 40),
+                    icon: Icon(Icons.error_outline, size: AppTamanoIcono.grande),
                     color: Theme.of(dialogCtx).colorScheme.error,
                   ));
           break;
         }
-        loadingLoginService.cargarEstado(true);
+        // Mostrar loading inmediatamente antes de la llamada a la API.
+        // pushAndRemoveUntil lo descarta solo en el path exitoso;
+        // el catch lo cierra manualmente antes de mostrar el error.
+        unawaited(showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          barrierColor: Colors.black.withValues(alpha: .72),
+          builder: (ctx) => PopScope(
+            canPop: false,
+            child: Dialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const LoadingEstrellas(),
+                  const SizedBox(height: AppEspaciado.lg),
+                  Text(
+                    'Buscando datos del beneficiario...',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
         try {
           await obtenerDatosBeneficiario(dniPersona);
         } catch (e) {
           if (!mounted) break;
-          loadingLoginService.cargarEstado(false);
+          // Cerrar el dialog de loading antes de mostrar el error.
+          Navigator.of(context).pop();
           final String detalle = e is Exception
               ? e.toString().replaceFirst('Exception: ', '').trim()
               : '';
@@ -353,7 +372,7 @@ class _EscanerDniState extends State<EscanerDni> {
                   : 'No se pudieron obtener los datos del beneficiario. Revise la red e intente de nuevo.',
               textoBotonAlerta: 'Listo',
               color: Theme.of(ctx).colorScheme.error,
-              icon: const Icon(Icons.wifi_off_rounded, size: 40),
+              icon: Icon(Icons.wifi_off_rounded, size: AppTamanoIcono.grande),
             ),
           );
         }
@@ -374,14 +393,14 @@ class _EscanerDniState extends State<EscanerDni> {
                     descripcionAlerta:
                         'El formato del documento no fue reconocido. Intente de nuevo.',
                     textoBotonAlerta: 'Listo',
-                    icon: const Icon(Icons.error_outline, size: 40),
+                    icon: Icon(Icons.error_outline, size: AppTamanoIcono.grande),
                     color: Theme.of(dialogCtx).colorScheme.error,
                   ));
           loadingLoginService.cargarEstado(false);
           break;
         }
 
-        loadingLoginService.cargarEstado(true);
+        loadingLoginService.cargarEstado(true, mensaje: 'Validando tutor...');
         try {
           await obtenerDatosTutor(dniPersona);
           if (!mounted) break;
@@ -389,7 +408,7 @@ class _EscanerDniState extends State<EscanerDni> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               behavior: SnackBarBehavior.floating,
-              backgroundColor: SisVacuColor.vercelestePrimario,
+              backgroundColor: SisVacuMarca.vercelestePrimario,
               margin: const EdgeInsets.all(16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -420,7 +439,7 @@ class _EscanerDniState extends State<EscanerDni> {
                   : 'Revise la red e intente de nuevo.',
               textoBotonAlerta: 'Listo',
               color: Theme.of(ctx).colorScheme.error,
-              icon: const Icon(Icons.error_outline, size: 40),
+              icon: Icon(Icons.error_outline, size: AppTamanoIcono.grande),
             ),
           );
         }
@@ -537,22 +556,6 @@ class _EscanerDniState extends State<EscanerDni> {
     });
   }
 
-  void mostrarAlerta(BuildContext context, String mensaje) {
-    showDialog<void>(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: const Text('Revise los datos'),
-            content: Text(mensaje),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Entendido'),
-                onPressed: () => Navigator.of(ctx).pop(),
-              )
-            ],
-          );
-        });
-  }
 }
 
 /// Resultado del parseo del PDF417 para uso interno del escáner.
@@ -754,6 +757,12 @@ class _ScannerPageState extends State<_ScannerPage> {
   bool _mostrarConsejoLargo = false;
   DateTime? _ultimoAvisoLecturaInvalida;
 
+  /// Contador de códigos detectados que no son válidos para el DNI.
+  int _contadorLecturasInvalidas = 0;
+
+  /// Timestamp de la última lectura válida o inválida.
+  DateTime? _ultimaLecturaIntentada;
+
   /// Panel de verificación in-camera (solo beneficiario).
   bool _panelConfirmacionVisible = false;
   String? _cadenaPendienteConfirmacion;
@@ -767,11 +776,31 @@ class _ScannerPageState extends State<_ScannerPage> {
       if (!mounted || _detected) return;
       setState(() => _mostrarConsejoLargo = true);
     });
+    _iniciarTemporizadorSinDeteccion();
+  }
+
+  Timer? _timerSinDeteccion;
+
+  void _iniciarTemporizadorSinDeteccion() {
+    _timerSinDeteccion?.cancel();
+    _ultimaLecturaIntentada = DateTime.now();
+    _timerSinDeteccion = Timer.periodic(const Duration(seconds: 8), (_) {
+      if (!mounted || _detected || _panelConfirmacionVisible) return;
+      final ahora = DateTime.now();
+      final desdeUltima = _ultimaLecturaIntentada != null
+          ? ahora.difference(_ultimaLecturaIntentada!).inSeconds
+          : 999;
+      if (desdeUltima >= 8) {
+        _mostrarMensajeSinDeteccion();
+        _ultimaLecturaIntentada = ahora;
+      }
+    });
   }
 
   @override
   void dispose() {
     _timerConsejo?.cancel();
+    _timerSinDeteccion?.cancel();
     super.dispose();
   }
 
@@ -792,26 +821,44 @@ class _ScannerPageState extends State<_ScannerPage> {
     Navigator.of(context).pop(rawValue);
   }
 
-  /// Otro código (QR ajeno, EAN, etc.): avisar sin cerrar la cámara.
-  void _avisarCodigoNoEsDni() {
+  /// Muestra feedback cuando se detecta un código que no corresponde al DNI.
+  /// [codigoDetectado] puede ser null si solo se quiere mostrar el mensaje genérico.
+  /// [forzarMensaje] reemplaza el mensaje calculado por uno personalizado.
+  void _avisarCodigoNoEsDni({String? codigoDetectado, String? forzarMensaje}) {
     if (!mounted || _detected || _panelConfirmacionVisible) return;
     final ahora = DateTime.now();
     if (_ultimoAvisoLecturaInvalida != null &&
         ahora.difference(_ultimoAvisoLecturaInvalida!) <
-            const Duration(seconds: 2)) {
+            const Duration(seconds: 1)) {
       return;
     }
     _ultimoAvisoLecturaInvalida = ahora;
+    _contadorLecturasInvalidas++;
     final tt = Theme.of(context).textTheme;
+
+    String mensaje;
+    if (forzarMensaje != null) {
+      mensaje = forzarMensaje;
+    } else if (_contadorLecturasInvalidas >= 3) {
+      mensaje = 'Seguís intentando con un código que no es del DNI.\n'
+          'Tarjeta nueva: código QR/digitable del frente.\n'
+          'Tarjeta anterior: PDF417 del reverso (estilo código de barras).';
+    } else {
+      mensaje = 'Ese código no es el del DNI.\n'
+          'Usá el del frente (tarjeta nueva) o el PDF417 del reverso (tarjeta anterior).\n'
+          'Mantené la cámara abierta.';
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 88),
-        duration: const Duration(seconds: 3),
+        duration: Duration(seconds: _contadorLecturasInvalidas >= 3 ? 5 : 3),
         backgroundColor: const Color(0xE6000000),
         content: Text(
-          'Ese código no es el del DNI. Usá el del frente (tarjeta nueva) '
-          'o el PDF417 del reverso (tarjeta anterior). Mantené la cámara abierta.',
+          codigoDetectado != null && codigoDetectado.contains('@') && forzarMensaje == null
+              ? 'Se leyó un código pero no tiene formato de DNI argentino.\n$mensaje'
+              : mensaje,
           style: tt.bodyMedium?.copyWith(
             color: Colors.white,
             height: 1.35,
@@ -821,8 +868,29 @@ class _ScannerPageState extends State<_ScannerPage> {
     );
   }
 
+  /// Muestra mensaje cuando no se detecta ningún código durante un período.
+  void _mostrarMensajeSinDeteccion() {
+    if (!mounted || _detected || _panelConfirmacionVisible) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 88),
+        duration: const Duration(seconds: 4),
+        backgroundColor: const Color(0xE6000000),
+        content: Text(
+          'No se detectó ningún código. Acercá el DNI al marco y asegurate de que esté bien iluminado.',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.white,
+                height: 1.35,
+              ),
+        ),
+      ),
+    );
+  }
+
   void _procesarCodigoLeido(Code result) {
     if (_detected || _panelConfirmacionVisible) return;
+    _ultimaLecturaIntentada = DateTime.now();
     final decodificado = decodificarCadenaPdf417Argentino(
       result.rawBytes,
       result.text,
@@ -830,9 +898,11 @@ class _ScannerPageState extends State<_ScannerPage> {
     if (decodificado.isEmpty) return;
     if (!(result.isValid || decodificado.contains('@'))) return;
     if (!_cadenaEsLecturaPlausibleDniArgentino(decodificado)) {
-      _avisarCodigoNoEsDni();
+      _avisarCodigoNoEsDni(codigoDetectado: decodificado);
       return;
     }
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    _contadorLecturasInvalidas = 0;
     if (widget.confirmarEnCamaraAntesDeSalir) {
       _abrirPanelConfirmacion(decodificado);
     } else {
@@ -910,8 +980,7 @@ class _ScannerPageState extends State<_ScannerPage> {
             // El marco no coincide con el crop: es solo guía; el lector usa todo el encuadre.
             scannerOverlay: ScannerOverlayBorder(
               cutOutSize: _kMarcoGuiaVisualPdf417,
-              borderColor:
-                  SisVacuColor.vercelestePrimario ?? const Color(0xFF00BCD4),
+              borderColor: SisVacuMarca.vercelestePrimario,
               borderWidth: 3,
               overlayColor: const Color.fromRGBO(0, 0, 0, 0.52),
               borderRadius: AppEspaciado.radioBoton,
@@ -994,9 +1063,8 @@ class _ScannerPageState extends State<_ScannerPage> {
                               children: [
                                 Icon(
                                   Icons.center_focus_strong_outlined,
-                                  size: 22,
-                                  color: SisVacuColor.vercelestePrimario ??
-                                      const Color(0xFF00BCD4),
+                                  size: AppTamanoIcono.mediano,
+                                  color: SisVacuMarca.vercelestePrimario,
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
@@ -1071,9 +1139,7 @@ class _PanelConfirmacionLecturaDni extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    final cs = Theme.of(context).colorScheme;
-    final colorAcento =
-        SisVacuColor.vercelesteCuaternario ?? cs.primary;
+    final colorAcento = SisVacuMarca.vercelesteCuaternario;
 
     return Positioned.fill(
       child: Material(
@@ -1094,7 +1160,7 @@ class _PanelConfirmacionLecturaDni extends StatelessWidget {
                 const Spacer(),
                 FaIcon(
                   FontAwesomeIcons.circleCheck,
-                  size: 44,
+                  size: AppTamanoIcono.extraGrande,
                   color: colorAcento,
                 ),
                 const SizedBox(height: 16),
@@ -1176,7 +1242,7 @@ class _PanelConfirmacionLecturaDni extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: AppEspaciado.sm),
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(

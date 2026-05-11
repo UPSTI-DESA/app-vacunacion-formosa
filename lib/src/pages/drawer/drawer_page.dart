@@ -69,9 +69,8 @@ class _BodyDrawerState extends State<BodyDrawer> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const VacunadorPage(
-                            infoCargador: [],
-                          ),
+                          builder: (context) =>
+                              const VacunadorPage(infoCargador: []),
                         ),
                       );
                     },
@@ -199,7 +198,7 @@ class _CabeceraDrawer extends StatelessWidget {
                 radius: 36,
                 backgroundColor: Colors.white.withValues(alpha: 0.95),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AppEspaciado.sm),
                   child: Padding(
                     padding: const EdgeInsets.all(6),
                     child: Image.asset(
@@ -223,7 +222,7 @@ class _CabeceraDrawer extends StatelessWidget {
             const SizedBox(height: AppEspaciado.xs),
             Text(
               'Bienvenido',
-              style: bar.barlowDrawerEncabezado.copyWith(
+              style: bar.encabezadoDrawer.copyWith(
                 color: Colors.white.withValues(alpha: 0.75),
               ),
             ),
@@ -257,7 +256,7 @@ class _EtiquetaSeccion extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final base = Theme.of(context).textTheme.labelSmall ?? const TextStyle();
     return Padding(
-      padding: const EdgeInsets.only(left: 4, top: 4),
+      padding: const EdgeInsets.only(left: AppEspaciado.xs, top: AppEspaciado.xs),
       child: Text(
         texto.toUpperCase(),
         style: base.copyWith(
@@ -303,7 +302,7 @@ class _FilaNavegacion extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+borderRadius: BorderRadius.circular(AppEspaciado.lg),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppEspaciado.md,
@@ -318,14 +317,10 @@ class _FilaNavegacion extends StatelessWidget {
                     color: esDestacadoSalida
                         ? cs.error.withValues(alpha: 0.14)
                         : cs.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
+borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
                   ),
                   alignment: Alignment.center,
-                  child: FaIcon(
-                    icono,
-                    size: 20,
-                    color: color,
-                  ),
+                  child: FaIcon(icono, size: 20, color: color),
                 ),
                 const SizedBox(width: AppEspaciado.md),
                 Expanded(
@@ -333,8 +328,9 @@ class _FilaNavegacion extends StatelessWidget {
                     titulo,
                     style: tt.titleSmall?.copyWith(
                       fontSize: 16,
-                      fontWeight:
-                          esDestacadoSalida ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: esDestacadoSalida
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                       color: esDestacadoSalida ? cs.error : cs.onSurface,
                       height: 1.2,
                     ),
@@ -343,7 +339,7 @@ class _FilaNavegacion extends StatelessWidget {
                 Icon(
                   Icons.chevron_right_rounded,
                   color: cs.onSurfaceVariant.withValues(alpha: 0.45),
-                  size: 22,
+                  size: AppTamanoIcono.mediano,
                 ),
               ],
             ),
@@ -367,9 +363,7 @@ class _SelectorTemaSoloIconos extends StatelessWidget {
       decoration: BoxDecoration(
         color: cs.surfaceContainerHighest.withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: cs.outlineVariant.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
       ),
       child: ListenableBuilder(
         listenable: temaAppService,
@@ -381,8 +375,7 @@ class _SelectorTemaSoloIconos extends StatelessWidget {
                   icono: Icons.brightness_auto_rounded,
                   tooltip: 'Según el sistema',
                   seleccionado: temaAppService.modoTema == ThemeMode.system,
-                  onTap: () =>
-                      temaAppService.establecerModo(ThemeMode.system),
+                  onTap: () => temaAppService.establecerModo(ThemeMode.system),
                 ),
               ),
               Expanded(
@@ -390,8 +383,7 @@ class _SelectorTemaSoloIconos extends StatelessWidget {
                   icono: Icons.light_mode_rounded,
                   tooltip: 'Tema claro',
                   seleccionado: temaAppService.modoTema == ThemeMode.light,
-                  onTap: () =>
-                      temaAppService.establecerModo(ThemeMode.light),
+                  onTap: () => temaAppService.establecerModo(ThemeMode.light),
                 ),
               ),
               Expanded(
@@ -399,8 +391,7 @@ class _SelectorTemaSoloIconos extends StatelessWidget {
                   icono: Icons.dark_mode_rounded,
                   tooltip: 'Tema oscuro',
                   seleccionado: temaAppService.modoTema == ThemeMode.dark,
-                  onTap: () =>
-                      temaAppService.establecerModo(ThemeMode.dark),
+                  onTap: () => temaAppService.establecerModo(ThemeMode.dark),
                 ),
               ),
             ],
@@ -464,7 +455,6 @@ class _PieDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    final oscuro = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -475,10 +465,7 @@ class _PieDrawer extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Divider(
-            height: 1,
-            color: cs.outlineVariant.withValues(alpha: 0.35),
-          ),
+          Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.35)),
           const SizedBox(height: AppEspaciado.sm),
           FutureBuilder<String>(
             future: InformacionVersionApp.etiquetaSemver(),
@@ -525,13 +512,6 @@ class _PieDrawer extends StatelessWidget {
             },
           ),
           const SizedBox(height: AppEspaciado.sm),
-          Image.asset(
-            'assets/img/fondo/logo_polo_upsti_azul.png',
-            height: 40,
-            fit: BoxFit.contain,
-            color: oscuro ? cs.onSurface.withValues(alpha: 0.75) : null,
-            colorBlendMode: oscuro ? BlendMode.srcIn : null,
-          ),
         ],
       ),
     );

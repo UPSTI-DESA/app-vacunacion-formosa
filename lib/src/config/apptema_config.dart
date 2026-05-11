@@ -20,7 +20,7 @@ class SisVacuMarca {
 }
 
 class SisVacuTheme {
-  /// Tema claro por defecto (paleta legacy + [SisVacuColor]).
+  /// Tema claro por defecto (paleta legacy + colores de marca).
   static final SisVacuTheme light = SisVacuTheme._claro();
 
   /// Instancia oscura solo referencial; el [ThemeData] oscuro sale de [temaOscuro].
@@ -107,7 +107,7 @@ class SisVacuTheme {
     );
   }
 
-  /// Referencia para futuras extensiones; [SisVacuColor] sigue enlazado a [light].
+  /// Referencia para futuras extensiones; colores de marca accesibles via [SisVacuMarca].
   factory SisVacuTheme._oscuro() {
     return SisVacuTheme._(
       id: 2,

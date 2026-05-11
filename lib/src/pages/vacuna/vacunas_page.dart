@@ -10,17 +10,15 @@ import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class VacunasPage extends StatefulWidget {
-  const VacunasPage({
-    Key? key,
-  }) : super(key: key);
+  const VacunasPage({Key? key}) : super(key: key);
   static const String nombreRuta = 'VacunasPage';
   @override
   _VacunasPageState createState() => _VacunasPageState();
 }
 
 class _VacunasPageState extends State<VacunasPage> {
-  bool? mostrarBeneficiario;
-  bool? mostrarTutor;
+  bool mostrarBeneficiario = false;
+  bool mostrarTutor = false;
 
   int pasos = 1;
   PerfilesVacunacion? _selectPerfil;
@@ -123,30 +121,29 @@ class _VacunasPageState extends State<VacunasPage> {
               tooltip: 'Historial de dosis aplicadas',
               onPressed: () {
                 showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(AppEspaciado.radioCampo),
-                      ),
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(AppEspaciado.radioCampo),
                     ),
-                    builder: (BuildContext context) {
-                      return DraggableScrollableSheet(
-                        initialChildSize: 0.52,
-                        minChildSize: 0.32,
-                        maxChildSize: 0.95,
-                        expand: false,
-                        builder: (context, scrollController) {
-                          return vacunasAplicadas(
-                              scrollController: scrollController);
-                        },
-                      );
-                    });
+                  ),
+                  builder: (BuildContext context) {
+                    return DraggableScrollableSheet(
+                      initialChildSize: 0.52,
+                      minChildSize: 0.32,
+                      maxChildSize: 0.95,
+                      expand: false,
+                      builder: (context, scrollController) {
+                        return vacunasAplicadas(
+                          scrollController: scrollController,
+                        );
+                      },
+                    );
+                  },
+                );
               },
-              icon: const FaIcon(
-                FontAwesomeIcons.hospitalUser,
-                size: 20,
-              ),
+              icon: const FaIcon(FontAwesomeIcons.hospitalUser, size: 20),
             ),
           ),
         ),
@@ -173,6 +170,12 @@ class _VacunasPageState extends State<VacunasPage> {
                 VacunasPanelFlujo(
                   pasoActual: pasos,
                   onIrAPaso: (p) => setState(() => pasos = p),
+                  perfil: _selectPerfil?.sysvacu12_descripcion,
+                  vacuna: _selectVacunas?.sysvacu04_nombre,
+                  condicion: _selectCondicion?.sysvacu01_descripcion,
+                  esquema: _selectEsquema?.sysvacu02_descripcion,
+                  dosis: _selectDosis?.sysvacu05_nombre,
+                  lote: _selectLote?.sysdesa18_lote,
                   child: containerPasos(),
                 ),
                 const SizedBox(height: AppEspaciado.md),
@@ -180,11 +183,7 @@ class _VacunasPageState extends State<VacunasPage> {
                 const SizedBox(height: AppEspaciado.sm),
                 containerTutor(),
                 const SizedBox(height: AppEspaciado.sm),
-                const ResumenSesionVacunacion(
-                  compendio: true,
-                  colapsable: true,
-                  expandidoInicial: false,
-                ),
+
                 const SizedBox(height: AppEspaciado.xl),
                 if (pasos == 7) botonRegistrarVacunacion(),
                 Padding(
@@ -194,10 +193,7 @@ class _VacunasPageState extends State<VacunasPage> {
                     icon: const Icon(Icons.cancel_outlined, size: 22),
                     label: Text(
                       'Cancelar registro',
-                      style: AppBotones.etiquetaBoton(
-                        tt,
-                        fontSize: 15,
-                      ),
+                      style: AppBotones.etiquetaBoton(tt, fontSize: 15),
                     ),
                     onPressed: () {
                       showDialog(
@@ -239,8 +235,8 @@ class _VacunasPageState extends State<VacunasPage> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.paddingOf(context).bottom +
-                      AppEspaciado.xl,
+                  height:
+                      MediaQuery.paddingOf(context).bottom + AppEspaciado.xl,
                 ),
               ],
             ),
@@ -291,10 +287,7 @@ class _VacunasPageState extends State<VacunasPage> {
           child: child,
         ),
       ),
-      child: KeyedSubtree(
-        key: ValueKey<int>(pasos),
-        child: child,
-      ),
+      child: KeyedSubtree(key: ValueKey<int>(pasos), child: child),
     );
   }
 
@@ -321,9 +314,7 @@ class _VacunasPageState extends State<VacunasPage> {
           const SizedBox(height: AppEspaciado.radioCampo),
           Text(
             'Historial de dosis',
-            style: bar.barlowTituloTarjeta.copyWith(
-              color: cs.onSurface,
-            ),
+            style: bar.tituloTarjeta.copyWith(color: cs.onSurface),
           ),
           const SizedBox(height: AppEspaciado.xs),
           Text(
@@ -344,23 +335,28 @@ class _VacunasPageState extends State<VacunasPage> {
                         controller: scrollController,
                         padding: const EdgeInsets.only(bottom: AppEspaciado.xl),
                         itemCount: notificacionesDosisService
-                            .listaDosisAplicadas.length,
+                            .listaDosisAplicadas
+                            .length,
                         itemBuilder: (BuildContext context, int index) {
                           final d = notificacionesDosisService
                               .listaDosisAplicadas[index];
                           return Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: AppEspaciado.sm),
+                            padding: const EdgeInsets.only(
+                              bottom: AppEspaciado.sm,
+                            ),
                             child: Material(
-                              color: cs.surfaceContainerHighest
-                                  .withValues(alpha: 0.55),
+                              color: cs.surfaceContainerHighest.withValues(
+                                alpha: 0.55,
+                              ),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(
-                                    AppEspaciado.radioCampo),
+                                  AppEspaciado.radioCampo,
+                                ),
                                 side: BorderSide(
-                                  color: cs.outlineVariant
-                                      .withValues(alpha: 0.38),
+                                  color: cs.outlineVariant.withValues(
+                                    alpha: 0.38,
+                                  ),
                                 ),
                               ),
                               child: Padding(
@@ -383,7 +379,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                       style: tt.bodyMedium?.copyWith(
                                         fontSize: 13,
                                         color: AppSuperficies.textoSecundario(
-                                            context),
+                                          context,
+                                        ),
                                       ),
                                     ),
                                     Text(
@@ -391,7 +388,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                       style: tt.bodyMedium?.copyWith(
                                         fontSize: 13,
                                         color: AppSuperficies.textoSecundario(
-                                            context),
+                                          context,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -410,14 +408,15 @@ class _VacunasPageState extends State<VacunasPage> {
                               Icon(
                                 Icons.vaccines_outlined,
                                 size: 52,
-                                color: cs.onSurfaceVariant
-                                    .withValues(alpha: 0.65),
+                                color: cs.onSurfaceVariant.withValues(
+                                  alpha: 0.65,
+                                ),
                               ),
                               const SizedBox(height: AppEspaciado.md),
                               Text(
                                 'Sin dosis registradas',
                                 textAlign: TextAlign.center,
-                                style: bar.barlowSubtituloTarjeta.copyWith(
+                                style: bar.subtituloTarjeta.copyWith(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                   color: cs.onSurface,
@@ -431,7 +430,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                   fontSize: 14,
                                   height: 1.35,
                                   color: AppSuperficies.textoSecundario(
-                                      context),
+                                    context,
+                                  ),
                                 ),
                               ),
                             ],
@@ -446,15 +446,12 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  /// Tarjeta de identidad: jerarquía clara, acento lateral (patrón UI reciente / M3).
   BoxDecoration _decoracionTarjetaIdentidadVacunas() {
     final cs = Theme.of(context).colorScheme;
     return BoxDecoration(
       color: cs.surfaceContainerLowest,
       borderRadius: BorderRadius.circular(AppEspaciado.xl),
-      border: Border.all(
-        color: cs.outlineVariant.withValues(alpha: 0.35),
-      ),
+      border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.35)),
       boxShadow: [
         BoxShadow(
           color: cs.shadow.withValues(alpha: 0.08),
@@ -495,16 +492,13 @@ class _VacunasPageState extends State<VacunasPage> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      cs.primary,
-                      cs.primary.withValues(alpha: 0.55),
-                    ],
+                    colors: [cs.primary, cs.primary.withValues(alpha: 0.55)],
                   ),
                 ),
               ),
               const SizedBox(width: 14),
-              Icon(icono, color: cs.primary, size: 22),
-              const SizedBox(width: 12),
+              Icon(icono, color: cs.primary, size: AppTamanoIcono.mediano),
+              const SizedBox(width: AppEspaciado.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,10 +513,10 @@ class _VacunasPageState extends State<VacunasPage> {
                         color: cs.primary,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: AppEspaciado.sm),
                     Text(
                       nombreDestacado,
-                      style: bar.barlowTituloTarjeta.copyWith(
+                      style: bar.tituloTarjeta.copyWith(
                         fontSize: 23,
                         height: 1.12,
                         color: cs.onSurface,
@@ -530,7 +524,7 @@ class _VacunasPageState extends State<VacunasPage> {
                     ),
                     if (lineaContexto != null &&
                         lineaContexto.trim().isNotEmpty) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppEspaciado.xs),
                       Text(
                         lineaContexto.trim(),
                         style: tt.titleSmall?.copyWith(
@@ -590,10 +584,9 @@ class _VacunasPageState extends State<VacunasPage> {
     if (edadDni != null && edadDni.trim().isNotEmpty) {
       filas.add(_filaDatoBeneficiario('Edad', '${edadDni.trim()} años'));
     } else if (_beneficiarioValorVisible(b.sysdesa10_edad)) {
-      filas.add(_filaDatoBeneficiario(
-        'Edad',
-        '${b.sysdesa10_edad!.trim()} años',
-      ));
+      filas.add(
+        _filaDatoBeneficiario('Edad', '${b.sysdesa10_edad!.trim()} años'),
+      );
     }
     agregar('C.U.I.L.', b.sysdesa10_cuil, ceroEsVacio: true);
     agregar('N.º de trámite', b.sysdesa10_nro_tramite, ceroEsVacio: true);
@@ -667,14 +660,15 @@ class _VacunasPageState extends State<VacunasPage> {
         ? resumen
         : 'Sin nombre en el registro';
     final dni = b.sysdesa10_dni?.trim() ?? '';
-    final lineaCtx =
-        dni.isNotEmpty ? 'Documento $dni' : 'Persona que recibirá la dosis';
+    final lineaCtx = dni.isNotEmpty
+        ? 'Documento $dni'
+        : 'Persona que recibirá la dosis';
 
     final cs = Theme.of(context).colorScheme;
     final filasDetalle = _filasDetalleBeneficiario(context, b);
     final bloquesDetalle = <Widget>[];
     for (var i = 0; i < filasDetalle.length; i++) {
-      if (i > 0) bloquesDetalle.add(const SizedBox(height: 10));
+      if (i > 0) bloquesDetalle.add(const SizedBox(height: AppEspaciado.md));
       bloquesDetalle.add(filasDetalle[i]);
     }
 
@@ -694,16 +688,16 @@ class _VacunasPageState extends State<VacunasPage> {
                 rol: 'Beneficiario',
                 nombreDestacado: nombreTarjeta,
                 lineaContexto: lineaCtx,
-                expandido: mostrarBeneficiario!,
+                expandido: mostrarBeneficiario,
                 onAlternar: () {
                   setState(() {
-                    mostrarBeneficiario = !mostrarBeneficiario!;
+                    mostrarBeneficiario = !mostrarBeneficiario;
                   });
                 },
               ),
             ),
           ),
-          if (mostrarBeneficiario!)
+          if (mostrarBeneficiario)
             Padding(
               padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
               child: Column(
@@ -714,7 +708,7 @@ class _VacunasPageState extends State<VacunasPage> {
                     thickness: 1,
                     color: cs.outlineVariant.withValues(alpha: 0.35),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: AppEspaciado.lg),
                   ...bloquesDetalle,
                 ],
               ),
@@ -736,9 +730,7 @@ class _VacunasPageState extends State<VacunasPage> {
       decoration: BoxDecoration(
         color: cs.surfaceContainerHigh.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(AppEspaciado.lg),
-        border: Border.all(
-          color: cs.outlineVariant.withValues(alpha: 0.28),
-        ),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.28)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -866,7 +858,7 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  /// Tutor dado de alta con D.N.I. (no basta con un objeto vacío del servicio).
+  /// Tutor dado de alta con D.N.I.
   bool _tutorTieneDocumentoCargado(Tutor? t) {
     if (t == null) return false;
     final dni = t.sysdesa10_dni_tutor?.trim() ?? '';
@@ -883,17 +875,19 @@ class _VacunasPageState extends State<VacunasPage> {
             final n = tut.sysdesa10_nombre_tutor?.trim() ?? '';
             final a = tut.sysdesa10_apellido_tutor?.trim() ?? '';
             final sub = [n, a].where((s) => s.isNotEmpty).join(' ');
-            final nombreTutor =
-                sub.isNotEmpty ? sub : 'Sin nombre en el registro';
+            final nombreTutor = sub.isNotEmpty
+                ? sub
+                : 'Sin nombre en el registro';
             final dniT = tut.sysdesa10_dni_tutor?.trim() ?? '';
-            final lineaTutor =
-                dniT.isNotEmpty ? 'Documento $dniT' : 'Tutor o responsable';
+            final lineaTutor = dniT.isNotEmpty
+                ? 'Documento $dniT'
+                : 'Tutor o responsable';
             final cs = Theme.of(context).colorScheme;
             final filasT = _filasDetalleTutor(context, tut);
             final bloquesT = <Widget>[];
             for (var i = 0; i < filasT.length; i++) {
               if (i > 0) {
-                bloquesT.add(const SizedBox(height: 10));
+                bloquesT.add(const SizedBox(height: AppEspaciado.md));
               }
               bloquesT.add(filasT[i]);
             }
@@ -913,16 +907,16 @@ class _VacunasPageState extends State<VacunasPage> {
                         rol: 'Tutor o responsable',
                         nombreDestacado: nombreTutor,
                         lineaContexto: lineaTutor,
-                        expandido: mostrarTutor!,
+                        expandido: mostrarTutor,
                         onAlternar: () {
                           setState(() {
-                            mostrarTutor = !mostrarTutor!;
+                            mostrarTutor = !mostrarTutor;
                           });
                         },
                       ),
                     ),
                   ),
-                  if (mostrarTutor!)
+                  if (mostrarTutor)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
                       child: Column(
@@ -933,7 +927,7 @@ class _VacunasPageState extends State<VacunasPage> {
                             thickness: 1,
                             color: cs.outlineVariant.withValues(alpha: 0.35),
                           ),
-                          const SizedBox(height: 14),
+                          const SizedBox(height: AppEspaciado.lg),
                           ...bloquesT,
                         ],
                       ),
@@ -986,7 +980,8 @@ class _VacunasPageState extends State<VacunasPage> {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
     final detalle = perfilesVacunacionService.mensajeListaPerfilesVacia;
-    final texto = detalle ??
+    final texto =
+        detalle ??
         'No hay perfiles de vacunación asignados a su usuario en este momento. '
             'Si cree que es un error, contacte a su supervisor o intente cargar de nuevo.';
     return Column(
@@ -995,19 +990,17 @@ class _VacunasPageState extends State<VacunasPage> {
         const VacunasTituloSeccionPaso(
           etiqueta: 'PASO 1',
           titulo: 'Perfil de vacunación',
-          subtitulo:
-              'Elija el contexto del registro (campaña o estrategia).',
+          subtitulo: 'Elija el contexto del registro (campaña o estrategia).',
         ),
         Container(
           padding: const EdgeInsets.all(AppEspaciado.lg),
-          decoration: AppSuperficies.tarjeta(context, radio: AppEspaciado.radioCampo),
+          decoration: AppSuperficies.tarjeta(
+            context,
+            radio: AppEspaciado.radioCampo,
+          ),
           child: Column(
             children: [
-              Icon(
-                Icons.assignment_late_outlined,
-                size: 48,
-                color: cs.primary,
-              ),
+              Icon(Icons.assignment_late_outlined, size: 48, color: cs.primary),
               const SizedBox(height: AppEspaciado.md),
               Text(
                 texto,
@@ -1021,7 +1014,9 @@ class _VacunasPageState extends State<VacunasPage> {
               const SizedBox(height: AppEspaciado.lg),
               FilledButton.icon(
                 style: AppBotones.estiloFilledIconCta(),
-                onPressed: _recargandoPerfiles ? null : _reintentarCargaPerfiles,
+                onPressed: _recargandoPerfiles
+                    ? null
+                    : _reintentarCargaPerfiles,
                 icon: const Icon(Icons.refresh_rounded, size: 22),
                 label: Text(
                   'Reintentar carga',
@@ -1086,10 +1081,10 @@ class _VacunasPageState extends State<VacunasPage> {
                     });
                     final tempLista = await vacunasxPerfiles
                         .obtenerVacunasxPerfilesProviders(
-                      _selectPerfil!.id_sysvacu12,
-                      beneficiarioService.beneficiario!.sysdesa10_dni,
-                      beneficiarioService.beneficiario!.sysdesa10_sexo,
-                    );
+                          _selectPerfil!.id_sysvacu12,
+                          beneficiarioService.beneficiario!.sysdesa10_dni,
+                          beneficiarioService.beneficiario!.sysdesa10_sexo,
+                        );
                     if (!mounted) return;
                     if (tempLista != null &&
                         tempLista[0].codigo_mensaje == "0") {
@@ -1122,10 +1117,6 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  // ── Lógica de selección por paso ─────────────────────────────────────────
-  // Extraída para eliminar duplicación: cada paso tenía el mismo callback
-  // tanto en la lista completa como en la lista filtrada por búsqueda.
-
   /// Paso 2 — seleccionar vacuna y avanzar al paso de condición.
   Future<void> _seleccionarVacuna(VacunasxPerfil v) async {
     listaLotes!.clear();
@@ -1135,12 +1126,13 @@ class _VacunasPageState extends State<VacunasPage> {
       controladorBusqueda.clear();
     });
     final ben = beneficiarioService.beneficiario!;
-    final edadEscaneo = beneficiarioService.edadAniosDesdePdf417Escaneado?.trim();
+    final edadEscaneo = beneficiarioService.edadAniosDesdePdf417Escaneado
+        ?.trim();
     final edadParam = (edadEscaneo != null && edadEscaneo.isNotEmpty)
         ? edadEscaneo
         : (ben.sysdesa10_edad?.trim().isNotEmpty == true
-            ? ben.sysdesa10_edad!.trim()
-            : '');
+              ? ben.sysdesa10_edad!.trim()
+              : '');
     final tempLista = await vacunasCondicion.obtenerCondicionesProviders(
       _selectVacunas!.id_sysvacu04,
       edadParam.isNotEmpty ? edadParam : ben.sysdesa10_edad,
@@ -1260,8 +1252,7 @@ class _VacunasPageState extends State<VacunasPage> {
             ? Container()
             : StreamBuilder(
                 stream: vacunasxPerfilService.listaVacunasxPerfilesStream,
-                builder:
-                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   return vacunasxPerfilService.listavacunasxPerfil!.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1275,118 +1266,130 @@ class _VacunasPageState extends State<VacunasPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                    Container(
-                                      decoration:
-                                          AppSuperficies.campoBusqueda(context),
-                                      child: TextField(
-                                        autocorrect: false,
-                                        controller: controladorBusqueda,
-                                        keyboardType: TextInputType.text,
-                                        decoration: InputDecoration(
-                                          prefixIcon: Icon(
-                                            Icons.search_rounded,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                          ),
-                                          focusedBorder: InputBorder.none,
-                                          border: InputBorder.none,
-                                          hintText: 'Buscar vacuna…',
-                                          hintStyle: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                            fontSize: 15,
-                                            color: AppSuperficies.textoSecundario(
-                                                context),
-                                          ),
-                                        ),
-                                        focusNode: focusNode,
-                                        onChanged: (value) {
-                                          vacunasxPerfilService.buscarVacuna(
-                                              value.toUpperCase());
-                                          if (value.length >= 3) {
-                                            focusNode.unfocus();
-                                          }
-                                        },
+                                Container(
+                                  decoration: AppSuperficies.campoBusqueda(
+                                    context,
+                                  ),
+                                  child: TextField(
+                                    autocorrect: false,
+                                    controller: controladorBusqueda,
+                                    keyboardType: TextInputType.text,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.search_rounded,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
+                                      focusedBorder: InputBorder.none,
+                                      border: InputBorder.none,
+                                      hintText: 'Buscar vacuna…',
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 15,
+                                            color:
+                                                AppSuperficies.textoSecundario(
+                                                  context,
+                                                ),
+                                          ),
                                     ),
-                                    const SizedBox(height: AppEspaciado.md),
-                                    StreamBuilder(
-                                      stream: vacunasxPerfilService
-                                          .listaBusquedaStream,
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<dynamic> snapshot) {
+                                    focusNode: focusNode,
+                                    onChanged: (value) {
+                                      vacunasxPerfilService.buscarVacuna(
+                                        value.toUpperCase(),
+                                      );
+                                      if (value.length >= 3) {
+                                        focusNode.unfocus();
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: AppEspaciado.md),
+                                StreamBuilder(
+                                  stream:
+                                      vacunasxPerfilService.listaBusquedaStream,
+                                  builder:
+                                      (
+                                        BuildContext context,
+                                        AsyncSnapshot<dynamic> snapshot,
+                                      ) {
                                         return controladorBusqueda.text.isEmpty
                                             ? SizedBox(
                                                 height: _alturaListaPaso,
                                                 child: _scrollbarConTema(
                                                   controller: _scrollVacunas,
                                                   child: ListView.builder(
-                                                          controller:
-                                                              _scrollVacunas,
-                                                          physics:
-                                                              const BouncingScrollPhysics(),
-                                                          shrinkWrap: true,
-                                                          itemCount:
+                                                    controller: _scrollVacunas,
+                                                    physics:
+                                                        const BouncingScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount:
+                                                        vacunasxPerfilService
+                                                            .listavacunasxPerfil!
+                                                            .length,
+                                                    itemBuilder:
+                                                        (
+                                                          BuildContext context,
+                                                          int index,
+                                                        ) {
+                                                          final v =
                                                               vacunasxPerfilService
-                                                                  .listavacunasxPerfil!
-                                                                  .length,
-                                                          itemBuilder:
-                                                              (BuildContext
-                                                                      context,
-                                                                  int index) {
-                                                            final v = vacunasxPerfilService
-                                                                .listavacunasxPerfil![
-                                                                    index];
-                                                            return _tarjetaOpcionFila(
-                                                              seleccionado:
-                                                                  _selectVacunas ==
-                                                                      v,
-                                                              titulo: v
-                                                                  .sysvacu04_nombre!,
-                                                              onTap: () => _seleccionarVacuna(v),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                  )
-                                                  : SizedBox(
-                                                      height: _alturaListaPaso,
-                                                      child: _scrollbarConTema(
-                                                        controller:
-                                                            _scrollVacunas,
-                                                        child: ListView.builder(
-                                                          physics:
-                                                              const BouncingScrollPhysics(),
-                                                          shrinkWrap: true,
-                                                          itemCount:
+                                                                  .listavacunasxPerfil![index];
+                                                          return _tarjetaOpcionFila(
+                                                            seleccionado:
+                                                                _selectVacunas ==
+                                                                v,
+                                                            titulo: v
+                                                                .sysvacu04_nombre!,
+                                                            onTap: () =>
+                                                                _seleccionarVacuna(
+                                                                  v,
+                                                                ),
+                                                          );
+                                                        },
+                                                  ),
+                                                ),
+                                              )
+                                            : SizedBox(
+                                                height: _alturaListaPaso,
+                                                child: _scrollbarConTema(
+                                                  controller: _scrollVacunas,
+                                                  child: ListView.builder(
+                                                    physics:
+                                                        const BouncingScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount: vacunasxPerfilService
+                                                        .listavacunasxPerfilBusqueda!
+                                                        .length,
+                                                    itemBuilder:
+                                                        (
+                                                          BuildContext context,
+                                                          int index,
+                                                        ) {
+                                                          final v =
                                                               vacunasxPerfilService
-                                                                  .listavacunasxPerfilBusqueda!
-                                                                  .length,
-                                                          itemBuilder:
-                                                              (BuildContext
-                                                                      context,
-                                                                  int index) {
-                                                            final v = vacunasxPerfilService
-                                                                .listavacunasxPerfilBusqueda![
-                                                                    index];
-                                                            return _tarjetaOpcionFila(
-                                                              seleccionado:
-                                                                  _selectVacunas ==
-                                                                      v,
-                                                              titulo: v
-                                                                  .sysvacu04_nombre!,
-                                                              onTap: () => _seleccionarVacuna(v),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                    );
-                                              },
-                                            ),
-                                          ],
-                                        ),
+                                                                  .listavacunasxPerfilBusqueda![index];
+                                                          return _tarjetaOpcionFila(
+                                                            seleccionado:
+                                                                _selectVacunas ==
+                                                                v,
+                                                            titulo: v
+                                                                .sysvacu04_nombre!,
+                                                            onTap: () =>
+                                                                _seleccionarVacuna(
+                                                                  v,
+                                                                ),
+                                                          );
+                                                        },
+                                                  ),
+                                                ),
+                                              );
+                                      },
+                                ),
+                              ],
+                            ),
                           ],
                         )
                       : Container();
@@ -1404,10 +1407,10 @@ class _VacunasPageState extends State<VacunasPage> {
             ? Container()
             : StreamBuilder(
                 stream: vacunasCondicionService.listaVacunasCondicionesStream,
-                builder:
-                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   return vacunasCondicionService
-                          .listaVacunasCondicion!.isNotEmpty
+                          .listaVacunasCondicion!
+                          .isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -1420,55 +1423,63 @@ class _VacunasPageState extends State<VacunasPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                    Container(
-                                      decoration:
-                                          AppSuperficies.campoBusqueda(context),
-                                      child: TextField(
-                                        autocorrect: false,
-                                        controller:
-                                            controladorBusquedaCondicion,
-                                        keyboardType: TextInputType.text,
-                                        decoration: InputDecoration(
-                                          prefixIcon: Icon(
-                                            Icons.search_rounded,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                          ),
-                                          focusedBorder: InputBorder.none,
-                                          border: InputBorder.none,
-                                          hintText: 'Buscar condición…',
-                                          hintStyle: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                            fontSize: 15,
-                                            color: AppSuperficies.textoSecundario(
-                                                context),
-                                          ),
-                                        ),
-                                        focusNode: focusNode,
-                                        onChanged: (value) {
-                                          vacunasCondicionService.buscarCondicion(
-                                              value.toUpperCase());
-                                          if (value.length >= 3) {
-                                            focusNode.unfocus();
-                                          }
-                                        },
+                                Container(
+                                  decoration: AppSuperficies.campoBusqueda(
+                                    context,
+                                  ),
+                                  child: TextField(
+                                    autocorrect: false,
+                                    controller: controladorBusquedaCondicion,
+                                    keyboardType: TextInputType.text,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.search_rounded,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
+                                      focusedBorder: InputBorder.none,
+                                      border: InputBorder.none,
+                                      hintText: 'Buscar condición…',
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 15,
+                                            color:
+                                                AppSuperficies.textoSecundario(
+                                                  context,
+                                                ),
+                                          ),
                                     ),
-                                    const SizedBox(height: AppEspaciado.md),
-                                    StreamBuilder(
-                                      stream: vacunasCondicionService
-                                          .listaBusquedaStream,
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<dynamic> snapshot) {
+                                    focusNode: focusNode,
+                                    onChanged: (value) {
+                                      vacunasCondicionService.buscarCondicion(
+                                        value.toUpperCase(),
+                                      );
+                                      if (value.length >= 3) {
+                                        focusNode.unfocus();
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: AppEspaciado.md),
+                                StreamBuilder(
+                                  stream: vacunasCondicionService
+                                      .listaBusquedaStream,
+                                  builder:
+                                      (
+                                        BuildContext context,
+                                        AsyncSnapshot<dynamic> snapshot,
+                                      ) {
                                         return controladorBusquedaCondicion
-                                                .text.isEmpty
+                                                .text
+                                                .isEmpty
                                             ? SizedBox(
                                                 height: _alturaListaPaso,
                                                 child: _scrollbarConTema(
-                                                  controller: _scrollCondiciones,
+                                                  controller:
+                                                      _scrollCondiciones,
                                                   child: ListView.builder(
                                                     controller:
                                                         _scrollCondiciones,
@@ -1480,27 +1491,33 @@ class _VacunasPageState extends State<VacunasPage> {
                                                             .listaVacunasCondicion!
                                                             .length,
                                                     itemBuilder:
-                                                        (BuildContext context,
-                                                            int index) {
-                                                      final cond = vacunasCondicionService
-                                                          .listaVacunasCondicion![
-                                                              index];
-                                                      return _tarjetaOpcionFila(
-                                                        seleccionado:
-                                                            _selectCondicion ==
+                                                        (
+                                                          BuildContext context,
+                                                          int index,
+                                                        ) {
+                                                          final cond =
+                                                              vacunasCondicionService
+                                                                  .listaVacunasCondicion![index];
+                                                          return _tarjetaOpcionFila(
+                                                            seleccionado:
+                                                                _selectCondicion ==
                                                                 cond,
-                                                        titulo: cond
-                                                            .sysvacu01_descripcion!,
-                                                        onTap: () => _seleccionarCondicion(cond),
-                                                      );
-                                                    },
+                                                            titulo: cond
+                                                                .sysvacu01_descripcion!,
+                                                            onTap: () =>
+                                                                _seleccionarCondicion(
+                                                                  cond,
+                                                                ),
+                                                          );
+                                                        },
                                                   ),
                                                 ),
                                               )
                                             : SizedBox(
                                                 height: _alturaListaPaso,
                                                 child: _scrollbarConTema(
-                                                  controller: _scrollCondiciones,
+                                                  controller:
+                                                      _scrollCondiciones,
                                                   child: ListView.builder(
                                                     physics:
                                                         const BouncingScrollPhysics(),
@@ -1510,27 +1527,32 @@ class _VacunasPageState extends State<VacunasPage> {
                                                             .listaVacunasCondicionBusqueda!
                                                             .length,
                                                     itemBuilder:
-                                                        (BuildContext context,
-                                                            int index) {
-                                                      final cond = vacunasCondicionService
-                                                          .listaVacunasCondicionBusqueda![
-                                                              index];
-                                                      return _tarjetaOpcionFila(
-                                                        seleccionado:
-                                                            _selectCondicion ==
+                                                        (
+                                                          BuildContext context,
+                                                          int index,
+                                                        ) {
+                                                          final cond =
+                                                              vacunasCondicionService
+                                                                  .listaVacunasCondicionBusqueda![index];
+                                                          return _tarjetaOpcionFila(
+                                                            seleccionado:
+                                                                _selectCondicion ==
                                                                 cond,
-                                                        titulo: cond
-                                                            .sysvacu01_descripcion!,
-                                                        onTap: () => _seleccionarCondicion(cond),
-                                                      );
-                                                    },
+                                                            titulo: cond
+                                                                .sysvacu01_descripcion!,
+                                                            onTap: () =>
+                                                                _seleccionarCondicion(
+                                                                  cond,
+                                                                ),
+                                                          );
+                                                        },
                                                   ),
                                                 ),
                                               );
                                       },
-                                    ),
-                                  ],
                                 ),
+                              ],
+                            ),
                           ],
                         )
                       : Container();
@@ -1548,8 +1570,7 @@ class _VacunasPageState extends State<VacunasPage> {
             ? Container()
             : StreamBuilder(
                 stream: vacunasEsquemaService.listavacunasEsquemaesStream,
-                builder:
-                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   return vacunasEsquemaService.listavacunasEsquema!.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1563,58 +1584,64 @@ class _VacunasPageState extends State<VacunasPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                    Container(
-                                      decoration:
-                                          AppSuperficies.campoBusqueda(context),
-                                      child: TextField(
-                                        autocorrect: false,
-                                        controller: controladorBusquedaEsquema,
-                                        keyboardType: TextInputType.text,
-                                        decoration: InputDecoration(
-                                          prefixIcon: Icon(
-                                            Icons.search_rounded,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                          ),
-                                          focusedBorder: InputBorder.none,
-                                          border: InputBorder.none,
-                                          hintText: 'Buscar esquema…',
-                                          hintStyle: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                            fontSize: 15,
-                                            color: AppSuperficies.textoSecundario(
-                                                context),
-                                          ),
-                                        ),
-                                        focusNode: focusNode,
-                                        onChanged: (value) {
-                                          vacunasEsquemaService.buscaresquema(
-                                              value.toUpperCase());
-                                          if (value.length >= 3) {
-                                            focusNode.unfocus();
-                                          }
-                                        },
+                                Container(
+                                  decoration: AppSuperficies.campoBusqueda(
+                                    context,
+                                  ),
+                                  child: TextField(
+                                    autocorrect: false,
+                                    controller: controladorBusquedaEsquema,
+                                    keyboardType: TextInputType.text,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.search_rounded,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
+                                      focusedBorder: InputBorder.none,
+                                      border: InputBorder.none,
+                                      hintText: 'Buscar esquema…',
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontSize: 15,
+                                            color:
+                                                AppSuperficies.textoSecundario(
+                                                  context,
+                                                ),
+                                          ),
                                     ),
-                                    const SizedBox(height: AppEspaciado.md),
-                                    StreamBuilder(
-                                      stream: vacunasEsquemaService
-                                          .listaBusquedaStream,
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<dynamic> snapshot) {
+                                    focusNode: focusNode,
+                                    onChanged: (value) {
+                                      vacunasEsquemaService.buscaresquema(
+                                        value.toUpperCase(),
+                                      );
+                                      if (value.length >= 3) {
+                                        focusNode.unfocus();
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: AppEspaciado.md),
+                                StreamBuilder(
+                                  stream:
+                                      vacunasEsquemaService.listaBusquedaStream,
+                                  builder:
+                                      (
+                                        BuildContext context,
+                                        AsyncSnapshot<dynamic> snapshot,
+                                      ) {
                                         return controladorBusquedaEsquema
-                                                .text.isEmpty
+                                                .text
+                                                .isEmpty
                                             ? SizedBox(
                                                 height: _alturaListaPaso,
                                                 child: _scrollbarConTema(
-                                                  controller:
-                                                      _scrollEsquemas,
+                                                  controller: _scrollEsquemas,
                                                   child: ListView.builder(
-                                                    controller:
-                                                        _scrollEsquemas,
+                                                    controller: _scrollEsquemas,
                                                     physics:
                                                         const BouncingScrollPhysics(),
                                                     shrinkWrap: true,
@@ -1623,58 +1650,66 @@ class _VacunasPageState extends State<VacunasPage> {
                                                             .listavacunasEsquema!
                                                             .length,
                                                     itemBuilder:
-                                                        (BuildContext context,
-                                                            int index) {
-                                                      final esq = vacunasEsquemaService
-                                                          .listavacunasEsquema![
-                                                              index];
-                                                      return _tarjetaOpcionFila(
-                                                        seleccionado:
-                                                            _selectEsquema ==
+                                                        (
+                                                          BuildContext context,
+                                                          int index,
+                                                        ) {
+                                                          final esq =
+                                                              vacunasEsquemaService
+                                                                  .listavacunasEsquema![index];
+                                                          return _tarjetaOpcionFila(
+                                                            seleccionado:
+                                                                _selectEsquema ==
                                                                 esq,
-                                                        titulo: esq
-                                                            .sysvacu02_descripcion!,
-                                                        onTap: () => _seleccionarEsquema(esq),
-                                                      );
-                                                    },
+                                                            titulo: esq
+                                                                .sysvacu02_descripcion!,
+                                                            onTap: () =>
+                                                                _seleccionarEsquema(
+                                                                  esq,
+                                                                ),
+                                                          );
+                                                        },
                                                   ),
                                                 ),
                                               )
                                             : SizedBox(
                                                 height: _alturaListaPaso,
                                                 child: _scrollbarConTema(
-                                                  controller:
-                                                      _scrollEsquemas,
+                                                  controller: _scrollEsquemas,
                                                   child: ListView.builder(
                                                     physics:
                                                         const BouncingScrollPhysics(),
                                                     shrinkWrap: true,
-                                                    itemCount:
-                                                        vacunasEsquemaService
-                                                            .listavacunasEsquemaBusqueda!
-                                                            .length,
+                                                    itemCount: vacunasEsquemaService
+                                                        .listavacunasEsquemaBusqueda!
+                                                        .length,
                                                     itemBuilder:
-                                                        (BuildContext context,
-                                                            int index) {
-                                                      final esq = vacunasEsquemaService
-                                                          .listavacunasEsquemaBusqueda![
-                                                              index];
-                                                      return _tarjetaOpcionFila(
-                                                        seleccionado:
-                                                            _selectEsquema ==
+                                                        (
+                                                          BuildContext context,
+                                                          int index,
+                                                        ) {
+                                                          final esq =
+                                                              vacunasEsquemaService
+                                                                  .listavacunasEsquemaBusqueda![index];
+                                                          return _tarjetaOpcionFila(
+                                                            seleccionado:
+                                                                _selectEsquema ==
                                                                 esq,
-                                                        titulo: esq
-                                                            .sysvacu02_descripcion!,
-                                                        onTap: () => _seleccionarEsquema(esq),
-                                                      );
-                                                    },
+                                                            titulo: esq
+                                                                .sysvacu02_descripcion!,
+                                                            onTap: () =>
+                                                                _seleccionarEsquema(
+                                                                  esq,
+                                                                ),
+                                                          );
+                                                        },
                                                   ),
                                                 ),
                                               );
                                       },
-                                    ),
-                                  ],
                                 ),
+                              ],
+                            ),
                           ],
                         )
                       : Container();
@@ -1692,8 +1727,7 @@ class _VacunasPageState extends State<VacunasPage> {
             ? Container()
             : StreamBuilder(
                 stream: vacunasDosisService.listaVacunasDosisStream,
-                builder:
-                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   return vacunasDosisService.listaVacunasDosis!.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1708,11 +1742,12 @@ class _VacunasPageState extends State<VacunasPage> {
                               spacing: AppEspaciado.sm,
                               runSpacing: AppEspaciado.sm,
                               children: vacunasDosisService.listaVacunasDosis!
-                                  .map((d) => FilterChip(
-                                        label: Text(d.sysvacu05_nombre!),
-                                        selected: _selectDosis == d,
-                                        showCheckmark: true,
-                                        onSelected: (_) async {
+                                  .map(
+                                    (d) => FilterChip(
+                                      label: Text(d.sysvacu05_nombre!),
+                                      selected: _selectDosis == d,
+                                      showCheckmark: true,
+                                      onSelected: (_) async {
                                         loadingLoginService.cargaLotes(false);
                                         listaLotes!.clear();
                                         setState(() {
@@ -1723,15 +1758,15 @@ class _VacunasPageState extends State<VacunasPage> {
                                           final tempLista =
                                               await lotesVacunaProvider
                                                   .validarLotes(
-                                                      _selectVacunas!
-                                                          .id_sysvacu04);
+                                                    _selectVacunas!
+                                                        .id_sysvacu04,
+                                                  );
                                           if (!mounted) return;
                                           if (tempLista.isEmpty) {
                                             showDialog(
-                                              context: _scaffoldKey
-                                                  .currentContext!,
-                                              builder: (dialogCtx) =>
-                                                  DialogoAlerta(
+                                              context:
+                                                  _scaffoldKey.currentContext!,
+                                              builder: (dialogCtx) => DialogoAlerta(
                                                 envioFuncion2: true,
                                                 envioFuncion1: true,
                                                 tituloAlerta:
@@ -1743,8 +1778,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                 textoBotonAlerta2:
                                                     'Cambiar dosis',
                                                 funcion1: () {
-                                                  Navigator.of(dialogCtx)
-                                                      .pop();
+                                                  Navigator.of(dialogCtx).pop();
                                                   setState(() {
                                                     pasos = 2;
                                                     _selectCondicion = null;
@@ -1755,15 +1789,15 @@ class _VacunasPageState extends State<VacunasPage> {
                                                   });
                                                 },
                                                 funcion2: () => Navigator.of(
-                                                        dialogCtx)
-                                                    .pop(),
+                                                  dialogCtx,
+                                                ).pop(),
                                                 icon: const Icon(
                                                   Icons.inventory_2_outlined,
                                                   size: 40,
                                                 ),
-                                                color: Theme.of(dialogCtx)
-                                                    .colorScheme
-                                                    .tertiary,
+                                                color: Theme.of(
+                                                  dialogCtx,
+                                                ).colorScheme.tertiary,
                                               ),
                                             );
                                             return;
@@ -1771,23 +1805,21 @@ class _VacunasPageState extends State<VacunasPage> {
                                           if (tempLista[0].codigo_mensaje ==
                                               "0") {
                                             showDialog(
-                                              context: _scaffoldKey
-                                                  .currentContext!,
-                                              builder: (dialogCtx) =>
-                                                  DialogoAlerta(
+                                              context:
+                                                  _scaffoldKey.currentContext!,
+                                              builder: (dialogCtx) => DialogoAlerta(
                                                 envioFuncion2: true,
                                                 envioFuncion1: true,
                                                 tituloAlerta:
                                                     'No se pudieron cargar los lotes',
                                                 descripcionAlerta:
                                                     tempLista[0].mensaje ??
-                                                        'Intente con otra dosis o cambie la vacuna.',
+                                                    'Intente con otra dosis o cambie la vacuna.',
                                                 textoBotonAlerta:
                                                     'Cambiar vacuna',
                                                 textoBotonAlerta2: 'Reintentar',
                                                 funcion1: () {
-                                                  Navigator.of(dialogCtx)
-                                                      .pop();
+                                                  Navigator.of(dialogCtx).pop();
                                                   setState(() {
                                                     pasos = 2;
                                                     _selectCondicion = null;
@@ -1798,31 +1830,35 @@ class _VacunasPageState extends State<VacunasPage> {
                                                   });
                                                 },
                                                 funcion2: () => Navigator.of(
-                                                        dialogCtx)
-                                                    .pop(),
+                                                  dialogCtx,
+                                                ).pop(),
                                                 icon: const Icon(
                                                   Icons.error_outline,
                                                   size: 40,
                                                 ),
-                                                color: Theme.of(dialogCtx)
-                                                    .colorScheme
-                                                    .error,
+                                                color: Theme.of(
+                                                  dialogCtx,
+                                                ).colorScheme.error,
                                               ),
                                             );
                                           } else {
                                             if (loadingLoginService
                                                 .getCargaLotesState!) {
                                               mostrarLoadingEstrellasXTiempo(
-                                                  context, 800);
+                                                context,
+                                                800,
+                                              );
                                             }
                                             setState(() {
                                               listaLotes = tempLista;
                                               vacunasLotesService
                                                   .cargarListaVacunasLotes(
-                                                      tempLista);
+                                                    tempLista,
+                                                  );
                                             });
                                             loadingLoginService.cargaLotes(
-                                                false);
+                                              false,
+                                            );
                                             setState(() => pasos++);
                                           }
                                         } catch (_) {
@@ -1830,14 +1866,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                           showDialog(
                                             context:
                                                 _scaffoldKey.currentContext!,
-                                            builder: (dialogCtx) =>
-                                                DialogoAlerta(
+                                            builder: (dialogCtx) => DialogoAlerta(
                                               envioFuncion2: true,
                                               envioFuncion1: true,
                                               tituloAlerta: 'Error de conexión',
                                               descripcionAlerta:
                                                   'No se pudieron obtener los lotes. Revise la conexión o cambie la vacuna.',
-                                              textoBotonAlerta: 'Cambiar vacuna',
+                                              textoBotonAlerta:
+                                                  'Cambiar vacuna',
                                               textoBotonAlerta2: 'Cerrar',
                                               funcion1: () {
                                                 Navigator.of(dialogCtx).pop();
@@ -1852,9 +1888,9 @@ class _VacunasPageState extends State<VacunasPage> {
                                               },
                                               funcion2: () =>
                                                   Navigator.of(dialogCtx).pop(),
-                                              color: Theme.of(dialogCtx)
-                                                  .colorScheme
-                                                  .error,
+                                              color: Theme.of(
+                                                dialogCtx,
+                                              ).colorScheme.error,
                                               icon: const Icon(
                                                 Icons.wifi_off_rounded,
                                                 size: 40,
@@ -1863,7 +1899,8 @@ class _VacunasPageState extends State<VacunasPage> {
                                           );
                                         }
                                       },
-                                    ))
+                                    ),
+                                  )
                                   .toList(),
                             ),
                           ],
@@ -1894,18 +1931,20 @@ class _VacunasPageState extends State<VacunasPage> {
                     spacing: AppEspaciado.sm,
                     runSpacing: AppEspaciado.sm,
                     children: vacunasLotesService.listavacunasLotes!
-                        .map((lote) => FilterChip(
-                              label: Text(lote.sysdesa18_lote!),
-                              selected: _selectLote == lote,
-                              showCheckmark: true,
-                              onSelected: (_) {
-                                loadingLoginService.cargarVerificar(false);
-                                setState(() {
-                                  _selectLote = lote;
-                                  pasos++;
-                                });
-                              },
-                            ))
+                        .map(
+                          (lote) => FilterChip(
+                            label: Text(lote.sysdesa18_lote!),
+                            selected: _selectLote == lote,
+                            showCheckmark: true,
+                            onSelected: (_) {
+                              loadingLoginService.cargarVerificar(false);
+                              setState(() {
+                                _selectLote = lote;
+                                pasos++;
+                              });
+                            },
+                          ),
+                        )
                         .toList(),
                   ),
                 ],
@@ -1923,21 +1962,18 @@ class _VacunasPageState extends State<VacunasPage> {
         const VacunasTituloSeccionPaso(
           etiqueta: 'PASO 6',
           titulo: 'Sin lotes disponibles',
-          subtitulo:
-              'No hay lotes registrados para la vacuna seleccionada.',
+          subtitulo: 'No hay lotes registrados para la vacuna seleccionada.',
         ),
         Container(
           padding: const EdgeInsets.all(AppEspaciado.xl),
           decoration: BoxDecoration(
             color: cs.errorContainer.withValues(alpha: 0.25),
             borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
-            border: Border.all(
-                color: cs.error.withValues(alpha: 0.3)),
+            border: Border.all(color: cs.error.withValues(alpha: 0.3)),
           ),
           child: Column(
             children: [
-              Icon(Icons.inventory_2_outlined,
-                  size: 48, color: cs.error),
+              Icon(Icons.inventory_2_outlined, size: 48, color: cs.error),
               const SizedBox(height: AppEspaciado.md),
               Text(
                 'Sin lotes registrados',
@@ -1986,10 +2022,16 @@ class _VacunasPageState extends State<VacunasPage> {
     final tt = Theme.of(context).textTheme;
 
     Widget filaResumen(
-        String etiqueta, String? valor, int paso, IconData icono) {
+      String etiqueta,
+      String? valor,
+      int paso,
+      IconData icono,
+    ) {
       return Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: AppEspaciado.md, vertical: AppEspaciado.sm),
+          horizontal: AppEspaciado.md,
+          vertical: AppEspaciado.sm,
+        ),
         child: Row(
           children: [
             Container(
@@ -2033,7 +2075,9 @@ class _VacunasPageState extends State<VacunasPage> {
               style: TextButton.styleFrom(
                 foregroundColor: cs.primary,
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AppEspaciado.sm, vertical: 4),
+                  horizontal: AppEspaciado.sm,
+                  vertical: 4,
+                ),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -2066,59 +2110,83 @@ class _VacunasPageState extends State<VacunasPage> {
             color: cs.surfaceContainerLow.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
             border: Border.all(
-                color: cs.outlineVariant.withValues(alpha: 0.45)),
+              color: cs.outlineVariant.withValues(alpha: 0.45),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              filaResumen('Perfil',
-                  _selectPerfil?.sysvacu12_descripcion, 1,
-                  Icons.assignment_ind_outlined),
+              filaResumen(
+                'Perfil',
+                _selectPerfil?.sysvacu12_descripcion,
+                1,
+                Icons.assignment_ind_outlined,
+              ),
               Divider(
-                  height: 1,
-                  thickness: 1,
-                  indent: AppEspaciado.md,
-                  endIndent: AppEspaciado.md,
-                  color: cs.outlineVariant.withValues(alpha: 0.35)),
-              filaResumen('Vacuna',
-                  _selectVacunas?.sysvacu04_nombre, 2,
-                  Icons.vaccines_outlined),
+                height: 1,
+                thickness: 1,
+                indent: AppEspaciado.md,
+                endIndent: AppEspaciado.md,
+                color: cs.outlineVariant.withValues(alpha: 0.35),
+              ),
+              filaResumen(
+                'Vacuna',
+                _selectVacunas?.sysvacu04_nombre,
+                2,
+                Icons.vaccines_outlined,
+              ),
               Divider(
-                  height: 1,
-                  thickness: 1,
-                  indent: AppEspaciado.md,
-                  endIndent: AppEspaciado.md,
-                  color: cs.outlineVariant.withValues(alpha: 0.35)),
-              filaResumen('Condición',
-                  _selectCondicion?.sysvacu01_descripcion, 3,
-                  Icons.health_and_safety_outlined),
+                height: 1,
+                thickness: 1,
+                indent: AppEspaciado.md,
+                endIndent: AppEspaciado.md,
+                color: cs.outlineVariant.withValues(alpha: 0.35),
+              ),
+              filaResumen(
+                'Condición',
+                _selectCondicion?.sysvacu01_descripcion,
+                3,
+                Icons.health_and_safety_outlined,
+              ),
               Divider(
-                  height: 1,
-                  thickness: 1,
-                  indent: AppEspaciado.md,
-                  endIndent: AppEspaciado.md,
-                  color: cs.outlineVariant.withValues(alpha: 0.35)),
-              filaResumen('Esquema',
-                  _selectEsquema?.sysvacu02_descripcion, 4,
-                  Icons.account_tree_outlined),
+                height: 1,
+                thickness: 1,
+                indent: AppEspaciado.md,
+                endIndent: AppEspaciado.md,
+                color: cs.outlineVariant.withValues(alpha: 0.35),
+              ),
+              filaResumen(
+                'Esquema',
+                _selectEsquema?.sysvacu02_descripcion,
+                4,
+                Icons.account_tree_outlined,
+              ),
               Divider(
-                  height: 1,
-                  thickness: 1,
-                  indent: AppEspaciado.md,
-                  endIndent: AppEspaciado.md,
-                  color: cs.outlineVariant.withValues(alpha: 0.35)),
-              filaResumen('Dosis',
-                  _selectDosis?.sysvacu05_nombre, 5,
-                  Icons.numbers_outlined),
+                height: 1,
+                thickness: 1,
+                indent: AppEspaciado.md,
+                endIndent: AppEspaciado.md,
+                color: cs.outlineVariant.withValues(alpha: 0.35),
+              ),
+              filaResumen(
+                'Dosis',
+                _selectDosis?.sysvacu05_nombre,
+                5,
+                Icons.numbers_outlined,
+              ),
               Divider(
-                  height: 1,
-                  thickness: 1,
-                  indent: AppEspaciado.md,
-                  endIndent: AppEspaciado.md,
-                  color: cs.outlineVariant.withValues(alpha: 0.35)),
-              filaResumen('Lote',
-                  _selectLote?.sysdesa18_lote, 6,
-                  Icons.inventory_2_outlined),
+                height: 1,
+                thickness: 1,
+                indent: AppEspaciado.md,
+                endIndent: AppEspaciado.md,
+                color: cs.outlineVariant.withValues(alpha: 0.35),
+              ),
+              filaResumen(
+                'Lote',
+                _selectLote?.sysdesa18_lote,
+                6,
+                Icons.inventory_2_outlined,
+              ),
             ],
           ),
         ),
@@ -2157,60 +2225,103 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  Widget _switchSexoTutorRegistro() {
+  Widget _selectorSexoTutor() {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    final suave = cs.onSurface.withValues(alpha: 0.5);
+    const colorFemenino = Color(0xFFE91E8C);
+    const colorMasculino = Color(0xFF009CAF);
+
+    Widget chip({
+      required bool seleccionado,
+      required String etiqueta,
+      required IconData icono,
+      required Color colorAccento,
+      required VoidCallback onTap,
+    }) {
+      return Expanded(
+        child: Material(
+          color: seleccionado
+              ? colorAccento.withValues(alpha: 0.10)
+              : cs.surfaceContainerLowest,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
+            side: BorderSide(
+              color: seleccionado
+                  ? colorAccento
+                  : cs.outlineVariant,
+              width: seleccionado ? 2 : 1,
+            ),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: AppEspaciado.md,
+                horizontal: AppEspaciado.sm,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    icono,
+                    size: 32,
+                    color: seleccionado ? colorAccento : cs.onSurfaceVariant,
+                  ),
+                  const SizedBox(height: AppEspaciado.xs),
+                  Text(
+                    etiqueta,
+                    style: tt.titleSmall?.copyWith(
+                      fontSize: 14,
+                      fontWeight: seleccionado
+                          ? FontWeight.w800
+                          : FontWeight.w600,
+                      color: seleccionado ? colorAccento : cs.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Sexo',
-          style: tt.titleSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 13,
+          'Sexo del tutor',
+          style: tt.labelLarge?.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
             color: AppSuperficies.textoSecundario(context),
-          ),
-        ),
-        const SizedBox(height: AppEspaciado.xs),
-        Text(
-          genero
-              ? 'Sexo del tutor: Masculino (M)'
-              : 'Sexo del tutor: Femenino (F)',
-          style: tt.bodyMedium?.copyWith(
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            color: cs.primary,
-            height: 1.2,
           ),
         ),
         const SizedBox(height: AppEspaciado.sm),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Femenino',
-              style: tt.bodyLarge?.copyWith(
-                color: !genero ? cs.onSurface : suave,
-                fontWeight: !genero ? FontWeight.w800 : FontWeight.w500,
-              ),
+            chip(
+              seleccionado: !genero,
+              etiqueta: 'Femenino',
+              icono: Icons.female_rounded,
+              colorAccento: colorFemenino,
+              onTap: () => setState(() {
+                genero = false;
+                sexoTutor = 'F';
+              }),
             ),
-            Switch(
-              value: genero,
-              onChanged: (value) {
-                setState(() {
-                  genero = value;
-                  sexoTutor = value ? 'M' : 'F';
-                });
-              },
-            ),
-            Text(
-              'Masculino',
-              style: tt.bodyLarge?.copyWith(
-                color: genero ? cs.onSurface : suave,
-                fontWeight: genero ? FontWeight.w800 : FontWeight.w500,
-              ),
+            const SizedBox(width: AppEspaciado.sm),
+            chip(
+              seleccionado: genero,
+              etiqueta: 'Masculino',
+              icono: Icons.male_rounded,
+              colorAccento: colorMasculino,
+              onTap: () => setState(() {
+                genero = true;
+                sexoTutor = 'M';
+              }),
             ),
           ],
         ),
@@ -2294,127 +2405,254 @@ class _VacunasPageState extends State<VacunasPage> {
   Widget _panelRegistroTutorMenor(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
     final sinDatoEdad = _beneficiarioSinDatoEdadParseable();
+
     return FadeInUpBig(
       from: 14,
       duration: const Duration(milliseconds: 400),
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppEspaciado.lg),
-        decoration: AppSuperficies.tarjeta(context, radio: AppEspaciado.radioCampo),
+        clipBehavior: Clip.antiAlias,
+        decoration: _decoracionTarjetaIdentidadVacunas(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (sinDatoEdad) ...[
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: cs.primaryContainer.withValues(alpha: 0.45),
-                  borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppEspaciado.md),
-                  child: Text(
-                    'No se recibió la edad desde el servidor. Si el '
-                    'beneficiario es menor, cargue al tutor o responsable; '
-                    'si es mayor, puede ignorar este bloque.',
-                    style: tt.bodyMedium?.copyWith(
-                      fontSize: 13,
-                      height: 1.35,
-                      color: cs.onPrimaryContainer,
+            // ── Encabezado ──────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 18, 14, 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 4,
+                    constraints: const BoxConstraints(minHeight: 52),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(AppEspaciado.xs),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          cs.tertiary,
+                          cs.tertiary.withValues(alpha: 0.55),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: AppEspaciado.md),
-            ],
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Expanded(
-                  child: VacunasTituloSeccionPaso(
-                    etiqueta: 'MENOR DE EDAD',
-                    titulo: 'Registrar tutor o responsable',
-                    subtitulo:
-                        'Reverso del D.N.I. con la cámara o datos abajo.',
+                  const SizedBox(width: 14),
+                  Icon(
+                    Icons.family_restroom_outlined,
+                    color: cs.tertiary,
+                    size: 22,
                   ),
-                ),
-                IconButton(
-                  tooltip: 'Ayuda: registrar tutor o responsable',
-                  style: AppBotones.estiloIconoAyuda(cs),
-                  onPressed: () {
-                    showDialog(
-                      context: _scaffoldKey.currentContext!,
-                      builder: (BuildContext context) => DialogoAlerta(
-                        envioFuncion2: false,
-                        envioFuncion1: false,
-                        tituloAlerta: 'Información',
-                        descripcionAlerta:
-                            'Escanee el código del D.N.I. (frente o reverso según la tarjeta) o ingrese número y sexo como en el documento.',
-                        textoBotonAlerta: 'Listo',
-                        color: cs.primary,
-                        icon: const Icon(
-                          Icons.info_outline_rounded,
-                          size: 40,
+                  const SizedBox(width: AppEspaciado.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'MENOR DE EDAD',
+                          style: tt.labelSmall?.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.35,
+                            height: 1.2,
+                            color: cs.tertiary,
+                          ),
+                        ),
+                        const SizedBox(height: AppEspaciado.sm),
+                        Text(
+                          'Tutor o responsable',
+                          style: bar.tituloTarjeta.copyWith(
+                            fontSize: 21,
+                            height: 1.12,
+                            color: cs.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: AppEspaciado.xs),
+                        Text(
+                          'Reverso del D.N.I. con la cámara o datos abajo.',
+                          style: tt.titleSmall?.copyWith(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            height: 1.25,
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: AppEspaciado.sm),
+                  IconButton(
+                    tooltip: 'Ayuda: registrar tutor o responsable',
+                    style: AppBotones.estiloIconoAyuda(cs),
+                    onPressed: () {
+                      showDialog(
+                        context: _scaffoldKey.currentContext!,
+                        builder: (BuildContext context) => DialogoAlerta(
+                          envioFuncion2: false,
+                          envioFuncion1: false,
+                          tituloAlerta: 'Información',
+                          descripcionAlerta:
+                              'Escanee el código del D.N.I. (frente o reverso según la tarjeta) o ingrese número y sexo como en el documento.',
+                          textoBotonAlerta: 'Listo',
+                          color: cs.primary,
+                          icon: const Icon(
+                            Icons.info_outline_rounded,
+                            size: 40,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.info_outline_rounded),
+                  ),
+                ],
+              ),
+            ),
+
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: cs.outlineVariant.withValues(alpha: 0.35),
+            ),
+
+            // ── Cuerpo ───────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.all(AppEspaciado.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Banner opcional: edad desconocida
+                  if (sinDatoEdad) ...[
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: cs.primaryContainer.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(
+                          AppEspaciado.radioBoton,
+                        ),
+                        border: Border.all(
+                          color: cs.primary.withValues(alpha: 0.25),
                         ),
                       ),
-                    );
-                  },
-                  icon: const Icon(Icons.info_outline_rounded),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppEspaciado.md),
-            const SizedBox(
-              width: double.infinity,
-              child: EscanerDni(
-                'Tutor',
-                'Escanear',
-                'Escanee el D.N.I. del Tutor',
-                anchoValor: 52,
-              ),
-            ),
-            const SizedBox(height: AppEspaciado.lg),
-            _campoDniTutorRegistro(),
-            const SizedBox(height: AppEspaciado.lg),
-            _switchSexoTutorRegistro(),
-            const SizedBox(height: AppEspaciado.lg),
-            FilledButton.icon(
-              style: AppBotones.estiloFilledIconCta(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppEspaciado.radioCampo,
-                  vertical: AppEspaciado.md + AppEspaciado.xs,
-                ),
-              ),
-              onPressed: () async {
-                if (controladorDni.text.length >= 7) {
-                  await obtenerDatosBeneficiario(
-                    context,
-                    controladorDni.text,
-                    sexoTutor!,
-                  );
-                } else {
-                  showDialog(
-                    context: _scaffoldKey.currentContext!,
-                    builder: (BuildContext dialogCtx) => DialogoAlerta(
-                      envioFuncion2: false,
-                      envioFuncion1: false,
-                      tituloAlerta: 'Datos incompletos',
-                      descripcionAlerta:
-                          'D.N.I. de al menos 7 dígitos y sexo indicados.',
-                      textoBotonAlerta: 'Listo',
-                      color: Theme.of(dialogCtx).colorScheme.error,
-                      icon: const Icon(
-                        Icons.error_outline_rounded,
-                        size: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppEspaciado.md),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.info_outline_rounded,
+                              size: 18,
+                              color: cs.primary,
+                            ),
+                            const SizedBox(width: AppEspaciado.sm),
+                            Expanded(
+                              child: Text(
+                                'No se recibió la edad desde el servidor. '
+                                'Si el beneficiario es menor, cargue al tutor o '
+                                'responsable; si es mayor, puede ignorar este bloque.',
+                                style: tt.bodyMedium?.copyWith(
+                                  fontSize: 13,
+                                  height: 1.35,
+                                  color: cs.onPrimaryContainer,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  );
-                }
-              },
-              icon: const Icon(Icons.verified_user_outlined, size: 22),
-              label: Text(
-                'Verificar',
-                style: AppBotones.etiquetaBoton(tt),
+                    const SizedBox(height: AppEspaciado.lg),
+                  ],
+
+                  // Botón escanear
+                  const SizedBox(
+                    width: double.infinity,
+                    child: EscanerDni('Tutor', 'Escanear', anchoValor: 52),
+                  ),
+
+                  const SizedBox(height: AppEspaciado.lg),
+
+                  // Separador "o ingresá los datos"
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: cs.outlineVariant.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppEspaciado.sm,
+                        ),
+                        child: Text(
+                          'o ingresá los datos',
+                          style: tt.labelSmall?.copyWith(
+                            fontSize: 11,
+                            letterSpacing: 0.3,
+                            color: AppSuperficies.textoSecundario(context),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: cs.outlineVariant.withValues(alpha: 0.4),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppEspaciado.lg),
+
+                  // Campo D.N.I.
+                  _campoDniTutorRegistro(),
+
+                  const SizedBox(height: AppEspaciado.lg),
+
+                  // Selector de sexo
+                  _selectorSexoTutor(),
+
+                  const SizedBox(height: AppEspaciado.lg),
+
+                  // Botón verificar
+                  FilledButton.icon(
+                    style: AppBotones.estiloFilledIconCta(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppEspaciado.radioCampo,
+                        vertical: AppEspaciado.md + AppEspaciado.xs,
+                      ),
+                    ),
+                    onPressed: () async {
+                      if (controladorDni.text.length >= 7) {
+                        await obtenerDatosBeneficiario(
+                          context,
+                          controladorDni.text,
+                          sexoTutor!,
+                        );
+                      } else {
+                        showDialog(
+                          context: _scaffoldKey.currentContext!,
+                          builder: (BuildContext dialogCtx) => DialogoAlerta(
+                            envioFuncion2: false,
+                            envioFuncion1: false,
+                            tituloAlerta: 'Datos incompletos',
+                            descripcionAlerta:
+                                'D.N.I. de al menos 7 dígitos y sexo indicados.',
+                            textoBotonAlerta: 'Listo',
+                            color: Theme.of(dialogCtx).colorScheme.error,
+                            icon: const Icon(
+                              Icons.error_outline_rounded,
+                              size: 40,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.verified_user_outlined, size: 22),
+                    label: Text(
+                      'Verificar',
+                      style: AppBotones.etiquetaBoton(tt),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -2472,20 +2710,25 @@ class _VacunasPageState extends State<VacunasPage> {
           beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
       vacunador_registrador:
           registradorService.registrador!.flxcore03_dni ==
-                  vacunadorService.vacunador!.id_sysdesa12
-              ? '1'
-              : '0',
+              vacunadorService.vacunador!.id_sysdesa12
+          ? '1'
+          : '0',
       // Incluido en el POST; el backend debe leerlo cuando esté disponible.
-      vacunacion_en_terreno:
-          sesionEquipoVacunacionService.enTerreno ? '1' : '0',
-      sysdesa10_apellido_tutor:
-          conTutor ? tutorService.tutor!.sysdesa10_apellido_tutor : '',
-      sysdesa10_dni_tutor:
-          conTutor ? tutorService.tutor!.sysdesa10_dni_tutor : '',
-      sysdesa10_nombre_tutor:
-          conTutor ? tutorService.tutor!.sysdesa10_nombre_tutor : '',
-      sysdesa10_sexo_tutor:
-          conTutor ? tutorService.tutor!.sysdesa10_sexo_tutor : '',
+      vacunacion_en_terreno: sesionEquipoVacunacionService.enTerreno
+          ? '1'
+          : '0',
+      sysdesa10_apellido_tutor: conTutor
+          ? tutorService.tutor!.sysdesa10_apellido_tutor
+          : '',
+      sysdesa10_dni_tutor: conTutor
+          ? tutorService.tutor!.sysdesa10_dni_tutor
+          : '',
+      sysdesa10_nombre_tutor: conTutor
+          ? tutorService.tutor!.sysdesa10_nombre_tutor
+          : '',
+      sysdesa10_sexo_tutor: conTutor
+          ? tutorService.tutor!.sysdesa10_sexo_tutor
+          : '',
     );
   }
 
@@ -2559,10 +2802,7 @@ class _VacunasPageState extends State<VacunasPage> {
             descripcionAlerta: datosBeneficiario[0].mensaje,
             textoBotonAlerta: 'Listo',
             color: Theme.of(dialogCtx).colorScheme.error,
-            icon: const Icon(
-              Icons.error_outline,
-              size: 40,
-            ),
+            icon: const Icon(Icons.error_outline, size: 40),
           ),
         );
         return;
@@ -2580,10 +2820,7 @@ class _VacunasPageState extends State<VacunasPage> {
               'No se pudieron obtener los datos del tutor. Revise la red e intente de nuevo.',
           textoBotonAlerta: 'Listo',
           color: Theme.of(dialogCtx).colorScheme.error,
-          icon: const Icon(
-            Icons.wifi_off_rounded,
-            size: 40,
-          ),
+          icon: const Icon(Icons.wifi_off_rounded, size: 40),
         ),
       );
     }
@@ -2597,23 +2834,21 @@ class _VacunasPageState extends State<VacunasPage> {
 
   Future<bool> onWillPop() async {
     final mensajeExit = await showDialog(
-        context: _scaffoldKey.currentContext!,
-        builder: (context) => DialogoAlerta(
-              envioFuncion2: true,
-              envioFuncion1: true,
-              tituloAlerta: '¿Cerrar sesión?',
-              descripcionAlerta:
-                  'Si sale, deberá iniciar sesión otra vez escaneando su documento.',
-              textoBotonAlerta: 'Sí, salir',
-              textoBotonAlerta2: 'No',
-              funcion1: () => Navigator.of(context).pop(true),
-              funcion2: () => Navigator.of(context).pop(false),
-              color: Theme.of(context).colorScheme.error,
-              icon: const Icon(
-                Icons.new_releases_outlined,
-                size: 40.0,
-              ),
-            ));
+      context: _scaffoldKey.currentContext!,
+      builder: (context) => DialogoAlerta(
+        envioFuncion2: true,
+        envioFuncion1: true,
+        tituloAlerta: '¿Cerrar sesión?',
+        descripcionAlerta:
+            'Si sale, deberá iniciar sesión otra vez escaneando su documento.',
+        textoBotonAlerta: 'Sí, salir',
+        textoBotonAlerta2: 'No',
+        funcion1: () => Navigator.of(context).pop(true),
+        funcion2: () => Navigator.of(context).pop(false),
+        color: Theme.of(context).colorScheme.error,
+        icon: const Icon(Icons.new_releases_outlined, size: 40.0),
+      ),
+    );
     return mensajeExit ?? false;
   }
 
