@@ -10,7 +10,7 @@ import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class VacunasPage extends StatefulWidget {
-  const VacunasPage({Key? key}) : super(key: key);
+  const VacunasPage({super.key});
   static const String nombreRuta = 'VacunasPage';
   @override
   _VacunasPageState createState() => _VacunasPageState();
@@ -26,6 +26,8 @@ class _VacunasPageState extends State<VacunasPage> {
   VacunasCondicion? _selectCondicion;
   VacunasEsquema? _selectEsquema;
   VacunasDosis? _selectDosis;
+
+  DateTime _selectFecha = DateTime.now();
 
   List<InfoVacunas>? listaVacunas;
   List<VacunasCondicion>? listaCondiciones;
@@ -46,9 +48,6 @@ class _VacunasPageState extends State<VacunasPage> {
   final TextEditingController controladorBusquedaLotes =
       TextEditingController();
   late FocusNode focusNode;
-  late bool genero;
-  String? dniTutor;
-  String? sexoTutor;
 
   bool _recargandoPerfiles = false;
 
@@ -71,9 +70,6 @@ class _VacunasPageState extends State<VacunasPage> {
     listaDosis = [];
     listaVacunas = [];
     listaLotes = [];
-    dniTutor = '';
-    sexoTutor = 'F';
-    genero = false;
     focusNode = FocusNode();
     cargarPerfilesService(registradorService.registrador!.id_flxcore03!);
   }
@@ -175,6 +171,9 @@ class _VacunasPageState extends State<VacunasPage> {
                   condicion: _selectCondicion?.sysvacu01_descripcion,
                   esquema: _selectEsquema?.sysvacu02_descripcion,
                   dosis: _selectDosis?.sysvacu05_nombre,
+                  fecha: pasos > 6
+                      ? '${_selectFecha.day.toString().padLeft(2, '0')}/${_selectFecha.month.toString().padLeft(2, '0')}/${_selectFecha.year}'
+                      : null,
                   lote: _selectLote?.sysdesa18_lote,
                   child: containerPasos(),
                 ),
@@ -185,16 +184,13 @@ class _VacunasPageState extends State<VacunasPage> {
                 const SizedBox(height: AppEspaciado.sm),
 
                 const SizedBox(height: AppEspaciado.xl),
-                if (pasos == 7) botonRegistrarVacunacion(),
+                if (pasos == 8) botonRegistrarVacunacion(),
                 Padding(
                   padding: const EdgeInsets.only(top: AppEspaciado.md),
                   child: OutlinedButton.icon(
                     style: AppBotones.estiloOutlinedPeligro(cs),
-                    icon: const Icon(Icons.cancel_outlined, size: 22),
-                    label: Text(
-                      'Cancelar registro',
-                      style: AppBotones.etiquetaBoton(tt, fontSize: 15),
-                    ),
+                    icon: const Icon(Icons.cancel_outlined),
+                    label: const Text('Cancelar registro'),
                     onPressed: () {
                       showDialog(
                         context: _scaffoldKey.currentContext!,
@@ -247,7 +243,7 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget containerPasos() {
-    // 1 -> Perfiles // 2 -> Vacuna // 3 -> Condicion // 4 -> Esquema // 5 -> Dosis // 6 -> Lote
+    // 1 -> Perfiles // 2 -> Vacuna // 3 -> Condicion // 4 -> Esquema // 5 -> Dosis // 6 -> Fecha // 7 -> Lote // 8 -> Verificar
     final Widget child;
     switch (pasos) {
       case 1:
@@ -266,9 +262,12 @@ class _VacunasPageState extends State<VacunasPage> {
         child = containerDosis();
         break;
       case 6:
-        child = containerLotes();
+        child = containerFecha();
         break;
       case 7:
+        child = containerLotes();
+        break;
+      case 8:
         child = containerVerificar();
         break;
       default:
@@ -929,6 +928,18 @@ class _VacunasPageState extends State<VacunasPage> {
                           ),
                           const SizedBox(height: AppEspaciado.lg),
                           ...bloquesT,
+                          const SizedBox(height: AppEspaciado.lg),
+                          OutlinedButton.icon(
+                            style: AppBotones.estiloOutlinedAccion(cs),
+                            onPressed: () {
+                              setState(() {
+                                tutorService.eliminarTutor();
+                                mostrarTutor = false;
+                              });
+                            },
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: const Text('Cambiar tutor'),
+                          ),
                         ],
                       ),
                     ),
@@ -968,7 +979,8 @@ class _VacunasPageState extends State<VacunasPage> {
               _columnaTarjetaTutor(tut),
               const SizedBox(height: AppEspaciado.md),
             ],
-            _panelRegistroTutorMenor(context),
+            if (tut == null || !_tutorTieneDocumentoCargado(tut))
+              _panelRegistroTutorMenor(context),
           ],
         );
       },
@@ -1013,15 +1025,17 @@ class _VacunasPageState extends State<VacunasPage> {
               ),
               const SizedBox(height: AppEspaciado.lg),
               FilledButton.icon(
-                style: AppBotones.estiloFilledIconCta(),
+                style: AppBotones.estiloFilledIconCta(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppEspaciado.xl,
+                    vertical: AppEspaciado.lg,
+                  ),
+                ),
                 onPressed: _recargandoPerfiles
                     ? null
                     : _reintentarCargaPerfiles,
-                icon: const Icon(Icons.refresh_rounded, size: 22),
-                label: Text(
-                  'Reintentar carga',
-                  style: AppBotones.etiquetaBoton(tt),
-                ),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Reintentar carga'),
               ),
             ],
           ),
@@ -1155,12 +1169,12 @@ class _VacunasPageState extends State<VacunasPage> {
       if (loadingLoginService.getLoadingCondicionState!) {
         mostrarLoadingEstrellasXTiempo(context, 800);
       }
+      loadingLoginService.cargarCondicion(false);
       setState(() {
         listaCondiciones = tempLista;
         vacunasCondicionService.cargarListaVacunasCondicion(tempLista);
+        pasos++;
       });
-      loadingLoginService.cargarCondicion(false);
-      setState(() => pasos++);
     }
   }
 
@@ -1195,12 +1209,12 @@ class _VacunasPageState extends State<VacunasPage> {
       if (loadingLoginService.getLoadingEsquemaState!) {
         mostrarLoadingEstrellasXTiempo(context, 800);
       }
+      loadingLoginService.cargarEsquema(false);
       setState(() {
         listaEsquemas = tempLista;
         vacunasEsquemaService.cargarListavacunasEsquema(tempLista);
+        pasos++;
       });
-      loadingLoginService.cargarEsquema(false);
-      setState(() => pasos++);
     }
   }
 
@@ -1235,12 +1249,12 @@ class _VacunasPageState extends State<VacunasPage> {
       if (loadingLoginService.getLoadingDosisState!) {
         mostrarLoadingEstrellasXTiempo(context, 800);
       }
+      loadingLoginService.cargarDosis(false);
       setState(() {
         listaDosis = tempLista;
         vacunasDosisService.cargarListaVacunasDosis(tempLista);
+        pasos++;
       });
-      loadingLoginService.cargarDosis(false);
-      setState(() => pasos++);
     }
   }
 
@@ -1249,7 +1263,7 @@ class _VacunasPageState extends State<VacunasPage> {
       stream: loadingLoginService.cargaPerfilStateStream,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return loadingLoginService.getCargaPerfilState!
-            ? Container()
+            ? const SizedBox.shrink()
             : StreamBuilder(
                 stream: vacunasxPerfilService.listaVacunasxPerfilesStream,
                 builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -1392,7 +1406,7 @@ class _VacunasPageState extends State<VacunasPage> {
                             ),
                           ],
                         )
-                      : Container();
+                      : const SizedBox.shrink();
                 },
               );
       },
@@ -1404,7 +1418,7 @@ class _VacunasPageState extends State<VacunasPage> {
       stream: loadingLoginService.loadingCondicionStateStream,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return loadingLoginService.getLoadingCondicionState!
-            ? Container()
+            ? const SizedBox.shrink()
             : StreamBuilder(
                 stream: vacunasCondicionService.listaVacunasCondicionesStream,
                 builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -1555,7 +1569,7 @@ class _VacunasPageState extends State<VacunasPage> {
                             ),
                           ],
                         )
-                      : Container();
+                      : const SizedBox.shrink();
                 },
               );
       },
@@ -1567,7 +1581,7 @@ class _VacunasPageState extends State<VacunasPage> {
       stream: loadingLoginService.loadingEsquemaStateStream,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return loadingLoginService.getLoadingEsquemaState!
-            ? Container()
+            ? const SizedBox.shrink()
             : StreamBuilder(
                 stream: vacunasEsquemaService.listavacunasEsquemaesStream,
                 builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -1712,7 +1726,7 @@ class _VacunasPageState extends State<VacunasPage> {
                             ),
                           ],
                         )
-                      : Container();
+                      : const SizedBox.shrink();
                 },
               );
       },
@@ -1724,7 +1738,7 @@ class _VacunasPageState extends State<VacunasPage> {
       stream: loadingLoginService.loadingDosisStateStream,
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return loadingLoginService.getLoadingDosisState!
-            ? Container()
+            ? const SizedBox.shrink()
             : StreamBuilder(
                 stream: vacunasDosisService.listaVacunasDosisStream,
                 builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -1747,157 +1761,13 @@ class _VacunasPageState extends State<VacunasPage> {
                                       label: Text(d.sysvacu05_nombre!),
                                       selected: _selectDosis == d,
                                       showCheckmark: true,
-                                      onSelected: (_) async {
-                                        loadingLoginService.cargaLotes(false);
+                                      onSelected: (_) {
                                         listaLotes!.clear();
                                         setState(() {
                                           _selectLote = null;
                                           _selectDosis = d;
+                                          pasos++;
                                         });
-                                        try {
-                                          final tempLista =
-                                              await lotesVacunaProvider
-                                                  .validarLotes(
-                                                    _selectVacunas!
-                                                        .id_sysvacu04,
-                                                  );
-                                          if (!mounted) return;
-                                          if (tempLista.isEmpty) {
-                                            showDialog(
-                                              context:
-                                                  _scaffoldKey.currentContext!,
-                                              builder: (dialogCtx) => DialogoAlerta(
-                                                envioFuncion2: true,
-                                                envioFuncion1: true,
-                                                tituloAlerta:
-                                                    'Sin lotes disponibles',
-                                                descripcionAlerta:
-                                                    'No hay lotes registrados para esta vacuna. Seleccione otra dosis o cambie la vacuna.',
-                                                textoBotonAlerta:
-                                                    'Cambiar vacuna',
-                                                textoBotonAlerta2:
-                                                    'Cambiar dosis',
-                                                funcion1: () {
-                                                  Navigator.of(dialogCtx).pop();
-                                                  setState(() {
-                                                    pasos = 2;
-                                                    _selectCondicion = null;
-                                                    _selectEsquema = null;
-                                                    _selectDosis = null;
-                                                    _selectLote = null;
-                                                    listaLotes!.clear();
-                                                  });
-                                                },
-                                                funcion2: () => Navigator.of(
-                                                  dialogCtx,
-                                                ).pop(),
-                                                icon: const Icon(
-                                                  Icons.inventory_2_outlined,
-                                                  size: 40,
-                                                ),
-                                                color: Theme.of(
-                                                  dialogCtx,
-                                                ).colorScheme.tertiary,
-                                              ),
-                                            );
-                                            return;
-                                          }
-                                          if (tempLista[0].codigo_mensaje ==
-                                              "0") {
-                                            showDialog(
-                                              context:
-                                                  _scaffoldKey.currentContext!,
-                                              builder: (dialogCtx) => DialogoAlerta(
-                                                envioFuncion2: true,
-                                                envioFuncion1: true,
-                                                tituloAlerta:
-                                                    'No se pudieron cargar los lotes',
-                                                descripcionAlerta:
-                                                    tempLista[0].mensaje ??
-                                                    'Intente con otra dosis o cambie la vacuna.',
-                                                textoBotonAlerta:
-                                                    'Cambiar vacuna',
-                                                textoBotonAlerta2: 'Reintentar',
-                                                funcion1: () {
-                                                  Navigator.of(dialogCtx).pop();
-                                                  setState(() {
-                                                    pasos = 2;
-                                                    _selectCondicion = null;
-                                                    _selectEsquema = null;
-                                                    _selectDosis = null;
-                                                    _selectLote = null;
-                                                    listaLotes!.clear();
-                                                  });
-                                                },
-                                                funcion2: () => Navigator.of(
-                                                  dialogCtx,
-                                                ).pop(),
-                                                icon: const Icon(
-                                                  Icons.error_outline,
-                                                  size: 40,
-                                                ),
-                                                color: Theme.of(
-                                                  dialogCtx,
-                                                ).colorScheme.error,
-                                              ),
-                                            );
-                                          } else {
-                                            if (loadingLoginService
-                                                .getCargaLotesState!) {
-                                              mostrarLoadingEstrellasXTiempo(
-                                                context,
-                                                800,
-                                              );
-                                            }
-                                            setState(() {
-                                              listaLotes = tempLista;
-                                              vacunasLotesService
-                                                  .cargarListaVacunasLotes(
-                                                    tempLista,
-                                                  );
-                                            });
-                                            loadingLoginService.cargaLotes(
-                                              false,
-                                            );
-                                            setState(() => pasos++);
-                                          }
-                                        } catch (_) {
-                                          if (!mounted) return;
-                                          showDialog(
-                                            context:
-                                                _scaffoldKey.currentContext!,
-                                            builder: (dialogCtx) => DialogoAlerta(
-                                              envioFuncion2: true,
-                                              envioFuncion1: true,
-                                              tituloAlerta: 'Error de conexión',
-                                              descripcionAlerta:
-                                                  'No se pudieron obtener los lotes. Revise la conexión o cambie la vacuna.',
-                                              textoBotonAlerta:
-                                                  'Cambiar vacuna',
-                                              textoBotonAlerta2: 'Cerrar',
-                                              funcion1: () {
-                                                Navigator.of(dialogCtx).pop();
-                                                setState(() {
-                                                  pasos = 2;
-                                                  _selectCondicion = null;
-                                                  _selectEsquema = null;
-                                                  _selectDosis = null;
-                                                  _selectLote = null;
-                                                  listaLotes!.clear();
-                                                });
-                                              },
-                                              funcion2: () =>
-                                                  Navigator.of(dialogCtx).pop(),
-                                              color: Theme.of(
-                                                dialogCtx,
-                                              ).colorScheme.error,
-                                              icon: const Icon(
-                                                Icons.wifi_off_rounded,
-                                                size: 40,
-                                              ),
-                                            ),
-                                          );
-                                        }
                                       },
                                     ),
                                   )
@@ -1905,10 +1775,208 @@ class _VacunasPageState extends State<VacunasPage> {
                             ),
                           ],
                         )
-                      : Container();
+                      : const SizedBox.shrink();
                 },
               );
       },
+    );
+  }
+
+  Widget containerFecha() {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
+    final fechaFmt =
+        '${_selectFecha.day.toString().padLeft(2, '0')}/${_selectFecha.month.toString().padLeft(2, '0')}/${_selectFecha.year}';
+
+    Future<void> cargarLotesYAvanzar() async {
+      loadingLoginService.cargaLotes(false);
+      try {
+        final tempLista = await lotesVacunaProvider.validarLotes(
+          _selectVacunas!.id_sysvacu04,
+        );
+        if (!mounted) return;
+        if (tempLista.isEmpty) {
+          showDialog(
+            context: _scaffoldKey.currentContext!,
+            builder: (dialogCtx) => DialogoAlerta(
+              envioFuncion2: true,
+              envioFuncion1: true,
+              tituloAlerta: 'Sin lotes disponibles',
+              descripcionAlerta:
+                  'No hay lotes registrados para esta vacuna. Seleccione otra dosis o cambie la vacuna.',
+              textoBotonAlerta: 'Cambiar vacuna',
+              textoBotonAlerta2: 'Cambiar dosis',
+              funcion1: () {
+                Navigator.of(dialogCtx).pop();
+                setState(() {
+                  pasos = 2;
+                  _selectCondicion = null;
+                  _selectEsquema = null;
+                  _selectDosis = null;
+                  _selectLote = null;
+                  listaLotes!.clear();
+                });
+              },
+              funcion2: () => Navigator.of(dialogCtx).pop(),
+              icon: const Icon(Icons.inventory_2_outlined, size: 40),
+              color: Theme.of(dialogCtx).colorScheme.tertiary,
+            ),
+          );
+          return;
+        }
+        if (tempLista[0].codigo_mensaje == "0") {
+          showDialog(
+            context: _scaffoldKey.currentContext!,
+            builder: (dialogCtx) => DialogoAlerta(
+              envioFuncion2: true,
+              envioFuncion1: true,
+              tituloAlerta: 'No se pudieron cargar los lotes',
+              descripcionAlerta:
+                  tempLista[0].mensaje ?? 'Intente con otra dosis o cambie la vacuna.',
+              textoBotonAlerta: 'Cambiar vacuna',
+              textoBotonAlerta2: 'Reintentar',
+              funcion1: () {
+                Navigator.of(dialogCtx).pop();
+                setState(() {
+                  pasos = 2;
+                  _selectCondicion = null;
+                  _selectEsquema = null;
+                  _selectDosis = null;
+                  _selectLote = null;
+                  listaLotes!.clear();
+                });
+              },
+              funcion2: () => Navigator.of(dialogCtx).pop(),
+              icon: const Icon(Icons.error_outline, size: 40),
+              color: Theme.of(
+                _scaffoldKey.currentContext!,
+              ).colorScheme.error,
+            ),
+          );
+          return;
+        }
+        if (loadingLoginService.getCargaLotesState!) {
+          mostrarLoadingEstrellasXTiempo(context, 800);
+        }
+        setState(() {
+          listaLotes = tempLista;
+          vacunasLotesService.cargarListaVacunasLotes(tempLista);
+        });
+        loadingLoginService.cargaLotes(false);
+        setState(() => pasos++);
+      } catch (_) {
+        if (!mounted) return;
+        showDialog(
+          context: _scaffoldKey.currentContext!,
+          builder: (dialogCtx) => DialogoAlerta(
+            envioFuncion2: true,
+            envioFuncion1: true,
+            tituloAlerta: 'Error de conexión',
+            descripcionAlerta:
+                'No se pudieron obtener los lotes. Revise la conexión o cambie la vacuna.',
+            textoBotonAlerta: 'Cambiar vacuna',
+            textoBotonAlerta2: 'Cerrar',
+            funcion1: () {
+              Navigator.of(dialogCtx).pop();
+              setState(() {
+                pasos = 2;
+                _selectCondicion = null;
+                _selectEsquema = null;
+                _selectDosis = null;
+                _selectLote = null;
+                listaLotes!.clear();
+              });
+            },
+            funcion2: () => Navigator.of(dialogCtx).pop(),
+            color: Theme.of(dialogCtx).colorScheme.error,
+            icon: const Icon(Icons.wifi_off_rounded, size: 40),
+          ),
+        );
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const VacunasTituloSeccionPaso(
+          etiqueta: 'PASO 6',
+          titulo: 'Fecha de Aplicación',
+          subtitulo: 'Seleccione la fecha en que se aplicó la vacuna.',
+        ),
+        const SizedBox(height: AppEspaciado.md),
+        Container(
+          padding: const EdgeInsets.all(AppEspaciado.lg),
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerLowest,
+            borderRadius: BorderRadius.circular(AppEspaciado.xl),
+            border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.35)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppEspaciado.xs),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [cs.tertiary, cs.tertiary.withValues(alpha: 0.55)],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Icon(Icons.calendar_today_outlined, color: cs.tertiary, size: AppTamanoIcono.mediano),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'FECHA SELECCIONADA',
+                      style: tt.labelSmall?.copyWith(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.35,
+                        color: cs.tertiary,
+                      ),
+                    ),
+                    const SizedBox(height: AppEspaciado.xs),
+                    Text(
+                      fechaFmt,
+                      style: bar.tituloTarjeta.copyWith(
+                        fontSize: 20,
+                        color: cs.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              TextButton.icon(
+                style: AppBotones.estiloTextoPequeno(cs),
+                onPressed: () async {
+                  final DateTime? nueva = await showDatePicker(
+                    context: context,
+                    initialDate: _selectFecha,
+                    firstDate: DateTime(2021),
+                    lastDate: DateTime.now(),
+                  );
+                  if (nueva != null) setState(() => _selectFecha = nueva);
+                },
+                icon: const Icon(Icons.edit_calendar_outlined),
+                label: const Text('Cambiar'),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppEspaciado.lg),
+        FilledButton(
+          style: AppBotones.estiloFilledPrimario(cs),
+          onPressed: cargarLotesYAvanzar,
+          child: const Text('Continuar'),
+        ),
+      ],
     );
   }
 
@@ -1922,7 +1990,7 @@ class _VacunasPageState extends State<VacunasPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const VacunasTituloSeccionPaso(
-                    etiqueta: 'PASO 6',
+                    etiqueta: 'PASO 7',
                     titulo: 'Lote',
                     subtitulo:
                         'Seleccione el lote disponible para registrar la aplicación.',
@@ -1960,7 +2028,7 @@ class _VacunasPageState extends State<VacunasPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const VacunasTituloSeccionPaso(
-          etiqueta: 'PASO 6',
+          etiqueta: 'PASO 7',
           titulo: 'Sin lotes disponibles',
           subtitulo: 'No hay lotes registrados para la vacuna seleccionada.',
         ),
@@ -1998,14 +2066,16 @@ class _VacunasPageState extends State<VacunasPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   OutlinedButton.icon(
+                    style: AppBotones.estiloOutlinedSecundario(),
                     onPressed: () => setState(() => pasos = 5),
-                    icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                    icon: const Icon(Icons.arrow_back_rounded),
                     label: const Text('Cambiar dosis'),
                   ),
                   const SizedBox(width: AppEspaciado.md),
                   OutlinedButton.icon(
+                    style: AppBotones.estiloOutlinedSecundario(),
                     onPressed: () => setState(() => pasos = 2),
-                    icon: const Icon(Icons.vaccines_outlined, size: 18),
+                    icon: const Icon(Icons.vaccines_outlined),
                     label: const Text('Cambiar vacuna'),
                   ),
                 ],
@@ -2072,24 +2142,9 @@ class _VacunasPageState extends State<VacunasPage> {
               ),
             ),
             TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: cs.primary,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppEspaciado.sm,
-                  vertical: 4,
-                ),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
+              style: AppBotones.estiloTextoPequeno(cs),
               onPressed: () => setState(() => pasos = paso),
-              child: Text(
-                'Cambiar',
-                style: tt.labelSmall?.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: cs.primary,
-                ),
-              ),
+              child: const Text('Cambiar'),
             ),
           ],
         ),
@@ -2100,7 +2155,7 @@ class _VacunasPageState extends State<VacunasPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const VacunasTituloSeccionPaso(
-          etiqueta: 'PASO 7',
+          etiqueta: 'PASO 8',
           titulo: 'Revisar selección',
           subtitulo:
               'Confirme los datos antes de continuar. Toque "Cambiar" en cualquier fila para corregir.',
@@ -2182,148 +2237,26 @@ class _VacunasPageState extends State<VacunasPage> {
                 color: cs.outlineVariant.withValues(alpha: 0.35),
               ),
               filaResumen(
+                'Fecha de Aplicación',
+                '${_selectFecha.day.toString().padLeft(2, '0')}/${_selectFecha.month.toString().padLeft(2, '0')}/${_selectFecha.year}',
+                6,
+                Icons.calendar_today_outlined,
+              ),
+              Divider(
+                height: 1,
+                thickness: 1,
+                indent: AppEspaciado.md,
+                endIndent: AppEspaciado.md,
+                color: cs.outlineVariant.withValues(alpha: 0.35),
+              ),
+              filaResumen(
                 'Lote',
                 _selectLote?.sysdesa18_lote,
-                6,
+                7,
                 Icons.inventory_2_outlined,
               ),
             ],
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _campoDniTutorRegistro() {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    return Container(
-      decoration: AppSuperficies.campoBusqueda(context),
-      child: TextField(
-        autocorrect: false,
-        controller: controladorDni,
-        keyboardType: TextInputType.number,
-        maxLength: 8,
-        focusNode: focusNode,
-        onEditingComplete: () => focusNode.unfocus(),
-        style: tt.titleMedium?.copyWith(fontSize: 16, color: cs.onSurface),
-        decoration: InputDecoration(
-          counterText: '',
-          prefixIcon: Icon(
-            Icons.perm_identity_rounded,
-            color: cs.onSurfaceVariant,
-          ),
-          hintText: 'D.N.I.',
-          hintStyle: tt.bodyLarge?.copyWith(
-            fontSize: 15,
-            color: AppSuperficies.textoSecundario(context),
-          ),
-          focusedBorder: InputBorder.none,
-          border: InputBorder.none,
-        ),
-      ),
-    );
-  }
-
-  Widget _selectorSexoTutor() {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    const colorFemenino = Color(0xFFE91E8C);
-    const colorMasculino = Color(0xFF009CAF);
-
-    Widget chip({
-      required bool seleccionado,
-      required String etiqueta,
-      required IconData icono,
-      required Color colorAccento,
-      required VoidCallback onTap,
-    }) {
-      return Expanded(
-        child: Material(
-          color: seleccionado
-              ? colorAccento.withValues(alpha: 0.10)
-              : cs.surfaceContainerLowest,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
-            side: BorderSide(
-              color: seleccionado
-                  ? colorAccento
-                  : cs.outlineVariant,
-              width: seleccionado ? 2 : 1,
-            ),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: AppEspaciado.md,
-                horizontal: AppEspaciado.sm,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    icono,
-                    size: 32,
-                    color: seleccionado ? colorAccento : cs.onSurfaceVariant,
-                  ),
-                  const SizedBox(height: AppEspaciado.xs),
-                  Text(
-                    etiqueta,
-                    style: tt.titleSmall?.copyWith(
-                      fontSize: 14,
-                      fontWeight: seleccionado
-                          ? FontWeight.w800
-                          : FontWeight.w600,
-                      color: seleccionado ? colorAccento : cs.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Sexo del tutor',
-          style: tt.labelLarge?.copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.2,
-            color: AppSuperficies.textoSecundario(context),
-          ),
-        ),
-        const SizedBox(height: AppEspaciado.sm),
-        Row(
-          children: [
-            chip(
-              seleccionado: !genero,
-              etiqueta: 'Femenino',
-              icono: Icons.female_rounded,
-              colorAccento: colorFemenino,
-              onTap: () => setState(() {
-                genero = false;
-                sexoTutor = 'F';
-              }),
-            ),
-            const SizedBox(width: AppEspaciado.sm),
-            chip(
-              seleccionado: genero,
-              etiqueta: 'Masculino',
-              icono: Icons.male_rounded,
-              colorAccento: colorMasculino,
-              onTap: () => setState(() {
-                genero = true;
-                sexoTutor = 'M';
-              }),
-            ),
-          ],
         ),
       ],
     );
@@ -2563,94 +2496,15 @@ class _VacunasPageState extends State<VacunasPage> {
                     const SizedBox(height: AppEspaciado.lg),
                   ],
 
-                  // Botón escanear
-                  const SizedBox(
-                    width: double.infinity,
-                    child: EscanerDni('Tutor', 'Escanear', anchoValor: 52),
-                  ),
-
-                  const SizedBox(height: AppEspaciado.lg),
-
-                  // Separador "o ingresá los datos"
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          color: cs.outlineVariant.withValues(alpha: 0.4),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppEspaciado.sm,
-                        ),
-                        child: Text(
-                          'o ingresá los datos',
-                          style: tt.labelSmall?.copyWith(
-                            fontSize: 11,
-                            letterSpacing: 0.3,
-                            color: AppSuperficies.textoSecundario(context),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: cs.outlineVariant.withValues(alpha: 0.4),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: AppEspaciado.lg),
-
-                  // Campo D.N.I.
-                  _campoDniTutorRegistro(),
-
-                  const SizedBox(height: AppEspaciado.lg),
-
-                  // Selector de sexo
-                  _selectorSexoTutor(),
-
-                  const SizedBox(height: AppEspaciado.lg),
-
-                  // Botón verificar
-                  FilledButton.icon(
-                    style: AppBotones.estiloFilledIconCta(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppEspaciado.radioCampo,
-                        vertical: AppEspaciado.md + AppEspaciado.xs,
-                      ),
-                    ),
-                    onPressed: () async {
-                      if (controladorDni.text.length >= 7) {
-                        await obtenerDatosBeneficiario(
-                          context,
-                          controladorDni.text,
-                          sexoTutor!,
-                        );
-                      } else {
-                        showDialog(
-                          context: _scaffoldKey.currentContext!,
-                          builder: (BuildContext dialogCtx) => DialogoAlerta(
-                            envioFuncion2: false,
-                            envioFuncion1: false,
-                            tituloAlerta: 'Datos incompletos',
-                            descripcionAlerta:
-                                'D.N.I. de al menos 7 dígitos y sexo indicados.',
-                            textoBotonAlerta: 'Listo',
-                            color: Theme.of(dialogCtx).colorScheme.error,
-                            icon: const Icon(
-                              Icons.error_outline_rounded,
-                              size: 40,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.verified_user_outlined, size: 22),
-                    label: Text(
-                      'Verificar',
-                      style: AppBotones.etiquetaBoton(tt),
-                    ),
+                  // Captura del documento del tutor (escaneo + ingreso manual)
+                  FormularioDocumento(
+                    tipoEscaneo: 'Tutor',
+                    textoBotonEscaneo: 'Escanear',
+                    anchoEscaner: 52,
+                    controladorDni: controladorDni,
+                    focusNode: focusNode,
+                    onVerificar: (dni, sexo) =>
+                        obtenerDatosBeneficiario(context, dni, sexo!),
                   ),
                 ],
               ),
@@ -2705,7 +2559,7 @@ class _VacunasPageState extends State<VacunasPage> {
           beneficiarioService.beneficiario!.sysdesa10_nro_tramite,
       sysdesa10_sexo: beneficiarioService.beneficiario!.sysdesa10_sexo,
       sysdesa10_edad: beneficiarioService.beneficiario!.sysdesa10_edad,
-      fecha_aplicacion: DateTime.now().toString(),
+      fecha_aplicacion: _selectFecha.toString(),
       sysdesa10_fecha_nacimiento:
           beneficiarioService.beneficiario!.sysdesa10_fecha_nacimiento,
       vacunador_registrador:
@@ -2733,18 +2587,11 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget botonRegistrarVacunacion() {
-    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
       child: FilledButton(
-        style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(48),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppEspaciado.xl,
-            vertical: AppEspaciado.lg,
-          ),
-          shape: AppBotones.forma,
-        ),
+        style: AppBotones.estiloFilledPrimario(cs),
         onPressed: () {
           final error = _validarDatosRegistro();
           if (error != null) {
@@ -2769,15 +2616,7 @@ class _VacunasPageState extends State<VacunasPage> {
             (route) => false,
           );
         },
-        child: Text(
-          'Continuar a confirmación',
-          style: AppBotones.etiquetaBoton(
-            tt,
-            base: tt.titleMedium,
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        child: const Text('Continuar a confirmación'),
       ),
     );
   }

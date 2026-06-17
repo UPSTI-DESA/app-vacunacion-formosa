@@ -1,4 +1,4 @@
-package com.upsti.sistema_vacunacion
+package com.mindh.vacunacion
 
 import io.flutter.embedding.android.FlutterActivity
 

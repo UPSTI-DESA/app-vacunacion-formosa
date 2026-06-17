@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
@@ -14,7 +16,7 @@ import '../pages.dart';
 class LoginBody extends StatefulWidget {
   static const String nombreRuta = '/Login';
 
-  const LoginBody({Key? key}) : super(key: key);
+  const LoginBody({super.key});
 
   @override
   State<LoginBody> createState() => _LoginBodyState();
@@ -26,8 +28,6 @@ class _LoginBodyState extends State<LoginBody> {
 
   final String nombreApp = 'Sistema de vacunación general';
 
-  // ignore: unused_field
-  final String _scanBarcode = 'Desconocido';
   List<String>? conSplit;
   List<String>? escaneados;
   String? nombrePersona;
@@ -39,7 +39,14 @@ class _LoginBodyState extends State<LoginBody> {
   @override
   void initState() {
     super.initState();
+    datosdecargaprovider.versionApp = 'Ok';
     _cargarEtiquetaSemver();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    SizeConfiguracion().init(context);
   }
 
   Future<void> _cargarEtiquetaSemver() async {
@@ -56,8 +63,6 @@ class _LoginBodyState extends State<LoginBody> {
 
   @override
   Widget build(BuildContext context) {
-    validarVersionNueva();
-    SizeConfiguracion().init(context);
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
@@ -75,16 +80,17 @@ class _LoginBodyState extends State<LoginBody> {
                   isExtended: true,
                   tooltip: 'PARA SU USO EN DESARROLLO!',
                   onPressed: () async {
-                    final respUsuario =
-                        await usuariosProviers.validarUsuariosNuevo('36355149');
+                    final respUsuario = await usuariosProviers
+                        .validarUsuariosNuevo('36355149');
                     registradorService.cargarRegistrador(respUsuario[0]);
                     Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => VacunadorPage(
-                                  infoCargador: respUsuario,
-                                )),
-                        (Route<dynamic> route) => false);
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            VacunadorPage(infoCargador: respUsuario),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
                   },
                 )
               : null,
@@ -128,9 +134,12 @@ class _LoginBodyState extends State<LoginBody> {
                                   vertical: AppEspaciado.xs,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: cs.surfaceContainerHighest
-                                      .withValues(alpha: 0.75),
-borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+                                  color: cs.surfaceContainerHighest.withValues(
+                                    alpha: 0.75,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    AppEspaciado.radioCampo,
+                                  ),
                                 ),
                                 child: Text(
                                   'v$_etiquetaSemver',
@@ -144,27 +153,11 @@ borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
                               Tooltip(
                                 message: 'Ver novedades de la versión',
                                 child: TextButton.icon(
+                                  style: AppBotones.estiloTextoPequeno(cs),
                                   onPressed: () =>
                                       mostrarDialogoNovedadesApp(context),
-                                  icon: Icon(
-                                    Icons.article_outlined,
-                                    size: AppTamanoIcono.pequeno,
-                                    color: cs.primary,
-                                  ),
-                                  label: Text(
-                                    'Novedades',
-                                    style: tt.labelLarge?.copyWith(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                      color: cs.primary,
-                                    ),
-                                  ),
-                                  style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: AppEspaciado.sm,
-                                    ),
-                                    visualDensity: VisualDensity.compact,
-                                  ),
+                                  icon: const Icon(Icons.article_outlined),
+                                  label: const Text('Novedades'),
                                 ),
                               ),
                             ],
@@ -211,8 +204,8 @@ borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
                           : null,
                       colorBlendMode:
                           Theme.of(context).brightness == Brightness.dark
-                              ? BlendMode.srcIn
-                              : null,
+                          ? BlendMode.srcIn
+                          : null,
                     ),
                   ),
                 ),
@@ -253,22 +246,26 @@ borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
               );
             }
             return loadingLoginService.getEstadoPrimerInicioState!
-                ? Container()
+                ? const SizedBox.shrink()
                 : FutureBuilder(
-                    future:
-                        Future.delayed(const Duration(milliseconds: 1000)),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<dynamic> snapshot) {
-                      return snapshot.connectionState ==
-                              ConnectionState.waiting
-                          ? Container(
-                              height: double.infinity,
-                              width: double.infinity,
-                              color: cs.scrim.withValues(alpha: .72),
-                              child:
-                                  const Center(child: LoadingEstrellas()))
-                          : Container();
-                    },
+                    future: Future.delayed(const Duration(milliseconds: 1000)),
+                    builder:
+                        (
+                          BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot,
+                        ) {
+                          return snapshot.connectionState ==
+                                  ConnectionState.waiting
+                              ? Container(
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                  color: cs.scrim.withValues(alpha: .72),
+                                  child: const Center(
+                                    child: LoadingEstrellas(),
+                                  ),
+                                )
+                              : const SizedBox.shrink();
+                        },
                   );
           },
         ),
@@ -276,29 +273,30 @@ borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
     );
   }
 
-  void validarVersionNueva() async {
-    datosdecargaprovider.versionApp = 'Ok';
-  }
-
   void mostrarAlertaActualizacion(BuildContext context, String mensaje) {
     showDialog<void>(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: const Text('Actualización disponible'),
-            content: Text(mensaje),
-            actions: <Widget>[
+      context: context,
+      builder: (BuildContext ctx) {
+        final cs = Theme.of(ctx).colorScheme;
+        return AlertDialog(
+          title: const Text('Actualización disponible'),
+          content: Text(mensaje),
+          actions: <Widget>[
+            if (!Platform.isIOS)
               TextButton(
+                style: AppBotones.estiloTexto(cs),
                 child: const Text('Descargar APK'),
                 onPressed: _launchURL,
               ),
-              TextButton(
-                child: const Text('Cerrar'),
-                onPressed: () => Navigator.of(ctx).pop(),
-              ),
-            ],
-          );
-        });
+            TextButton(
+              style: AppBotones.estiloTexto(cs),
+              child: const Text('Cerrar'),
+              onPressed: () => Navigator.of(ctx).pop(),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _launchURL() async {
@@ -321,14 +319,11 @@ class _TarjetaLoginAcceso extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppEspaciado.xl),
-      decoration: AppSuperficies.tarjeta(context).copyWith(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: AppSuperficies.tarjeta(
+        context,
+      ).copyWith(borderRadius: BorderRadius.circular(20)),
       child: Column(
         children: [
-          // VacunApp2.png: blancos invisibles en claro. VacunApp2_claro.png (generado
-          // con tool/generar_logo_tema_claro.py) mantiene #005661 y mapea claros a
-          // vercelesteCuaternario #009CAF (segundo tono de marca, no el mismo petróleo).
           Image.asset(
             Theme.of(context).brightness == Brightness.light
                 ? 'assets/logo/VacunApp2_claro.png'
@@ -359,7 +354,7 @@ class _TarjetaLoginAcceso extends StatelessWidget {
           ),
           const SizedBox(height: AppEspaciado.xs),
           Text(
-            'Escanee el código del frente (DNI nuevo) o el PDF417 del reverso (DNI anterior).',
+            'Escanee el código del frente (DNI nuevo), del reverso (DNI anterior).',
             textAlign: TextAlign.center,
             style: tt.bodyMedium?.copyWith(
               fontSize: 13,

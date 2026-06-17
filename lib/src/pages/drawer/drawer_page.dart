@@ -485,26 +485,10 @@ class _PieDrawer extends StatelessWidget {
                   Tooltip(
                     message: 'Ver novedades de la versión',
                     child: TextButton.icon(
+                      style: AppBotones.estiloTextoPequeno(cs),
                       onPressed: () => mostrarDialogoNovedadesApp(context),
-                      icon: Icon(
-                        Icons.article_outlined,
-                        size: 18,
-                        color: cs.primary,
-                      ),
-                      label: Text(
-                        'Novedades de la versión',
-                        style: tt.labelLarge?.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: cs.primary,
-                        ),
-                      ),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppEspaciado.xs,
-                        ),
-                        visualDensity: VisualDensity.compact,
-                      ),
+                      icon: const Icon(Icons.article_outlined),
+                      label: const Text('Novedades de la versión'),
                     ),
                   ),
                 ],

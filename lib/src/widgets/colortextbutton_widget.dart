@@ -39,6 +39,11 @@ class ColorTextButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
           ),
+          textStyle: TextStyle(
+            fontSize: AppBotones.fontSizeBoton,
+            fontWeight: AppBotones.fontWeightBoton,
+          ),
+          iconSize: AppBotones.iconoTamano,
         ),
         onPressed: onPressed,
         child: Row(
@@ -51,13 +56,7 @@ class ColorTextButton extends StatelessWidget {
               ),
             if (iconoBool == true && iconoBoton != null)
               const SizedBox(width: AppEspaciado.sm),
-            Text(
-              text,
-              style: AppBotones.etiquetaBoton(
-                Theme.of(context).textTheme,
-                base: Theme.of(context).textTheme.titleSmall,
-              ),
-            ),
+            Text(text),
           ],
         ),
       ),

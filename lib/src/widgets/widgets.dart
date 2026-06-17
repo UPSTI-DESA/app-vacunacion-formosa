@@ -7,6 +7,7 @@ export 'package:sistema_vacunacion/src/widgets/basebutton_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/colortextbutton_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/escanerdni_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/custom_input_widget.dart';
+export 'package:sistema_vacunacion/src/widgets/formulario_documento_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/new_boton_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/loading_widget.dart';
 export 'package:sistema_vacunacion/src/widgets/headers_widgets.dart';

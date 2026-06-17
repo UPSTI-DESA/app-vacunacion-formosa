@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
-
+import 'package:sistema_vacunacion/src/debug/dev_overlay.dart';
 import 'package:sistema_vacunacion/src/services/enviroment_service.dart';
 import 'package:sistema_vacunacion/src/services/tema_app_service.dart';
 
@@ -57,6 +57,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner:
           enviromentService.envState!.enviroment == 'DEV' ? true : false,
+      builder: (context, child) {
+        if (enviromentService.envState?.enviroment == 'DEV') {
+          return DevOverlay(child: child!);
+        }
+        return child!;
+      },
       initialRoute: LoginBody.nombreRuta,
       theme: SisVacuTheme.light.theme,
       darkTheme: SisVacuTheme.light.temaOscuro,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:sistema_vacunacion/src/debug/dev_log_service.dart';
 import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 import 'package:http/http.dart' as http;
@@ -17,8 +18,22 @@ class _InsertRegistro {
         host: host,
         path: urlPruebaInsert,
         queryParameters: {'insertvacunado': registro});
-    // ignore: unused_local_variable
+
+    devLogService.log(
+      DevLogTipo.apiRequest,
+      'insertRegistro',
+      'POST ${url.path}',
+      datos: {'payload': json.decode(registro)},
+    );
+
     final cargarRegistro = await procesarRespuestaUri(url);
+
+    devLogService.log(
+      DevLogTipo.apiResponse,
+      'insertRegistro',
+      'Respuesta: ${cargarRegistro.isNotEmpty ? cargarRegistro.first.mensaje ?? 'ok' : 'vacío'}',
+    );
+
     return cargarRegistro;
   }
 

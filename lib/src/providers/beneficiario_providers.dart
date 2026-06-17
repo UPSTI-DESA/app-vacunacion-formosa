@@ -4,12 +4,22 @@ import 'dart:developer' as developer;
 
 import 'package:http/http.dart' as http;
 import 'package:sistema_vacunacion/src/config/config.dart';
+import 'package:sistema_vacunacion/src/debug/dev_log_service.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
 class _BeneficiarioProviders {
   // ignore: missing_return
   Future<List<Beneficiario>> procesarRespuestaDos(Uri url) async {
+    devLogService.log(
+      DevLogTipo.apiRequest,
+      'beneficiario',
+      'GET ${url.path}',
+      datos: {
+        'dni': url.queryParameters['sysdesa10_dni'],
+        'sexo': url.queryParameters['sysdesa10_sexo'],
+      },
+    );
     try {
       // Timeout de 30 segundos: evita que la app quede colgada indefinidamente
       // si el servidor no responde. TimeoutException es capturada por el catch.
@@ -31,10 +41,25 @@ class _BeneficiarioProviders {
             '${f == null ? "null" : f.isEmpty ? "cadena vacía — sin imagen en esta respuesta" : "${f.length} caracteres"}',
             name: 'wserv_obtener_datos_beneficiario',
           );
+          devLogService.log(
+            DevLogTipo.apiResponse,
+            'beneficiario',
+            'codigo_msg=${b0.codigo_mensaje} | ${b0.sysdesa10_apellido ?? ''}, ${b0.sysdesa10_nombre ?? ''}',
+            datos: {
+              'dni': b0.sysdesa10_dni,
+              'nombre': b0.sysdesa10_nombre,
+              'apellido': b0.sysdesa10_apellido,
+              'sexo': b0.sysdesa10_sexo,
+              'edad': b0.sysdesa10_edad,
+              'codigo_mensaje': b0.codigo_mensaje,
+              'foto': f == null ? null : '${f.length} chars',
+            },
+          );
         }
         return items;
       }
     } catch (e) {
+      devLogService.log(DevLogTipo.apiError, 'beneficiario', '$e');
       throw 'Ocurrio un error $e';
     }
 

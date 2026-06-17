@@ -70,6 +70,11 @@ class BotonCustom extends StatelessWidget {
           ),
         ),
         tapTargetSize: MaterialTapTargetSize.padded,
+        textStyle: TextStyle(
+          fontSize: AppBotones.fontSizeBoton,
+          fontWeight: AppBotones.fontWeightBoton,
+        ),
+        iconSize: AppBotones.iconoTamano,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -88,10 +93,6 @@ class BotonCustom extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: AppBotones.etiquetaBoton(
-                Theme.of(context).textTheme,
-                base: Theme.of(context).textTheme.titleMedium,
-              ),
             ),
           ),
         ],

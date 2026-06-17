@@ -29,7 +29,7 @@ class VacunadorPage extends StatefulWidget {
   static const String nombreRuta = 'VacunadorEstablecimiento';
   final List<Usuarios?> infoCargador;
 
-  const VacunadorPage({Key? key, required this.infoCargador}) : super(key: key);
+  const VacunadorPage({super.key, required this.infoCargador});
 
   @override
   State<VacunadorPage> createState() => _VacunadorPageState();
@@ -143,12 +143,12 @@ class _VacunadorPageState extends State<VacunadorPage> {
                     valueListenable: mismoVacunador,
                     builder: (context, esMismo, _) {
                       final hayVacunador = _vacunadorActual != null;
-                      if (!esMismo || hayVacunador) {
+                      if (esMismo || hayVacunador) {
                         return const SizedBox.shrink();
                       }
                       return RepaintBoundary(
                         child: _RegistroVacunadorPanel(
-                          onValidarDni: verificarEscencialText,
+                          onValidarDni: verificarEsencialText,
                         ),
                       );
                     },
@@ -160,7 +160,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                       valueListenable: mismoVacunador,
                       builder: (context, esMismoVacunador, _) {
                         final hayV = _vacunadorActual != null;
-                        final puedeAvanzar = !esMismoVacunador || hayV;
+                        final puedeAvanzar = esMismoVacunador || hayV;
                         return BotonCustom(
                           text: puedeAvanzar
                               ? 'Siguiente'
@@ -168,7 +168,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                           enabled: puedeAvanzar,
                           onPressed: () {
                             if (!puedeAvanzar) return;
-                            if (esMismoVacunador) {
+                            if (!esMismoVacunador) {
                               verificarVacunador();
                             } else {
                               vacunadorService.cargarVacunador(
@@ -327,6 +327,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
+                        style: AppBotones.estiloTexto(cs),
                         onPressed: _cargarListaEfectoresInicial,
                         child: const Text('Reintentar'),
                       ),
@@ -414,10 +415,10 @@ class _VacunadorPageState extends State<VacunadorPage> {
             builder: (context, esMismoVacunador, _) {
               final valorVacunador = hayVacunador
                   ? vacunadorService.vacunador!.sysdesa06_nombre!
-                  : (esMismoVacunador
+                  : (!esMismoVacunador
                         ? 'Falta asignar'
                         : registradorService.registrador!.flxcore03_nombre!);
-              final destacarPendiente = !hayVacunador && esMismoVacunador;
+              final destacarPendiente = !hayVacunador && !esMismoVacunador;
               return _filaPersona(
                 context,
                 etiqueta: 'Vacunador',
@@ -704,7 +705,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
     }
   }
 
-  Future<void> verificarEscencialText(
+  Future<void> verificarEsencialText(
     String dni,
     TextEditingController controladorCampo,
   ) async {
@@ -1101,7 +1102,7 @@ class _RegistroVacunadorPanelState extends State<_RegistroVacunadorPanel> {
           ),
           const SizedBox(height: AppEspaciado.lg),
           Text(
-            'Escanee el código del D.N.I. del vacunador (frente o reverso según el tipo de tarjeta), igual que en el acceso inicial.',
+            'Escanee el código del D.N.I. del vacunador (frente o reverso según el tipo de tarjeta) o ingréselo manualmente.',
             textAlign: TextAlign.center,
             style: tt.bodyMedium?.copyWith(
               fontSize: 14,
@@ -1110,42 +1111,15 @@ class _RegistroVacunadorPanelState extends State<_RegistroVacunadorPanel> {
             ),
           ),
           const SizedBox(height: AppEspaciado.xl),
-          const SizedBox(
-            width: double.infinity,
-            child: EscanerDni(
-              'Vacunador',
-              'Escanear documento',
-              anchoValor: 44,
-            ),
-          ),
-          const SizedBox(height: AppEspaciado.xl),
-          Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.45)),
-          const SizedBox(height: AppEspaciado.lg),
-          Text(
-            'Ingreso manual del D.N.I.',
-            style: bar.subtituloTarjeta.copyWith(color: cs.onSurface),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Sin puntos; confirme con «Listo» del teclado.',
-            style: tt.bodyMedium?.copyWith(
-              fontSize: 13,
-              height: 1.35,
-              color: cs.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: AppEspaciado.md),
-          CustomInput(
-            autoFocus: false,
+          FormularioDocumento(
+            tipoEscaneo: 'Vacunador',
+            textoBotonEscaneo: 'Escanear documento',
+            anchoEscaner: 44,
+            mostrarSexo: false,
+            controladorDni: _controlador,
             focusNode: _focus,
-            icon: Icons.perm_identity,
-            placeholder: 'D.N.I.',
-            keyboardType: TextInputType.phone,
-            textController: _controlador,
-            funcionTerminar: true,
-            funcion: () {
-              widget.onValidarDni(_controlador.text, _controlador);
-            },
+            onVerificar: (dni, _) =>
+                widget.onValidarDni(dni, _controlador),
           ),
         ],
       ),

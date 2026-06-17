@@ -536,11 +536,11 @@ class _EscanerDniState extends State<EscanerDni> {
     final datos = _parsearPdf417DniArgentino(partes);
 
     setState(() {
-      if (datos != null && RegExp(r'^\d{7,8}$').hasMatch(datos.dni)) {
+      if (datos != null && _kRegexDni.hasMatch(datos.dni)) {
         apellidoPersona = datos.apellido;
         nombrePersona = datos.nombre;
         dniPersona = datos.dni;
-        sexoPersona = datos.sexo == 'M' ? 'M' : 'F';
+        sexoPersona = _normalizarSexoPdf417(datos.sexo);
         numeroTramite = datos.tramite;
         codigodebarras = cadenaApi;
         _fechaNacPdf417Escaneo = datos.fechaNacimientoPdf417;
@@ -588,7 +588,7 @@ _DatosDniPdf417? _parsearPdf417DniArgentino(List<String> p) {
   // Formato anterior: PDF417 del reverso (16 o 17 campos con @).
   if (n == 17 || n == 16) {
     final dni = p[1].replaceAll(RegExp(r'\s'), '');
-    if (RegExp(r'^\d{7,8}$').hasMatch(dni)) {
+    if (_kRegexDni.hasMatch(dni)) {
       return _DatosDniPdf417(
         apellido: p[4],
         nombre: p[5],
@@ -613,8 +613,7 @@ _DatosDniPdf417? _parsearPdf417DniArgentino(List<String> p) {
   if (n >= 5) {
     final dni = p[4].replaceAll(RegExp(r'\s'), '');
     final sx = p[3].trim();
-    if (RegExp(r'^\d{7,8}$').hasMatch(dni) &&
-        RegExp(r'^[MF]$', caseSensitive: false).hasMatch(sx)) {
+    if (_kRegexDni.hasMatch(dni) && _kRegexSexo.hasMatch(sx)) {
       return _DatosDniPdf417(
         apellido: p[1],
         nombre: p[2],
@@ -638,10 +637,11 @@ _DatosDniPdf417? _parsearPdf417DniArgentino(List<String> p) {
   );
 }
 
+/// M / F / X (género no binario, habilitado por Renaper desde 2021).
 String _normalizarSexoPdf417(String raw) {
   final u = raw.trim().toUpperCase();
-  if (u.startsWith('M')) return 'M';
-  if (u.startsWith('F')) return 'F';
+  if (u == 'M' || u == 'MASCULINO') return 'M';
+  if (u == 'X') return 'X';
   return 'F';
 }
 
@@ -652,7 +652,7 @@ _DatosDniPdf417? _parseoHeuristicoPdf417(List<String> p) {
   // Posición habitual del DNI en layout nuevo (evita confundir con otros números de 7–8 dígitos).
   if (p.length > 4) {
     final t4 = p[4].replaceAll(RegExp(r'\s'), '');
-    if (RegExp(r'^\d{7,8}$').hasMatch(t4)) {
+    if (_kRegexDni.hasMatch(t4)) {
       dni = t4;
       idxDni = 4;
     }
@@ -660,7 +660,7 @@ _DatosDniPdf417? _parseoHeuristicoPdf417(List<String> p) {
   if (dni == null) {
     for (var i = 0; i < p.length; i++) {
       final t = p[i].replaceAll(RegExp(r'\s'), '');
-      if (RegExp(r'^\d{7,8}$').hasMatch(t)) {
+      if (_kRegexDni.hasMatch(t)) {
         dni = t;
         idxDni = i;
         break;
@@ -672,20 +672,14 @@ _DatosDniPdf417? _parseoHeuristicoPdf417(List<String> p) {
   var sexo = 'F';
   for (final s in p) {
     final u = s.trim().toUpperCase();
-    if (u == 'M' || u == 'MASCULINO') {
-      sexo = 'M';
-      break;
-    }
-    if (u == 'F' || u == 'FEMENINO') {
-      sexo = 'F';
-      break;
-    }
+    if (u == 'M' || u == 'MASCULINO') { sexo = 'M'; break; }
+    if (u == 'X')                      { sexo = 'X'; break; }
+    if (u == 'F' || u == 'FEMENINO')   { sexo = 'F'; break; }
   }
   if (sexo == 'F') {
     for (final s in p) {
-      final x = s.trim();
-      if (RegExp(r'^[MF]$', caseSensitive: false).hasMatch(x)) {
-        sexo = x.toUpperCase() == 'M' ? 'M' : 'F';
+      if (_kRegexSexo.hasMatch(s.trim())) {
+        sexo = _normalizarSexoPdf417(s.trim());
         break;
       }
     }
@@ -697,8 +691,8 @@ _DatosDniPdf417? _parseoHeuristicoPdf417(List<String> p) {
     if (s.isEmpty) continue;
     if (i == idxDni) continue;
     final soloDigitos = s.replaceAll(RegExp(r'\s'), '');
-    if (RegExp(r'^\d+$').hasMatch(soloDigitos)) continue;
-    if (RegExp(r'^[MF]$', caseSensitive: false).hasMatch(s)) continue;
+    if (_kRegexSoloNums.hasMatch(soloDigitos)) continue;
+    if (_kRegexSexo.hasMatch(s)) continue;
     if (s.length < 2) continue;
     textos.add(s);
   }
@@ -713,13 +707,18 @@ _DatosDniPdf417? _parseoHeuristicoPdf417(List<String> p) {
     dni: dni,
     sexo: sexo,
     tramite: tramite,
-    fechaNacimientoPdf417: fechaNacimientoDesdePartesPdf417(p),
+    fechaNacimientoPdf417: null, // el caller ya calculó fn y hace fn ?? h.fechaNacimientoPdf417
   );
 }
 
-/// PDF417 (frente o reverso) y códigos lineales habituales en documentos argentinos.
-const int _kFormatosCodigoDniArgentino =
-    Format.pdf417 | Format.code128 | Format.code93;
+// Compiled once — se usan en cada evento de scan.
+final _kRegexDni      = RegExp(r'^\d{7,8}$');
+final _kRegexSexo     = RegExp(r'^[MFX]$', caseSensitive: false);
+final _kRegexSoloNums = RegExp(r'^\d+$');
+
+/// El DNI argentino usa exclusivamente PDF417. Code128/Code93 corresponden a
+/// licencias de conducir y productos — incluirlos triplica el trabajo nativo por frame.
+const int _kFormatosCodigoDniArgentino = Format.pdf417;
 
 /// True si [crudo] tiene forma de lectura de DNI (@ + DNI 7–8 dígitos parseable).
 bool _cadenaEsLecturaPlausibleDniArgentino(String crudo) {
@@ -727,7 +726,7 @@ bool _cadenaEsLecturaPlausibleDniArgentino(String crudo) {
   if (s.isEmpty || !s.contains('@')) return false;
   final partes = s.split('@').map((e) => e.trim()).toList();
   final datos = _parsearPdf417DniArgentino(partes);
-  return datos != null && RegExp(r'^\d{7,8}$').hasMatch(datos.dni);
+  return datos != null && _kRegexDni.hasMatch(datos.dni);
 }
 
 class _ScannerPage extends StatefulWidget {
@@ -840,12 +839,12 @@ class _ScannerPageState extends State<_ScannerPage> {
     if (forzarMensaje != null) {
       mensaje = forzarMensaje;
     } else if (_contadorLecturasInvalidas >= 3) {
-      mensaje = 'Seguís intentando con un código que no es del DNI.\n'
-          'Tarjeta nueva: código QR/digitable del frente.\n'
-          'Tarjeta anterior: PDF417 del reverso (estilo código de barras).';
+      mensaje = 'Seguís intentando con un código que no corresponde al DNI.\n'
+          'Tarjeta nueva (plástico): PDF417 del frente.\n'
+          'Tarjeta anterior (cartón): PDF417 del reverso.';
     } else {
-      mensaje = 'Ese código no es el del DNI.\n'
-          'Usá el del frente (tarjeta nueva) o el PDF417 del reverso (tarjeta anterior).\n'
+      mensaje = 'Ese código no es del DNI argentino.\n'
+          'Usá el código de barras del frente (tarjeta nueva) o del reverso (tarjeta anterior).\n'
           'Mantené la cámara abierta.';
     }
 
@@ -857,7 +856,7 @@ class _ScannerPageState extends State<_ScannerPage> {
         backgroundColor: const Color(0xE6000000),
         content: Text(
           codigoDetectado != null && codigoDetectado.contains('@') && forzarMensaje == null
-              ? 'Se leyó un código pero no tiene formato de DNI argentino.\n$mensaje'
+              ? 'Se leyó un PDF417 pero no tiene el formato del DNI argentino.\n$mensaje'
               : mensaje,
           style: tt.bodyMedium?.copyWith(
             color: Colors.white,
@@ -913,12 +912,12 @@ class _ScannerPageState extends State<_ScannerPage> {
   void _abrirPanelConfirmacion(String crudo) {
     final partes = crudo.split('@').map((e) => e.trim()).toList();
     final datos = _parsearPdf417DniArgentino(partes);
-    if (datos == null || !RegExp(r'^\d{7,8}$').hasMatch(datos.dni)) {
+    if (datos == null || !_kRegexDni.hasMatch(datos.dni)) {
       _avisarCodigoNoEsDni();
       return;
     }
-    final sx = datos.sexo.toUpperCase().startsWith('M') ? 'M' : 'F';
-    final etiquetaSexo = sx == 'M' ? 'Masculino' : 'Femenino';
+    final sx = _normalizarSexoPdf417(datos.sexo);
+    final etiquetaSexo = sx == 'M' ? 'Masculino' : sx == 'X' ? 'No binario (X)' : 'Femenino';
     setState(() {
       _panelConfirmacionVisible = true;
       _cadenaPendienteConfirmacion = crudo;
@@ -990,7 +989,8 @@ class _ScannerPageState extends State<_ScannerPage> {
             scanDelaySuccess: Duration.zero,
             // Un poco más de aire entre intentos reduce lecturas sobre fotogramas movidos.
             scanDelay: const Duration(milliseconds: 240),
-            tryHarder: true,
+            // PDF417 impreso en DNI moderno es legible sin estrategias extra.
+            tryHarder: false,
             tryDownscale: true,
             // Algunos PDF417 del DNI se leen mejor con variante invertida.
             tryInverted: true,
@@ -1018,6 +1018,7 @@ class _ScannerPageState extends State<_ScannerPage> {
                       ),
                       actions: [
                         TextButton(
+                          style: AppBotones.estiloTexto(Theme.of(ctx).colorScheme),
                           onPressed: () => Navigator.of(ctx).pop(),
                           child: const Text('Cerrar'),
                         ),
@@ -1069,8 +1070,9 @@ class _ScannerPageState extends State<_ScannerPage> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
-                                    'Tarjeta nueva: código en el frente. Tarjeta anterior: PDF417 del reverso. '
-                                    'Centrá el código en el marco; se lee todo el encuadre.',
+                                    'Tarjeta nueva (plástico): PDF417 del frente. '
+                                    'Tarjeta anterior (cartón): PDF417 del reverso. '
+                                    'Centrá el código de barras en el marco.',
                                     style: tt.bodyMedium?.copyWith(
                                       color: Colors.white,
                                       height: 1.35,
@@ -1227,19 +1229,8 @@ class _PanelConfirmacionLecturaDni extends StatelessWidget {
                   width: double.infinity,
                   child: FilledButton(
                     onPressed: onConfirmar,
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(48),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: AppBotones.forma,
-                    ),
-                    child: Text(
-                      'Confirmar y continuar',
-                      style: AppBotones.etiquetaBoton(
-                        tt,
-                        base: tt.labelLarge,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    style: AppBotones.estiloFilledCta(),
+                    child: const Text('Confirmar y continuar'),
                   ),
                 ),
                 const SizedBox(height: AppEspaciado.sm),
@@ -1248,28 +1239,14 @@ class _PanelConfirmacionLecturaDni extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: onEscanearDeNuevo,
                     style: AppBotones.estiloOutlinedSobreOscuro(),
-                    child: Text(
-                      'Escanear de nuevo',
-                      style: AppBotones.etiquetaBoton(
-                        tt,
-                        base: tt.labelLarge,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    child: const Text('Escanear de nuevo'),
                   ),
                 ),
                 const SizedBox(height: 8),
                 TextButton(
                   onPressed: onSalir,
                   style: AppBotones.estiloTextoSobreOscuro(),
-                  child: Text(
-                    'Salir sin cargar',
-                    style: AppBotones.etiquetaBoton(
-                      tt,
-                      base: tt.labelLarge,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  child: const Text('Salir sin cargar'),
                 ),
                 const Spacer(),
               ],

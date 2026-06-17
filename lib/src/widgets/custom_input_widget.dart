@@ -17,7 +17,7 @@ class CustomInput extends StatelessWidget {
   final FocusNode focusNode;
 
   const CustomInput({
-    Key? key,
+    super.key,
     required this.icon,
     required this.placeholder,
     required this.textController,
@@ -29,7 +29,7 @@ class CustomInput extends StatelessWidget {
     required this.focusNode,
     this.funcion,
     this.scrollPadding = const EdgeInsets.only(bottom: 120),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +50,11 @@ class CustomInput extends StatelessWidget {
         controller: textController,
         keyboardType: keyboardType,
         obscureText: isPassword,
-        onEditingComplete: funcionTerminar == true ? funcion : null,
+        onEditingComplete: funcionTerminar ? funcion : null,
         scrollPadding: scrollPadding,
         decoration: InputDecoration(
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.surfaceContainer,
           prefixIcon: Icon(icon, size: AppTamanoIcono.mediano),
           focusedBorder: InputBorder.none,
           border: InputBorder.none,

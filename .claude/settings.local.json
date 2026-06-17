@@ -28,7 +28,12 @@
       "Bash(grep -n \"loading_indicator\\\\|Roulette\" /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib/src/widgets/*.dart)",
       "Bash(find /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib -name \"*.dart\" -exec wc -l {} +)",
       "Bash(grep -r \"^class.*Widget\\\\|^class.*extends State\" /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/lib/src/pages/*.dart)",
-      "Bash(dart analyze *)"
+      "Bash(dart analyze *)",
+      "Bash(pod install *)",
+      "Bash(flutter emulators *)",
+      "Bash(flutter devices *)",
+      "Bash(flutter run *)",
+      "Bash(open /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/ios/Runner.xcworkspace)"
     ]
   }
 }

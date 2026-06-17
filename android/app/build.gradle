@@ -4,8 +4,14 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    namespace "com.upsti.sistema_vacunacion"
+    namespace "com.mindh.vacunacion"
     compileSdk 36
 
     compileOptions {
@@ -22,7 +28,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.upsti.sistema_vacunacion"
+        applicationId "com.mindh.vacunacion"
         minSdkVersion flutter.minSdkVersion
         targetSdk 36
         multiDexEnabled true
@@ -30,9 +36,21 @@ android {
         versionName flutter.versionName
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

@@ -87,11 +87,8 @@ Future<void> mostrarDialogoNovedadesApp(BuildContext context) {
                 alignment: Alignment.centerRight,
                 child: FilledButton.tonal(
                   onPressed: () => Navigator.of(ctx).pop(),
-                  style: FilledButton.styleFrom(shape: AppBotones.forma),
-                  child: Text(
-                    'Cerrar',
-                    style: tt.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-                  ),
+                  style: AppBotones.estiloFilled(Theme.of(context).colorScheme),
+                  child: const Text('Cerrar'),
                 ),
               ),
             ],

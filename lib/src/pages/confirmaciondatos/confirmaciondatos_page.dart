@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/models/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
@@ -9,23 +8,16 @@ import 'package:sistema_vacunacion/src/services/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class ConfirmarDatos extends StatefulWidget {
-  const ConfirmarDatos({Key? key}) : super(key: key);
+  const ConfirmarDatos({super.key});
   static const String nombreRuta = 'ConfirmarDatos';
   @override
   _ConfirmarDatosState createState() => _ConfirmarDatosState();
 }
 
 class _ConfirmarDatosState extends State<ConfirmarDatos> {
-  late DateTime fechaSeleccionada;
   bool habilitarCircular = false;
   bool _mostrarBeneficiario = false;
   bool _mostrarTutor = false;
-
-  @override
-  void initState() {
-    super.initState();
-    fechaSeleccionada = DateTime.now();
-  }
 
   bool _hayTutor() {
     final t = tutorService.tutor;
@@ -63,8 +55,6 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                     _encabezadoPagina(),
                     const SizedBox(height: AppEspaciado.md),
                     _seccionResumenVacuna(),
-                    const SizedBox(height: AppEspaciado.md),
-                    _seccionFecha(),
                     const SizedBox(height: AppEspaciado.md),
                     _tarjetaBeneficiario(),
                     if (_hayTutor()) ...[
@@ -224,102 +214,6 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
         ),
       ],
     );
-  }
-
-  Widget _seccionFecha() {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    final bar = context.sisTipografia;
-    final fechaFmt = DateFormat('dd / MM / yyyy').format(fechaSeleccionada);
-
-    return Container(
-      padding: const EdgeInsets.all(AppEspaciado.lg),
-      decoration: BoxDecoration(
-        color: cs.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(AppEspaciado.xl),
-        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.35)),
-        boxShadow: [
-          BoxShadow(
-            color: cs.shadow.withValues(alpha: 0.08),
-            blurRadius: 22,
-            offset: const Offset(0, 10),
-            spreadRadius: -6,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 4,
-            height: 48,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppEspaciado.xs),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [cs.tertiary, cs.tertiary.withValues(alpha: 0.55)],
-              ),
-            ),
-          ),
-          const SizedBox(width: 14),
-          Icon(Icons.calendar_today_outlined, color: cs.tertiary, size: AppTamanoIcono.mediano),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'FECHA DE APLICACIÓN',
-                  style: tt.labelSmall?.copyWith(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.35,
-                    color: cs.tertiary,
-                  ),
-                ),
-                const SizedBox(height: AppEspaciado.xs),
-                Text(
-                  fechaFmt,
-                  style: bar.tituloTarjeta.copyWith(
-                    fontSize: 20,
-                    color: cs.onSurface,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          TextButton.icon(
-            style: TextButton.styleFrom(
-              foregroundColor: cs.primary,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppEspaciado.sm,
-                vertical: AppEspaciado.xs,
-              ),
-            ),
-            onPressed: _seleccionarFecha,
-            icon: const Icon(Icons.edit_calendar_outlined, size: 18),
-            label: Text(
-              'Cambiar',
-              style: tt.labelSmall?.copyWith(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: cs.primary,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _seleccionarFecha() async {
-    final DateTime? nueva = await showDatePicker(
-      context: context,
-      initialDate: fechaSeleccionada,
-      firstDate: DateTime(2021),
-      lastDate: DateTime.now(),
-    );
-    if (nueva != null) setState(() => fechaSeleccionada = nueva);
   }
 
   BoxDecoration _decoracionTarjeta() {
@@ -592,7 +486,6 @@ const SizedBox(width: AppEspaciado.md),
   }
 
   Widget _botonRegistrar() {
-    final tt = Theme.of(context).textTheme;
     return FilledButton.icon(
       style: AppBotones.estiloFilledIconCta(
         padding: const EdgeInsets.symmetric(
@@ -601,28 +494,17 @@ const SizedBox(width: AppEspaciado.md),
         ),
       ),
       onPressed: habilitarCircular ? null : () => enviarDatos(context),
-      icon: const Icon(Icons.check_circle_outline_rounded, size: 22),
-      label: Text(
-        'Registrar vacunación',
-        style: AppBotones.etiquetaBoton(
-          tt,
-          fontSize: 16,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
+      icon: const Icon(Icons.check_circle_outline_rounded),
+      label: const Text('Registrar vacunación'),
     );
   }
 
   Widget _botonCancelar() {
     final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
     return OutlinedButton.icon(
       style: AppBotones.estiloOutlinedPeligro(cs),
-      icon: const Icon(Icons.cancel_outlined, size: 22),
-      label: Text(
-        'Cancelar registro',
-        style: AppBotones.etiquetaBoton(tt, fontSize: 15),
-      ),
+      icon: const Icon(Icons.cancel_outlined),
+      label: const Text('Cancelar registro'),
       onPressed: habilitarCircular
           ? null
           : () {
@@ -688,10 +570,6 @@ const SizedBox(width: AppEspaciado.md),
   Future<void> enviarDatos(BuildContext context2) async {
     setState(() => habilitarCircular = true);
     try {
-      if (insertRegistroService.registro!.fecha_aplicacion !=
-          fechaSeleccionada.toString()) {
-        insertRegistroService.agregarFecha(fechaSeleccionada);
-      }
       final mensaje = await insertRegistroProvider.insertRegistroProd();
       if (!mounted) return;
       setState(() => habilitarCircular = false);

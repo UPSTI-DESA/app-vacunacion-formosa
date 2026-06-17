@@ -4,7 +4,7 @@ import 'package:sistema_vacunacion/src/config/config.dart';
 
 /// Cabecera contextual: jerarquía clara, copy orientado a tarea (patrón 2024–2026).
 class VacunasEncabezadoPagina extends StatelessWidget {
-  const VacunasEncabezadoPagina({Key? key}) : super(key: key);
+  const VacunasEncabezadoPagina({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,33 +57,29 @@ const List<_PasoMeta> _metasPasosVacunas = [
   _PasoMeta('Condición', Icons.health_and_safety_outlined),
   _PasoMeta('Esquema', Icons.account_tree_outlined),
   _PasoMeta('Dosis', Icons.numbers_outlined),
+  _PasoMeta('Fecha', Icons.calendar_today_outlined),
   _PasoMeta('Lote', Icons.inventory_2_outlined),
   _PasoMeta('Revisar', Icons.fact_check_outlined),
 ];
 
-class _ColorPasoMeta {
-  const _ColorPasoMeta(this.color);
-  final Color color;
-}
-
-const List<_ColorPasoMeta> _coloresPasosVacunas = [
-  _ColorPasoMeta(Color(0xFF004B8E)),
-  _ColorPasoMeta(Color(0xFF00796B)),
-  _ColorPasoMeta(Color(0xFF00897A)),
-  _ColorPasoMeta(Color(0xFF0097A7)),
-  _ColorPasoMeta(Color(0xFF00695C)),
-  _ColorPasoMeta(Color(0xFF009688)),
+const List<Color> _coloresPasosVacunas = [
+  Color(0xFF004B8E),
+  Color(0xFF00796B),
+  Color(0xFF00897A),
+  Color(0xFF0097A7),
+  Color(0xFF00695C),
+  Color(0xFF009688),
 ];
 
 /// Stepper horizontal con etiquetas, tacto amplio y estados M3.
 class VacunasFlujoStepper extends StatelessWidget {
   const VacunasFlujoStepper({
-    Key? key,
+    super.key,
     required this.pasoActual,
     required this.onIrAPaso,
-  }) : super(key: key);
+  });
 
-  /// 1–7 alineado con [VacunasPage] `pasos`.
+  /// 1–8 alineado con [VacunasPage] `pasos`.
   final int pasoActual;
   final ValueChanged<int> onIrAPaso;
 
@@ -193,7 +189,7 @@ class VacunasFlujoStepper extends StatelessWidget {
 /// Contenedor del flujo: header con selecciones + stepper + contenido del paso.
 class VacunasPanelFlujo extends StatefulWidget {
   const VacunasPanelFlujo({
-    Key? key,
+    super.key,
     required this.pasoActual,
     required this.onIrAPaso,
     required this.child,
@@ -202,8 +198,9 @@ class VacunasPanelFlujo extends StatefulWidget {
     this.condicion,
     this.esquema,
     this.dosis,
+    this.fecha,
     this.lote,
-  }) : super(key: key);
+  });
 
   final int pasoActual;
   final ValueChanged<int> onIrAPaso;
@@ -213,6 +210,7 @@ class VacunasPanelFlujo extends StatefulWidget {
   final String? condicion;
   final String? esquema;
   final String? dosis;
+  final String? fecha;
   final String? lote;
 
   @override
@@ -242,7 +240,7 @@ class _VacunasPanelFlujoState extends State<VacunasPanelFlujo> {
       _ItemSeleccion(numeroPaso: 3, nombre: 'Condición', valor: widget.condicion, icono: Icons.health_and_safety_outlined, indiceColor: 2),
       _ItemSeleccion(numeroPaso: 4, nombre: 'Esquema', valor: widget.esquema, icono: Icons.account_tree_outlined, indiceColor: 3),
       _ItemSeleccion(numeroPaso: 5, nombre: 'Dosis', valor: widget.dosis, icono: Icons.numbers_outlined, indiceColor: 4),
-      _ItemSeleccion(numeroPaso: 6, nombre: 'Lote', valor: widget.lote, icono: Icons.inventory_2_outlined, indiceColor: 5),
+      _ItemSeleccion(numeroPaso: 7, nombre: 'Lote', valor: widget.lote, valorSecundario: widget.fecha, icono: Icons.inventory_2_outlined, indiceColor: 5),
     ]);
   }
 
@@ -289,7 +287,7 @@ class _VacunasPanelFlujoState extends State<VacunasPanelFlujo> {
                         borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
                       ),
                       child: Text(
-                        'PASO ${widget.pasoActual} DE 7',
+                        'PASO ${widget.pasoActual} DE ${_metasPasosVacunas.length}',
                         style: tt.labelSmall?.copyWith(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
@@ -354,6 +352,7 @@ class _ItemSeleccion {
     required this.numeroPaso,
     required this.nombre,
     this.valor,
+    this.valorSecundario,
     required this.icono,
     required this.indiceColor,
   });
@@ -361,6 +360,7 @@ class _ItemSeleccion {
   final int numeroPaso;
   final String nombre;
   final String? valor;
+  final String? valorSecundario;
   final IconData icono;
   final int indiceColor;
   bool get tieneValor => valor != null && valor!.isNotEmpty;
@@ -422,12 +422,15 @@ class _ChipItemSeleccion extends StatelessWidget {
   final bool puedeTocarse;
   final VoidCallback onTap;
 
+  bool get _tieneSecundario =>
+      item.valorSecundario != null && item.valorSecundario!.isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final oscuro = cs.brightness == Brightness.dark;
 
-    final colorPaso = _coloresPasosVacunas[item.indiceColor].color;
+    final colorPaso = _coloresPasosVacunas[item.indiceColor];
 
     final Color borde;
     final Color colorIcono;
@@ -516,9 +519,22 @@ class _ChipItemSeleccion extends StatelessWidget {
                         color: colorValor,
                         height: 1.3,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    if (_tieneSecundario) ...[
+                      Text(
+                        item.valorSecundario!,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: colorValor.withValues(alpha: 0.75),
+                          height: 1.2,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -533,11 +549,11 @@ class _ChipItemSeleccion extends StatelessWidget {
 /// Título + subtítulo por paso del flujo (coherente con cabecera de pantalla).
 class VacunasTituloSeccionPaso extends StatelessWidget {
   const VacunasTituloSeccionPaso({
-    Key? key,
+    super.key,
     this.etiqueta,
     required this.titulo,
     this.subtitulo,
-  }) : super(key: key);
+  });
 
   final String? etiqueta;
   final String titulo;
@@ -594,7 +610,7 @@ class VacunasTituloSeccionPaso extends StatelessWidget {
 
 class VacunasBarraResumen extends StatelessWidget {
   const VacunasBarraResumen({
-    Key? key,
+    super.key,
     required this.pasoActual,
     required this.perfil,
     required this.vacuna,
@@ -602,7 +618,7 @@ class VacunasBarraResumen extends StatelessWidget {
     required this.esquema,
     required this.dosis,
     required this.lote,
-  }) : super(key: key);
+  });
 
   final int pasoActual;
   final String? perfil;
@@ -631,7 +647,7 @@ class VacunasBarraResumen extends StatelessWidget {
           nombre: chip.nombre,
           valor: chip.valor ?? '—',
           tieneValor: chip.valor != null && chip.valor!.isNotEmpty,
-          colorBase: _coloresPasosVacunas[chip.indice].color,
+          colorBase: _coloresPasosVacunas[chip.indice],
         );
       }).toList(),
     );
