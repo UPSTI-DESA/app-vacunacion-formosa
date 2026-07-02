@@ -343,13 +343,10 @@ class _VacunadorPageState extends State<VacunadorPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: StreamBuilder<Usuarios?>(
-                  stream: registradorService.registradorStream,
-                  initialData: registradorService.registrador,
-                  builder: (context, snapshot) {
-                    final desc =
-                        registradorService.registrador?.sysofic01_descripcion ??
-                        '';
+                child: ValueListenableBuilder<Usuarios?>(
+                  valueListenable: registradorService.registradorEstado,
+                  builder: (context, registrador, _) {
+                    final desc = registrador?.sysofic01_descripcion ?? '';
                     return Text(
                       desc,
                       style: tt.titleMedium?.copyWith(

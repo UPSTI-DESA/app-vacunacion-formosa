@@ -1,40 +1,35 @@
-import 'dart:async';
-
 import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 
+import 'estado.dart';
+
 class _RegistradorService {
-  Usuarios? _registrador;
+  final registradorEstado = Estado<Usuarios?>(null);
 
-  final StreamController<Usuarios?> _registradorStreamController =
-      StreamController<Usuarios?>.broadcast();
+  Usuarios? get registrador => registradorEstado.value;
 
-  Usuarios? get registrador => _registrador;
-
-  bool get existeRegistrador => (_registrador != null) ? true : false;
-
-  Stream<Usuarios?> get registradorStream =>
-      _registradorStreamController.stream;
+  bool get existeRegistrador => registradorEstado.value != null;
 
   void cargarRegistrador(Usuarios? registrador) {
-    _registrador = registrador;
-    _registradorStreamController.add(registrador);
+    registradorEstado.value = registrador;
   }
 
-  void eliminarRegistrador() {
-    _registrador = null;
-    _registradorStreamController.add(_registrador!);
+  void reiniciar() {
+    registradorEstado.reiniciar();
   }
 
   //---------------- Editar el Efector de un Registrador ---------------------------//
 
   void editarEfectorUsuario(Efectores nuevoEfector) {
-    _registrador!.rela_sysofic01 = nuevoEfector.relaSysofic01;
-    _registrador!.sysofic01_descripcion = nuevoEfector.sysofic01Descripcion;
-    _registradorStreamController.add(_registrador);
-  }
-
-  dispose() {
-    _registradorStreamController.close();
+    final r = registradorEstado.value!;
+    registradorEstado.value = Usuarios(
+      id_flxcore03: r.id_flxcore03,
+      flxcore03_dni: r.flxcore03_dni,
+      flxcore03_nombre: r.flxcore03_nombre,
+      rela_sysofic01: nuevoEfector.relaSysofic01,
+      sysofic01_descripcion: nuevoEfector.sysofic01Descripcion,
+      codigo_mensaje: r.codigo_mensaje,
+      mensaje: r.mensaje,
+    );
   }
 }
 

@@ -211,15 +211,16 @@ class _TabSesionState extends State<_TabSesion> {
     super.initState();
     _subs = [
       vacunadorService.vacunadorStream.listen((_) => setState(() {})),
-      registradorService.registradorStream.listen((_) => setState(() {})),
       efectoresService.efectoresStream.listen((_) => setState(() {})),
     ];
     void rebuild() => setState(() {});
     beneficiarioService.beneficiarioEstado.addListener(rebuild);
     tutorService.tutorEstado.addListener(rebuild);
+    registradorService.registradorEstado.addListener(rebuild);
     _detenerListeners = [
       () => beneficiarioService.beneficiarioEstado.removeListener(rebuild),
       () => tutorService.tutorEstado.removeListener(rebuild),
+      () => registradorService.registradorEstado.removeListener(rebuild),
     ];
   }
 
