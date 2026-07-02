@@ -1,95 +1,55 @@
-import 'dart:async';
-
 import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 
+import 'estado.dart';
+
 class _VacunasporPerfiles {
-  VacunasxPerfil? _vacunasxperfil;
+  final vacunasxperfilEstado = Estado<VacunasxPerfil?>(null);
+  final listavacunasxperfilEstado = Estado<List<VacunasxPerfil>>([]);
+  final listavacunasxperfilBusquedaEstado = Estado<List<VacunasxPerfil>>([]);
 
-  List<VacunasxPerfil>? _listavacunasxperfil = [];
+  VacunasxPerfil? get vacunasxPerfil => vacunasxperfilEstado.value;
 
-  List<VacunasxPerfil>? _listavacunasxperfilBusqueda = [];
-
-  final StreamController<VacunasxPerfil?> _vacunasxperfilStreamController =
-      StreamController<VacunasxPerfil?>.broadcast();
-
-  VacunasxPerfil? get vacunasxPerfil => _vacunasxperfil;
-
-  bool get existeVacunasxPerfil => (_vacunasxperfil != null) ? true : false;
-
-  Stream<VacunasxPerfil?> get efectoresStream =>
-      _vacunasxperfilStreamController.stream;
+  bool get existeVacunasxPerfil => vacunasxperfilEstado.value != null;
 
   void cargarVacunasxPerfil(VacunasxPerfil? perfiles) {
-    _vacunasxperfil = perfiles;
-    _vacunasxperfilStreamController.add(perfiles);
+    vacunasxperfilEstado.value = perfiles;
   }
 
   //Manejo de Listas
 
-  final StreamController<List<VacunasxPerfil?>>
-      _listavacunasxperfilStreamController =
-      StreamController<List<VacunasxPerfil?>>.broadcast();
-
-  List<VacunasxPerfil>? get listavacunasxPerfil => _listavacunasxperfil;
+  List<VacunasxPerfil> get listavacunasxPerfil =>
+      listavacunasxperfilEstado.value;
 
   bool get existelistaVacunasxPerfiles =>
-      (_listavacunasxperfil!.isNotEmpty) ? true : false;
-
-  Stream<List<VacunasxPerfil?>> get listaVacunasxPerfilesStream =>
-      _listavacunasxperfilStreamController.stream;
+      listavacunasxperfilEstado.value.isNotEmpty;
 
   void cargarListaVacunasxPerfil(List<VacunasxPerfil> listavacunasxPerfil) {
     final ordenada = List<VacunasxPerfil>.of(listavacunasxPerfil)
       ..sort((a, b) => (a.sysvacu04_nombre ?? '')
           .compareTo(b.sysvacu04_nombre ?? ''));
-    _listavacunasxperfil = ordenada;
-    _listavacunasxperfilStreamController.add(ordenada);
-    _listavacunasxperfilBusquedaStreamController.add(ordenada);
-  }
-
-  void eliminarListaVacunasxPerfil() {
-    List<VacunasxPerfil> vacio = [];
-    _listavacunasxperfil = vacio;
-    _listavacunasxperfilStreamController.add(vacio);
+    listavacunasxperfilEstado.value = ordenada;
+    listavacunasxperfilBusquedaEstado.value = ordenada;
   }
 
   //---------------------  Manejo de Busqueda --------------------------///
 
-  final StreamController<List<VacunasxPerfil?>>
-      _listavacunasxperfilBusquedaStreamController =
-      StreamController<List<VacunasxPerfil?>>.broadcast();
-
-  List<VacunasxPerfil>? get listavacunasxPerfilBusqueda =>
-      _listavacunasxperfilBusqueda;
+  List<VacunasxPerfil> get listavacunasxPerfilBusqueda =>
+      listavacunasxperfilBusquedaEstado.value;
 
   bool get existeBusquedaxPerfiles =>
-      (_listavacunasxperfilBusqueda!.isNotEmpty) ? true : false;
-
-  Stream<List<VacunasxPerfil?>> get listaBusquedaStream =>
-      _listavacunasxperfilBusquedaStreamController.stream;
+      listavacunasxperfilBusquedaEstado.value.isNotEmpty;
 
   void buscarVacuna(String busqueda) {
-    List<VacunasxPerfil> busquedaVacunas = _listavacunasxperfil!
+    listavacunasxperfilBusquedaEstado.value = listavacunasxperfilEstado.value
         .where((element) =>
             element.sysvacu04_nombre!.toUpperCase().contains(busqueda))
         .toList();
-    _listavacunasxperfilBusqueda = busquedaVacunas;
-    _listavacunasxperfilBusquedaStreamController
-        .add(_listavacunasxperfilBusqueda!);
   }
 
-  void eliminarBusqueda() {
-    List<VacunasxPerfil> vacio = [];
-    _listavacunasxperfilBusqueda = vacio;
-    _listavacunasxperfilBusquedaStreamController.add(vacio);
-  }
-
-////------------------------------------------------------------------------------------///////
-
-  dispose() {
-    _listavacunasxperfilBusquedaStreamController.close();
-    _vacunasxperfilStreamController.close();
-    _listavacunasxperfilStreamController.close();
+  void reiniciar() {
+    vacunasxperfilEstado.reiniciar();
+    listavacunasxperfilEstado.reiniciar();
+    listavacunasxperfilBusquedaEstado.reiniciar();
   }
 }
 

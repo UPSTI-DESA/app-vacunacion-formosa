@@ -210,7 +210,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           funcion2: () => Navigator.of(context).pop(),
                           envioFuncion1: true,
                           funcion1: () {
-                            vacunasxPerfilService.eliminarListaVacunasxPerfil();
+                            vacunasxPerfilService.reiniciar();
                             perfilesVacunacionService.reiniciar();
                             vacunasConfiguracionService.reiniciar();
                             vacunasLotesService.reiniciar();
@@ -1259,10 +1259,11 @@ class _VacunasPageState extends State<VacunasPage> {
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return loadingLoginService.getCargaPerfilState!
             ? const SizedBox.shrink()
-            : StreamBuilder(
-                stream: vacunasxPerfilService.listaVacunasxPerfilesStream,
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  return vacunasxPerfilService.listavacunasxPerfil!.isNotEmpty
+            : ValueListenableBuilder<List<VacunasxPerfil>>(
+                valueListenable:
+                    vacunasxPerfilService.listavacunasxperfilEstado,
+                builder: (BuildContext context, listaVacunasxPerfil, _) {
+                  return listaVacunasxPerfil.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -1316,13 +1317,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                   ),
                                 ),
                                 const SizedBox(height: AppEspaciado.md),
-                                StreamBuilder(
-                                  stream:
-                                      vacunasxPerfilService.listaBusquedaStream,
+                                ValueListenableBuilder<List<VacunasxPerfil>>(
+                                  valueListenable: vacunasxPerfilService
+                                      .listavacunasxperfilBusquedaEstado,
                                   builder:
                                       (
                                         BuildContext context,
-                                        AsyncSnapshot<dynamic> snapshot,
+                                        listaBusquedaVacunas,
+                                        _,
                                       ) {
                                         return controladorBusqueda.text.isEmpty
                                             ? SizedBox(
@@ -1335,8 +1337,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         const BouncingScrollPhysics(),
                                                     shrinkWrap: true,
                                                     itemCount:
-                                                        vacunasxPerfilService
-                                                            .listavacunasxPerfil!
+                                                        listaVacunasxPerfil
                                                             .length,
                                                     itemBuilder:
                                                         (
@@ -1344,8 +1345,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           int index,
                                                         ) {
                                                           final v =
-                                                              vacunasxPerfilService
-                                                                  .listavacunasxPerfil![index];
+                                                              listaVacunasxPerfil[index];
                                                           return _tarjetaOpcionFila(
                                                             seleccionado:
                                                                 _selectVacunas ==
@@ -1369,17 +1369,16 @@ class _VacunasPageState extends State<VacunasPage> {
                                                     physics:
                                                         const BouncingScrollPhysics(),
                                                     shrinkWrap: true,
-                                                    itemCount: vacunasxPerfilService
-                                                        .listavacunasxPerfilBusqueda!
-                                                        .length,
+                                                    itemCount:
+                                                        listaBusquedaVacunas
+                                                            .length,
                                                     itemBuilder:
                                                         (
                                                           BuildContext context,
                                                           int index,
                                                         ) {
                                                           final v =
-                                                              vacunasxPerfilService
-                                                                  .listavacunasxPerfilBusqueda![index];
+                                                              listaBusquedaVacunas[index];
                                                           return _tarjetaOpcionFila(
                                                             seleccionado:
                                                                 _selectVacunas ==
