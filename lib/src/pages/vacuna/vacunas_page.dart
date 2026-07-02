@@ -1572,10 +1572,11 @@ class _VacunasPageState extends State<VacunasPage> {
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return loadingLoginService.getLoadingEsquemaState!
             ? const SizedBox.shrink()
-            : StreamBuilder(
-                stream: vacunasEsquemaService.listavacunasEsquemaesStream,
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  return vacunasEsquemaService.listavacunasEsquema!.isNotEmpty
+            : ValueListenableBuilder<List<VacunasEsquema>>(
+                valueListenable:
+                    vacunasEsquemaService.listaVacunasEsquemaEstado,
+                builder: (BuildContext context, listaEsquema, _) {
+                  return listaEsquema.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -1629,13 +1630,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                   ),
                                 ),
                                 const SizedBox(height: AppEspaciado.md),
-                                StreamBuilder(
-                                  stream:
-                                      vacunasEsquemaService.listaBusquedaStream,
+                                ValueListenableBuilder<List<VacunasEsquema>>(
+                                  valueListenable: vacunasEsquemaService
+                                      .listaVacunasEsquemaBusquedaEstado,
                                   builder:
                                       (
                                         BuildContext context,
-                                        AsyncSnapshot<dynamic> snapshot,
+                                        listaBusquedaEsquema,
+                                        _,
                                       ) {
                                         return controladorBusquedaEsquema
                                                 .text
@@ -1650,17 +1652,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         const BouncingScrollPhysics(),
                                                     shrinkWrap: true,
                                                     itemCount:
-                                                        vacunasEsquemaService
-                                                            .listavacunasEsquema!
-                                                            .length,
+                                                        listaEsquema.length,
                                                     itemBuilder:
                                                         (
                                                           BuildContext context,
                                                           int index,
                                                         ) {
                                                           final esq =
-                                                              vacunasEsquemaService
-                                                                  .listavacunasEsquema![index];
+                                                              listaEsquema[index];
                                                           return _tarjetaOpcionFila(
                                                             seleccionado:
                                                                 _selectEsquema ==
@@ -1684,17 +1683,16 @@ class _VacunasPageState extends State<VacunasPage> {
                                                     physics:
                                                         const BouncingScrollPhysics(),
                                                     shrinkWrap: true,
-                                                    itemCount: vacunasEsquemaService
-                                                        .listavacunasEsquemaBusqueda!
-                                                        .length,
+                                                    itemCount:
+                                                        listaBusquedaEsquema
+                                                            .length,
                                                     itemBuilder:
                                                         (
                                                           BuildContext context,
                                                           int index,
                                                         ) {
                                                           final esq =
-                                                              vacunasEsquemaService
-                                                                  .listavacunasEsquemaBusqueda![index];
+                                                              listaBusquedaEsquema[index];
                                                           return _tarjetaOpcionFila(
                                                             seleccionado:
                                                                 _selectEsquema ==
