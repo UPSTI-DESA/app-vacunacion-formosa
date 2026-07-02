@@ -81,8 +81,8 @@ class _VacunadorPageState extends State<VacunadorPage> {
       final String dni = registradorService.registrador!.flxcore03_dni!;
       await efectoresRepository.obtenerDatosEfectores(dni);
       if (!mounted) return;
-      final List<Efectores>? lista = efectoresService.listaEfectores;
-      if (lista == null || lista.isEmpty) {
+      final List<Efectores> lista = efectoresService.listaEfectores;
+      if (lista.isEmpty) {
         setState(() {
           _efectoresMensajeError =
               'No hay establecimientos disponibles para su usuario.';
@@ -827,23 +827,15 @@ class _ListaEfectoresHoja extends StatefulWidget {
 class _ListaEfectoresHojaState extends State<_ListaEfectoresHoja> {
   bool _reintentando = false;
 
-  List<Efectores?>? _listaInicial() {
-    final List<Efectores>? base = efectoresService.listaEfectores;
-    if (base == null) return null;
-    return List<Efectores?>.from(base);
-  }
-
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
-    return StreamBuilder<List<Efectores?>>(
-      stream: efectoresService.listaEfectoresStream,
-      initialData: _listaInicial(),
-      builder: (context, snapshot) {
-        final lista = snapshot.data;
-        final n = lista?.length ?? 0;
+    return ValueListenableBuilder<List<Efectores>>(
+      valueListenable: efectoresService.listaEfectoresEstado,
+      builder: (context, lista, _) {
+        final n = lista.length;
         final vacio = n == 0;
         final cargando = vacio && (widget.efectoresCargando || _reintentando);
         final errorSinDatos =
@@ -905,9 +897,7 @@ class _ListaEfectoresHojaState extends State<_ListaEfectoresHoja> {
           padding: const EdgeInsets.only(bottom: AppEspaciado.xl),
           itemCount: n,
           itemBuilder: (BuildContext context, int index) {
-            final Efectores? raw = lista![index];
-            if (raw == null) return const SizedBox.shrink();
-            final item = raw;
+            final item = lista[index];
             return ListTile(
               key: ValueKey(item.relaSysofic01 ?? item.sysofic01Descripcion),
               leading: CircleAvatar(

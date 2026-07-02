@@ -1,45 +1,25 @@
-import 'dart:async';
-
 import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 
+import 'estado.dart';
+
 class _EfectoresrService {
-  Efectores? _efectores;
+  final efectoresEstado = Estado<Efectores?>(null);
+  final listaEfectoresEstado = Estado<List<Efectores>>([]);
 
-  List<Efectores>? _listaEfectores;
+  Efectores? get efectores => efectoresEstado.value;
 
-  final StreamController<Efectores?> _efectoresStreamController =
-      StreamController<Efectores?>.broadcast();
+  bool get existeEfectores => efectoresEstado.value != null;
 
-  Efectores? get efectores => _efectores;
+  List<Efectores> get listaEfectores => listaEfectoresEstado.value;
 
-  bool get existeEfectores => (_efectores != null) ? true : false;
-
-  Stream<Efectores?> get efectoresStream => _efectoresStreamController.stream;
-  //Manejo de Listas
-
-  final StreamController<List<Efectores?>> _listaEfectoresStreamController =
-      StreamController<List<Efectores?>>.broadcast();
-
-  List<Efectores>? get listaEfectores => _listaEfectores;
-
-  bool get existeListaEfectores => (_listaEfectores!.isNotEmpty) ? true : false;
-
-  Stream<List<Efectores?>> get listaEfectoresStream =>
-      _listaEfectoresStreamController.stream;
+  bool get existeListaEfectores => listaEfectoresEstado.value.isNotEmpty;
 
   void cargarEfectores(Efectores? efectores) {
-    _efectores = efectores;
-    _efectoresStreamController.add(efectores);
+    efectoresEstado.value = efectores;
   }
 
   void cargarListaEfectores(List<Efectores> listaEfectores) {
-    _listaEfectores = listaEfectores;
-    _listaEfectoresStreamController.add(listaEfectores);
-  }
-
-  dispose() {
-    _efectoresStreamController.close();
-    _listaEfectoresStreamController.close();
+    listaEfectoresEstado.value = listaEfectores;
   }
 }
 
