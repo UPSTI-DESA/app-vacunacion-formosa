@@ -43,10 +43,12 @@ class _VacunadorPageState extends State<VacunadorPage> {
   bool _efectoresCargando = true;
   String? _efectoresMensajeError;
 
-  /// Evita dos [StreamBuilder] del mismo stream: si el [Scaffold] se invalida,
-  /// no se duplica el trabajo del builder.
+  /// Evita rebuilds redundantes al invalidar el [Scaffold]: se cachea el valor
+  /// y solo se actualiza cuando cambia el [Estado] del vacunador.
   Vacunador? _vacunadorActual;
-  StreamSubscription<Vacunador?>? _suscripcionVacunador;
+  void _onVacunadorCambio() {
+    if (mounted) setState(() => _vacunadorActual = vacunadorService.vacunador);
+  }
 
   @override
   void initState() {
@@ -54,11 +56,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
     mismoVacunador = ValueNotifier<bool>(true);
     esTerreno = ValueNotifier<bool>(sesionEquipoVacunacionService.enTerreno);
     _vacunadorActual = vacunadorService.vacunador;
-    _suscripcionVacunador = vacunadorService.vacunadorStream.listen((
-      Vacunador? v,
-    ) {
-      if (mounted) setState(() => _vacunadorActual = v);
-    });
+    vacunadorService.vacunadorEstado.addListener(_onVacunadorCambio);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cargarListaEfectoresInicial();
     });
@@ -66,7 +64,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
 
   @override
   void dispose() {
-    _suscripcionVacunador?.cancel();
+    vacunadorService.vacunadorEstado.removeListener(_onVacunadorCambio);
     sesionEquipoVacunacionService.establecerEnTerreno(esTerreno.value);
     mismoVacunador.dispose();
     esTerreno.dispose();

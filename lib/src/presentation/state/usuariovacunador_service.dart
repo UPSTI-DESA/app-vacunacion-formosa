@@ -1,30 +1,20 @@
-import 'dart:async';
 import 'package:sistema_vacunacion/src/domain/entities/usuarios/usuariovacunador_models.dart';
 
+import 'estado.dart';
+
 class _VacunadorService {
-  Vacunador? _vacunador;
+  final vacunadorEstado = Estado<Vacunador?>(null);
 
-  final StreamController<Vacunador?> _vacunadorStreamController =
-      StreamController<Vacunador?>.broadcast();
+  Vacunador? get vacunador => vacunadorEstado.value;
 
-  Vacunador? get vacunador => _vacunador;
-
-  bool get existeVacunador => (_vacunador != null) ? true : false;
-
-  Stream<Vacunador?> get vacunadorStream => _vacunadorStreamController.stream;
+  bool get existeVacunador => vacunadorEstado.value != null;
 
   void cargarVacunador(Vacunador? vacunador) {
-    _vacunador = vacunador;
-    _vacunadorStreamController.add(vacunador);
+    vacunadorEstado.value = vacunador;
   }
 
-  void eliminarVacunador() {
-    _vacunador = null;
-    _vacunadorStreamController.add(_vacunador!);
-  }
-
-  dispose() {
-    _vacunadorStreamController.close();
+  void reiniciar() {
+    vacunadorEstado.reiniciar();
   }
 }
 
