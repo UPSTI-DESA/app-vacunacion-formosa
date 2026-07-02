@@ -211,7 +211,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           envioFuncion1: true,
                           funcion1: () {
                             vacunasxPerfilService.eliminarListaVacunasxPerfil();
-                            perfilesVacunacionService.eliminarListaPerfiles();
+                            perfilesVacunacionService.reiniciar();
                             vacunasConfiguracionService
                                 .eliminarListaVacunasConfiguracion();
                             vacunasLotesService.eliminarListaVacunasLotes();
@@ -1056,14 +1056,10 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget containerPerfiles() {
-    return StreamBuilder(
-      stream: perfilesVacunacionService.listaPerfilesVacunacionStream,
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+    return ValueListenableBuilder<List<PerfilesVacunacion>>(
+      valueListenable: perfilesVacunacionService.listaPerfilesVacunacionEstado,
+      builder: (BuildContext context, lista, _) {
         if (_recargandoPerfiles) {
-          return const LoadingEstrellas();
-        }
-        final lista = perfilesVacunacionService.listaPerfilesVacunacion;
-        if (lista == null) {
           return const LoadingEstrellas();
         }
         if (lista.isEmpty) {

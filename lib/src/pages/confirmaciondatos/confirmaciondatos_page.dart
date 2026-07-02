@@ -523,7 +523,7 @@ const SizedBox(width: AppEspaciado.md),
                   envioFuncion1: true,
                   funcion1: () {
                     vacunasxPerfilService.eliminarListaVacunasxPerfil();
-                    perfilesVacunacionService.eliminarListaPerfiles();
+                    perfilesVacunacionService.reiniciar();
                     vacunasConfiguracionService
                         .eliminarListaVacunasConfiguracion();
                     vacunasLotesService.eliminarListaVacunasLotes();
