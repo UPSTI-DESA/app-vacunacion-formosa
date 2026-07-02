@@ -1252,10 +1252,10 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget containerVacunas() {
-    return StreamBuilder(
-      stream: loadingLoginService.cargaPerfilStateStream,
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        return loadingLoginService.getCargaPerfilState!
+    return ValueListenableBuilder<bool>(
+      valueListenable: loadingLoginService.cargaPerfilEstado,
+      builder: (BuildContext context, cargaPerfil, _) {
+        return cargaPerfil
             ? const SizedBox.shrink()
             : ValueListenableBuilder<List<VacunasxPerfil>>(
                 valueListenable:
@@ -1406,10 +1406,10 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget containerCondiciones() {
-    return StreamBuilder(
-      stream: loadingLoginService.loadingCondicionStateStream,
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        return loadingLoginService.getLoadingCondicionState!
+    return ValueListenableBuilder<bool>(
+      valueListenable: loadingLoginService.loadingCondicionEstado,
+      builder: (BuildContext context, loadingCondicion, _) {
+        return loadingCondicion
             ? const SizedBox.shrink()
             : ValueListenableBuilder<List<VacunasCondicion>>(
                 valueListenable:
@@ -1564,10 +1564,10 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget containerEsquemas() {
-    return StreamBuilder(
-      stream: loadingLoginService.loadingEsquemaStateStream,
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        return loadingLoginService.getLoadingEsquemaState!
+    return ValueListenableBuilder<bool>(
+      valueListenable: loadingLoginService.loadingEsquemaEstado,
+      builder: (BuildContext context, loadingEsquema, _) {
+        return loadingEsquema
             ? const SizedBox.shrink()
             : ValueListenableBuilder<List<VacunasEsquema>>(
                 valueListenable:
@@ -1719,10 +1719,10 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget containerDosis() {
-    return StreamBuilder(
-      stream: loadingLoginService.loadingDosisStateStream,
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        return loadingLoginService.getLoadingDosisState!
+    return ValueListenableBuilder<bool>(
+      valueListenable: loadingLoginService.loadingDosisEstado,
+      builder: (BuildContext context, loadingDosisFlag, _) {
+        return loadingDosisFlag
             ? const SizedBox.shrink()
             : ValueListenableBuilder<List<VacunasDosis>>(
                 valueListenable: vacunasDosisService.listaVacunasDosisEstado,

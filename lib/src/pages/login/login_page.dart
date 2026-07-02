@@ -214,10 +214,10 @@ class _LoginBodyState extends State<LoginBody> {
             ],
           ),
         ),
-        StreamBuilder(
-          stream: loadingLoginService.loadingStateStream,
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (loadingLoginService.getEstadoLoginState!) {
+        ValueListenableBuilder<bool>(
+          valueListenable: loadingLoginService.loadingEstado,
+          builder: (BuildContext context, loading, _) {
+            if (loading) {
               return Container(
                 height: double.infinity,
                 width: double.infinity,

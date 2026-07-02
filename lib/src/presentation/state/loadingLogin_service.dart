@@ -1,152 +1,80 @@
 // ignore_for_file: file_names
-import 'dart:async';
+
+import 'estado.dart';
 
 class _LoadingLoginService {
-  bool? _loading = false;
-  bool? _primerInicio = true;
-  bool? _loadingPerfil = true;
-  bool? _loadingLotes = true;
-  bool? _loadingCondicion = true;
-  bool? _loadingEsquema = true;
-  bool? _loadingDosis = true;
-  bool? _loadingVerificar = true;
-  String _loadingMensaje = '';
+  final loadingEstado = Estado<bool>(false);
+  final primerInicioEstado = Estado<bool>(true);
+  final cargaPerfilEstado = Estado<bool>(true);
+  final cargaLotesEstado = Estado<bool>(true);
+  final loadingCondicionEstado = Estado<bool>(true);
+  final loadingEsquemaEstado = Estado<bool>(true);
+  final loadingDosisEstado = Estado<bool>(true);
+  final loadingVerificarEstado = Estado<bool>(true);
+  final loadingMensajeEstado = Estado<String>('');
 
-  final StreamController<bool> _loadingLoginStreamController =
-      StreamController<bool>.broadcast();
+  bool? get getEstadoLoginState => loadingEstado.value;
 
-  final StreamController<String> _loadingMensajeStreamController =
-      StreamController<String>.broadcast();
-
-  bool? get getEstadoLoginState => _loading;
-
-  Stream<bool> get loadingStateStream => _loadingLoginStreamController.stream;
-
-  Stream<String> get loadingMensajeStream => _loadingMensajeStreamController.stream;
-
-  String get loadingMensaje => _loadingMensaje;
+  String get loadingMensaje => loadingMensajeEstado.value;
 
   void cargarEstado(bool estado, {String? mensaje}) {
-    _loading = estado;
     if (mensaje != null) {
-      _loadingMensaje = mensaje;
-      _loadingMensajeStreamController.add(mensaje);
+      loadingMensajeEstado.value = mensaje;
     }
-    _loadingLoginStreamController.add(estado);
+    loadingEstado.value = estado;
   }
   //--------------- Manejo Primer Dosis -----------//
 
-  final StreamController<bool> _loadingVerificarStreamController =
-      StreamController<bool>.broadcast();
-
-  bool? get getLoadingVerificarState => _loadingVerificar;
-
-  Stream<bool> get loadingVerificarStateStream =>
-      _loadingVerificarStreamController.stream;
+  bool? get getLoadingVerificarState => loadingVerificarEstado.value;
 
   void cargarVerificar(bool estado) {
-    _loadingVerificar = estado;
-
-    _loadingVerificarStreamController.add(estado);
+    loadingVerificarEstado.value = estado;
   }
 
   //--------------- Manejo Primer Dosis -----------//
 
-  final StreamController<bool> _loadingDosisStreamController =
-      StreamController<bool>.broadcast();
-
-  bool? get getLoadingDosisState => _loadingDosis;
-
-  Stream<bool> get loadingDosisStateStream =>
-      _loadingDosisStreamController.stream;
+  bool? get getLoadingDosisState => loadingDosisEstado.value;
 
   void cargarDosis(bool estado) {
-    _loadingDosis = estado;
-
-    _loadingDosisStreamController.add(estado);
+    loadingDosisEstado.value = estado;
   }
 
 //--------------- Manejo Primer Esquema -----------//
 
-  final StreamController<bool> _loadingEsquemaStreamController =
-      StreamController<bool>.broadcast();
-
-  bool? get getLoadingEsquemaState => _loadingEsquema;
-
-  Stream<bool> get loadingEsquemaStateStream =>
-      _loadingEsquemaStreamController.stream;
+  bool? get getLoadingEsquemaState => loadingEsquemaEstado.value;
 
   void cargarEsquema(bool estado) {
-    _loadingEsquema = estado;
-
-    _loadingEsquemaStreamController.add(estado);
+    loadingEsquemaEstado.value = estado;
   }
 
 //--------------- Manejo Primer condicion -----------//
 
-  final StreamController<bool> _loadingCondicionStreamController =
-      StreamController<bool>.broadcast();
-
-  bool? get getLoadingCondicionState => _loadingCondicion;
-
-  Stream<bool> get loadingCondicionStateStream =>
-      _loadingCondicionStreamController.stream;
+  bool? get getLoadingCondicionState => loadingCondicionEstado.value;
 
   void cargarCondicion(bool estado) {
-    _loadingCondicion = estado;
-
-    _loadingCondicionStreamController.add(estado);
+    loadingCondicionEstado.value = estado;
   }
 //--------------- Manejo Primer Inicio -----------//
 
-  final StreamController<bool> _primerInicioStreamController =
-      StreamController<bool>.broadcast();
-
-  bool? get getEstadoPrimerInicioState => _primerInicio;
-
-  Stream<bool> get primerInicioStateStream =>
-      _primerInicioStreamController.stream;
+  bool? get getEstadoPrimerInicioState => primerInicioEstado.value;
 
   void cargarPrimerInicio(bool estado) {
-    _primerInicio = estado;
-
-    _primerInicioStreamController.add(estado);
+    primerInicioEstado.value = estado;
   }
 //--------------- Manejo Carga Perfiles -----------//
 
-  final StreamController<bool> _cargaPerfilesStreamController =
-      StreamController<bool>.broadcast();
-
-  bool? get getCargaPerfilState => _loadingPerfil;
-
-  Stream<bool> get cargaPerfilStateStream =>
-      _cargaPerfilesStreamController.stream;
+  bool? get getCargaPerfilState => cargaPerfilEstado.value;
 
   void cargaPerfil(bool estado) {
-    _loadingPerfil = estado;
-    _cargaPerfilesStreamController.add(estado);
+    cargaPerfilEstado.value = estado;
   }
 
   //--------------- Manejo Carga Lotes -----------//
 
-  final StreamController<bool> _cargarLotesStreamController =
-      StreamController<bool>.broadcast();
-
-  bool? get getCargaLotesState => _loadingLotes;
-
-  Stream<bool> get cargaLotesStateStream => _cargarLotesStreamController.stream;
+  bool? get getCargaLotesState => cargaLotesEstado.value;
 
   void cargaLotes(bool estado) {
-    _loadingLotes = estado;
-    _cargarLotesStreamController.add(estado);
-  }
-
-  dispose() {
-    _cargaPerfilesStreamController.close();
-    _cargarLotesStreamController.close();
-    _loadingLoginStreamController.close();
-    _loadingMensajeStreamController.close();
-    _primerInicioStreamController.close();
+    cargaLotesEstado.value = estado;
   }
 }
 
