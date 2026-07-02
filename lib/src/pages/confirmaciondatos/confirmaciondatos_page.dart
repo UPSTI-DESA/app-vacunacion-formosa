@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
-import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
 import 'package:sistema_vacunacion/src/presentation/state/services.dart';
@@ -522,12 +521,7 @@ const SizedBox(width: AppEspaciado.md),
                   funcion2: () => Navigator.of(context).pop(),
                   envioFuncion1: true,
                   funcion1: () {
-                    vacunasxPerfilService.reiniciar();
-                    perfilesVacunacionService.reiniciar();
-                    vacunasConfiguracionService.reiniciar();
-                    vacunasLotesService.reiniciar();
-                    notificacionesDosisService.reiniciar();
-                    insertRegistroService.cargarRegistro(InsertRegistros());
+                    reiniciarCicloBeneficiario();
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(

@@ -210,11 +210,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           funcion2: () => Navigator.of(context).pop(),
                           envioFuncion1: true,
                           funcion1: () {
-                            vacunasxPerfilService.reiniciar();
-                            perfilesVacunacionService.reiniciar();
-                            vacunasConfiguracionService.reiniciar();
-                            vacunasLotesService.reiniciar();
-                            notificacionesDosisService.reiniciar();
+                            reiniciarCicloBeneficiario();
 
                             Navigator.pushAndRemoveUntil(
                               context,
