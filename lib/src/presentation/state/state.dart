@@ -1,3 +1,5 @@
+export 'package:sistema_vacunacion/src/presentation/state/estado.dart';
+export 'package:sistema_vacunacion/src/presentation/state/estado_sesion.dart';
 export 'package:sistema_vacunacion/src/presentation/state/enviroment_service.dart';
 export 'package:sistema_vacunacion/src/presentation/state/tema_app_service.dart';
 export 'package:sistema_vacunacion/src/presentation/state/usuarioregistrador_service.dart';
