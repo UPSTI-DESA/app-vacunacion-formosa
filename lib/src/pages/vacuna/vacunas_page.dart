@@ -2,11 +2,12 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
-import 'package:sistema_vacunacion/src/models/models.dart';
+import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/pages/vacuna/vacunas_ui_helpers.dart';
-import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/data/datasources/providers.dart';
+import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
+import 'package:sistema_vacunacion/src/presentation/state/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class VacunasPage extends StatefulWidget {
@@ -1147,7 +1148,7 @@ class _VacunasPageState extends State<VacunasPage> {
         : (ben.sysdesa10_edad?.trim().isNotEmpty == true
               ? ben.sysdesa10_edad!.trim()
               : '');
-    final tempLista = await vacunasCondicion.obtenerCondicionesProviders(
+    final tempLista = await vacunasRepository.obtenerCondicionesProviders(
       _selectVacunas!.id_sysvacu04,
       edadParam.isNotEmpty ? edadParam : ben.sysdesa10_edad,
     );
@@ -1187,7 +1188,7 @@ class _VacunasPageState extends State<VacunasPage> {
       _selectCondicion = cond;
       controladorBusquedaCondicion.clear();
     });
-    final tempLista = await vacunasEsquemaProvider.obtenerEsquemasProviders(
+    final tempLista = await vacunasRepository.obtenerEsquemasProviders(
       _selectVacunas!.id_sysvacu04!,
       _selectCondicion!.id_sysvacu01,
     );
@@ -1226,7 +1227,7 @@ class _VacunasPageState extends State<VacunasPage> {
       _selectEsquema = esq;
       controladorBusquedaEsquema.clear();
     });
-    final tempLista = await vacunasDosisProvider.obtenerDosisProviders(
+    final tempLista = await vacunasRepository.obtenerDosisProviders(
       _selectVacunas!.id_sysvacu04!,
       _selectCondicion!.id_sysvacu01!,
       _selectEsquema!.id_sysvacu02!,
@@ -1792,7 +1793,7 @@ class _VacunasPageState extends State<VacunasPage> {
     Future<void> cargarLotesYAvanzar() async {
       loadingLoginService.cargaLotes(false);
       try {
-        final tempLista = await lotesVacunaProvider.validarLotes(
+        final tempLista = await vacunasRepository.validarLotes(
           _selectVacunas!.id_sysvacu04,
         );
         if (!mounted) return;
@@ -2692,6 +2693,6 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   cargarPerfilesService(String id) async {
-    await perfilesProviders.obtenerDatosPerfilesVacunacion(id);
+    await vacunasRepository.obtenerDatosPerfilesVacunacion(id);
   }
 }

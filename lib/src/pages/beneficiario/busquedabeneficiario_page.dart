@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
-import 'package:sistema_vacunacion/src/models/models.dart';
-import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/domain/entities/models.dart';
+import 'package:sistema_vacunacion/src/data/datasources/providers.dart';
+import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
+import 'package:sistema_vacunacion/src/presentation/state/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 import '../pages.dart';
@@ -211,7 +212,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     try {
       final datosBeneficiario = await beneficiarioProviders
           .obtenerDatosBeneficiario('', dni, sexoPersona);
-      final notificaciones = await notificacionesProvider.validarNotificaciones(
+      final notificaciones = await sistemaRepository.validarNotificaciones(
         dni,
         sexoPersona,
       );
@@ -327,7 +328,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
   }
 
   Future<void> _incrementoVacunados() async {
-    final cantidadVacunas = await cantidadVacunadosProvider.cantidadVacunas();
+    final cantidadVacunas = await vacunasRepository.cantidadVacunas();
     cantidadVacunasService.cargarCantidadVacunados(cantidadVacunas[0]);
   }
 }

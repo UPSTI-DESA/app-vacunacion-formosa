@@ -1,10 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
-import 'package:sistema_vacunacion/src/models/models.dart';
+import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
-import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
+import 'package:sistema_vacunacion/src/presentation/state/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class ConfirmarDatos extends StatefulWidget {
@@ -570,7 +570,7 @@ const SizedBox(width: AppEspaciado.md),
   Future<void> enviarDatos(BuildContext context2) async {
     setState(() => habilitarCircular = true);
     try {
-      final mensaje = await insertRegistroProvider.insertRegistroProd();
+      final mensaje = await sistemaRepository.insertRegistroProd();
       if (!mounted) return;
       setState(() => habilitarCircular = false);
       if (mensaje[0].codigo_mensaje == "0") {

@@ -8,10 +8,11 @@ import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/utils/edad_pdf417_dni_arg.dart';
 import 'package:sistema_vacunacion/src/utils/encoding_utils.dart';
 
-import 'package:sistema_vacunacion/src/models/models.dart';
+import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
-import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/data/datasources/providers.dart';
+import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
+import 'package:sistema_vacunacion/src/presentation/state/services.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class EscanerDni extends StatefulWidget {
@@ -152,7 +153,7 @@ class _EscanerDniState extends State<EscanerDni> {
         loadingLoginService.cargarEstado(true, mensaje: 'Validando usuario...');
         try {
           final respUsuario =
-              await usuariosProviers.validarUsuariosNuevo(dniPersona);
+              await authRepository.validarUsuariosNuevo(dniPersona);
           if (!mounted) {
             loadingLoginService.cargarEstado(false);
             break;
@@ -255,7 +256,7 @@ class _EscanerDniState extends State<EscanerDni> {
         loadingLoginService.cargarEstado(true, mensaje: 'Validando vacunador...');
         try {
           final respUsuario =
-              await vacunadorProviders.validarVacunador(dniPersona);
+              await vacunadorRepository.validarVacunador(dniPersona);
           if (!mounted) {
             loadingLoginService.cargarEstado(false);
             break;
@@ -505,7 +506,7 @@ class _EscanerDniState extends State<EscanerDni> {
       });
 
       final notificaciones =
-          await notificacionesProvider.validarNotificaciones(dni, sexoPersona);
+          await sistemaRepository.validarNotificaciones(dni, sexoPersona);
       notificaciones[0].codigo_mensaje == '1'
           ? {
               notificacionesDosisService.cargarListaDosis(notificaciones),

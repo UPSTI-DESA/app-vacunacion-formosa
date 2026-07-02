@@ -4,8 +4,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/config/appsize_config.dart';
-import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/data/datasources/providers.dart';
+import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
+import 'package:sistema_vacunacion/src/presentation/state/services.dart';
 import 'package:sistema_vacunacion/src/utils/informacion_version_app_util.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
@@ -80,7 +81,7 @@ class _LoginBodyState extends State<LoginBody> {
                   isExtended: true,
                   tooltip: 'PARA SU USO EN DESARROLLO!',
                   onPressed: () async {
-                    final respUsuario = await usuariosProviers
+                    final respUsuario = await authRepository
                         .validarUsuariosNuevo('36355149');
                     registradorService.cargarRegistrador(respUsuario[0]);
                     Navigator.pushAndRemoveUntil(

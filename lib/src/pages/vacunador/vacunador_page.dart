@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
-import 'package:sistema_vacunacion/src/models/models.dart';
-import 'package:sistema_vacunacion/src/providers/providers.dart';
-import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/domain/entities/models.dart';
+import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
+import 'package:sistema_vacunacion/src/presentation/state/services.dart';
 import 'package:sistema_vacunacion/src/utils/dni_input_utils.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
@@ -81,7 +81,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
     });
     try {
       final String dni = registradorService.registrador!.flxcore03_dni!;
-      await efectoresProviders.obtenerDatosEfectores(dni);
+      await efectoresRepository.obtenerDatosEfectores(dni);
       if (!mounted) return;
       final List<Efectores>? lista = efectoresService.listaEfectores;
       if (lista == null || lista.isEmpty) {
@@ -733,7 +733,7 @@ class _VacunadorPageState extends State<VacunadorPage> {
     }
 
     try {
-      final respUsuario = await vacunadorProviders.validarVacunador(dniNorm);
+      final respUsuario = await vacunadorRepository.validarVacunador(dniNorm);
       if (!mounted) return;
 
       if (respUsuario[0].codigo_mensaje == '0') {

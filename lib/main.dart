@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
-import 'package:sistema_vacunacion/src/debug/dev_overlay.dart';
-import 'package:sistema_vacunacion/src/services/enviroment_service.dart';
-import 'package:sistema_vacunacion/src/services/tema_app_service.dart';
+import 'package:sistema_vacunacion/src/core/debug/dev_overlay.dart';
+import 'package:sistema_vacunacion/src/presentation/state/enviroment_service.dart';
+import 'package:sistema_vacunacion/src/presentation/state/tema_app_service.dart';
 
 import 'src/pages/pages.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
-import 'package:sistema_vacunacion/src/services/services.dart';
+import 'package:sistema_vacunacion/src/presentation/state/services.dart';
 
 class ResumenSesionVacunacion extends StatefulWidget {
   const ResumenSesionVacunacion({

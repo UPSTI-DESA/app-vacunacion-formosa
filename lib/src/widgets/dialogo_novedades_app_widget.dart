@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
-import 'package:sistema_vacunacion/src/models/sistema/changelog_app_models.dart';
-import 'package:sistema_vacunacion/src/services/changelog_app_service.dart';
+import 'package:sistema_vacunacion/src/domain/entities/sistema/changelog_app_models.dart';
+import 'package:sistema_vacunacion/src/presentation/state/changelog_app_service.dart';
 
 Future<void> mostrarDialogoNovedadesApp(BuildContext context) {
   return showDialog<void>(
