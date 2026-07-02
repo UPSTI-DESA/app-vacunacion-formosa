@@ -4,6 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
 import 'package:sistema_vacunacion/src/domain/entities/models.dart';
+import 'package:sistema_vacunacion/src/domain/entities/vacunados/cantidadvacunados_models.dart'
+    as modelo;
 import 'package:sistema_vacunacion/src/data/datasources/providers.dart';
 import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
 import 'package:sistema_vacunacion/src/presentation/state/services.dart';
@@ -400,10 +402,10 @@ borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
                     width: 2,
                   ),
                 ),
-                child: StreamBuilder(
-                  stream: cantidadVacunasService.cantidadvacunadosStream,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                child: ValueListenableBuilder<modelo.CantidadVacunados?>(
+                  valueListenable: cantidadVacunasService.cantidadVacunadosEstado,
+                  builder: (BuildContext context, cantidadVacunados, _) {
+                    if (cantidadVacunados == null) {
                       return SizedBox(
                         width: 22,
                         height: 22,
@@ -414,9 +416,7 @@ borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
                       );
                     }
                     return Text(
-                      cantidadVacunasService
-                          .cantidadvacunados!
-                          .cantidad_aplicaciones!,
+                      cantidadVacunados.cantidad_aplicaciones!,
                       style: tt.titleMedium?.copyWith(
                         color: cs.primary,
                         fontWeight: FontWeight.w800,

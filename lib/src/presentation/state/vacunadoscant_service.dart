@@ -1,29 +1,20 @@
-import 'dart:async';
-
 import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 
+import 'estado.dart';
+
 class _CantidadVacunasService {
-  CantidadVacunados? _cantidadVacunados;
+  final cantidadVacunadosEstado = Estado<CantidadVacunados?>(null);
 
-  final StreamController<CantidadVacunados?>
-      _cantidadVacunadosStreamController =
-      StreamController<CantidadVacunados?>.broadcast();
+  CantidadVacunados? get cantidadvacunados => cantidadVacunadosEstado.value;
 
-  CantidadVacunados? get cantidadvacunados => _cantidadVacunados;
-
-  bool get existeCantidadvacunados =>
-      (_cantidadVacunados != null) ? true : false;
-
-  Stream<CantidadVacunados?> get cantidadvacunadosStream =>
-      _cantidadVacunadosStreamController.stream;
+  bool get existeCantidadvacunados => cantidadVacunadosEstado.value != null;
 
   void cargarCantidadVacunados(CantidadVacunados? cantidadVacunados) {
-    _cantidadVacunados = cantidadVacunados;
-    _cantidadVacunadosStreamController.add(cantidadVacunados);
+    cantidadVacunadosEstado.value = cantidadVacunados;
   }
 
-  dispose() {
-    _cantidadVacunadosStreamController.close();
+  void reiniciar() {
+    cantidadVacunadosEstado.reiniciar();
   }
 }
 
