@@ -1734,10 +1734,10 @@ class _VacunasPageState extends State<VacunasPage> {
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return loadingLoginService.getLoadingDosisState!
             ? const SizedBox.shrink()
-            : StreamBuilder(
-                stream: vacunasDosisService.listaVacunasDosisStream,
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  return vacunasDosisService.listaVacunasDosis!.isNotEmpty
+            : ValueListenableBuilder<List<VacunasDosis>>(
+                valueListenable: vacunasDosisService.listaVacunasDosisEstado,
+                builder: (BuildContext context, listaDosis, _) {
+                  return listaDosis.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -1750,7 +1750,7 @@ class _VacunasPageState extends State<VacunasPage> {
                             Wrap(
                               spacing: AppEspaciado.sm,
                               runSpacing: AppEspaciado.sm,
-                              children: vacunasDosisService.listaVacunasDosis!
+                              children: listaDosis
                                   .map(
                                     (d) => FilterChip(
                                       label: Text(d.sysvacu05_nombre!),
