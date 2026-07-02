@@ -1414,12 +1414,11 @@ class _VacunasPageState extends State<VacunasPage> {
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         return loadingLoginService.getLoadingCondicionState!
             ? const SizedBox.shrink()
-            : StreamBuilder(
-                stream: vacunasCondicionService.listaVacunasCondicionesStream,
-                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  return vacunasCondicionService
-                          .listaVacunasCondicion!
-                          .isNotEmpty
+            : ValueListenableBuilder<List<VacunasCondicion>>(
+                valueListenable:
+                    vacunasCondicionService.listaVacunasCondicionEstado,
+                builder: (BuildContext context, listaCondicion, _) {
+                  return listaCondicion.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -1473,13 +1472,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                   ),
                                 ),
                                 const SizedBox(height: AppEspaciado.md),
-                                StreamBuilder(
-                                  stream: vacunasCondicionService
-                                      .listaBusquedaStream,
+                                ValueListenableBuilder<List<VacunasCondicion>>(
+                                  valueListenable: vacunasCondicionService
+                                      .listaVacunasCondicionBusquedaEstado,
                                   builder:
                                       (
                                         BuildContext context,
-                                        AsyncSnapshot<dynamic> snapshot,
+                                        listaBusquedaCondicion,
+                                        _,
                                       ) {
                                         return controladorBusquedaCondicion
                                                 .text
@@ -1496,17 +1496,14 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         const BouncingScrollPhysics(),
                                                     shrinkWrap: true,
                                                     itemCount:
-                                                        vacunasCondicionService
-                                                            .listaVacunasCondicion!
-                                                            .length,
+                                                        listaCondicion.length,
                                                     itemBuilder:
                                                         (
                                                           BuildContext context,
                                                           int index,
                                                         ) {
                                                           final cond =
-                                                              vacunasCondicionService
-                                                                  .listaVacunasCondicion![index];
+                                                              listaCondicion[index];
                                                           return _tarjetaOpcionFila(
                                                             seleccionado:
                                                                 _selectCondicion ==
@@ -1532,8 +1529,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                         const BouncingScrollPhysics(),
                                                     shrinkWrap: true,
                                                     itemCount:
-                                                        vacunasCondicionService
-                                                            .listaVacunasCondicionBusqueda!
+                                                        listaBusquedaCondicion
                                                             .length,
                                                     itemBuilder:
                                                         (
@@ -1541,8 +1537,7 @@ class _VacunasPageState extends State<VacunasPage> {
                                                           int index,
                                                         ) {
                                                           final cond =
-                                                              vacunasCondicionService
-                                                                  .listaVacunasCondicionBusqueda![index];
+                                                              listaBusquedaCondicion[index];
                                                           return _tarjetaOpcionFila(
                                                             seleccionado:
                                                                 _selectCondicion ==

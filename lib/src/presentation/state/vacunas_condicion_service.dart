@@ -1,92 +1,56 @@
-import 'dart:async';
 import 'package:sistema_vacunacion/src/domain/entities/vacunas/vacunas_condicion_model.dart';
 
+import 'estado.dart';
+
 class _VacunasCondicionService {
-  VacunasCondicion? _vacunasCondicion;
+  final vacunasCondicionEstado = Estado<VacunasCondicion?>(null);
+  final listaVacunasCondicionEstado = Estado<List<VacunasCondicion>>([]);
+  final listaVacunasCondicionBusquedaEstado = Estado<List<VacunasCondicion>>(
+    [],
+  );
 
-  List<VacunasCondicion>? _listaVacunasCondicion = [];
+  VacunasCondicion? get vacunasCondicion => vacunasCondicionEstado.value;
 
-  List<VacunasCondicion>? _listaVacunasCondicionBusqueda = [];
-
-  final StreamController<VacunasCondicion?> _vacunasCondicionStreamController =
-      StreamController<VacunasCondicion?>.broadcast();
-
-  VacunasCondicion? get vacunasCondicion => _vacunasCondicion;
-
-  bool get existeVacunasCondicion => (_vacunasCondicion != null) ? true : false;
-
-  Stream<VacunasCondicion?> get vacunasCondicionStream =>
-      _vacunasCondicionStreamController.stream;
+  bool get existeVacunasCondicion => vacunasCondicionEstado.value != null;
 
   void cargarVacunasCondicion(VacunasCondicion? condicion) {
-    _vacunasCondicion = condicion;
-    _vacunasCondicionStreamController.add(condicion);
+    vacunasCondicionEstado.value = condicion;
   }
 
   //Manejo de Listas
 
-  final StreamController<List<VacunasCondicion?>>
-      _listaVacunasCondicionStreamController =
-      StreamController<List<VacunasCondicion?>>.broadcast();
-
-  List<VacunasCondicion>? get listaVacunasCondicion => _listaVacunasCondicion;
+  List<VacunasCondicion> get listaVacunasCondicion =>
+      listaVacunasCondicionEstado.value;
 
   bool get existelistaVacunasCondicion =>
-      (_listaVacunasCondicion!.isNotEmpty) ? true : false;
-
-  Stream<List<VacunasCondicion?>> get listaVacunasCondicionesStream =>
-      _listaVacunasCondicionStreamController.stream;
+      listaVacunasCondicionEstado.value.isNotEmpty;
 
   void cargarListaVacunasCondicion(
       List<VacunasCondicion> listaVacunasCondicion) {
-    _listaVacunasCondicion = listaVacunasCondicion;
-    _listaVacunasCondicionStreamController.add(listaVacunasCondicion);
-    _listaVacunasCondicionBusquedaStreamController.add(listaVacunasCondicion);
-  }
-
-  void eliminarListaVacunasCondicion() {
-    List<VacunasCondicion> vacio = [];
-    _listaVacunasCondicion = vacio;
-    _listaVacunasCondicionStreamController.add(vacio);
+    listaVacunasCondicionEstado.value = listaVacunasCondicion;
+    listaVacunasCondicionBusquedaEstado.value = listaVacunasCondicion;
   }
 
   //---------------------  Manejo de Busqueda --------------------------///
 
-  final StreamController<List<VacunasCondicion?>>
-      _listaVacunasCondicionBusquedaStreamController =
-      StreamController<List<VacunasCondicion?>>.broadcast();
-
-  List<VacunasCondicion>? get listaVacunasCondicionBusqueda =>
-      _listaVacunasCondicionBusqueda;
+  List<VacunasCondicion> get listaVacunasCondicionBusqueda =>
+      listaVacunasCondicionBusquedaEstado.value;
 
   bool get existeBusquedaCondicion =>
-      (_listaVacunasCondicionBusqueda!.isNotEmpty) ? true : false;
-
-  Stream<List<VacunasCondicion?>> get listaBusquedaStream =>
-      _listaVacunasCondicionBusquedaStreamController.stream;
+      listaVacunasCondicionBusquedaEstado.value.isNotEmpty;
 
   void buscarCondicion(String busqueda) {
-    List<VacunasCondicion> busquedaVacunas = _listaVacunasCondicion!
-        .where((element) =>
-            element.sysvacu01_descripcion!.toUpperCase().contains(busqueda))
-        .toList();
-    _listaVacunasCondicionBusqueda = busquedaVacunas;
-    _listaVacunasCondicionBusquedaStreamController
-        .add(_listaVacunasCondicionBusqueda!);
+    listaVacunasCondicionBusquedaEstado.value =
+        listaVacunasCondicionEstado.value
+            .where((element) =>
+                element.sysvacu01_descripcion!.toUpperCase().contains(busqueda))
+            .toList();
   }
 
-  void eliminarBusqueda() {
-    List<VacunasCondicion> vacio = [];
-    _listaVacunasCondicionBusqueda = vacio;
-    _listaVacunasCondicionBusquedaStreamController.add(vacio);
-  }
-
-////------------------------------------------------------------------------------------///////
-
-  dispose() {
-    _listaVacunasCondicionBusquedaStreamController.close();
-    _vacunasCondicionStreamController.close();
-    _listaVacunasCondicionStreamController.close();
+  void reiniciar() {
+    vacunasCondicionEstado.reiniciar();
+    listaVacunasCondicionEstado.reiniciar();
+    listaVacunasCondicionBusquedaEstado.reiniciar();
   }
 }
 
