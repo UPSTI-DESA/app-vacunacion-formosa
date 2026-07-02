@@ -212,8 +212,7 @@ class _VacunasPageState extends State<VacunasPage> {
                           funcion1: () {
                             vacunasxPerfilService.eliminarListaVacunasxPerfil();
                             perfilesVacunacionService.reiniciar();
-                            vacunasConfiguracionService
-                                .eliminarListaVacunasConfiguracion();
+                            vacunasConfiguracionService.reiniciar();
                             vacunasLotesService.eliminarListaVacunasLotes();
                             notificacionesDosisService.eliminarListaDosis();
 

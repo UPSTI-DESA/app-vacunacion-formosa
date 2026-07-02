@@ -1,97 +1,58 @@
-import 'dart:async';
-
 import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 
+import 'estado.dart';
+
 class _VacunasConfiguracion {
-  ConfiVacuna? _vacunasConfiguracion;
+  final vacunasConfiguracionEstado = Estado<ConfiVacuna?>(null);
+  final listavacunasConfiguracionEstado = Estado<List<ConfiVacuna>>([]);
+  final listavacunasConfiguracionBusquedaEstado = Estado<List<ConfiVacuna>>(
+    [],
+  );
 
-  List<ConfiVacuna>? _listavacunasConfiguracion = [];
-
-  List<ConfiVacuna>? _listavacunasConfiguracionBusqueda = [];
-
-  final StreamController<ConfiVacuna?> _vacunasConfiguracionStreamController =
-      StreamController<ConfiVacuna?>.broadcast();
-
-  ConfiVacuna? get vacunasConfiguracion => _vacunasConfiguracion;
+  ConfiVacuna? get vacunasConfiguracion => vacunasConfiguracionEstado.value;
 
   bool get existeVacunasConfiguracion =>
-      (_vacunasConfiguracion != null) ? true : false;
-
-  Stream<ConfiVacuna?> get vacunasConfiguracionStream =>
-      _vacunasConfiguracionStreamController.stream;
+      vacunasConfiguracionEstado.value != null;
 
   void cargarVacunasConfiguracion(ConfiVacuna? configuraciones) {
-    _vacunasConfiguracion = configuraciones;
-    _vacunasConfiguracionStreamController.add(configuraciones);
+    vacunasConfiguracionEstado.value = configuraciones;
   }
 
   //----------------------------Manejo de Listas-------------------------//
 
-  final StreamController<List<ConfiVacuna?>>
-      _listavacunasConfiguracionStreamController =
-      StreamController<List<ConfiVacuna?>>.broadcast();
-
-  List<ConfiVacuna>? get listavacunasConfiguracion =>
-      _listavacunasConfiguracion;
+  List<ConfiVacuna> get listavacunasConfiguracion =>
+      listavacunasConfiguracionEstado.value;
 
   bool get existelistaVacunasConfiguraciones =>
-      (_listavacunasConfiguracion!.isNotEmpty) ? true : false;
-
-  Stream<List<ConfiVacuna?>> get listaVacunasConfiguracionesStream =>
-      _listavacunasConfiguracionStreamController.stream;
+      listavacunasConfiguracionEstado.value.isNotEmpty;
 
   void cargarListaVacunasConfiguracion(
       List<ConfiVacuna> listavacunasConfiguracion) {
-    _listavacunasConfiguracion = listavacunasConfiguracion;
-    _listavacunasConfiguracionStreamController.add(listavacunasConfiguracion);
-    _listavacunasConfiguracionBusquedaStreamController
-        .add(listavacunasConfiguracion);
-  }
-
-  void eliminarListaVacunasConfiguracion() {
-    List<ConfiVacuna> vacio = [];
-    _listavacunasConfiguracion = vacio;
-    _listavacunasConfiguracionStreamController.add(vacio);
+    listavacunasConfiguracionEstado.value = listavacunasConfiguracion;
+    listavacunasConfiguracionBusquedaEstado.value = listavacunasConfiguracion;
   }
 
   //---------------------  Manejo de Busqueda --------------------------///
 
-  final StreamController<List<ConfiVacuna?>>
-      _listavacunasConfiguracionBusquedaStreamController =
-      StreamController<List<ConfiVacuna?>>.broadcast();
-
-  List<ConfiVacuna>? get listavacunasConfiguracionBusqueda =>
-      _listavacunasConfiguracionBusqueda;
+  List<ConfiVacuna> get listavacunasConfiguracionBusqueda =>
+      listavacunasConfiguracionBusquedaEstado.value;
 
   bool get existeBusquedaxConfiguracion =>
-      (_listavacunasConfiguracionBusqueda!.isNotEmpty) ? true : false;
-
-  Stream<List<ConfiVacuna?>> get listaBusquedaConfiguracionStream =>
-      _listavacunasConfiguracionBusquedaStreamController.stream;
+      listavacunasConfiguracionBusquedaEstado.value.isNotEmpty;
 
   void buscarConfiguracion(String busqconfiguracion) {
-    List<ConfiVacuna> busquedaConfiguracion = _listavacunasConfiguracion!
-        .where((element) => element.sysvacu02_descripcion!
-            .toUpperCase()
-            .contains(busqconfiguracion))
-        .toList();
-    _listavacunasConfiguracionBusqueda = busquedaConfiguracion;
-    _listavacunasConfiguracionBusquedaStreamController
-        .add(_listavacunasConfiguracionBusqueda!);
+    listavacunasConfiguracionBusquedaEstado.value =
+        listavacunasConfiguracionEstado.value
+            .where((element) => element.sysvacu02_descripcion!
+                .toUpperCase()
+                .contains(busqconfiguracion))
+            .toList();
   }
 
-  void eliminarBusquedaConfiguracion() {
-    List<ConfiVacuna> vacio = [];
-    _listavacunasConfiguracionBusqueda = vacio;
-    _listavacunasConfiguracionBusquedaStreamController.add(vacio);
-  }
-
-////------------------------------------------------------------------------------------///////
-
-  dispose() {
-    _listavacunasConfiguracionBusquedaStreamController.close();
-    _vacunasConfiguracionStreamController.close();
-    _listavacunasConfiguracionStreamController.close();
+  void reiniciar() {
+    vacunasConfiguracionEstado.reiniciar();
+    listavacunasConfiguracionEstado.reiniciar();
+    listavacunasConfiguracionBusquedaEstado.reiniciar();
   }
 }
 
