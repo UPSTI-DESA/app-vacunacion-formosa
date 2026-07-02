@@ -213,7 +213,7 @@ class _VacunasPageState extends State<VacunasPage> {
                             vacunasxPerfilService.eliminarListaVacunasxPerfil();
                             perfilesVacunacionService.reiniciar();
                             vacunasConfiguracionService.reiniciar();
-                            vacunasLotesService.eliminarListaVacunasLotes();
+                            vacunasLotesService.reiniciar();
                             notificacionesDosisService.eliminarListaDosis();
 
                             Navigator.pushAndRemoveUntil(
@@ -1976,10 +1976,10 @@ class _VacunasPageState extends State<VacunasPage> {
   }
 
   Widget containerLotes() {
-    return StreamBuilder(
-      stream: vacunasLotesService.listaVacunasLotesStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return vacunasLotesService.listavacunasLotes!.isEmpty
+    return ValueListenableBuilder<List<Lotes>>(
+      valueListenable: vacunasLotesService.listavacunaslotesEstado,
+      builder: (BuildContext context, lotesDisponibles, _) {
+        return lotesDisponibles.isEmpty
             ? _sinLotesDisponibles()
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1993,7 +1993,7 @@ class _VacunasPageState extends State<VacunasPage> {
                   Wrap(
                     spacing: AppEspaciado.sm,
                     runSpacing: AppEspaciado.sm,
-                    children: vacunasLotesService.listavacunasLotes!
+                    children: lotesDisponibles
                         .map(
                           (lote) => FilterChip(
                             label: Text(lote.sysdesa18_lote!),

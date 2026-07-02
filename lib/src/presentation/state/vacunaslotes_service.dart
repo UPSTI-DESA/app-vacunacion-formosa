@@ -1,88 +1,50 @@
-import 'dart:async';
-
 import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 
+import 'estado.dart';
+
 class _VacunasLotes {
-  Lotes? _vacunasLotes;
+  final vacunasLotesEstado = Estado<Lotes?>(null);
+  final listavacunaslotesEstado = Estado<List<Lotes>>([]);
+  final listavacunaslotesBusquedaEstado = Estado<List<Lotes>>([]);
 
-  List<Lotes>? _listavacunaslotes = [];
+  Lotes? get vacunasLotes => vacunasLotesEstado.value;
 
-  List<Lotes>? _listavacunaslotesBusqueda = [];
-
-  final StreamController<Lotes?> _vacunasLotesStreamController =
-      StreamController<Lotes?>.broadcast();
-
-  Lotes? get vacunasLotes => _vacunasLotes;
-
-  bool get existeVacunasLotes => (_vacunasLotes != null) ? true : false;
-
-  Stream<Lotes?> get lotesStream => _vacunasLotesStreamController.stream;
+  bool get existeVacunasLotes => vacunasLotesEstado.value != null;
 
   void cargarVacunasLotes(Lotes? lotes) {
-    _vacunasLotes = lotes;
-    _vacunasLotesStreamController.add(lotes);
+    vacunasLotesEstado.value = lotes;
   }
 
   //Manejo de Listas
 
-  final StreamController<List<Lotes?>> _listavacunaslotesStreamController =
-      StreamController<List<Lotes?>>.broadcast();
+  List<Lotes> get listavacunasLotes => listavacunaslotesEstado.value;
 
-  List<Lotes>? get listavacunasLotes => _listavacunaslotes;
-
-  bool get existelistaVacunasLotes =>
-      (_listavacunaslotes!.isNotEmpty) ? true : false;
-
-  Stream<List<Lotes?>> get listaVacunasLotesStream =>
-      _listavacunaslotesStreamController.stream;
+  bool get existelistaVacunasLotes => listavacunaslotesEstado.value.isNotEmpty;
 
   void cargarListaVacunasLotes(List<Lotes> listavacunaslotes) {
-    _listavacunaslotes = listavacunaslotes;
-    _listavacunaslotesStreamController.add(listavacunaslotes);
-    _listavacunaslotesBusquedaStreamController.add(listavacunaslotes);
-  }
-
-  void eliminarListaVacunasLotes() {
-    List<Lotes> vacio = [];
-    _listavacunaslotes = vacio;
-    _listavacunaslotesStreamController.add(vacio);
+    listavacunaslotesEstado.value = listavacunaslotes;
+    listavacunaslotesBusquedaEstado.value = listavacunaslotes;
   }
 
   //---------------------  Manejo de Busqueda --------------------------///
 
-  final StreamController<List<Lotes?>>
-      _listavacunaslotesBusquedaStreamController =
-      StreamController<List<Lotes?>>.broadcast();
-
-  List<Lotes>? get listavacunasLotesBusqueda => _listavacunaslotesBusqueda;
+  List<Lotes> get listavacunasLotesBusqueda =>
+      listavacunaslotesBusquedaEstado.value;
 
   bool get existeBusquedaxLotes =>
-      (_listavacunaslotesBusqueda!.isNotEmpty) ? true : false;
-
-  Stream<List<Lotes?>> get listaBusquedaLotesStream =>
-      _listavacunaslotesBusquedaStreamController.stream;
+      listavacunaslotesBusquedaEstado.value.isNotEmpty;
 
   void buscarLotes(String lotes) {
-    List<Lotes> busquedaLotes = _listavacunaslotes!
+    listavacunaslotesBusquedaEstado.value = listavacunaslotesEstado.value
         .where(
             (element) => element.sysdesa18_lote!.toUpperCase().contains(lotes))
         .toList();
-    _listavacunaslotesBusqueda = busquedaLotes;
-    _listavacunaslotesBusquedaStreamController.add(_listavacunaslotesBusqueda!);
   }
 
-  void eliminarBusquedaLotes() {
-    List<Lotes> vacio = [];
-    _listavacunaslotesBusqueda = vacio;
-    _listavacunaslotesBusquedaStreamController.add(vacio);
-  }
-
-////------------------------------------------------------------------------------------///////
-
-  dispose() {
-    _listavacunaslotesBusquedaStreamController.close();
-    _vacunasLotesStreamController.close();
-    _listavacunaslotesStreamController.close();
+  void reiniciar() {
+    vacunasLotesEstado.reiniciar();
+    listavacunaslotesEstado.reiniciar();
+    listavacunaslotesBusquedaEstado.reiniciar();
   }
 }
 

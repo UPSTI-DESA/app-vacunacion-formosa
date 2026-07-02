@@ -525,7 +525,7 @@ const SizedBox(width: AppEspaciado.md),
                     vacunasxPerfilService.eliminarListaVacunasxPerfil();
                     perfilesVacunacionService.reiniciar();
                     vacunasConfiguracionService.reiniciar();
-                    vacunasLotesService.eliminarListaVacunasLotes();
+                    vacunasLotesService.reiniciar();
                     notificacionesDosisService.eliminarListaDosis();
                     insertRegistroService.cargarRegistro(InsertRegistros());
                     Navigator.pushAndRemoveUntil(
