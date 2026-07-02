@@ -214,7 +214,7 @@ class _VacunasPageState extends State<VacunasPage> {
                             perfilesVacunacionService.reiniciar();
                             vacunasConfiguracionService.reiniciar();
                             vacunasLotesService.reiniciar();
-                            notificacionesDosisService.eliminarListaDosis();
+                            notificacionesDosisService.reiniciar();
 
                             Navigator.pushAndRemoveUntil(
                               context,
@@ -326,19 +326,17 @@ class _VacunasPageState extends State<VacunasPage> {
           ),
           const SizedBox(height: AppEspaciado.lg),
           Expanded(
-            child: StreamBuilder(
-              stream: notificacionesDosisService.listaDosisAplicadasStream,
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                return notificacionesDosisService.listaDosisAplicadas.isNotEmpty
+            child: ValueListenableBuilder<List<NotificacionesDosis>>(
+              valueListenable:
+                  notificacionesDosisService.listaDosisAplicadasEstado,
+              builder: (BuildContext context, listaDosisAplicadas, _) {
+                return listaDosisAplicadas.isNotEmpty
                     ? ListView.builder(
                         controller: scrollController,
                         padding: const EdgeInsets.only(bottom: AppEspaciado.xl),
-                        itemCount: notificacionesDosisService
-                            .listaDosisAplicadas
-                            .length,
+                        itemCount: listaDosisAplicadas.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final d = notificacionesDosisService
-                              .listaDosisAplicadas[index];
+                          final d = listaDosisAplicadas[index];
                           return Padding(
                             padding: const EdgeInsets.only(
                               bottom: AppEspaciado.sm,

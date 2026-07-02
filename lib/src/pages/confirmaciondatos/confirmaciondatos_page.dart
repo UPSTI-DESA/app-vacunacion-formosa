@@ -526,7 +526,7 @@ const SizedBox(width: AppEspaciado.md),
                     perfilesVacunacionService.reiniciar();
                     vacunasConfiguracionService.reiniciar();
                     vacunasLotesService.reiniciar();
-                    notificacionesDosisService.eliminarListaDosis();
+                    notificacionesDosisService.reiniciar();
                     insertRegistroService.cargarRegistro(InsertRegistros());
                     Navigator.pushAndRemoveUntil(
                       context,

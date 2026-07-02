@@ -1,50 +1,31 @@
-import 'dart:async';
-
 import 'package:sistema_vacunacion/src/domain/entities/sistema/notificacionesdosis_models.dart';
 
+import 'estado.dart';
+
 class _NotificacionesDosisService {
-  NotificacionesDosis? _notiDosis;
+  final notiDosisEstado = Estado<NotificacionesDosis?>(null);
 
-  final StreamController<NotificacionesDosis?> _notiDosisStreamController =
-      StreamController<NotificacionesDosis?>.broadcast();
+  NotificacionesDosis? get dosis => notiDosisEstado.value;
 
-  NotificacionesDosis? get dosis => _notiDosis;
-
-  bool get existeDosis => (_notiDosis != null) ? true : false;
-
-  Stream<NotificacionesDosis?> get dosisStream =>
-      _notiDosisStreamController.stream;
+  bool get existeDosis => notiDosisEstado.value != null;
 
   void cargarRegistro(NotificacionesDosis? dosis) {
-    _notiDosis = dosis;
-    _notiDosisStreamController.add(dosis);
+    notiDosisEstado.value = dosis;
   }
   // ----------------------- Manejo de Listas de Notificaciones ---------------------- //
 
-  List<NotificacionesDosis> _listaDosisAplicadas = [];
+  final listaDosisAplicadasEstado = Estado<List<NotificacionesDosis>>([]);
 
-  final StreamController<List<NotificacionesDosis>?>
-      _listaDosisAplicadasStreamController =
-      StreamController<List<NotificacionesDosis>?>.broadcast();
-
-  List<NotificacionesDosis> get listaDosisAplicadas => _listaDosisAplicadas;
-
-  Stream<List<NotificacionesDosis>?> get listaDosisAplicadasStream =>
-      _listaDosisAplicadasStreamController.stream;
+  List<NotificacionesDosis> get listaDosisAplicadas =>
+      listaDosisAplicadasEstado.value;
 
   void cargarListaDosis(List<NotificacionesDosis> dosisAplicadas) {
-    _listaDosisAplicadas = dosisAplicadas;
-    _listaDosisAplicadasStreamController.add(dosisAplicadas);
+    listaDosisAplicadasEstado.value = dosisAplicadas;
   }
 
-  void eliminarListaDosis() {
-    _listaDosisAplicadas = [];
-    _listaDosisAplicadasStreamController.add(_listaDosisAplicadas);
-  }
-
-  dispose() {
-    _notiDosisStreamController.close();
-    _listaDosisAplicadasStreamController.close();
+  void reiniciar() {
+    notiDosisEstado.reiniciar();
+    listaDosisAplicadasEstado.reiniciar();
   }
 }
 
