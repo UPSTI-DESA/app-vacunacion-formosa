@@ -32,7 +32,7 @@ class _BeneficiariorService {
     String? fechaNacimientoDesdePdf417Escaneado,
   }) {
     // Un beneficiario nuevo no debe arrastrar tutor de otro registro en memoria.
-    tutorService.eliminarTutor();
+    tutorService.reiniciar();
     _edadAniosDesdePdf417Escaneado = edadAniosDesdePdf417Escaneado;
     _fechaNacimientoDesdePdf417Escaneado = fechaNacimientoDesdePdf417Escaneado;
     _beneficiario = beneficiario;

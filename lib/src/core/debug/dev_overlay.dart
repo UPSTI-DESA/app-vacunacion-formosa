@@ -204,6 +204,7 @@ class _TabSesion extends StatefulWidget {
 
 class _TabSesionState extends State<_TabSesion> {
   late final List<StreamSubscription> _subs;
+  late final VoidCallback _tutorListener;
 
   @override
   void initState() {
@@ -212,9 +213,10 @@ class _TabSesionState extends State<_TabSesion> {
       beneficiarioService.beneficiarioStream.listen((_) => setState(() {})),
       vacunadorService.vacunadorStream.listen((_) => setState(() {})),
       registradorService.registradorStream.listen((_) => setState(() {})),
-      tutorService.tutorStream.listen((_) => setState(() {})),
       efectoresService.efectoresStream.listen((_) => setState(() {})),
     ];
+    _tutorListener = () => setState(() {});
+    tutorService.tutorEstado.addListener(_tutorListener);
   }
 
   @override
@@ -222,6 +224,7 @@ class _TabSesionState extends State<_TabSesion> {
     for (final s in _subs) {
       s.cancel();
     }
+    tutorService.tutorEstado.removeListener(_tutorListener);
     super.dispose();
   }
 

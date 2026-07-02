@@ -934,7 +934,7 @@ class _VacunasPageState extends State<VacunasPage> {
                             style: AppBotones.estiloOutlinedAccion(cs),
                             onPressed: () {
                               setState(() {
-                                tutorService.eliminarTutor();
+                                tutorService.reiniciar();
                                 mostrarTutor = false;
                               });
                             },
@@ -960,10 +960,9 @@ class _VacunasPageState extends State<VacunasPage> {
     if (beneficiarioService.beneficiario == null) {
       return const SizedBox.shrink();
     }
-    return StreamBuilder<Tutor?>(
-      stream: tutorService.tutorStream,
-      builder: (BuildContext context, AsyncSnapshot<Tutor?> snapshot) {
-        final tut = snapshot.data ?? tutorService.tutor;
+    return ValueListenableBuilder<Tutor?>(
+      valueListenable: tutorService.tutorEstado,
+      builder: (BuildContext context, Tutor? tut, _) {
         final requiereRegistroTutor = _beneficiarioRequierePanelTutor();
 
         if (!requiereRegistroTutor) {
