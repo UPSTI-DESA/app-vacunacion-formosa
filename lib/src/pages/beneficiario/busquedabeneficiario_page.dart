@@ -29,6 +29,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
   @override
   void initState() {
     super.initState();
+    reiniciarCicloBeneficiario();
     dniController = TextEditingController();
     focusNode = FocusNode();
     if (vacunadorService.existeVacunador != false) {
