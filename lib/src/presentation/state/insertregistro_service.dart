@@ -1,32 +1,25 @@
-import 'dart:async';
-
 import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 
+import 'estado.dart';
+
 class _InsertRegistroService {
-  InsertRegistros? _registro;
+  final registroEstado = Estado<InsertRegistros?>(null);
 
-  final StreamController<InsertRegistros> _registroStreamController =
-      StreamController<InsertRegistros>.broadcast();
+  InsertRegistros? get registro => registroEstado.value;
 
-  InsertRegistros? get registro => _registro;
-
-  bool get existeRegistro => (_registro != null) ? true : false;
-
-  Stream<InsertRegistros> get registroStream =>
-      _registroStreamController.stream;
+  bool get existeRegistro => registroEstado.value != null;
 
   void cargarRegistro(InsertRegistros registro) {
-    _registro = registro;
-    _registroStreamController.add(registro);
+    registroEstado.value = registro;
   }
 
   void agregarFecha(DateTime fechaDeCarga) {
-    _registro!.fecha_aplicacion = fechaDeCarga.toString();
-    _registroStreamController.add(_registro!);
+    registroEstado.value = registroEstado.value!
+      ..fecha_aplicacion = fechaDeCarga.toString();
   }
 
-  dispose() {
-    _registroStreamController.close();
+  void reiniciar() {
+    registroEstado.reiniciar();
   }
 }
 

@@ -517,17 +517,17 @@ class _TabRegistroJson extends StatefulWidget {
 }
 
 class _TabRegistroJsonState extends State<_TabRegistroJson> {
-  StreamSubscription? _sub;
+  void _rebuild() => setState(() {});
 
   @override
   void initState() {
     super.initState();
-    _sub = insertRegistroService.registroStream.listen((_) => setState(() {}));
+    insertRegistroService.registroEstado.addListener(_rebuild);
   }
 
   @override
   void dispose() {
-    _sub?.cancel();
+    insertRegistroService.registroEstado.removeListener(_rebuild);
     super.dispose();
   }
 
