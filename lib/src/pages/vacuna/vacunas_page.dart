@@ -65,7 +65,12 @@ class _VacunasPageState extends State<VacunasPage> {
   @override
   void initState() {
     super.initState();
-    mostrarBeneficiario = false;
+    // Si ya hay situación cargada (embarazada/puérpera/personal de salud),
+    // la tarjeta de beneficiario arranca expandida para que no quede oculta
+    // detrás de un tap.
+    mostrarBeneficiario = situacionBeneficiarioService.condicionGestacional !=
+            null ||
+        situacionBeneficiarioService.esPersonalDeSalud;
     mostrarTutor = false;
     pasos = 1;
     listaCondiciones = [];
@@ -134,10 +139,13 @@ class _VacunasPageState extends State<VacunasPage> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  /// Ancla para el banner de alerta de tutor: `Scrollable.ensureVisible`
+  /// scrollea hasta acá al tocarlo, sin necesidad de que el operador busque.
+  final GlobalKey _tutorSectionKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
 
     return PopScope(
       canPop: false,
@@ -156,101 +164,405 @@ class _VacunasPageState extends State<VacunasPage> {
                 backgroundColor: cs.onPrimary.withValues(alpha: 0.2),
               ),
               tooltip: 'Historial de dosis aplicadas',
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(AppEspaciado.radioCampo),
-                    ),
-                  ),
-                  builder: (BuildContext context) {
-                    return DraggableScrollableSheet(
-                      initialChildSize: 0.52,
-                      minChildSize: 0.32,
-                      maxChildSize: 0.95,
-                      expand: false,
-                      builder: (context, scrollController) {
-                        return vacunasAplicadas(
-                          scrollController: scrollController,
-                        );
-                      },
-                    );
-                  },
-                );
-              },
+              onPressed: _mostrarHistorialDosis,
               icon: const FaIcon(FontAwesomeIcons.hospitalUser, size: 20),
             ),
           ),
-        ),
-        body: RawScrollbar(
-          thumbColor: cs.primary.withValues(alpha: 0.42),
-          thumbVisibility: true,
-          radius: const Radius.circular(AppEspaciado.radioBoton),
-          thickness: 6,
-          controller: _generalScroll,
-          child: SingleChildScrollView(
-            controller: _generalScroll,
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(
-              AppEspaciado.lg,
-              AppEspaciado.sm,
-              AppEspaciado.lg,
-              AppEspaciado.xl,
+          actions: [
+            IconButton(
+              style: IconButton.styleFrom(
+                foregroundColor: cs.onPrimary,
+                backgroundColor: cs.onPrimary.withValues(alpha: 0.2),
+              ),
+              tooltip: 'Calendario de vacunación sugerido',
+              onPressed: _mostrarCalendarioSheet,
+              icon: const Icon(Icons.calendar_month_outlined, size: 20),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const VacunasEncabezadoPagina(),
-                const SizedBox(height: AppEspaciado.sm),
-                VacunasPanelFlujo(
-                  pasoActual: pasos,
-                  onIrAPaso: (p) => setState(() => pasos = p),
-                  perfil: _selectPerfil?.sysvacu12_descripcion,
-                  vacuna: _selectVacunas?.sysvacu04_nombre,
-                  condicion: _selectCondicion?.sysvacu01_descripcion,
-                  esquema: _selectEsquema?.sysvacu02_descripcion,
-                  dosis: _selectDosis?.sysvacu05_nombre,
-                  fecha: pasos > 6
-                      ? '${_selectFecha.day.toString().padLeft(2, '0')}/${_selectFecha.month.toString().padLeft(2, '0')}/${_selectFecha.year}'
-                      : null,
-                  lote: _selectLote?.sysdesa18_lote,
-                  child: containerPasos(),
-                ),
-                const SizedBox(height: AppEspaciado.md),
-                containerBeneficiario(),
-                const SizedBox(height: AppEspaciado.sm),
-                _seccionSituacionEditable(),
-                _seccionVacunasVisita(),
-                if (beneficiarioService.existeBeneficiario)
-                  VacunasCalendarioFiltradas(
-                    resultado: clasificarBeneficiarioActual(),
+          ],
+        ),
+        body: Column(
+          children: [
+            _bannerIdentidad(),
+            _bannerAlertaTutor(),
+            Expanded(
+              child: RawScrollbar(
+                thumbColor: cs.primary.withValues(alpha: 0.42),
+                thumbVisibility: true,
+                radius: const Radius.circular(AppEspaciado.radioBoton),
+                thickness: 6,
+                controller: _generalScroll,
+                child: SingleChildScrollView(
+                  controller: _generalScroll,
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppEspaciado.lg,
+                    AppEspaciado.sm,
+                    AppEspaciado.lg,
+                    AppEspaciado.xl,
                   ),
-                const SizedBox(height: AppEspaciado.sm),
-                containerTutor(),
-                const SizedBox(height: AppEspaciado.sm),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      VacunasPanelFlujo(
+                        pasoActual: pasos,
+                        onIrAPaso: (p) => setState(() => pasos = p),
+                        perfil: _selectPerfil?.sysvacu12_descripcion,
+                        vacuna: _selectVacunas?.sysvacu04_nombre,
+                        condicion: _selectCondicion?.sysvacu01_descripcion,
+                        esquema: _selectEsquema?.sysvacu02_descripcion,
+                        dosis: _selectDosis?.sysvacu05_nombre,
+                        fecha: pasos > 6
+                            ? '${_selectFecha.day.toString().padLeft(2, '0')}/${_selectFecha.month.toString().padLeft(2, '0')}/${_selectFecha.year}'
+                            : null,
+                        lote: _selectLote?.sysdesa18_lote,
+                        child: containerPasos(),
+                      ),
+                      const SizedBox(height: AppEspaciado.md),
+                      containerBeneficiario(),
+                      const SizedBox(height: AppEspaciado.sm),
+                      _seccionVacunasVisita(),
+                      KeyedSubtree(
+                        key: _tutorSectionKey,
+                        child: containerTutor(),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.paddingOf(context).bottom +
+                            AppEspaciado.xl,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: _barraAccionesFija(cs),
+      ),
+    );
+  }
 
-                const SizedBox(height: AppEspaciado.xl),
-                if (pasos == 8) botonRegistrarVacunacion(),
-                Padding(
-                  padding: const EdgeInsets.only(top: AppEspaciado.md),
-                  child: OutlinedButton.icon(
-                    style: AppBotones.estiloOutlinedPeligro(cs),
-                    icon: const Icon(Icons.cancel_outlined),
-                    label: const Text('Cancelar registro'),
-                    onPressed: () => _mostrarDialogoCancelarRegistro(cs),
+  /// Banner fijo (fuera del scroll) con nombre · D.N.I. de la persona en
+  /// pantalla. Siempre visible sin costar espacio del formulario: una sola
+  /// línea. Tocar abre el detalle completo en un bottom sheet
+  /// (`_mostrarDetalleBeneficiarioSheet`); no reemplaza a `containerBeneficiario`,
+  /// que sigue más abajo con el resto de datos y la situación editable.
+  Widget _bannerIdentidad() {
+    final b = beneficiarioService.beneficiario;
+    if (b == null) return const SizedBox.shrink();
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final nombre = [b.sysdesa10_nombre, b.sysdesa10_apellido]
+        .where((s) => (s ?? '').trim().isNotEmpty)
+        .join(' ')
+        .trim();
+    final dni = b.sysdesa10_dni?.trim() ?? '';
+    final etiqueta = [
+      if (nombre.isNotEmpty) nombre,
+      if (dni.isNotEmpty) 'DNI $dni',
+    ].join(' · ');
+    final esMenor = _beneficiarioRequierePanelTutor();
+
+    return Material(
+      color: cs.surfaceContainerHigh.withValues(alpha: 0.6),
+      child: InkWell(
+        onTap: _mostrarDetalleBeneficiarioSheet,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppEspaciado.lg,
+            vertical: AppEspaciado.sm,
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.badge_outlined, size: 16, color: cs.primary),
+              const SizedBox(width: AppEspaciado.sm),
+              Expanded(
+                child: Text(
+                  etiqueta.isNotEmpty ? etiqueta : 'Beneficiario',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: tt.bodySmall?.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: cs.onSurface,
                   ),
                 ),
-                SizedBox(
-                  height:
-                      MediaQuery.paddingOf(context).bottom + AppEspaciado.xl,
+              ),
+              if (esMenor) ...[
+                const SizedBox(width: AppEspaciado.sm),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: cs.tertiary.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'MENOR',
+                    style: tt.labelSmall?.copyWith(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                      color: cs.tertiary,
+                    ),
+                  ),
                 ),
               ],
-            ),
+              const SizedBox(width: AppEspaciado.xs),
+              Icon(Icons.expand_more_rounded, size: 16, color: cs.onSurfaceVariant),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  /// Banner fijo de alerta: menor sin tutor cargado. Tocar scrollea hasta el
+  /// panel de tutor (`_tutorSectionKey`) en vez de obligar a bajar a ciegas.
+  Widget _bannerAlertaTutor() {
+    if (beneficiarioService.beneficiario == null) return const SizedBox.shrink();
+    final requiere = _beneficiarioRequierePanelTutor();
+    final tut = tutorService.tutor;
+    final yaCargado = tut != null && _tutorTieneDocumentoCargado(tut);
+    if (!requiere || yaCargado) return const SizedBox.shrink();
+
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    return Material(
+      color: cs.errorContainer.withValues(alpha: 0.35),
+      child: InkWell(
+        onTap: () {
+          final ctx = _tutorSectionKey.currentContext;
+          if (ctx != null) {
+            Scrollable.ensureVisible(
+              ctx,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppEspaciado.lg,
+            vertical: AppEspaciado.sm,
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.family_restroom_outlined, size: 16, color: cs.error),
+              const SizedBox(width: AppEspaciado.sm),
+              Expanded(
+                child: Text(
+                  'Menor de edad: falta cargar el tutor',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: tt.bodySmall?.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: cs.error,
+                  ),
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, size: 16, color: cs.error),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Barra fija de acciones (fuera del scroll): "Cancelar registro" siempre
+  /// disponible + la acción de avance del paso actual cuando ese paso la
+  /// tiene (Fecha y Verificar). El resto de los pasos avanza solo con tocar
+  /// una opción de la lista, sin botón propio.
+  Widget _barraAccionesFija(ColorScheme cs) {
+    final String? etiquetaAvance;
+    final VoidCallback? alAvanzar;
+    if (pasos == 6) {
+      etiquetaAvance = 'Continuar';
+      alAvanzar = _cargarLotesYAvanzar;
+    } else if (pasos == 8) {
+      etiquetaAvance = 'Continuar a confirmación';
+      alAvanzar = _alPresionarContinuarRegistro;
+    } else {
+      etiquetaAvance = null;
+      alAvanzar = null;
+    }
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppEspaciado.lg,
+          AppEspaciado.sm,
+          AppEspaciado.lg,
+          AppEspaciado.sm,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                style: AppBotones.estiloOutlinedPeligro(cs),
+                icon: const Icon(Icons.cancel_outlined),
+                label: const Text('Cancelar'),
+                onPressed: () => _mostrarDialogoCancelarRegistro(cs),
+              ),
+            ),
+            if (etiquetaAvance != null) ...[
+              const SizedBox(width: AppEspaciado.sm),
+              Expanded(
+                flex: 2,
+                child: FilledButton(
+                  style: AppBotones.estiloFilledPrimario(cs),
+                  onPressed: alAvanzar,
+                  child: Text(etiquetaAvance),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _mostrarHistorialDosis() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppEspaciado.radioCampo),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.52,
+          minChildSize: 0.32,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return vacunasAplicadas(scrollController: scrollController);
+          },
+        );
+      },
+    );
+  }
+
+  /// Calendario sugerido (`VacunasCalendarioFiltradas`, solo informativo) en
+  /// bottom sheet: antes era el bloque más alto de la página, siempre
+  /// expandido en el medio del flujo, compitiendo con el formulario por
+  /// espacio.
+  void _mostrarCalendarioSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppEspaciado.radioCampo),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.35,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return _calendarioSheetContenido(scrollController: scrollController);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _calendarioSheetContenido({ScrollController? scrollController}) {
+    if (!beneficiarioService.existeBeneficiario) {
+      return Padding(
+        padding: const EdgeInsets.all(AppEspaciado.lg),
+        child: Text(
+          'Cargue un beneficiario para ver el calendario sugerido.',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      );
+    }
+    final cs = Theme.of(context).colorScheme;
+    return SingleChildScrollView(
+      controller: scrollController,
+      padding: const EdgeInsets.fromLTRB(
+        AppEspaciado.lg,
+        AppEspaciado.sm,
+        AppEspaciado.lg,
+        AppEspaciado.xl,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Container(
+              width: 44,
+              height: AppEspaciado.xs,
+              decoration: BoxDecoration(
+                color: cs.outlineVariant.withValues(alpha: 0.65),
+                borderRadius: BorderRadius.circular(AppEspaciado.xs),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppEspaciado.radioCampo),
+          VacunasCalendarioFiltradas(resultado: clasificarBeneficiarioActual()),
+        ],
+      ),
+    );
+  }
+
+  /// Detalle completo del beneficiario en bottom sheet, abierto desde el
+  /// banner de identidad fijo. Reusa las mismas filas de detalle que
+  /// `containerBeneficiario` ya mostraba en su cuerpo colapsable.
+  void _mostrarDetalleBeneficiarioSheet() {
+    final b = beneficiarioService.beneficiario;
+    if (b == null) return;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppEspaciado.radioCampo),
+        ),
+      ),
+      builder: (BuildContext dialogCtx) {
+        final cs = Theme.of(dialogCtx).colorScheme;
+        final bar = context.sisTipografia;
+        final filasDetalle = _filasDetalleBeneficiario(context, b);
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppEspaciado.lg,
+            AppEspaciado.md,
+            AppEspaciado.lg,
+            AppEspaciado.xl,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: AppEspaciado.xs,
+                  decoration: BoxDecoration(
+                    color: cs.outlineVariant.withValues(alpha: 0.65),
+                    borderRadius: BorderRadius.circular(AppEspaciado.xs),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppEspaciado.radioCampo),
+              Text(
+                'Beneficiario',
+                style: bar.tituloTarjeta.copyWith(color: cs.onSurface),
+              ),
+              const SizedBox(height: AppEspaciado.lg),
+              for (final fila in filasDetalle) ...[
+                fila,
+                const SizedBox(height: AppEspaciado.md),
+              ],
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -708,8 +1020,10 @@ class _VacunasPageState extends State<VacunasPage> {
   /// Situación editable sin volver a buscar al beneficiario: antes solo se
   /// fijaba en `BusquedaBeneficiario`/`EscanerDni` y no había forma de
   /// corregirla si el operador se enteraba de la condición ya en `VacunasPage`
-  /// (única salida previa: cancelar el registro entero).
-  Widget _seccionSituacionEditable() {
+  /// (única salida previa: cancelar el registro entero). Vive dentro del
+  /// cuerpo colapsable de `containerBeneficiario`: es un atributo de la
+  /// persona, no un bloque aparte.
+  Widget _bloqueSituacionInline() {
     final b = beneficiarioService.beneficiario;
     if (b == null) return const SizedBox.shrink();
     final sexoEsFemenino = b.sysdesa10_sexo == 'F';
@@ -719,26 +1033,19 @@ class _VacunasPageState extends State<VacunasPage> {
         return ValueListenableBuilder<bool>(
           valueListenable: situacionBeneficiarioService.esPersonalDeSaludEstado,
           builder: (BuildContext context, esPersonalDeSalud, _) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
-              child: Container(
-                padding: const EdgeInsets.all(AppEspaciado.md),
-                decoration: _decoracionTarjetaIdentidadVacunas(),
-                child: SituacionBeneficiario(
-                  sexoEsFemenino: sexoEsFemenino,
-                  condicion: condicion,
-                  esPersonalDeSalud: esPersonalDeSalud,
-                  onCondicionChanged: (c) =>
-                      situacionBeneficiarioService.cargarSituacion(
-                    condicionGestacional: c,
-                    esPersonalDeSalud: esPersonalDeSalud,
-                  ),
-                  onPersonalSaludChanged: (v) =>
-                      situacionBeneficiarioService.cargarSituacion(
-                    condicionGestacional: condicion,
-                    esPersonalDeSalud: v,
-                  ),
-                ),
+            return SituacionBeneficiario(
+              sexoEsFemenino: sexoEsFemenino,
+              condicion: condicion,
+              esPersonalDeSalud: esPersonalDeSalud,
+              onCondicionChanged: (c) =>
+                  situacionBeneficiarioService.cargarSituacion(
+                condicionGestacional: c,
+                esPersonalDeSalud: esPersonalDeSalud,
+              ),
+              onPersonalSaludChanged: (v) =>
+                  situacionBeneficiarioService.cargarSituacion(
+                condicionGestacional: condicion,
+                esPersonalDeSalud: v,
               ),
             );
           },
@@ -747,9 +1054,10 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  /// Vacunas ya registradas con éxito en esta visita (ciclo persona). Vacío
-  /// hasta que se confirme la primera; se acumula en
-  /// `insertRegistroService.visitaRegistrosEstado` desde `ConfirmarDatos`.
+  /// Vacunas ya registradas con éxito en esta visita (ciclo persona): antes
+  /// era una tarjeta con la lista completa; ahora una línea compacta que al
+  /// tocarla abre el mismo bottom sheet de historial (`_mostrarHistorialDosis`,
+  /// ya incluye las de esta visita tras refrescarse en `ConfirmarDatos`).
   Widget _seccionVacunasVisita() {
     return ValueListenableBuilder<List<InsertRegistros>>(
       valueListenable: insertRegistroService.visitaRegistrosEstado,
@@ -759,40 +1067,35 @@ class _VacunasPageState extends State<VacunasPage> {
         final tt = Theme.of(context).textTheme;
         return Padding(
           padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
-          child: Container(
-            padding: const EdgeInsets.all(AppEspaciado.md),
-            decoration: BoxDecoration(
-              color: cs.primaryContainer.withValues(alpha: 0.35),
+          child: Material(
+            color: cs.primaryContainer.withValues(alpha: 0.35),
+            borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+            child: InkWell(
               borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
-              border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Ya aplicadas en esta visita (${visita.length})',
-                  style: tt.labelSmall?.copyWith(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.4,
-                    color: cs.onSurfaceVariant,
-                  ),
+              onTap: _mostrarHistorialDosis,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppEspaciado.md,
+                  vertical: AppEspaciado.sm,
                 ),
-                const SizedBox(height: AppEspaciado.sm),
-                ...visita.map(
-                  (r) => Padding(
-                    padding: const EdgeInsets.only(bottom: 2),
-                    child: Text(
-                      '${r.nombreVacuna ?? '—'} · ${r.nombreDosis ?? '—'}',
-                      style: tt.bodySmall?.copyWith(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: cs.onSurface,
+                child: Row(
+                  children: [
+                    Icon(Icons.check_circle_outline, size: 16, color: cs.primary),
+                    const SizedBox(width: AppEspaciado.sm),
+                    Expanded(
+                      child: Text(
+                        '${visita.length} aplicada${visita.length == 1 ? '' : 's'} en esta visita',
+                        style: tt.bodySmall?.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: cs.onSurfaceVariant,
+                        ),
                       ),
                     ),
-                  ),
+                    Icon(Icons.chevron_right_rounded, size: 16, color: cs.onSurfaceVariant),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         );
@@ -862,6 +1165,14 @@ class _VacunasPageState extends State<VacunasPage> {
                   ),
                   const SizedBox(height: AppEspaciado.lg),
                   ...bloquesDetalle,
+                  const SizedBox(height: AppEspaciado.lg),
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: cs.outlineVariant.withValues(alpha: 0.35),
+                  ),
+                  const SizedBox(height: AppEspaciado.lg),
+                  _bloqueSituacionInline(),
                   const SizedBox(height: AppEspaciado.md),
                   _bloqueFilasCalendario(context),
                 ],
@@ -1992,101 +2303,29 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  Widget containerFecha() {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    final bar = context.sisTipografia;
-    final fechaFmt =
-        '${_selectFecha.day.toString().padLeft(2, '0')}/${_selectFecha.month.toString().padLeft(2, '0')}/${_selectFecha.year}';
-
-    Future<void> cargarLotesYAvanzar() async {
-      loadingLoginService.cargaLotes(false);
-      try {
-        final tempLista = await vacunasRepository.validarLotes(
-          _selectVacunas!.id_sysvacu04,
-        );
-        if (!mounted) return;
-        if (tempLista.isEmpty) {
-          showDialog(
-            context: _scaffoldKey.currentContext!,
-            builder: (dialogCtx) => DialogoAlerta(
-              envioFuncion2: true,
-              envioFuncion1: true,
-              tituloAlerta: 'Sin lotes disponibles',
-              descripcionAlerta:
-                  'No hay lotes registrados para esta vacuna. Seleccione otra dosis o cambie la vacuna.',
-              textoBotonAlerta: 'Cambiar vacuna',
-              textoBotonAlerta2: 'Cambiar dosis',
-              funcion1: () {
-                Navigator.of(dialogCtx).pop();
-                setState(() {
-                  pasos = 2;
-                  _selectCondicion = null;
-                  _selectEsquema = null;
-                  _selectDosis = null;
-                  _selectLote = null;
-                  listaLotes!.clear();
-                });
-              },
-              funcion2: () => Navigator.of(dialogCtx).pop(),
-              icon: const Icon(Icons.inventory_2_outlined, size: 40),
-              color: Theme.of(dialogCtx).colorScheme.tertiary,
-            ),
-          );
-          return;
-        }
-        if (tempLista[0].codigo_mensaje == "0") {
-          showDialog(
-            context: _scaffoldKey.currentContext!,
-            builder: (dialogCtx) => DialogoAlerta(
-              envioFuncion2: true,
-              envioFuncion1: true,
-              tituloAlerta: 'No se pudieron cargar los lotes',
-              descripcionAlerta:
-                  tempLista[0].mensaje ?? 'Intente con otra dosis o cambie la vacuna.',
-              textoBotonAlerta: 'Cambiar vacuna',
-              textoBotonAlerta2: 'Reintentar',
-              funcion1: () {
-                Navigator.of(dialogCtx).pop();
-                setState(() {
-                  pasos = 2;
-                  _selectCondicion = null;
-                  _selectEsquema = null;
-                  _selectDosis = null;
-                  _selectLote = null;
-                  listaLotes!.clear();
-                });
-              },
-              funcion2: () => Navigator.of(dialogCtx).pop(),
-              icon: const Icon(Icons.error_outline, size: 40),
-              color: Theme.of(
-                _scaffoldKey.currentContext!,
-              ).colorScheme.error,
-            ),
-          );
-          return;
-        }
-        if (loadingLoginService.getCargaLotesState!) {
-          mostrarLoadingEstrellasXTiempo(context, 800);
-        }
-        setState(() {
-          listaLotes = tempLista;
-          vacunasLotesService.cargarListaVacunasLotes(tempLista);
-        });
-        loadingLoginService.cargaLotes(false);
-        setState(() => pasos++);
-      } catch (_) {
-        if (!mounted) return;
+  /// Avanza de Fecha (paso 6) a Lote: valida lotes disponibles para la vacuna
+  /// elegida. Hoisteado a nivel de clase (antes función local de
+  /// `containerFecha`) para poder dispararlo también desde la barra de
+  /// acciones fija (`_barraAccionesFija`), no solo desde un botón dentro del
+  /// contenido del paso.
+  Future<void> _cargarLotesYAvanzar() async {
+    loadingLoginService.cargaLotes(false);
+    try {
+      final tempLista = await vacunasRepository.validarLotes(
+        _selectVacunas!.id_sysvacu04,
+      );
+      if (!mounted) return;
+      if (tempLista.isEmpty) {
         showDialog(
           context: _scaffoldKey.currentContext!,
           builder: (dialogCtx) => DialogoAlerta(
             envioFuncion2: true,
             envioFuncion1: true,
-            tituloAlerta: 'Error de conexión',
+            tituloAlerta: 'Sin lotes disponibles',
             descripcionAlerta:
-                'No se pudieron obtener los lotes. Revise la conexión o cambie la vacuna.',
+                'No hay lotes registrados para esta vacuna. Seleccione otra dosis o cambie la vacuna.',
             textoBotonAlerta: 'Cambiar vacuna',
-            textoBotonAlerta2: 'Cerrar',
+            textoBotonAlerta2: 'Cambiar dosis',
             funcion1: () {
               Navigator.of(dialogCtx).pop();
               setState(() {
@@ -2099,12 +2338,89 @@ class _VacunasPageState extends State<VacunasPage> {
               });
             },
             funcion2: () => Navigator.of(dialogCtx).pop(),
-            color: Theme.of(dialogCtx).colorScheme.error,
-            icon: const Icon(Icons.wifi_off_rounded, size: 40),
+            icon: const Icon(Icons.inventory_2_outlined, size: 40),
+            color: Theme.of(dialogCtx).colorScheme.tertiary,
           ),
         );
+        return;
       }
+      if (tempLista[0].codigo_mensaje == "0") {
+        showDialog(
+          context: _scaffoldKey.currentContext!,
+          builder: (dialogCtx) => DialogoAlerta(
+            envioFuncion2: true,
+            envioFuncion1: true,
+            tituloAlerta: 'No se pudieron cargar los lotes',
+            descripcionAlerta:
+                tempLista[0].mensaje ?? 'Intente con otra dosis o cambie la vacuna.',
+            textoBotonAlerta: 'Cambiar vacuna',
+            textoBotonAlerta2: 'Reintentar',
+            funcion1: () {
+              Navigator.of(dialogCtx).pop();
+              setState(() {
+                pasos = 2;
+                _selectCondicion = null;
+                _selectEsquema = null;
+                _selectDosis = null;
+                _selectLote = null;
+                listaLotes!.clear();
+              });
+            },
+            funcion2: () => Navigator.of(dialogCtx).pop(),
+            icon: const Icon(Icons.error_outline, size: 40),
+            color: Theme.of(
+              _scaffoldKey.currentContext!,
+            ).colorScheme.error,
+          ),
+        );
+        return;
+      }
+      if (loadingLoginService.getCargaLotesState!) {
+        mostrarLoadingEstrellasXTiempo(context, 800);
+      }
+      setState(() {
+        listaLotes = tempLista;
+        vacunasLotesService.cargarListaVacunasLotes(tempLista);
+      });
+      loadingLoginService.cargaLotes(false);
+      setState(() => pasos++);
+    } catch (_) {
+      if (!mounted) return;
+      showDialog(
+        context: _scaffoldKey.currentContext!,
+        builder: (dialogCtx) => DialogoAlerta(
+          envioFuncion2: true,
+          envioFuncion1: true,
+          tituloAlerta: 'Error de conexión',
+          descripcionAlerta:
+              'No se pudieron obtener los lotes. Revise la conexión o cambie la vacuna.',
+          textoBotonAlerta: 'Cambiar vacuna',
+          textoBotonAlerta2: 'Cerrar',
+          funcion1: () {
+            Navigator.of(dialogCtx).pop();
+            setState(() {
+              pasos = 2;
+              _selectCondicion = null;
+              _selectEsquema = null;
+              _selectDosis = null;
+              _selectLote = null;
+              listaLotes!.clear();
+            });
+          },
+          funcion2: () => Navigator.of(dialogCtx).pop(),
+          color: Theme.of(dialogCtx).colorScheme.error,
+          icon: const Icon(Icons.wifi_off_rounded, size: 40),
+        ),
+      );
     }
+  }
+
+  Widget containerFecha() {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bar = context.sisTipografia;
+    final fechaFmt =
+        '${_selectFecha.day.toString().padLeft(2, '0')}/${_selectFecha.month.toString().padLeft(2, '0')}/${_selectFecha.year}';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2186,12 +2502,6 @@ class _VacunasPageState extends State<VacunasPage> {
               ),
             ],
           ),
-        ),
-        const SizedBox(height: AppEspaciado.lg),
-        FilledButton(
-          style: AppBotones.estiloFilledPrimario(cs),
-          onPressed: cargarLotesYAvanzar,
-          child: const Text('Continuar'),
         ),
       ],
     );
@@ -2811,58 +3121,51 @@ class _VacunasPageState extends State<VacunasPage> {
     );
   }
 
-  Widget botonRegistrarVacunacion() {
-    final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
-      child: FilledButton(
-        style: AppBotones.estiloFilledPrimario(cs),
-        onPressed: () {
-          final error = _validarDatosRegistro();
-          if (error != null) {
-            showDialog(
-              context: _scaffoldKey.currentContext!,
-              builder: (dialogCtx) => DialogoAlerta(
-                envioFuncion2: false,
-                envioFuncion1: false,
-                tituloAlerta: 'Faltan datos para continuar',
-                descripcionAlerta: error,
-                textoBotonAlerta: 'Listo',
-                icon: const Icon(Icons.error_outline, size: 40),
-                color: Theme.of(dialogCtx).colorScheme.error,
-              ),
-            );
-            return;
-          }
-          if (_vacunaDosisYaAplicada()) {
-            showDialog(
-              context: _scaffoldKey.currentContext!,
-              builder: (dialogCtx) => DialogoAlerta(
-                dosBotones: true,
-                envioFuncion1: true,
-                envioFuncion2: true,
-                funcion1: () {
-                  Navigator.of(dialogCtx).pop();
-                  _continuarAConfirmacion();
-                },
-                funcion2: () => Navigator.of(dialogCtx).pop(),
-                tituloAlerta: 'Vacuna ya registrada',
-                descripcionAlerta:
-                    'Esta vacuna y dosis ya figuran aplicadas para esta persona '
-                    '(historial o esta misma visita). ¿Continuar igual?',
-                textoBotonAlerta: 'Continuar igual',
-                textoBotonAlerta2: 'Volver',
-                icon: const Icon(Icons.warning_amber_rounded, size: 40),
-                color: Theme.of(dialogCtx).colorScheme.error,
-              ),
-            );
-            return;
-          }
-          _continuarAConfirmacion();
-        },
-        child: const Text('Continuar a confirmación'),
-      ),
-    );
+  /// Acción de la barra fija en el paso 8. Antes vivía en un `FilledButton`
+  /// al final del contenido scrolleable (`botonRegistrarVacunacion`); ahora
+  /// la dispara `_barraAccionesFija`, siempre visible sin scroll.
+  void _alPresionarContinuarRegistro() {
+    final error = _validarDatosRegistro();
+    if (error != null) {
+      showDialog(
+        context: _scaffoldKey.currentContext!,
+        builder: (dialogCtx) => DialogoAlerta(
+          envioFuncion2: false,
+          envioFuncion1: false,
+          tituloAlerta: 'Faltan datos para continuar',
+          descripcionAlerta: error,
+          textoBotonAlerta: 'Listo',
+          icon: const Icon(Icons.error_outline, size: 40),
+          color: Theme.of(dialogCtx).colorScheme.error,
+        ),
+      );
+      return;
+    }
+    if (_vacunaDosisYaAplicada()) {
+      showDialog(
+        context: _scaffoldKey.currentContext!,
+        builder: (dialogCtx) => DialogoAlerta(
+          dosBotones: true,
+          envioFuncion1: true,
+          envioFuncion2: true,
+          funcion1: () {
+            Navigator.of(dialogCtx).pop();
+            _continuarAConfirmacion();
+          },
+          funcion2: () => Navigator.of(dialogCtx).pop(),
+          tituloAlerta: 'Vacuna ya registrada',
+          descripcionAlerta:
+              'Esta vacuna y dosis ya figuran aplicadas para esta persona '
+              '(historial o esta misma visita). ¿Continuar igual?',
+          textoBotonAlerta: 'Continuar igual',
+          textoBotonAlerta2: 'Volver',
+          icon: const Icon(Icons.warning_amber_rounded, size: 40),
+          color: Theme.of(dialogCtx).colorScheme.error,
+        ),
+      );
+      return;
+    }
+    _continuarAConfirmacion();
   }
 
   void _continuarAConfirmacion() {

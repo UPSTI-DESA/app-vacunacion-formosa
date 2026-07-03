@@ -2,49 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
 
-/// Cabecera contextual: jerarquía clara, copy orientado a tarea (patrón 2024–2026).
-class VacunasEncabezadoPagina extends StatelessWidget {
-  const VacunasEncabezadoPagina({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-
-    return Row(
-      children: [
-        Text(
-          'REGISTRO ACTIVO',
-          style: tt.labelSmall?.copyWith(
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.2,
-            color: cs.primary,
-          ),
-        ),
-        const SizedBox(width: AppEspaciado.sm),
-        Container(
-          width: 4,
-          height: 4,
-          decoration: BoxDecoration(
-            color: cs.primary.withValues(alpha: 0.4),
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: AppEspaciado.sm),
-        Text(
-          'Vacunación en campo',
-          style: tt.bodyMedium?.copyWith(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: AppSuperficies.textoSecundario(context),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _PasoMeta {
   const _PasoMeta(this.etiqueta, this.icono);
   final String etiqueta;
@@ -71,122 +28,10 @@ const List<Color> _coloresPasosVacunas = [
   Color(0xFF009688),
 ];
 
-/// Stepper horizontal con etiquetas, tacto amplio y estados M3.
-class VacunasFlujoStepper extends StatelessWidget {
-  const VacunasFlujoStepper({
-    super.key,
-    required this.pasoActual,
-    required this.onIrAPaso,
-  });
-
-  /// 1–8 alineado con [VacunasPage] `pasos`.
-  final int pasoActual;
-  final ValueChanged<int> onIrAPaso;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(_metasPasosVacunas.length, (i) {
-          final n = i + 1;
-          final meta = _metasPasosVacunas[i];
-          final hecho = pasoActual > n;
-          final actual = pasoActual == n;
-          final Color borde;
-          final Color fondoCirculo;
-          final Color textoEtiqueta;
-          if (actual) {
-            borde = cs.primary;
-            fondoCirculo = cs.primaryContainer;
-            textoEtiqueta = cs.onSurface;
-          } else if (hecho) {
-            borde = cs.primary.withValues(alpha: 0.35);
-            fondoCirculo = cs.primary.withValues(alpha: 0.12);
-            textoEtiqueta = cs.onSurface;
-          } else {
-            borde = cs.outlineVariant.withValues(alpha: 0.55);
-            fondoCirculo = cs.surfaceContainerHighest;
-            textoEtiqueta = AppSuperficies.textoSecundario(context);
-          }
-
-          return Padding(
-            padding: EdgeInsets.only(right: i < _metasPasosVacunas.length - 1 ? 4 : 0),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: n <= pasoActual ? () => onIrAPaso(n) : null,
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-                  child: SizedBox(
-                    width: 48,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 220),
-                          curve: Curves.easeOutCubic,
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: fondoCirculo,
-                            border: Border.all(color: borde, width: actual ? 2 : 1),
-                            boxShadow: actual
-                                ? [
-                                    BoxShadow(
-                                      color: cs.primary.withValues(alpha: 0.15),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ]
-                                : null,
-                          ),
-                          child: Center(
-                            child: hecho && !actual
-                                ? Icon(Icons.check_rounded, color: cs.primary, size: 16)
-                                : Icon(meta.icono,
-                                    size: 16,
-                                    color: actual
-                                        ? cs.onPrimaryContainer
-                                        : hecho
-                                            ? cs.primary
-                                            : cs.onSurfaceVariant),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          meta.etiqueta,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: tt.labelSmall?.copyWith(
-                            fontSize: 10,
-                            fontWeight: actual ? FontWeight.w800 : FontWeight.w500,
-                            height: 1.1,
-                            color: textoEtiqueta,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-}
-
-/// Contenedor del flujo: header con selecciones + stepper + contenido del paso.
+/// Contenedor del flujo: header compacto (badge de paso + resumen de lo ya
+/// elegido) + contenido del paso. El resumen solo lista pasos con valor, en
+/// un `Wrap` que crece con el progreso — antes era una grilla fija de 6 chips
+/// de 56dp en 3 filas, ocupando ~250dp incluso en el paso 1 sin nada elegido.
 class VacunasPanelFlujo extends StatefulWidget {
   const VacunasPanelFlujo({
     super.key,
@@ -235,12 +80,12 @@ class _VacunasPanelFlujoState extends State<VacunasPanelFlujo> {
   void _actualizarItems() {
     _items.clear();
     _items.addAll([
-      _ItemSeleccion(numeroPaso: 1, nombre: 'Perfil', valor: widget.perfil, icono: Icons.assignment_ind_outlined, indiceColor: 0),
-      _ItemSeleccion(numeroPaso: 2, nombre: 'Vacuna', valor: widget.vacuna, icono: Icons.vaccines_outlined, indiceColor: 1),
-      _ItemSeleccion(numeroPaso: 3, nombre: 'Condición', valor: widget.condicion, icono: Icons.health_and_safety_outlined, indiceColor: 2),
-      _ItemSeleccion(numeroPaso: 4, nombre: 'Esquema', valor: widget.esquema, icono: Icons.account_tree_outlined, indiceColor: 3),
-      _ItemSeleccion(numeroPaso: 5, nombre: 'Dosis', valor: widget.dosis, icono: Icons.numbers_outlined, indiceColor: 4),
-      _ItemSeleccion(numeroPaso: 7, nombre: 'Lote', valor: widget.lote, valorSecundario: widget.fecha, icono: Icons.inventory_2_outlined, indiceColor: 5),
+      _ItemSeleccion(numeroPaso: 1, nombre: 'Perfil', valor: widget.perfil, indiceColor: 0),
+      _ItemSeleccion(numeroPaso: 2, nombre: 'Vacuna', valor: widget.vacuna, indiceColor: 1),
+      _ItemSeleccion(numeroPaso: 3, nombre: 'Condición', valor: widget.condicion, indiceColor: 2),
+      _ItemSeleccion(numeroPaso: 4, nombre: 'Esquema', valor: widget.esquema, indiceColor: 3),
+      _ItemSeleccion(numeroPaso: 5, nombre: 'Dosis', valor: widget.dosis, indiceColor: 4),
+      _ItemSeleccion(numeroPaso: 7, nombre: 'Lote', valor: widget.lote, valorSecundario: widget.fecha, indiceColor: 5),
     ]);
   }
 
@@ -254,7 +99,7 @@ class _VacunasPanelFlujoState extends State<VacunasPanelFlujo> {
         ? _metasPasosVacunas[widget.pasoActual - 1].etiqueta
         : '';
 
-    final pasosCompletados = _items.where((i) => i.tieneValor).length;
+    final completados = _items.where((i) => i.tieneValor).toList();
 
     return Container(
       decoration: AppSuperficies.tarjetaBlanca(context, radio: AppEspaciado.xl),
@@ -269,11 +114,11 @@ class _VacunasPanelFlujoState extends State<VacunasPanelFlujo> {
                 top: Radius.circular(AppEspaciado.xl),
               ),
             ),
-            padding: const EdgeInsets.fromLTRB(
+            padding: EdgeInsets.fromLTRB(
               AppEspaciado.lg,
               AppEspaciado.lg,
               AppEspaciado.lg,
-              AppEspaciado.md,
+              completados.isEmpty ? AppEspaciado.lg : AppEspaciado.md,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,31 +151,23 @@ class _VacunasPanelFlujoState extends State<VacunasPanelFlujo> {
                         color: cs.onPrimaryContainer.withValues(alpha: 0.7),
                       ),
                     ),
-                    const Spacer(),
-                    if (pasosCompletados > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: cs.primary.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '$pasosCompletados completados',
-                          style: tt.labelSmall?.copyWith(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: cs.primary,
-                          ),
-                        ),
-                      ),
                   ],
                 ),
-                const SizedBox(height: AppEspaciado.md),
-                _BarraSelecciones(
-                  items: _items,
-                  pasoActual: widget.pasoActual,
-                  onIrAPaso: widget.onIrAPaso,
-                ),
+                if (completados.isNotEmpty) ...[
+                  const SizedBox(height: AppEspaciado.sm),
+                  Wrap(
+                    spacing: AppEspaciado.sm,
+                    runSpacing: AppEspaciado.xs,
+                    children: completados
+                        .map(
+                          (item) => _ChipCompacto(
+                            item: item,
+                            onTap: () => widget.onIrAPaso(item.numeroPaso),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ],
               ],
             ),
           ),
@@ -353,7 +190,6 @@ class _ItemSeleccion {
     required this.nombre,
     this.valor,
     this.valorSecundario,
-    required this.icono,
     required this.indiceColor,
   });
 
@@ -361,181 +197,60 @@ class _ItemSeleccion {
   final String nombre;
   final String? valor;
   final String? valorSecundario;
-  final IconData icono;
   final int indiceColor;
   bool get tieneValor => valor != null && valor!.isNotEmpty;
 }
 
-class _BarraSelecciones extends StatelessWidget {
-  const _BarraSelecciones({
-    required this.items,
-    required this.pasoActual,
-    required this.onIrAPaso,
-  });
-
-  final List<_ItemSeleccion> items;
-  final int pasoActual;
-  final ValueChanged<int> onIrAPaso;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (int i = 0; i < items.length; i += 2)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
-            child: Row(
-              children: [
-                for (int j = i; j < i + 2 && j < items.length; j++)
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(right: j < i + 1 && j < items.length - 1 ? AppEspaciado.sm : 0),
-                      child: _ChipItemSeleccion(
-                        item: items[j],
-                        esPasoActual: pasoActual == items[j].numeroPaso,
-                        puedeTocarse: items[j].numeroPaso <= pasoActual || items[j].tieneValor,
-                        onTap: () => onIrAPaso(items[j].numeroPaso),
-                      ),
-                    ),
-                  ),
-                if (i + 2 > items.length && items.length - i == 1)
-                  const Expanded(child: SizedBox()),
-              ],
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _ChipItemSeleccion extends StatelessWidget {
-  const _ChipItemSeleccion({
-    required this.item,
-    required this.esPasoActual,
-    required this.puedeTocarse,
-    required this.onTap,
-  });
+/// Chip compacto de una línea: "Nombre: valor". Reemplaza a la tarjeta de
+/// 56dp por selección — solo se renderiza para pasos ya completados, así el
+/// header no ocupa espacio con selecciones vacías.
+class _ChipCompacto extends StatelessWidget {
+  const _ChipCompacto({required this.item, required this.onTap});
 
   final _ItemSeleccion item;
-  final bool esPasoActual;
-  final bool puedeTocarse;
   final VoidCallback onTap;
-
-  bool get _tieneSecundario =>
-      item.valorSecundario != null && item.valorSecundario!.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final oscuro = cs.brightness == Brightness.dark;
+    final colorBase = _coloresPasosVacunas[item.indiceColor];
+    final fondo = oscuro ? colorBase.withValues(alpha: 0.22) : colorBase.withValues(alpha: 0.12);
+    final borde = oscuro ? colorBase.withValues(alpha: 0.75) : colorBase.withValues(alpha: 0.55);
+    final texto = oscuro ? colorBase.withValues(alpha: 1.0) : colorBase;
 
-    final colorPaso = _coloresPasosVacunas[item.indiceColor];
-
-    final Color borde;
-    final Color colorIcono;
-    final Color colorNombre;
-    final Color colorValor;
-
-    if (item.tieneValor) {
-      borde = colorPaso;
-      colorIcono = oscuro ? colorPaso.withValues(alpha: 0.9) : colorPaso;
-      colorNombre = oscuro ? cs.onSurface.withValues(alpha: 0.6) : cs.onSurfaceVariant;
-      colorValor = oscuro ? cs.onSurface : colorPaso.withValues(alpha: 0.85);
-    } else if (esPasoActual) {
-      borde = cs.primary;
-      colorIcono = cs.primary;
-      colorNombre = cs.onSurfaceVariant;
-      colorValor = cs.primary;
-    } else {
-      borde = cs.outlineVariant;
-      colorIcono = cs.onSurfaceVariant.withValues(alpha: 0.5);
-      colorNombre = cs.onSurfaceVariant.withValues(alpha: 0.5);
-      colorValor = cs.onSurfaceVariant.withValues(alpha: 0.4);
-    }
+    final valorCompleto = item.valorSecundario != null && item.valorSecundario!.isNotEmpty
+        ? '${item.valor} · ${item.valorSecundario}'
+        : item.valor!;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: puedeTocarse ? onTap : null,
-        borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppEspaciado.sm),
         child: Container(
-          height: 56,
+          padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.sm, vertical: 5),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppEspaciado.radioBoton),
-            border: Border.all(color: borde, width: esPasoActual ? 2 : 1.5),
+            color: fondo,
+            borderRadius: BorderRadius.circular(AppEspaciado.sm),
+            border: Border.all(color: borde, width: 1),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: item.tieneValor
-                      ? colorPaso.withValues(alpha: oscuro ? 0.2 : 0.1)
-                      : (esPasoActual ? cs.primary.withValues(alpha: 0.1) : Colors.transparent),
-                  border: Border.all(color: borde, width: 1.5),
-                ),
-                child: Center(
-                  child: item.tieneValor
-                      ? Icon(Icons.check, size: 14, color: colorPaso)
-                      : Text(
-                          '${item.numeroPaso}',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: colorPaso,
-                          ),
-                        ),
-                ),
+              Icon(Icons.check_rounded, size: 12, color: texto),
+              const SizedBox(width: 4),
+              Text(
+                '${item.nombre}: ',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: texto),
               ),
-              const SizedBox(width: AppEspaciado.sm),
-              Icon(item.icono, size: 16, color: colorIcono),
-              const SizedBox(width: AppEspaciado.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      item.nombre,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: colorNombre,
-                        height: 1.2,
-                      ),
-                      maxLines: 1,
-                    ),
-                    const SizedBox(height: AppEspaciado.xs),
-                    Text(
-                      item.tieneValor ? item.valor! : (esPasoActual ? 'Seleccione...' : '—'),
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: item.tieneValor ? FontWeight.w700 : FontWeight.w400,
-                        fontStyle: item.tieneValor ? FontStyle.normal : FontStyle.italic,
-                        color: colorValor,
-                        height: 1.3,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (_tieneSecundario) ...[
-                      Text(
-                        item.valorSecundario!,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: colorValor.withValues(alpha: 0.75),
-                          height: 1.2,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ],
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 120),
+                child: Text(
+                  valorCompleto,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: texto),
                 ),
               ),
             ],
@@ -602,137 +317,6 @@ class VacunasTituloSeccionPaso extends StatelessWidget {
               ),
             ),
           ],
-        ],
-      ),
-    );
-  }
-}
-
-class VacunasBarraResumen extends StatelessWidget {
-  const VacunasBarraResumen({
-    super.key,
-    required this.pasoActual,
-    required this.perfil,
-    required this.vacuna,
-    required this.condicion,
-    required this.esquema,
-    required this.dosis,
-    required this.lote,
-  });
-
-  final int pasoActual;
-  final String? perfil;
-  final String? vacuna;
-  final String? condicion;
-  final String? esquema;
-  final String? dosis;
-  final String? lote;
-
-  @override
-  Widget build(BuildContext context) {
-    final selections = [
-      _ChipDatoPaso(nombre: 'Perfil', valor: perfil, indice: 0),
-      _ChipDatoPaso(nombre: 'Vacuna', valor: vacuna, indice: 1),
-      _ChipDatoPaso(nombre: 'Condición', valor: condicion, indice: 2),
-      _ChipDatoPaso(nombre: 'Esquema', valor: esquema, indice: 3),
-      _ChipDatoPaso(nombre: 'Dosis', valor: dosis, indice: 4),
-      _ChipDatoPaso(nombre: 'Lote', valor: lote, indice: 5),
-    ];
-
-    return Wrap(
-      spacing: AppEspaciado.sm,
-      runSpacing: AppEspaciado.sm,
-      children: selections.map((chip) {
-        return _ChipSeleccion(
-          nombre: chip.nombre,
-          valor: chip.valor ?? '—',
-          tieneValor: chip.valor != null && chip.valor!.isNotEmpty,
-          colorBase: _coloresPasosVacunas[chip.indice],
-        );
-      }).toList(),
-    );
-  }
-}
-
-class _ChipDatoPaso {
-  const _ChipDatoPaso({
-    required this.nombre,
-    required this.valor,
-    required this.indice,
-  });
-  final String nombre;
-  final String? valor;
-  final int indice;
-}
-
-class _ChipSeleccion extends StatelessWidget {
-  const _ChipSeleccion({
-    required this.nombre,
-    required this.valor,
-    required this.tieneValor,
-    required this.colorBase,
-  });
-
-  final String nombre;
-  final String valor;
-  final bool tieneValor;
-  final Color colorBase;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final oscuro = cs.brightness == Brightness.dark;
-
-    final Color fondo;
-    final Color borde;
-    final Color texto;
-
-    if (tieneValor) {
-      if (oscuro) {
-        fondo = colorBase.withValues(alpha: 0.35);
-        borde = colorBase.withValues(alpha: 0.8);
-        texto = colorBase.withValues(alpha: 1.0);
-      } else {
-        fondo = colorBase.withValues(alpha: 0.15);
-        borde = colorBase.withValues(alpha: 0.6);
-        texto = colorBase;
-      }
-    } else {
-      fondo = cs.surfaceContainerHighest.withValues(alpha: 0.5);
-      borde = cs.outlineVariant.withValues(alpha: 0.5);
-      texto = cs.onSurfaceVariant;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.md, vertical: AppEspaciado.xs),
-      decoration: BoxDecoration(
-        color: fondo,
-        borderRadius: BorderRadius.circular(AppEspaciado.sm),
-        border: Border.all(color: borde, width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '$nombre: ',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: texto,
-            ),
-          ),
-          Flexible(
-            child: Text(
-              valor,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: tieneValor ? FontWeight.w700 : FontWeight.w400,
-                color: texto,
-              ),
-            ),
-          ),
         ],
       ),
     );

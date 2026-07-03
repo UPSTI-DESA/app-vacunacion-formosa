@@ -92,39 +92,81 @@ beneficiario nuevo limpia el tutor anterior (`usuariobeneficiario_service.dart:2
 derivada: fecha nac. (PDF417 > API) o edad en años (PDF417 > API), más situación.
 Devuelve filas del calendario + flag `edadIndeterminada`. La matriz es
 transcripción literal de `docs/calendario_nacional_vacunacion_2026.md`
-(`calendario_2026.dart:196-286`). Se muestra en `VacunasPage` solo si hay
-beneficiario (`vacunas_page.dart:186-189`).
+(`calendario_2026.dart:196-286`).
 
-Situación editable sin re-buscar: `_seccionSituacionEditable()` en
-`VacunasPage`, debajo de `containerBeneficiario()`, reusa
-`SituacionBeneficiario` contra `situacionBeneficiarioService` directamente
-(no hay copia local intermedia). Cambiarla recalcula el calendario en el
-siguiente build.
+**Puramente informativo, en bottom sheet** (`_mostrarCalendarioSheet()`,
+ícono en el `AppBar`, `Icons.calendar_month_outlined`): antes vivía siempre
+expandido en el medio del flujo vertical de `VacunasPage` y era el bloque
+más alto de la pantalla, empujando el formulario. `containerBeneficiario`
+sí conserva un resumen liviano de las filas clasificadas —solo chips de
+etiqueta (`_bloqueFilasCalendario`, sin el detalle vacuna+indicación)—
+dentro de su cuerpo colapsable.
 
-### 4. Registro — wizard de 8 pasos
+Situación editable sin re-buscar: `_bloqueSituacionInline()` en
+`VacunasPage`, dentro del cuerpo colapsable de `containerBeneficiario()`
+(no es un bloque aparte), reusa `SituacionBeneficiario` contra
+`situacionBeneficiarioService` directamente. La tarjeta arranca expandida
+si ya hay situación cargada (`condicionGestacional != null` o
+`esPersonalDeSalud`), para que ese dato no quede oculto detrás de un tap.
 
-`containerPasos()` (`vacunas_page.dart:246-292`):
+### 4. Layout de `VacunasPage` — banners fijos + barra de acciones fija
+
+Reescrito completo tras detectar que el formulario (lo importante de la
+pantalla) quedaba debajo de bloques informativos siempre expandidos, y que
+la acción de avance del paso 8 exigía scrollear toda la página.
+
+- **`_bannerIdentidad()`**: fuera del `SingleChildScrollView` (en un `Column`
+  con `Expanded` alrededor del scroll), una línea fija con nombre · DNI (+
+  «MENOR» si `_beneficiarioRequierePanelTutor()`). Tocar abre
+  `_mostrarDetalleBeneficiarioSheet()` (bottom sheet con el detalle
+  completo, mismas filas que `containerBeneficiario`). No reemplaza a
+  `containerBeneficiario`, que sigue más abajo colapsable con el resto de
+  los datos y la situación.
+- **`_bannerAlertaTutor()`**: también fijo, visible solo si
+  `_beneficiarioRequierePanelTutor()` y no hay tutor cargado. Tocar
+  scrollea hasta `containerTutor()` (`Scrollable.ensureVisible` sobre
+  `_tutorSectionKey`) en vez de obligar a bajar a ciegas.
+- **`_barraAccionesFija()`** (`bottomNavigationBar` del `Scaffold`): «Cancelar»
+  siempre visible + la acción de avance del paso actual, cuando ese paso
+  tiene una (paso 6 Fecha → `_cargarLotesYAvanzar`; paso 8 Verificar →
+  `_alPresionarContinuarRegistro`). Los demás pasos (Perfil, Vacuna,
+  Condición, Esquema, Lote) avanzan solo con tocar una opción de la lista,
+  sin botón propio — no se les agregó uno.
+- **`_seccionVacunasVisita()`**: pasó de tarjeta con lista completa a una
+  línea («N aplicadas en esta visita»); tocarla abre el mismo bottom sheet
+  de historial (`_mostrarHistorialDosis()`, botón del `AppBar`).
+
+### 5. Registro — wizard de 8 pasos
+
+`containerPasos()` (`vacunas_page.dart`):
 1 Perfil · 2 Vacuna · 3 Condición · 4 Esquema · 5 Dosis · 6 Fecha · 7 Lote · 8 Verificar.
 
-- Cascada dependiente: cambiar una selección anula todas las de aguas abajo
-  (`vacunas_page.dart:1199`, `1247-1248`, `1286-1287`, `1820-1821`).
-- El stepper solo permite navegar hacia atrás: guard `n <= pasoActual`
-  (`vacunas_ui_helpers.dart:123`).
-- «Cancelar registro» (`_mostrarDialogoCancelarRegistro`, `vacunas_page.dart`):
-  tres destinos — «Volver» (cierra el diálogo), «Salir y buscar otra persona»
-  (`BusquedaBeneficiario`, pierde la persona) y «Descartar esta vacuna»
-  (`reiniciarCicloVacuna()` + `VacunasPage`, conserva beneficiario/tutor).
+- Cascada dependiente: cambiar una selección anula todas las de aguas abajo.
+- Header del panel (`VacunasPanelFlujo`, `vacunas_ui_helpers.dart`): badge
+  «PASO X DE 8» + `Wrap` de chips compactos **solo de los pasos ya
+  completados** (`_ChipCompacto`) — antes una grilla fija de 6 chips de
+  56dp en 3 filas, siempre renderizada aunque todo dijera «—». Tocar un
+  chip vuelve a ese paso: guard real es `numeroPaso <= pasoActual ||
+  tieneValor` en `_ChipCompacto`/`onIrAPaso` (el `VacunasFlujoStepper` con
+  guard `n <= pasoActual` que citaba esta sección antes era código muerto,
+  eliminado).
+- «Cancelar registro» (`_mostrarDialogoCancelarRegistro`, `vacunas_page.dart`,
+  disparado desde la barra fija): tres destinos — «Volver» (cierra el
+  diálogo), «Salir y buscar otra persona» (`BusquedaBeneficiario`, pierde la
+  persona) y «Descartar esta vacuna» (`reiniciarCicloVacuna()` +
+  `VacunasPage`, conserva beneficiario/tutor).
 - **Perfil heredado dentro de la visita**: si ya hay perfil elegido en una
   vacuna anterior de la misma persona (`perfilesVacunacionService`, ciclo
   persona), `_heredarPerfilDeLaVisita()` lo reutiliza y arranca directo en
   paso 2 (`vacunas_page.dart`, `initState`). Para cambiarlo: volver a paso 1
-  con el stepper y elegir otro perfil ahí.
+  con el chip del header y elegir otro perfil ahí.
 - Fecha de aplicación: default hoy, `firstDate` del picker = fecha de
   nacimiento del beneficiario si es posterior a 2021, si no 2021
-  (`vacunas_page.dart:2011-2024`, `_fechaNacimientoBeneficiario()`).
-- Paso 8 valida completitud (`_validarDatosRegistro`, `vacunas_page.dart:2543-2551`)
-  y arma `InsertRegistros` (`_construirRegistro`, `vacunas_page.dart:2555-2610`).
-  La condición gestacional se descarta si `sysdesa10_sexo != 'F'`.
+  (`_fechaNacimientoBeneficiario()`). El botón «Continuar» de este paso vive
+  en la barra fija, no dentro del contenido del paso.
+- Paso 8 valida completitud (`_validarDatosRegistro`) y arma
+  `InsertRegistros` (`_construirRegistro`). La condición gestacional se
+  descarta si `sysdesa10_sexo != 'F'`.
 - **Advertencia de duplicado** (no bloquea): `_vacunaDosisYaAplicada()`
   compara vacuna+dosis por nombre contra el historial del back
   (`notificacionesDosisService.listaDosisAplicadas`) y contra lo ya
@@ -132,7 +174,7 @@ siguiente build.
   coincide, diálogo «Vacuna ya registrada» con «Continuar igual» / «Volver»
   antes de ir a `ConfirmarDatos`.
 
-### 5. Confirmación y envío
+### 6. Confirmación y envío
 
 `ConfirmarDatos` (revisión final) → POST `insertRegistroProd`
 (`confirmaciondatos_page.dart:565`). El resumen de vacuna/dosis/lote se
@@ -217,3 +259,11 @@ Tachadas: ya resueltas (Fases 1-8 del plan, completo).
    Fase 6 (advertencia, no bloqueo). Fecha aplicación ≥ fecha nacimiento:
    resuelto Fase 3.3. Tutor ≠ beneficiario / tutor mayor de edad: pendiente,
    sin fase asignada.
+9. ~~El formulario (lo importante de la pantalla) quedaba debajo de bloques
+   informativos siempre expandidos: el calendario completo (bloque más alto
+   de la página) y, por error propio al aplicar las Fases 5 y 7.2, la
+   situación editable y "vacunas de la visita" también sin colapsar. La
+   acción de avance del paso 8 exigía scrollear todo eso.~~ Resuelto: ver
+   «Layout de `VacunasPage`» arriba — calendario a bottom sheet, situación
+   dentro de `containerBeneficiario` (colapsable), visita a una línea,
+   acciones de avance a barra fija.
