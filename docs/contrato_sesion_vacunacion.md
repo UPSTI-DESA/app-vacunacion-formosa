@@ -192,7 +192,7 @@ modo prueba / pendientes de confirmación del back:
 ## Incoherencias conocidas
 
 Detalle, impacto y orden de resolución: `docs/plan_mejora_sesion_vacunacion.md`.
-Tachadas: ya resueltas (Fases 1-7 del plan).
+Tachadas: ya resueltas (Fases 1-8 del plan, completo).
 
 1. ~~Historial de dosis en `estadosPorVacuna`: se borraba al elegir «otra
    vacuna, misma persona» aunque es dato de la persona.~~ Resuelto Fase 1
@@ -211,8 +211,8 @@ Tachadas: ya resueltas (Fases 1-7 del plan).
 6. ~~Perfil se re-consulta y re-selecciona en cada vacuna de la misma
    persona.~~ Resuelto Fase 4 (perfil en ciclo persona, heredado entre
    vacunas de la visita).
-7. `enTerreno`: doble escritura (`vacunador_page.dart:68` y `:523`).
-   Pendiente, Fase 8.1.
+7. ~~`enTerreno`: doble escritura.~~ Resuelto Fase 8.1 (queda solo el
+   on-change del switch, se quitó la del `dispose`).
 8. ~~Sin validación de duplicado vacuna+dosis dentro de la visita.~~ Resuelto
    Fase 6 (advertencia, no bloqueo). Fecha aplicación ≥ fecha nacimiento:
    resuelto Fase 3.3. Tutor ≠ beneficiario / tutor mayor de edad: pendiente,

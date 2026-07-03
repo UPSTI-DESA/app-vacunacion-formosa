@@ -64,8 +64,10 @@ class _VacunadorPageState extends State<VacunadorPage> {
 
   @override
   void dispose() {
+    // sesionEquipoVacunacionService ya se actualiza on-change del switch
+    // (más abajo, _filaSwitch de "¿Es en terreno?"); escribirlo de nuevo acá
+    // era una segunda fuente de verdad redundante.
     vacunadorService.vacunadorEstado.removeListener(_onVacunadorCambio);
-    sesionEquipoVacunacionService.establecerEnTerreno(esTerreno.value);
     mismoVacunador.dispose();
     esTerreno.dispose();
     super.dispose();

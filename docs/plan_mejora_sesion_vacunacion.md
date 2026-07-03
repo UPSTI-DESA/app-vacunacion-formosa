@@ -171,17 +171,29 @@ Con esto, Fase 7 queda resuelta por completo.
 
 ## Fase 8 — Limpieza menor (independiente, cualquier momento)
 
-1. Quitar doble escritura de `enTerreno`: dejar solo el on-change
-   (`vacunador_page.dart:523`), borrar la del `dispose` (`vacunador_page.dart:68`).
-2. `ResumenSesionVacunacion`: podar parámetros nunca variados
-   (`mostrarNotaBackend`, `colapsable`, `expandidoInicial` — único uso real
-   `busquedabeneficiario_page.dart:86`) y la nota backend muerta
-   (`resumen_sesion_vacunacion_widget.dart:176-186`). Hacerlo reactivo a
-   `enTerrenoEstado` con `ValueListenableBuilder`.
+1. **Doble escritura de `enTerreno`** ✅ resuelta. `vacunador_page.dart`,
+   `dispose()`: se quitó la escritura redundante de
+   `sesionEquipoVacunacionService.establecerEnTerreno(esTerreno.value)`;
+   queda solo el on-change del switch «¿Es en terreno?» (línea ~523).
+2. **`ResumenSesionVacunacion`** ✅ resuelta. Se podaron `mostrarNotaBackend`,
+   `colapsable` y `expandidoInicial` — en el único uso real
+   (`busquedabeneficiario_page.dart:86`, `compendio: true`) nunca variaban de
+   su default. Con eso cae también `didUpdateWidget` (solo existía para la
+   transición de `colapsable`, que ya no es parámetro) y la nota backend
+   muerta. El widget queda siempre colapsable, arranca colapsado, y la fila
+   «Modalidad» ahora usa `ValueListenableBuilder` sobre `enTerrenoEstado` en
+   vez de leerlo una sola vez en `build`.
 3. **Default de `enTerreno`** ✅ resuelta. Decisión: `false` (establecimiento
    fijo) — la mayoría de las sesiones son en establecimiento fijo, no en
    campaña. `sesion_equipo_vacunacion_service.dart:7-8`: default cambiado de
    `true` a `false`.
+
+## Estado del plan
+
+Fases 1-8 resueltas. Lo que sigue en `docs/contrato_sesion_vacunacion.md` bajo
+«Piezas en modo prueba» y «Fuera de alcance» (nombres de campo con el back,
+umbrales edad↔situación) depende de confirmación externa, no de trabajo de
+este repo.
 
 ---
 
