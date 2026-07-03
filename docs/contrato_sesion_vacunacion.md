@@ -114,6 +114,12 @@ beneficiario (`vacunas_page.dart:186-189`).
 - Paso 8 valida completitud (`_validarDatosRegistro`, `vacunas_page.dart:2543-2551`)
   y arma `InsertRegistros` (`_construirRegistro`, `vacunas_page.dart:2555-2610`).
   La condición gestacional se descarta si `sysdesa10_sexo != 'F'`.
+- **Advertencia de duplicado** (no bloquea): `_vacunaDosisYaAplicada()`
+  compara vacuna+dosis por nombre contra el historial del back
+  (`notificacionesDosisService.listaDosisAplicadas`) y contra lo ya
+  registrado en la visita (`insertRegistroService.visitaRegistros`). Si
+  coincide, diálogo «Vacuna ya registrada» con «Continuar igual» / «Volver»
+  antes de ir a `ConfirmarDatos`.
 
 ### 5. Confirmación y envío
 
@@ -189,6 +195,7 @@ Tachadas: ya resueltas (Fases 1-4 del plan).
    vacunas de la visita).
 7. `enTerreno`: doble escritura (`vacunador_page.dart:68` y `:523`).
    Pendiente, Fase 8.1.
-8. Sin validación de duplicado vacuna+dosis dentro de la visita (Fase 6,
-   requiere Fase 5). Fecha aplicación ≥ fecha nacimiento: resuelto Fase 3.3.
-   Tutor ≠ beneficiario / tutor mayor de edad: pendiente, sin fase asignada.
+8. ~~Sin validación de duplicado vacuna+dosis dentro de la visita.~~ Resuelto
+   Fase 6 (advertencia, no bloqueo). Fecha aplicación ≥ fecha nacimiento:
+   resuelto Fase 3.3. Tutor ≠ beneficiario / tutor mayor de edad: pendiente,
+   sin fase asignada.

@@ -2665,6 +2665,28 @@ class _VacunasPageState extends State<VacunasPage> {
     return null;
   }
 
+  /// Compara vacuna+dosis seleccionadas contra el historial del back
+  /// (`notificacionesDosisService`) y contra lo ya registrado en esta visita
+  /// (`insertRegistroService.visitaRegistros`). Solo hay nombres en común
+  /// entre ambas fuentes (el historial no trae ids), por eso compara por
+  /// nombre, sin distinguir mayúsculas/espacios.
+  bool _vacunaDosisYaAplicada() {
+    final vacuna = _selectVacunas?.sysvacu04_nombre?.trim().toLowerCase();
+    final dosis = _selectDosis?.sysvacu05_nombre?.trim().toLowerCase();
+    if (vacuna == null || dosis == null) return false;
+
+    bool coincide(String? v, String? d) =>
+        v?.trim().toLowerCase() == vacuna && d?.trim().toLowerCase() == dosis;
+
+    final enHistorial = notificacionesDosisService.listaDosisAplicadas.any(
+      (n) => coincide(n.sysvacu04_nombre, n.sysvacu05_nombre),
+    );
+    final enVisita = insertRegistroService.visitaRegistros.any(
+      (r) => coincide(r.nombreVacuna, r.nombreDosis),
+    );
+    return enHistorial || enVisita;
+  }
+
   /// Construye el objeto InsertRegistros con o sin datos de tutor según edad.
   InsertRegistros _construirRegistro() {
     final conTutor =
@@ -2750,15 +2772,43 @@ class _VacunasPageState extends State<VacunasPage> {
             );
             return;
           }
-          insertRegistroService.cargarRegistro(_construirRegistro());
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => const ConfirmarDatos()),
-            (route) => false,
-          );
+          if (_vacunaDosisYaAplicada()) {
+            showDialog(
+              context: _scaffoldKey.currentContext!,
+              builder: (dialogCtx) => DialogoAlerta(
+                dosBotones: true,
+                envioFuncion1: true,
+                envioFuncion2: true,
+                funcion1: () {
+                  Navigator.of(dialogCtx).pop();
+                  _continuarAConfirmacion();
+                },
+                funcion2: () => Navigator.of(dialogCtx).pop(),
+                tituloAlerta: 'Vacuna ya registrada',
+                descripcionAlerta:
+                    'Esta vacuna y dosis ya figuran aplicadas para esta persona '
+                    '(historial o esta misma visita). ¿Continuar igual?',
+                textoBotonAlerta: 'Continuar igual',
+                textoBotonAlerta2: 'Volver',
+                icon: const Icon(Icons.warning_amber_rounded, size: 40),
+                color: Theme.of(dialogCtx).colorScheme.error,
+              ),
+            );
+            return;
+          }
+          _continuarAConfirmacion();
         },
         child: const Text('Continuar a confirmación'),
       ),
+    );
+  }
+
+  void _continuarAConfirmacion() {
+    insertRegistroService.cargarRegistro(_construirRegistro());
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const ConfirmarDatos()),
+      (route) => false,
     );
   }
 

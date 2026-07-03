@@ -111,14 +111,25 @@ vez, tanto `VacunasPage` como `ConfirmarDatos` muestran la 1ª ya aplicada.
 
 Base para Fase 6 (advertencia de duplicados).
 
-## Fase 6 — Advertencia de duplicado en la visita
+## Fase 6 — Advertencia de duplicado en la visita ✅ resuelta
 
-**Cambio**: antes de registrar, comparar vacuna+dosis contra el historial del
-back (Fases 1-2) y contra la lista de la visita (Fase 5). Coincidencia → diálogo
-de advertencia.
+**Decisión**: advertencia, no bloqueo. El operador ve el aviso y decide si
+continúa; el criterio médico final queda del lado humano, no de la app.
 
-**DECISIÓN pendiente**: ¿advertencia (permite continuar) o bloqueo? Criterio
-médico; default propuesto: advertencia.
+**Cambio aplicado** (`vacunas_page.dart`):
+- `_vacunaDosisYaAplicada()`: compara vacuna+dosis seleccionadas (por nombre,
+  sin distinguir mayúsculas/espacios — es la única clave en común, el
+  historial del back no trae ids) contra
+  `notificacionesDosisService.listaDosisAplicadas` (Fases 1-2) y contra
+  `insertRegistroService.visitaRegistros` (Fase 5).
+- `botonRegistrarVacunacion()`: si hay coincidencia, diálogo «Vacuna ya
+  registrada» con «Continuar igual» / «Volver» antes de ir a
+  `ConfirmarDatos`. Sin coincidencia, sigue directo (`_continuarAConfirmacion()`,
+  extraído del botón para reusar en ambos caminos).
+
+**Verificación**: registrar una vacuna → «Sí, otra vacuna» → elegir la misma
+vacuna+dosis → botón «Continuar a confirmación» muestra la advertencia;
+«Continuar igual» avanza, «Volver» se queda en el paso 8.
 
 ## Fase 7 — Fricciones UX del ciclo
 
@@ -167,7 +178,7 @@ médico; default propuesto: advertencia.
 | # | Decisión | Fase |
 |---|----------|------|
 | ~~1~~ | ~~Perfil: ciclo persona o ciclo cuenta~~ → ciclo persona, resuelto | 4 |
-| 2 | Duplicados: advertencia o bloqueo | 6 |
+| ~~2~~ | ~~Duplicados: advertencia o bloqueo~~ → advertencia, resuelto | 6 |
 | 3 | Sexo manual: exigir elección explícita | 7.3 |
 | 4 | Confirmación única para 2ª vacuna en adelante: alcance | 7.4 |
 | 5 | Default de `enTerreno` | 8.3 |
