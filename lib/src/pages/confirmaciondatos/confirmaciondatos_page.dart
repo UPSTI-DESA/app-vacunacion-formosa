@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:sistema_vacunacion/src/config/config.dart';
+import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
 import 'package:sistema_vacunacion/src/presentation/state/services.dart';
@@ -559,6 +560,29 @@ const SizedBox(width: AppEspaciado.md),
     );
   }
 
+  /// Recarga el historial de dosis del beneficiario en memoria tras un
+  /// registro exitoso, para que la vacuna recién aplicada aparezca antes de
+  /// cargar la siguiente de la misma visita. Misma llamada que
+  /// `busquedabeneficiario_page.dart:378-390`. Si falla, sigue el flujo: el
+  /// historial queda con los datos previos, no bloquea la carga de otra vacuna.
+  Future<void> _refrescarHistorialDosis() async {
+    final b = beneficiarioService.beneficiario;
+    if (b == null) return;
+    try {
+      final notificaciones = await sistemaRepository.validarNotificaciones(
+        b.sysdesa10_dni,
+        b.sysdesa10_sexo,
+      );
+      if (notificaciones[0].codigo_mensaje == '1') {
+        notificacionesDosisService.cargarListaDosis(notificaciones);
+      } else {
+        notificacionesDosisService.cargarRegistro(NotificacionesDosis());
+      }
+    } catch (_) {
+      // Sin conexión: se mantiene el historial cargado hasta ahora.
+    }
+  }
+
   Future<void> enviarDatos(BuildContext context2) async {
     setState(() => habilitarCircular = true);
     try {
@@ -597,8 +621,10 @@ const SizedBox(width: AppEspaciado.md),
               (Route<dynamic> route) => false,
             ),
             envioFuncion1: true,
-            funcion1: () {
+            funcion1: () async {
+              await _refrescarHistorialDosis();
               reiniciarCicloVacuna();
+              if (!mounted) return;
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const VacunasPage()),
