@@ -5,6 +5,7 @@ export 'package:sistema_vacunacion/src/presentation/state/tema_app_service.dart'
 export 'package:sistema_vacunacion/src/presentation/state/usuarioregistrador_service.dart';
 export 'package:sistema_vacunacion/src/presentation/state/usuariovacunador_service.dart';
 export 'package:sistema_vacunacion/src/presentation/state/usuariobeneficiario_service.dart';
+export 'package:sistema_vacunacion/src/presentation/state/situacionbeneficiario_service.dart';
 export 'package:sistema_vacunacion/src/presentation/state/tutor_service.dart';
 export 'package:sistema_vacunacion/src/presentation/state/notificacionesdosis_service.dart';
 export 'package:sistema_vacunacion/src/presentation/state/vacunascant_service.dart';

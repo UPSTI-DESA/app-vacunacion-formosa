@@ -32,6 +32,8 @@ class InsertRegistros {
     this.sysdesa10_nombre_tutor,
     this.sysdesa10_dni_tutor,
     this.sysdesa10_sexo_tutor,
+    this.condicion_gestacional_beneficiario,
+    this.es_personal_salud,
     this.nombreVacuna,
     this.nombreCondicion,
     this.nombreEsquema,
@@ -66,6 +68,10 @@ class InsertRegistros {
   String? sysdesa10_nombre_tutor;
   String? sysdesa10_dni_tutor;
   String? sysdesa10_sexo_tutor;
+  // TODO backend: confirmar nombre de campo. Valores: 'embarazada' | 'puerpera' | null.
+  String? condicion_gestacional_beneficiario;
+  // TODO backend: confirmar nombre de campo. '1' | '0'.
+  String? es_personal_salud;
   String? codigo_mensaje;
   String? mensaje;
 
@@ -102,6 +108,8 @@ class InsertRegistros {
         "sysdesa10_nombre_tutor": sysdesa10_nombre_tutor,
         "sysdesa10_dni_tutor": sysdesa10_dni_tutor,
         "sysdesa10_sexo_tutor": sysdesa10_sexo_tutor,
+        "condicion_gestacional_beneficiario": condicion_gestacional_beneficiario,
+        "es_personal_salud": es_personal_salud,
         "fecha_aplicacion": fecha_aplicacion,
       };
 }

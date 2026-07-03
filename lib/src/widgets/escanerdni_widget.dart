@@ -22,6 +22,11 @@ class EscanerDni extends StatefulWidget {
   final double? largoValor;
   final bool? iconBool;
 
+  /// Solo tipo 'Beneficiario': si se provee, tras cargar el beneficiario en
+  /// [beneficiarioService] NO navega a VacunasPage; devuelve el control a la
+  /// pantalla anfitriona (que muestra la situación y continúa).
+  final VoidCallback? onBeneficiarioCargado;
+
   const EscanerDni(
     this.tipoEscaneo,
     this.textoBoton, {
@@ -29,6 +34,7 @@ class EscanerDni extends StatefulWidget {
     this.anchoValor,
     this.largoValor,
     this.iconBool,
+    this.onBeneficiarioCargado,
   }) : super(key: key);
 
   @override
@@ -514,10 +520,17 @@ class _EscanerDniState extends State<EscanerDni> {
           : notificacionesDosisService.cargarRegistro(NotificacionesDosis());
       loadingLoginService.cargarEstado(false);
       if (!mounted) return;
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const VacunasPage()),
-          (Route<dynamic> route) => false);
+      if (widget.onBeneficiarioCargado != null) {
+        // Cierra el loading «Buscando datos...» y devuelve el control a la
+        // pantalla anfitriona (situación + continuar se resuelven allí).
+        Navigator.of(context).pop();
+        widget.onBeneficiarioCargado!();
+      } else {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const VacunasPage()),
+            (Route<dynamic> route) => false);
+      }
     } catch (_) {
       loadingLoginService.cargarEstado(false);
       rethrow;

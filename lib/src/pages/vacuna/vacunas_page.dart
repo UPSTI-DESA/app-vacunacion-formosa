@@ -7,7 +7,9 @@ import 'package:sistema_vacunacion/src/pages/pages.dart';
 import 'package:sistema_vacunacion/src/pages/vacuna/vacunas_ui_helpers.dart';
 import 'package:sistema_vacunacion/src/data/datasources/providers.dart';
 import 'package:sistema_vacunacion/src/data/repositories/repositories.dart';
+import 'package:sistema_vacunacion/src/domain/calendario/calendario_2026.dart';
 import 'package:sistema_vacunacion/src/presentation/state/services.dart';
+import 'package:sistema_vacunacion/src/utils/edad_beneficiario.dart';
 import 'package:sistema_vacunacion/src/widgets/widgets.dart';
 
 class VacunasPage extends StatefulWidget {
@@ -180,6 +182,11 @@ class _VacunasPageState extends State<VacunasPage> {
                 ),
                 const SizedBox(height: AppEspaciado.md),
                 containerBeneficiario(),
+                const SizedBox(height: AppEspaciado.sm),
+                if (beneficiarioService.existeBeneficiario)
+                  VacunasCalendarioFiltradas(
+                    resultado: clasificarBeneficiarioActual(),
+                  ),
                 const SizedBox(height: AppEspaciado.sm),
                 containerTutor(),
                 const SizedBox(height: AppEspaciado.sm),
@@ -701,11 +708,78 @@ class _VacunasPageState extends State<VacunasPage> {
                   ),
                   const SizedBox(height: AppEspaciado.lg),
                   ...bloquesDetalle,
+                  const SizedBox(height: AppEspaciado.md),
+                  _bloqueFilasCalendario(context),
                 ],
               ),
             ),
         ],
       ),
+    );
+  }
+
+  /// Filas del Calendario Nacional 2026 a las que pertenece el beneficiario
+  /// actual (`clasificarBeneficiarioActual`). Solo clasificación etaria y de
+  /// situación — sin mapeo a vacunas todavía.
+  Widget _bloqueFilasCalendario(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final resultado = clasificarBeneficiarioActual();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Calendario de vacunación',
+          style: tt.labelLarge?.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
+            color: AppSuperficies.textoSecundario(context),
+          ),
+        ),
+        const SizedBox(height: AppEspaciado.sm),
+        if (resultado.filas.isEmpty)
+          Text(
+            'Edad no determinada: no se pudo ubicar en el calendario.',
+            style: tt.bodySmall?.copyWith(
+              fontSize: 12,
+              color: AppSuperficies.textoSecundario(context),
+            ),
+          )
+        else
+          Wrap(
+            spacing: AppEspaciado.sm,
+            runSpacing: AppEspaciado.sm,
+            children: resultado.filas
+                .map(
+                  (f) => Chip(
+                    label: Text(f.etiqueta),
+                    labelStyle: tt.labelMedium?.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: cs.onSecondaryContainer,
+                    ),
+                    backgroundColor: cs.secondaryContainer.withValues(
+                      alpha: 0.6,
+                    ),
+                    side: BorderSide.none,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                )
+                .toList(),
+          ),
+        if (resultado.edadIndeterminada && resultado.filas.isNotEmpty) ...[
+          const SizedBox(height: AppEspaciado.xs),
+          Text(
+            'Edad no determinada con precisión: solo se muestran las filas de situación.',
+            style: tt.bodySmall?.copyWith(
+              fontSize: 11,
+              color: AppSuperficies.textoSecundario(context),
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -2243,47 +2317,13 @@ class _VacunasPageState extends State<VacunasPage> {
 
   /// Edad numérica desde el WS (`8`, `"12"`, `"8 años"`, etc.).
   /// Valores &gt; 120 se ignoran (a veces mandan año de nacimiento en el campo edad).
-  int? _edadNumericaBeneficiario(String? raw) {
-    if (raw == null) return null;
-    final s = raw.toString().trim();
-    if (s.isEmpty) return null;
-    int? v = int.tryParse(s);
-    if (v == null) {
-      final m = RegExp(r'(\d+)').firstMatch(s);
-      if (m != null) v = int.tryParse(m.group(1)!);
-    }
-    if (v == null || v > 120) return null;
-    return v;
-  }
+  int? _edadNumericaBeneficiario(String? raw) => parseEdadAnios(raw);
 
   /// Años cumplidos desde fecha de nacimiento si el campo edad no viene o no parsea.
   int? _edadAniosDesdeFechaNacimiento(String? raw) {
-    if (raw == null) return null;
-    final s = raw.toString().trim();
-    if (s.isEmpty) return null;
-    DateTime? dt;
-    if (RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(s)) {
-      dt = DateTime.tryParse(s.substring(0, s.length >= 10 ? 10 : s.length));
-    }
-    if (dt == null) {
-      final m = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{4})').firstMatch(s);
-      if (m != null) {
-        final d = int.tryParse(m.group(1)!);
-        final mo = int.tryParse(m.group(2)!);
-        final y = int.tryParse(m.group(3)!);
-        if (d != null && mo != null && y != null) {
-          dt = DateTime(y, mo, d);
-        }
-      }
-    }
+    final dt = parseFechaNacimiento(raw);
     if (dt == null) return null;
-    final ahora = DateTime.now();
-    var anios = ahora.year - dt.year;
-    if (ahora.month < dt.month ||
-        (ahora.month == dt.month && ahora.day < dt.day)) {
-      anios--;
-    }
-    return anios;
+    return edadAniosDesde(dt, DateTime.now());
   }
 
   /// Panel tutor: primero edad del **DNI escaneado**; si no hay (búsqueda manual), datos del API.
@@ -2562,6 +2602,10 @@ class _VacunasPageState extends State<VacunasPage> {
       sysdesa10_sexo_tutor: conTutor
           ? tutorService.tutor!.sysdesa10_sexo_tutor
           : '',
+      condicion_gestacional_beneficiario:
+          situacionBeneficiarioService.condicionGestacional?.name,
+      es_personal_salud:
+          situacionBeneficiarioService.esPersonalDeSalud ? '1' : '0',
     );
   }
 

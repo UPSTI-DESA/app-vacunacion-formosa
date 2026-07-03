@@ -26,6 +26,15 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
   late TextEditingController dniController;
   late FocusNode focusNode;
 
+  /// Modo de entrada elegido: 'escaneo' | 'manual'. Uno solo visible por vez.
+  String _modo = 'escaneo';
+
+  /// Escaneo: true cuando el beneficiario ya fue cargado por [EscanerDni]
+  /// y la tarjeta pasa a mostrar sexo detectado + situación + continuar.
+  bool _beneficiarioEscaneado = false;
+  CondicionGestacional? _condicionEscaneo;
+  bool _personalSaludEscaneo = false;
+
   @override
   void initState() {
     super.initState();
@@ -92,9 +101,8 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     );
   }
 
-  /// Tarjeta unificada de captura del D.N.I. del beneficiario: escaneo con
-  /// cámara o ingreso manual (número + sexo), con el mismo componente que
-  /// usan las pantallas de Vacunador y Tutor.
+  /// Tarjeta de captura del beneficiario con selector de modo: escaneo del
+  /// D.N.I. o carga manual. Se muestra un solo formulario por vez.
   Widget _tarjetaCaptura(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
@@ -118,12 +126,12 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Lectura del D.N.I.',
+                      'Datos del beneficiario',
                       style: bar.tituloTarjeta.copyWith(color: cs.onSurface),
                     ),
                     const SizedBox(height: AppEspaciado.xs),
                     Text(
-                      'Código del documento (frente o reverso)',
+                      'Elegí cómo cargar el documento',
                       style: tt.labelLarge?.copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -145,7 +153,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
                       envioFuncion1: false,
                       tituloAlerta: 'Información',
                       descripcionAlerta:
-                          'Si el beneficiario tiene el D.N.I., use Escanear y enfoque la cámara al código de barras. Si no lo tiene, ingrese el número y el sexo más abajo.',
+                          'Si el beneficiario tiene el D.N.I., use el modo Escanear y enfoque la cámara al código de barras; el sexo se detecta solo y luego completa la situación. Si no lo tiene, use Carga manual e ingrese número, sexo y situación.',
                       textoBotonAlerta: 'Entendido',
                       color: SisVacuMarca.vercelesteCuaternario,
                       icon: const Icon(
@@ -164,17 +172,169 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
             ],
           ),
           const SizedBox(height: AppEspaciado.lg),
-          FormularioDocumento(
-            tipoEscaneo: 'Beneficiario',
-            textoBotonEscaneo: 'Escanear documento',
-            anchoEscaner: 44,
-            controladorDni: dniController,
-            focusNode: focusNode,
-            etiquetaBoton: 'Verificar datos',
-            onVerificar: _confirmarYBuscar,
+          SegmentedButton<String>(
+            segments: const [
+              ButtonSegment(
+                value: 'escaneo',
+                label: Text('Escanear D.N.I.'),
+                icon: Icon(Icons.qr_code_scanner_rounded),
+              ),
+              ButtonSegment(
+                value: 'manual',
+                label: Text('Carga manual'),
+                icon: Icon(Icons.keyboard_alt_outlined),
+              ),
+            ],
+            selected: {_modo},
+            onSelectionChanged: (s) => setState(() => _modo = s.first),
+          ),
+          const SizedBox(height: AppEspaciado.lg),
+          AnimatedSize(
+            duration: AppMotion.entrada,
+            curve: Curves.easeInOut,
+            alignment: Alignment.topCenter,
+            child: _modo == 'escaneo' ? _modoEscaneo(context) : _modoManual(),
           ),
         ],
       ),
+    );
+  }
+
+  /// Modo escaneo: botón de cámara; tras cargar el beneficiario muestra el
+  /// sexo detectado, las selecciones de situación y el botón continuar.
+  Widget _modoEscaneo(BuildContext context) {
+    final b = beneficiarioService.beneficiario;
+    final sexo = b?.sysdesa10_sexo;
+    final etiquetaSexo = sexo == 'M'
+        ? 'Masculino'
+        : sexo == 'X'
+            ? 'No binario (X)'
+            : 'Femenino';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        EscanerDni(
+          'Beneficiario',
+          _beneficiarioEscaneado ? 'Escanear otro D.N.I.' : 'Escanear documento',
+          anchoValor: 44,
+          onBeneficiarioCargado: _alCargarBeneficiarioEscaneado,
+        ),
+        if (_beneficiarioEscaneado && b != null) ...[
+          const SizedBox(height: AppEspaciado.lg),
+          _resumenEscaneado(context, b, etiquetaSexo),
+          const SizedBox(height: AppEspaciado.lg),
+          SituacionBeneficiario(
+            sexoEsFemenino: sexo == 'F',
+            condicion: _condicionEscaneo,
+            esPersonalDeSalud: _personalSaludEscaneo,
+            onCondicionChanged: (c) => setState(() => _condicionEscaneo = c),
+            onPersonalSaludChanged: (v) =>
+                setState(() => _personalSaludEscaneo = v),
+          ),
+          const SizedBox(height: AppEspaciado.lg),
+          FilledButton.icon(
+            style: AppBotones.estiloFilledIconCta(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppEspaciado.radioCampo,
+                vertical: AppEspaciado.md + AppEspaciado.xs,
+              ),
+            ),
+            onPressed: _continuarEscaneado,
+            icon: const Icon(Icons.arrow_forward_rounded),
+            label: const Text('Continuar'),
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// Datos detectados del escaneo (solo lectura).
+  Widget _resumenEscaneado(
+    BuildContext context,
+    Beneficiario b,
+    String etiquetaSexo,
+  ) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final nombre =
+        '${b.sysdesa10_nombre ?? ''} ${b.sysdesa10_apellido ?? ''}'.trim();
+
+    Widget fila(String etiqueta, String valor) => Padding(
+          padding: const EdgeInsets.only(bottom: AppEspaciado.xs),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 72,
+                child: Text(
+                  etiqueta,
+                  style: tt.labelMedium?.copyWith(
+                    color: AppSuperficies.textoSecundario(context),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  valor,
+                  style: tt.titleSmall?.copyWith(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: cs.onSurface,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppEspaciado.md),
+      decoration: AppSuperficies.campoBusqueda(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (nombre.isNotEmpty) fila('Nombre', nombre),
+          fila('D.N.I.', b.sysdesa10_dni ?? ''),
+          fila('Sexo', etiquetaSexo),
+        ],
+      ),
+    );
+  }
+
+  void _alCargarBeneficiarioEscaneado() {
+    setState(() {
+      _beneficiarioEscaneado = true;
+      _condicionEscaneo = null;
+      _personalSaludEscaneo = false;
+    });
+  }
+
+  void _continuarEscaneado() {
+    situacionBeneficiarioService.cargarSituacion(
+      condicionGestacional: _condicionEscaneo,
+      esPersonalDeSalud: _personalSaludEscaneo,
+    );
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const VacunasPage()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  /// Modo manual: D.N.I. + sexo + situación (reactiva al sexo) + verificar.
+  Widget _modoManual() {
+    return FormularioDocumento(
+      tipoEscaneo: 'Beneficiario',
+      textoBotonEscaneo: '',
+      mostrarEscaner: false,
+      mostrarSituacion: true,
+      controladorDni: dniController,
+      focusNode: focusNode,
+      etiquetaBoton: 'Verificar datos',
+      onVerificar: _confirmarYBuscar,
     );
   }
 
@@ -253,7 +413,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
         );
         return;
       }
-      confirmarBeneficiario(datosBeneficiario[0]);
+      await confirmarBeneficiario(datosBeneficiario[0]);
     } catch (_) {
       if (!mounted) return;
       _cerrarDialogoCargaSiAbierta();
@@ -284,7 +444,7 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
     });
   }
 
-  void confirmarBeneficiario(Beneficiario? beneficiario) {
+  Future<void> confirmarBeneficiario(Beneficiario? beneficiario) async {
     beneficiarioService.cargarBeneficiario(beneficiario);
     Navigator.pushAndRemoveUntil(
       context,

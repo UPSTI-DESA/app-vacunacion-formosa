@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:sistema_vacunacion/src/config/config.dart';
+import 'package:sistema_vacunacion/src/presentation/state/services.dart';
 import 'package:sistema_vacunacion/src/widgets/escanerdni_widget.dart';
 import 'package:sistema_vacunacion/src/widgets/alertadialogo_widget.dart';
+import 'package:sistema_vacunacion/src/widgets/situacion_beneficiario_widget.dart';
 
 /// Formulario unificado de captura de documento de una persona.
 ///
@@ -28,6 +30,15 @@ class FormularioDocumento extends StatefulWidget {
   /// [onVerificar] recibe `sexo == null`.
   final bool mostrarSexo;
 
+  /// Si es `false`, oculta el botón de escaneo y el separador: queda solo la
+  /// carga manual (caso Beneficiario con selector de modo).
+  final bool mostrarEscaner;
+
+  /// Si es `true` (caso Beneficiario), muestra el bloque «Situación»
+  /// (condición gestacional reactiva al sexo + switch personal de salud)
+  /// y lo persiste en [situacionBeneficiarioService] al verificar.
+  final bool mostrarSituacion;
+
   /// Controlador del campo de D.N.I. (lo administra la pantalla anfitriona).
   final TextEditingController controladorDni;
 
@@ -38,8 +49,8 @@ class FormularioDocumento extends StatefulWidget {
   final String etiquetaBoton;
   final IconData iconoBoton;
 
-  /// Callback de verificación. Recibe el D.N.I. ingresado y el sexo ('F'/'M')
-  /// o `null` cuando [mostrarSexo] es `false`.
+  /// Callback de verificación. Recibe el D.N.I. ingresado y el sexo
+  /// ('F'/'M'/'X') o `null` cuando [mostrarSexo] es `false`.
   final void Function(String dni, String? sexo) onVerificar;
 
   const FormularioDocumento({
@@ -50,6 +61,8 @@ class FormularioDocumento extends StatefulWidget {
     required this.onVerificar,
     this.anchoEscaner = 52,
     this.mostrarSexo = true,
+    this.mostrarEscaner = true,
+    this.mostrarSituacion = false,
     this.focusNode,
     this.etiquetaBoton = 'Verificar',
     this.iconoBoton = Icons.verified_user_outlined,
@@ -60,10 +73,20 @@ class FormularioDocumento extends StatefulWidget {
 }
 
 class _FormularioDocumentoState extends State<FormularioDocumento> {
-  /// Estado del selector de sexo: `false` = Femenino ('F'), `true` = Masculino ('M').
-  bool _genero = false;
+  /// Estado del selector de sexo: 'F' (Femenino), 'M' (Masculino) o 'X' (No binario).
+  String _sexo = 'F';
 
-  String get _sexo => _genero ? 'M' : 'F';
+  /// Situación (solo cuando [FormularioDocumento.mostrarSituacion]).
+  CondicionGestacional? _condicion;
+  bool _personalSalud = false;
+
+  void _cambiarSexo(String sexo) {
+    setState(() {
+      _sexo = sexo;
+      // La condición gestacional solo aplica a sexo F.
+      if (sexo != 'F') _condicion = null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,42 +96,45 @@ class _FormularioDocumentoState extends State<FormularioDocumento> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Botón escanear
-        SizedBox(
-          width: double.infinity,
-          child: EscanerDni(
-            widget.tipoEscaneo,
-            widget.textoBotonEscaneo,
-            anchoValor: widget.anchoEscaner,
-          ),
-        ),
-
-        const SizedBox(height: AppEspaciado.lg),
-
-        // Separador "o ingresá los datos"
-        Row(
-          children: [
-            Expanded(
-              child: Divider(color: cs.outlineVariant.withValues(alpha: 0.4)),
+        if (widget.mostrarEscaner) ...[
+          // Botón escanear
+          SizedBox(
+            width: double.infinity,
+            child: EscanerDni(
+              widget.tipoEscaneo,
+              widget.textoBotonEscaneo,
+              anchoValor: widget.anchoEscaner,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppEspaciado.sm),
-              child: Text(
-                'o ingresá los datos',
-                style: tt.labelSmall?.copyWith(
-                  fontSize: 11,
-                  letterSpacing: 0.3,
-                  color: AppSuperficies.textoSecundario(context),
+          ),
+
+          const SizedBox(height: AppEspaciado.lg),
+
+          // Separador "o ingresá los datos"
+          Row(
+            children: [
+              Expanded(
+                child: Divider(color: cs.outlineVariant.withValues(alpha: 0.4)),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppEspaciado.sm),
+                child: Text(
+                  'o ingresá los datos',
+                  style: tt.labelSmall?.copyWith(
+                    fontSize: 11,
+                    letterSpacing: 0.3,
+                    color: AppSuperficies.textoSecundario(context),
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Divider(color: cs.outlineVariant.withValues(alpha: 0.4)),
-            ),
-          ],
-        ),
+              Expanded(
+                child: Divider(color: cs.outlineVariant.withValues(alpha: 0.4)),
+              ),
+            ],
+          ),
 
-        const SizedBox(height: AppEspaciado.lg),
+          const SizedBox(height: AppEspaciado.lg),
+        ],
 
         // Campo D.N.I.
         _campoDni(cs, tt),
@@ -116,6 +142,17 @@ class _FormularioDocumentoState extends State<FormularioDocumento> {
         if (widget.mostrarSexo) ...[
           const SizedBox(height: AppEspaciado.lg),
           _selectorSexo(cs, tt),
+        ],
+
+        if (widget.mostrarSituacion) ...[
+          const SizedBox(height: AppEspaciado.lg),
+          SituacionBeneficiario(
+            sexoEsFemenino: _sexo == 'F',
+            condicion: _condicion,
+            esPersonalDeSalud: _personalSalud,
+            onCondicionChanged: (c) => setState(() => _condicion = c),
+            onPersonalSaludChanged: (v) => setState(() => _personalSalud = v),
+          ),
         ],
 
         const SizedBox(height: AppEspaciado.lg),
@@ -138,6 +175,12 @@ class _FormularioDocumentoState extends State<FormularioDocumento> {
 
   void _onPresionarVerificar() {
     if (widget.controladorDni.text.length >= 7) {
+      if (widget.mostrarSituacion) {
+        situacionBeneficiarioService.cargarSituacion(
+          condicionGestacional: _condicion,
+          esPersonalDeSalud: _personalSalud,
+        );
+      }
       widget.onVerificar(
         widget.controladorDni.text,
         widget.mostrarSexo ? _sexo : null,
@@ -193,6 +236,7 @@ class _FormularioDocumentoState extends State<FormularioDocumento> {
   Widget _selectorSexo(ColorScheme cs, TextTheme tt) {
     const colorFemenino = Color(0xFFE91E8C);
     const colorMasculino = Color(0xFF009CAF);
+    const colorNoBinario = Color(0xFF7C5CBF);
 
     Widget chip({
       required bool seleccionado,
@@ -263,19 +307,27 @@ class _FormularioDocumentoState extends State<FormularioDocumento> {
         Row(
           children: [
             chip(
-              seleccionado: !_genero,
+              seleccionado: _sexo == 'F',
               etiqueta: 'Femenino',
               icono: Icons.female_rounded,
               colorAccento: colorFemenino,
-              onTap: () => setState(() => _genero = false),
+              onTap: () => _cambiarSexo('F'),
             ),
             const SizedBox(width: AppEspaciado.sm),
             chip(
-              seleccionado: _genero,
+              seleccionado: _sexo == 'M',
               etiqueta: 'Masculino',
               icono: Icons.male_rounded,
               colorAccento: colorMasculino,
-              onTap: () => setState(() => _genero = true),
+              onTap: () => _cambiarSexo('M'),
+            ),
+            const SizedBox(width: AppEspaciado.sm),
+            chip(
+              seleccionado: _sexo == 'X',
+              etiqueta: 'No binario (X)',
+              icono: Icons.transgender_rounded,
+              colorAccento: colorNoBinario,
+              onTap: () => _cambiarSexo('X'),
             ),
           ],
         ),

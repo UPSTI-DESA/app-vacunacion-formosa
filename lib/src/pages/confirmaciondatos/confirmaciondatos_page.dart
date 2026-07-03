@@ -587,18 +587,29 @@ const SizedBox(width: AppEspaciado.md),
         showDialog(
           context: context,
           builder: (BuildContext dialogCtx) => DialogoAlerta(
-            envioFuncion2: false,
-            envioFuncion1: true,
-            funcion1: () => Navigator.pushAndRemoveUntil(
+            dosBotones: true,
+            envioFuncion2: true,
+            funcion2: () => Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                 builder: (context) => const BusquedaBeneficiario(),
               ),
               (Route<dynamic> route) => false,
             ),
+            envioFuncion1: true,
+            funcion1: () {
+              reiniciarCicloVacuna();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const VacunasPage()),
+                (Route<dynamic> route) => false,
+              );
+            },
             tituloAlerta: 'Información',
-            descripcionAlerta: mensaje[0].mensaje,
-            textoBotonAlerta: 'Listo',
+            descripcionAlerta:
+                '${mensaje[0].mensaje}\n\n¿Aplicar otra vacuna a la misma persona?',
+            textoBotonAlerta: 'Sí, otra vacuna',
+            textoBotonAlerta2: 'No, finalizar',
             color: Theme.of(dialogCtx).colorScheme.primary,
             icon: const Icon(Icons.check_circle, size: 40.0),
           ),
