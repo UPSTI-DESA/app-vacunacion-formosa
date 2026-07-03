@@ -4,7 +4,8 @@ import 'estado.dart';
 /// (p. ej. si la aplicación es en terreno). Persisten hasta cerrar sesión.
 class _SesionEquipoVacunacionService {
   /// `true` = vacunación en terreno; `false` = en establecimiento fijo.
-  final enTerrenoEstado = Estado<bool>(true);
+  /// Default `false`: la mayoría de las sesiones son en establecimiento fijo.
+  final enTerrenoEstado = Estado<bool>(false);
 
   bool get enTerreno => enTerrenoEstado.value;
 

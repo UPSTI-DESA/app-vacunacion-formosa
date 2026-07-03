@@ -140,12 +140,21 @@ vacuna+dosis → botón «Continuar a confirmación» muestra la advertencia;
 2. **Situación editable en `VacunasPage`**: reusar `SituacionBeneficiario`
    (stateless, `situacion_beneficiario_widget.dart:16`) para corregir
    embarazada/puérpera/personal de salud sin re-buscar.
-3. **Sexo manual sin default**: `formulario_documento_widget.dart:77` arranca en
-   `'F'`; pasar a sin selección + validación de elección explícita.
-   **DECISIÓN pendiente**: confirmar que se quiere exigir elección.
-4. **Colapsar doble confirmación** (paso 8 «Verificar» + página `ConfirmarDatos`)
-   para la segunda vacuna en adelante: persona ya confirmada, revisar solo
-   vacuna/dosis/lote. **DECISIÓN pendiente**: alcance exacto.
+3. **Sexo manual sin default** ✅ resuelta. Decisión: exigir elección
+   explícita. `formulario_documento_widget.dart`: `_sexo` pasó de
+   `String _sexo = 'F'` a `String? _sexo` (sin inicializar); `_onPresionarVerificar`
+   exige `_sexo != null` cuando `mostrarSexo` es `true` (mismo diálogo
+   «Datos incompletos» que ya cubría el D.N.I., el texto ya mencionaba sexo).
+   Aplica tanto a Beneficiario (manual) como a Tutor, únicos usos con
+   `mostrarSexo: true` (`busquedabeneficiario_page.dart:329`,
+   `vacunas_page.dart:2633`).
+4. **Colapsar doble confirmación** ✅ resuelta. Decisión: colapsar
+   beneficiario/tutor en `ConfirmarDatos` desde la 2ª vacuna de la visita
+   (paso 8 «Verificar» se mantiene igual siempre; ahí la selección cambia
+   en cada vacuna). `confirmaciondatos_page.dart`, `initState`:
+   `_mostrarBeneficiario` / `_mostrarTutor` arrancan en `true` (expandido)
+   solo si `insertRegistroService.visitaRegistros` está vacía (1ª vacuna de
+   la visita); si no, arrancan en `false` (colapsado, un toque los expande).
 5. **Etiqueta sexo desconocido**: fallback «Femenino»
    (`busquedabeneficiario_page.dart:208-212`) → mostrar «Sin dato» cuando el
    sexo no es M/F/X.
@@ -159,8 +168,10 @@ vacuna+dosis → botón «Continuar a confirmación» muestra la advertencia;
    `busquedabeneficiario_page.dart:86`) y la nota backend muerta
    (`resumen_sesion_vacunacion_widget.dart:176-186`). Hacerlo reactivo a
    `enTerrenoEstado` con `ValueListenableBuilder`.
-3. **DECISIÓN pendiente**: default de `enTerreno`
-   (`sesion_equipo_vacunacion_service.dart:7`, hoy `true`).
+3. **Default de `enTerreno`** ✅ resuelta. Decisión: `false` (establecimiento
+   fijo) — la mayoría de las sesiones son en establecimiento fijo, no en
+   campaña. `sesion_equipo_vacunacion_service.dart:7-8`: default cambiado de
+   `true` a `false`.
 
 ---
 
@@ -179,6 +190,8 @@ vacuna+dosis → botón «Continuar a confirmación» muestra la advertencia;
 |---|----------|------|
 | ~~1~~ | ~~Perfil: ciclo persona o ciclo cuenta~~ → ciclo persona, resuelto | 4 |
 | ~~2~~ | ~~Duplicados: advertencia o bloqueo~~ → advertencia, resuelto | 6 |
-| 3 | Sexo manual: exigir elección explícita | 7.3 |
-| 4 | Confirmación única para 2ª vacuna en adelante: alcance | 7.4 |
-| 5 | Default de `enTerreno` | 8.3 |
+| ~~3~~ | ~~Sexo manual: exigir elección explícita~~ → sí, resuelto | 7.3 |
+| ~~4~~ | ~~Confirmación única para 2ª vacuna en adelante: alcance~~ → colapsar beneficiario/tutor desde la 2ª vacuna, resuelto | 7.4 |
+| ~~5~~ | ~~Default de `enTerreno`~~ → `false`, resuelto | 8.3 |
+
+Todas las decisiones del plan están resueltas.

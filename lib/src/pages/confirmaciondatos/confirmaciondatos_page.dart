@@ -16,13 +16,24 @@ class ConfirmarDatos extends StatefulWidget {
 
 class _ConfirmarDatosState extends State<ConfirmarDatos> {
   bool habilitarCircular = false;
-  bool _mostrarBeneficiario = false;
-  bool _mostrarTutor = false;
+  late bool _mostrarBeneficiario;
+  late bool _mostrarTutor;
 
   bool _hayTutor() {
     final t = tutorService.tutor;
     if (t == null) return false;
     return (t.sysdesa10_dni_tutor?.trim().isNotEmpty) ?? false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // 1ª vacuna de la visita: beneficiario/tutor expandidos para revisar.
+    // Desde la 2ª (visitaRegistros no vacía): ya se confirmaron antes,
+    // arrancan colapsados; el operador los expande con un toque si necesita.
+    final esPrimeraVacunaDeLaVisita = insertRegistroService.visitaRegistros.isEmpty;
+    _mostrarBeneficiario = esPrimeraVacunaDeLaVisita;
+    _mostrarTutor = esPrimeraVacunaDeLaVisita;
   }
 
   @override

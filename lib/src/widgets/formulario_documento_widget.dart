@@ -73,8 +73,11 @@ class FormularioDocumento extends StatefulWidget {
 }
 
 class _FormularioDocumentoState extends State<FormularioDocumento> {
-  /// Estado del selector de sexo: 'F' (Femenino), 'M' (Masculino) o 'X' (No binario).
-  String _sexo = 'F';
+  /// Estado del selector de sexo: 'F' (Femenino), 'M' (Masculino), 'X' (No
+  /// binario) o `null` sin elegir. Sin default: se exige elección explícita
+  /// (afecta situación/condición gestacional y, en Tutor, la búsqueda en el
+  /// back) para no registrar un sexo equivocado por apuro.
+  String? _sexo;
 
   /// Situación (solo cuando [FormularioDocumento.mostrarSituacion]).
   CondicionGestacional? _condicion;
@@ -174,7 +177,8 @@ class _FormularioDocumentoState extends State<FormularioDocumento> {
   }
 
   void _onPresionarVerificar() {
-    if (widget.controladorDni.text.length >= 7) {
+    final sexoCompleto = !widget.mostrarSexo || _sexo != null;
+    if (widget.controladorDni.text.length >= 7 && sexoCompleto) {
       if (widget.mostrarSituacion) {
         situacionBeneficiarioService.cargarSituacion(
           condicionGestacional: _condicion,

@@ -58,8 +58,9 @@ está implementada como: ciclo persona + pregunta post-registro
 
 **Vía manual** (`_modoManual`, `busquedabeneficiario_page.dart:328`):
 
-1. Operador escribe DNI (≥7 dígitos) y elige sexo; el sexo tiene default `'F'`
-   (`formulario_documento_widget.dart:77`).
+1. Operador escribe DNI (≥7 dígitos) y elige sexo; sin default, elección
+   obligatoria — «Verificar datos» no avanza sin sexo elegido
+   (`formulario_documento_widget.dart:77`, `176-179`).
 2. Bloque Situación visible; condición gestacional solo si sexo = F; al cambiar
    a sexo ≠ F la condición se anula (`formulario_documento_widget.dart:83-89`).
 3. «Verificar datos» guarda la situación en el service **antes** de consultar el
@@ -123,8 +124,13 @@ beneficiario (`vacunas_page.dart:186-189`).
 
 ### 5. Confirmación y envío
 
-`ConfirmarDatos` (revisión final, segunda confirmación del mismo contenido) →
-POST `insertRegistroProd` (`confirmaciondatos_page.dart:565`).
+`ConfirmarDatos` (revisión final) → POST `insertRegistroProd`
+(`confirmaciondatos_page.dart:565`). El resumen de vacuna/dosis/lote se
+muestra siempre expandido (cambia en cada vacuna). Las tarjetas de
+beneficiario y tutor arrancan expandidas solo en la 1ª vacuna de la visita
+(`insertRegistroService.visitaRegistros` vacía); desde la 2ª arrancan
+colapsadas — ya se revisaron antes — y un toque las expande
+(`confirmaciondatos_page.dart`, `initState`).
 
 Convención `codigo_mensaje` (verificada en llamadas, no en el PHP):
 - Beneficiario: `'0'` = error/no encontrado (`busquedabeneficiario_page.dart:392`).
@@ -168,8 +174,8 @@ modo prueba / pendientes de confirmación del back:
   test en `test/calendario_2026_test.dart`.
 - Umbrales edad↔situación: sin definir; se definen cuando el back confirme campos.
 - Modalidad en terreno: switch en «Equipo de trabajo»
-  (`vacunador_page.dart:514-527`), default `true`
-  (`sesion_equipo_vacunacion_service.dart:7`), reset solo en logout manual.
+  (`vacunador_page.dart:514-527`), default `false` (establecimiento fijo)
+  (`sesion_equipo_vacunacion_service.dart:7-8`), reset solo en logout manual.
 
 ---
 
