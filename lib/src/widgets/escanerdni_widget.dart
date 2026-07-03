@@ -497,6 +497,25 @@ class _EscanerDniState extends State<EscanerDni> {
       final datosBeneficiario = await beneficiarioProviders
           .obtenerDatosBeneficiario(codigodebarras, dni, sexoPersona);
       final b0 = datosBeneficiario[0];
+      if (b0.codigo_mensaje == '0') {
+        loadingLoginService.cargarEstado(false);
+        if (!mounted) return;
+        // Cierra el diálogo «Buscando datos...» antes de mostrar el error.
+        Navigator.of(context).pop();
+        await showDialog<void>(
+          context: context,
+          builder: (BuildContext dialogCtx) => DialogoAlerta(
+            envioFuncion2: false,
+            envioFuncion1: false,
+            tituloAlerta: 'No se pudo continuar',
+            descripcionAlerta: b0.mensaje,
+            textoBotonAlerta: 'Listo',
+            color: Theme.of(dialogCtx).colorScheme.error,
+            icon: const Icon(Icons.error, size: 40),
+          ),
+        );
+        return;
+      }
       final nombreB =
           _fusionarTextoApiConEscaneo(b0.sysdesa10_nombre, nombrePersona);
       final apellidoB =

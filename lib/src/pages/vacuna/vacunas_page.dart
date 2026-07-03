@@ -2009,10 +2009,17 @@ class _VacunasPageState extends State<VacunasPage> {
               TextButton.icon(
                 style: AppBotones.estiloTextoPequeno(cs),
                 onPressed: () async {
+                  final fechaNacimiento = _fechaNacimientoBeneficiario();
+                  final DateTime primeraFecha =
+                      fechaNacimiento != null && fechaNacimiento.isAfter(DateTime(2021))
+                          ? fechaNacimiento
+                          : DateTime(2021);
                   final DateTime? nueva = await showDatePicker(
                     context: context,
-                    initialDate: _selectFecha,
-                    firstDate: DateTime(2021),
+                    initialDate: _selectFecha.isBefore(primeraFecha)
+                        ? primeraFecha
+                        : _selectFecha,
+                    firstDate: primeraFecha,
                     lastDate: DateTime.now(),
                   );
                   if (nueva != null) setState(() => _selectFecha = nueva);
@@ -2326,6 +2333,18 @@ class _VacunasPageState extends State<VacunasPage> {
     return edadAniosDesde(dt, DateTime.now());
   }
 
+  /// Fecha de nacimiento del beneficiario actual, misma prioridad que el
+  /// clasificador de calendario (`calendario_2026.dart`): PDF417 escaneado
+  /// antes que el dato del API.
+  DateTime? _fechaNacimientoBeneficiario() {
+    return parseFechaNacimiento(
+          beneficiarioService.fechaNacimientoDesdePdf417Escaneado,
+        ) ??
+        parseFechaNacimiento(
+          beneficiarioService.beneficiario?.sysdesa10_fecha_nacimiento,
+        );
+  }
+
   /// Panel tutor: primero edad del **DNI escaneado**; si no hay (búsqueda manual), datos del API.
   bool _beneficiarioRequierePanelTutor() {
     final b = beneficiarioService.beneficiario;
@@ -2602,8 +2621,12 @@ class _VacunasPageState extends State<VacunasPage> {
       sysdesa10_sexo_tutor: conTutor
           ? tutorService.tutor!.sysdesa10_sexo_tutor
           : '',
+      // La condición gestacional solo aplica a sexo femenino: se descarta acá
+      // por si quedó cargada con un sexo declarado distinto al confirmado por el back.
       condicion_gestacional_beneficiario:
-          situacionBeneficiarioService.condicionGestacional?.name,
+          beneficiarioService.beneficiario!.sysdesa10_sexo == 'F'
+              ? situacionBeneficiarioService.condicionGestacional?.name
+              : null,
       es_personal_salud:
           situacionBeneficiarioService.esPersonalDeSalud ? '1' : '0',
     );
