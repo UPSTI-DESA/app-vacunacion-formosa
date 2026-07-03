@@ -30,6 +30,7 @@ final List<Estado> estadosPorPersona = [
   situacionBeneficiarioService.esPersonalDeSaludEstado,
   notificacionesDosisService.notiDosisEstado,
   notificacionesDosisService.listaDosisAplicadasEstado,
+  perfilesVacunacionService.perfilesVacunacionEstado,
 ];
 
 /// Estados de la vacuna en curso: se reinician entre una dosis y la
@@ -38,7 +39,6 @@ final List<Estado> estadosPorPersona = [
 /// enviroment, vacunador, registrador, efectores, sesionEquipoVacunacion,
 /// cantidadVacunados) NO se registra acá.
 final List<Estado> estadosPorVacuna = [
-  perfilesVacunacionService.perfilesVacunacionEstado,
   perfilesVacunacionService.listaPerfilesVacunacionEstado,
   perfilesVacunacionService.mensajeListaPerfilesVaciaEstado,
   vacunasConfiguracionService.vacunasConfiguracionEstado,

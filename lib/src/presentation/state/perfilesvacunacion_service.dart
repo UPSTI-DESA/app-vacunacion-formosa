@@ -3,6 +3,9 @@ import 'package:sistema_vacunacion/src/domain/entities/models.dart';
 import 'estado.dart';
 
 class _PerfilesVacunacionrService {
+  /// Perfil elegido en `VacunasPage`. Vive en el ciclo persona
+  /// (`estado_sesion.dart`): se hereda entre vacunas de la misma visita y
+  /// solo se limpia al buscar otro beneficiario.
   final perfilesVacunacionEstado = Estado<PerfilesVacunacion?>(null);
   final listaPerfilesVacunacionEstado = Estado<List<PerfilesVacunacion>>([]);
 

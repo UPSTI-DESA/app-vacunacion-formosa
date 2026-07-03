@@ -16,8 +16,8 @@ Se agrupa en tres ciclos, de mayor a menor duración:
 | Ciclo | Nace | Muere | Contiene |
 |-------|------|-------|----------|
 | **Largo (cuenta/equipo)** | Login / pantalla «Equipo de trabajo» | Logout manual (`drawer_page.dart:110`) | tema, enviroment, vacunador, registrador, efectores, `sesionEquipoVacunacionService` (enTerreno), cantidadVacunados (`estado_sesion.dart:30-32`) |
-| **Persona (`estadosPorPersona`)** | Al cargar un beneficiario | Al buscar otro beneficiario — `reiniciarCicloBeneficiario()` | beneficiario, edad y fecha nac. del PDF417, tutor, situación (condición gestacional + personal de salud) (`estado_sesion.dart:19-26`) |
-| **Vacuna (`estadosPorVacuna`)** | Al iniciar la carga de una vacuna | Entre dosis de la misma persona — `reiniciarCicloVacuna()` — y al cambiar de persona | perfiles, vacunas, lotes, dosis, condiciones, esquemas, vacunas×perfil, notificaciones de dosis, insertRegistro, flags de loading (`estado_sesion.dart:33-64`) |
+| **Persona (`estadosPorPersona`)** | Al cargar un beneficiario | Al buscar otro beneficiario — `reiniciarCicloBeneficiario()` | beneficiario, edad y fecha nac. del PDF417, tutor, situación (condición gestacional + personal de salud), historial de dosis (notificaciones), **perfil de vacunación elegido** (`estado_sesion.dart:19-32`) |
+| **Vacuna (`estadosPorVacuna`)** | Al iniciar la carga de una vacuna | Entre dosis de la misma persona — `reiniciarCicloVacuna()` — y al cambiar de persona | lista de perfiles disponibles, vacunas, lotes, dosis, condiciones, esquemas, vacunas×perfil, insertRegistro, flags de loading (`estado_sesion.dart:35-58`) |
 
 **Punto único de reinicio del ciclo persona**: `busquedabeneficiario_page.dart:41`
 (`initState` de `BusquedaBeneficiario`). Ningún otro lugar llama
@@ -103,10 +103,17 @@ beneficiario (`vacunas_page.dart:186-189`).
   (`vacunas_page.dart:1199`, `1247-1248`, `1286-1287`, `1820-1821`).
 - El stepper solo permite navegar hacia atrás: guard `n <= pasoActual`
   (`vacunas_ui_helpers.dart:123`).
-- Fecha de aplicación: default hoy, picker limitado a 2021..hoy
-  (`vacunas_page.dart:2015-2016`).
+- **Perfil heredado dentro de la visita**: si ya hay perfil elegido en una
+  vacuna anterior de la misma persona (`perfilesVacunacionService`, ciclo
+  persona), `_heredarPerfilDeLaVisita()` lo reutiliza y arranca directo en
+  paso 2 (`vacunas_page.dart`, `initState`). Para cambiarlo: volver a paso 1
+  con el stepper y elegir otro perfil ahí.
+- Fecha de aplicación: default hoy, `firstDate` del picker = fecha de
+  nacimiento del beneficiario si es posterior a 2021, si no 2021
+  (`vacunas_page.dart:2011-2024`, `_fechaNacimientoBeneficiario()`).
 - Paso 8 valida completitud (`_validarDatosRegistro`, `vacunas_page.dart:2543-2551`)
   y arma `InsertRegistros` (`_construirRegistro`, `vacunas_page.dart:2555-2610`).
+  La condición gestacional se descarta si `sysdesa10_sexo != 'F'`.
 
 ### 5. Confirmación y envío
 
@@ -154,19 +161,25 @@ modo prueba / pendientes de confirmación del back:
 ## Incoherencias conocidas
 
 Detalle, impacto y orden de resolución: `docs/plan_mejora_sesion_vacunacion.md`.
+Tachadas: ya resueltas (Fases 1-4 del plan).
 
-1. Historial de dosis en `estadosPorVacuna` (`estado_sesion.dart:55-56`): se borra
-   al elegir «otra vacuna, misma persona» aunque es dato de la persona.
-2. Escáner no valida `codigo_mensaje == '0'` del beneficiario
-   (`escanerdni_widget.dart:499-511`); la vía manual y el tutor sí.
-3. Situación fijada con sexo declarado, sin revalidar contra sexo del back
-   (`formulario_documento_widget.dart:179` → `vacunas_page.dart:2605-2606`).
-4. Situación no editable después de la búsqueda.
+1. ~~Historial de dosis en `estadosPorVacuna`: se borraba al elegir «otra
+   vacuna, misma persona» aunque es dato de la persona.~~ Resuelto Fase 1
+   (movido a `estadosPorPersona`) + Fase 2 (se refresca tras cada registro).
+2. ~~Escáner no valida `codigo_mensaje == '0'` del beneficiario.~~ Resuelto
+   Fase 3.1.
+3. ~~Situación fijada con sexo declarado, sin revalidar contra sexo del
+   back.~~ Resuelto Fase 3.2 (`_construirRegistro` descarta condición si
+   `sysdesa10_sexo != 'F'`).
+4. Situación no editable después de la búsqueda. Pendiente, Fase 7.2.
 5. Etiqueta de sexo con fallback «Femenino» ante sexo desconocido, con bloque
    condición oculto (`busquedabeneficiario_page.dart:208-212` vs `:228`).
-6. Perfil se re-consulta y re-selecciona en cada vacuna de la misma persona
-   (`vacunas_page.dart:70,77`).
+   Pendiente, Fase 7.5.
+6. ~~Perfil se re-consulta y re-selecciona en cada vacuna de la misma
+   persona.~~ Resuelto Fase 4 (perfil en ciclo persona, heredado entre
+   vacunas de la visita).
 7. `enTerreno`: doble escritura (`vacunador_page.dart:68` y `:523`).
-8. Sin validación de duplicado vacuna+dosis dentro de la visita, ni de
-   fecha aplicación ≥ fecha nacimiento, ni de tutor ≠ beneficiario /
-   tutor mayor de edad.
+   Pendiente, Fase 8.1.
+8. Sin validación de duplicado vacuna+dosis dentro de la visita (Fase 6,
+   requiere Fase 5). Fecha aplicación ≥ fecha nacimiento: resuelto Fase 3.3.
+   Tutor ≠ beneficiario / tutor mayor de edad: pendiente, sin fase asignada.

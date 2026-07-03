@@ -75,6 +75,44 @@ class _VacunasPageState extends State<VacunasPage> {
     listaLotes = [];
     focusNode = FocusNode();
     cargarPerfilesService(registradorService.registrador!.id_flxcore03!);
+    _heredarPerfilDeLaVisita();
+  }
+
+  /// Si ya se eligió un perfil en una vacuna anterior de la MISMA visita
+  /// (perfilesVacunacionService, ciclo persona), lo reutiliza y arranca en el
+  /// paso 2 en vez de pedirlo de nuevo. Para cambiarlo, el operador vuelve al
+  /// paso 1 con el stepper (ya permite retroceder) y elige otro.
+  Future<void> _heredarPerfilDeLaVisita() async {
+    final perfilHeredado = perfilesVacunacionService.efectores;
+    if (perfilHeredado == null) return;
+    setState(() {
+      _selectPerfil = perfilHeredado;
+      pasos = 2;
+    });
+    loadingLoginService.cargaPerfil(true);
+    listaLotes!.clear();
+    final tempLista = await vacunasxPerfiles.obtenerVacunasxPerfilesProviders(
+      perfilHeredado.id_sysvacu12,
+      beneficiarioService.beneficiario!.sysdesa10_dni,
+      beneficiarioService.beneficiario!.sysdesa10_sexo,
+    );
+    if (!mounted) return;
+    if (tempLista != null && tempLista[0].codigo_mensaje == "0") {
+      showDialog(
+        context: _scaffoldKey.currentContext!,
+        builder: (dialogCtx) => DialogoAlerta(
+          envioFuncion2: false,
+          envioFuncion1: false,
+          tituloAlerta: 'No se pudieron cargar las vacunas del perfil',
+          descripcionAlerta: tempLista[0].mensaje,
+          textoBotonAlerta: 'Listo',
+          icon: const Icon(Icons.error_outline, size: 40),
+          color: Theme.of(dialogCtx).colorScheme.error,
+        ),
+      );
+    } else {
+      loadingLoginService.cargaPerfil(false);
+    }
   }
 
   @override
@@ -1154,6 +1192,9 @@ class _VacunasPageState extends State<VacunasPage> {
                       _selectVacunas = null;
                       _selectPerfil = perfil;
                     });
+                    // Perfil de la visita: se hereda en la próxima vacuna de
+                    // la misma persona (ver _heredarPerfilDeLaVisita).
+                    perfilesVacunacionService.cargarPerfilesVacu(perfil);
                     final tempLista = await vacunasxPerfiles
                         .obtenerVacunasxPerfilesProviders(
                           _selectPerfil!.id_sysvacu12,

@@ -62,18 +62,30 @@ recién aplicada.
 **Verificación**: escaneo de DNI inexistente no avanza; registro de persona M
 sale sin condición; bebé nacido 2026 no admite fecha 2021.
 
-## Fase 4 — Perfil heredado dentro de la visita
+## Fase 4 — Perfil heredado dentro de la visita ✅ resuelta
 
 **Problema**: cada vacuna de la misma persona re-consulta perfiles y obliga a
 re-seleccionar (`vacunas_page.dart:70,77`; `pasos = 1`).
 
-**Cambio**: sacar la selección de perfil a un `Estado` fuera de
-`estadosPorVacuna` y arrancar `VacunasPage` en paso 2 cuando ya hay perfil
-seleccionado. El operador puede volver al paso 1 con el stepper (ya permite
-retroceder, `vacunas_ui_helpers.dart:123`).
+**Decisión**: el perfil vive en el ciclo persona — se hereda entre vacunas de
+la misma visita y se limpia al buscar otro beneficiario. Para cambiarlo, el
+operador vuelve al paso 1 con el stepper (ya permite retroceder,
+`vacunas_ui_helpers.dart:123`) y elige otro perfil ahí — sin pantalla ni
+control nuevo.
 
-**DECISIÓN pendiente**: ¿el perfil vive en el ciclo persona (se limpia al cambiar
-de beneficiario) o en el ciclo largo de la cuenta (persiste toda la jornada)?
+**Cambio aplicado**:
+- `perfilesVacunacionEstado` (perfil seleccionado) pasó de
+  `estadosPorVacuna` a `estadosPorPersona` (`estado_sesion.dart`).
+- Al elegir perfil en paso 1, se persiste con
+  `perfilesVacunacionService.cargarPerfilesVacu(perfil)` además de
+  `_selectPerfil` local (`vacunas_page.dart`, `onSelected` del `FilterChip`).
+- `_heredarPerfilDeLaVisita()` en `initState`: si ya hay perfil de una vacuna
+  anterior de la misma visita, lo asigna a `_selectPerfil`, arranca en
+  `pasos = 2` y repite la consulta de vacunas×perfil (esa lista sí es de
+  ciclo vacuna, se vació con `reiniciarCicloVacuna()`).
+
+**Verificación**: registrar vacuna → «Sí, otra vacuna» → `VacunasPage` abre
+directo en paso 2 con el mismo perfil; volver a paso 1 permite elegir otro.
 
 ## Fase 5 — «Vacunas de esta visita»
 
@@ -139,7 +151,7 @@ médico; default propuesto: advertencia.
 
 | # | Decisión | Fase |
 |---|----------|------|
-| 1 | Perfil: ciclo persona o ciclo cuenta | 4 |
+| ~~1~~ | ~~Perfil: ciclo persona o ciclo cuenta~~ → ciclo persona, resuelto | 4 |
 | 2 | Duplicados: advertencia o bloqueo | 6 |
 | 3 | Sexo manual: exigir elección explícita | 7.3 |
 | 4 | Confirmación única para 2ª vacuna en adelante: alcance | 7.4 |
