@@ -54,6 +54,7 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
                   children: [
                     _encabezadoPagina(),
                     const SizedBox(height: AppEspaciado.md),
+                    _seccionVacunasVisita(),
                     _seccionResumenVacuna(),
                     const SizedBox(height: AppEspaciado.md),
                     _tarjetaBeneficiario(),
@@ -121,6 +122,58 @@ class _ConfirmarDatosState extends State<ConfirmarDatos> {
           ),
         ),
       ],
+    );
+  }
+
+  /// Vacunas ya registradas con éxito en esta visita (ciclo persona), antes
+  /// de confirmar la actual. Vacío en la primera vacuna de la visita.
+  Widget _seccionVacunasVisita() {
+    return ValueListenableBuilder<List<InsertRegistros>>(
+      valueListenable: insertRegistroService.visitaRegistrosEstado,
+      builder: (BuildContext context, visita, _) {
+        if (visita.isEmpty) return const SizedBox.shrink();
+        final cs = Theme.of(context).colorScheme;
+        final tt = Theme.of(context).textTheme;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: AppEspaciado.md),
+          child: Container(
+            padding: const EdgeInsets.all(AppEspaciado.md),
+            decoration: BoxDecoration(
+              color: cs.primaryContainer.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+              border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Ya aplicadas en esta visita (${visita.length})',
+                  style: tt.labelSmall?.copyWith(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.4,
+                    color: cs.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: AppEspaciado.sm),
+                ...visita.map(
+                  (r) => Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      '${r.nombreVacuna ?? '—'} · ${r.nombreDosis ?? '—'}',
+                      style: tt.bodySmall?.copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: cs.onSurface,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -608,6 +661,9 @@ const SizedBox(width: AppEspaciado.md),
           ),
         );
       } else {
+        // Registro exitoso: queda en "vacunas de esta visita" (ciclo persona)
+        // sin importar qué botón elija el operador a continuación.
+        insertRegistroService.agregarRegistroVisita(insertRegistroService.registro!);
         showDialog(
           context: context,
           builder: (BuildContext dialogCtx) => DialogoAlerta(

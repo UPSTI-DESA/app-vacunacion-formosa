@@ -87,14 +87,29 @@ control nuevo.
 **Verificación**: registrar vacuna → «Sí, otra vacuna» → `VacunasPage` abre
 directo en paso 2 con el mismo perfil; volver a paso 1 permite elegir otro.
 
-## Fase 5 — «Vacunas de esta visita»
+## Fase 5 — «Vacunas de esta visita» ✅ resuelta
 
-**Problema**: `insertRegistroService` guarda solo el último registro; no hay
-rastro visible de lo aplicado en la visita en curso.
+**Problema**: `insertRegistroService` guardaba solo el último registro; no
+había rastro visible de lo aplicado en la visita en curso.
 
-**Cambio**: lista local acumulada de registros confirmados de la visita (ciclo
-persona), visible en `VacunasPage` y `ConfirmarDatos`. Base para la advertencia
-de duplicados.
+**Cambio aplicado**:
+- `insertregistro_service.dart`: `visitaRegistrosEstado` (`Estado<List<InsertRegistros>>`)
+  + `agregarRegistroVisita(registro)` (agrega con lista nueva, no mutación
+  in-place, para que el `ValueNotifier` notifique).
+- `estado_sesion.dart`: `visitaRegistrosEstado` va en `estadosPorPersona` — se
+  acumula durante toda la visita y se limpia al buscar otro beneficiario.
+- `confirmaciondatos_page.dart` (`enviarDatos`, rama de éxito): agrega el
+  registro a la visita antes de mostrar el diálogo «¿otra vacuna?», así queda
+  contado sin importar qué botón elija el operador después.
+- UI: `_seccionVacunasVisita()` en `vacunas_page.dart` (debajo de
+  `containerBeneficiario()`) y en `confirmaciondatos_page.dart` (arriba del
+  resumen de la vacuna a confirmar) — tarjeta «Ya aplicadas en esta visita
+  (N)» con vacuna · dosis por línea, oculta si la lista está vacía.
+
+**Verificación**: registrar 2 vacunas seguidas a la misma persona → la 2ª
+vez, tanto `VacunasPage` como `ConfirmarDatos` muestran la 1ª ya aplicada.
+
+Base para Fase 6 (advertencia de duplicados).
 
 ## Fase 6 — Advertencia de duplicado en la visita
 

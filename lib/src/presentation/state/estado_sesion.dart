@@ -20,7 +20,8 @@ import 'loadingLogin_service.dart';
 /// El historial de dosis (notiDosisEstado, listaDosisAplicadasEstado) vive acá
 /// y no en estadosPorVacuna: es dato de la persona, se carga una vez al
 /// buscarla/escanearla y debe seguir visible al registrar la 2ª, 3ª... vacuna
-/// de la misma visita.
+/// de la misma visita. Lo mismo el perfil elegido (perfilesVacunacionEstado) y
+/// la lista de registros ya confirmados en la visita (visitaRegistrosEstado).
 final List<Estado> estadosPorPersona = [
   beneficiarioService.beneficiarioEstado,
   beneficiarioService.edadEstado,
@@ -31,6 +32,7 @@ final List<Estado> estadosPorPersona = [
   notificacionesDosisService.notiDosisEstado,
   notificacionesDosisService.listaDosisAplicadasEstado,
   perfilesVacunacionService.perfilesVacunacionEstado,
+  insertRegistroService.visitaRegistrosEstado,
 ];
 
 /// Estados de la vacuna en curso: se reinician entre una dosis y la

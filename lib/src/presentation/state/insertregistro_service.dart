@@ -20,6 +20,17 @@ class _InsertRegistroService {
     registroEstado.notificar();
   }
 
+  /// Vacunas ya registradas con éxito en la visita en curso (ciclo persona):
+  /// se acumula en cada registro exitoso y se muestra en VacunasPage /
+  /// ConfirmarDatos para que el operador vea lo aplicado sin volver a buscar.
+  final visitaRegistrosEstado = Estado<List<InsertRegistros>>([]);
+
+  List<InsertRegistros> get visitaRegistros => visitaRegistrosEstado.value;
+
+  void agregarRegistroVisita(InsertRegistros registro) {
+    visitaRegistrosEstado.value = [...visitaRegistrosEstado.value, registro];
+  }
+
   void reiniciar() {
     registroEstado.reiniciar();
   }

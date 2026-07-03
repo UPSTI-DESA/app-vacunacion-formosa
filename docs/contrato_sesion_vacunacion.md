@@ -16,7 +16,7 @@ Se agrupa en tres ciclos, de mayor a menor duración:
 | Ciclo | Nace | Muere | Contiene |
 |-------|------|-------|----------|
 | **Largo (cuenta/equipo)** | Login / pantalla «Equipo de trabajo» | Logout manual (`drawer_page.dart:110`) | tema, enviroment, vacunador, registrador, efectores, `sesionEquipoVacunacionService` (enTerreno), cantidadVacunados (`estado_sesion.dart:30-32`) |
-| **Persona (`estadosPorPersona`)** | Al cargar un beneficiario | Al buscar otro beneficiario — `reiniciarCicloBeneficiario()` | beneficiario, edad y fecha nac. del PDF417, tutor, situación (condición gestacional + personal de salud), historial de dosis (notificaciones), **perfil de vacunación elegido** (`estado_sesion.dart:19-32`) |
+| **Persona (`estadosPorPersona`)** | Al cargar un beneficiario | Al buscar otro beneficiario — `reiniciarCicloBeneficiario()` | beneficiario, edad y fecha nac. del PDF417, tutor, situación (condición gestacional + personal de salud), historial de dosis (notificaciones), perfil de vacunación elegido, **vacunas registradas en la visita** (`estado_sesion.dart:19-34`) |
 | **Vacuna (`estadosPorVacuna`)** | Al iniciar la carga de una vacuna | Entre dosis de la misma persona — `reiniciarCicloVacuna()` — y al cambiar de persona | lista de perfiles disponibles, vacunas, lotes, dosis, condiciones, esquemas, vacunas×perfil, insertRegistro, flags de loading (`estado_sesion.dart:35-58`) |
 
 **Punto único de reinicio del ciclo persona**: `busquedabeneficiario_page.dart:41`
@@ -126,8 +126,17 @@ Convención `codigo_mensaje` (verificada en llamadas, no en el PHP):
 - Insert: `'0'` = error, reintentar (`confirmaciondatos_page.dart:568`).
 
 Post-registro OK (`confirmaciondatos_page.dart:586-616`):
+- Antes del diálogo, el registro se suma a
+  `insertRegistroService.visitaRegistrosEstado` («vacunas de esta visita»,
+  ciclo persona) sin importar qué botón se elija después.
 - «Sí, otra vacuna» → `reiniciarCicloVacuna()` → `VacunasPage` (misma persona).
 - «No, finalizar» → `BusquedaBeneficiario` → reinicio total del ciclo persona.
+
+«Vacunas de esta visita»: tarjeta con las vacunas ya confirmadas en la visita
+en curso, visible en `VacunasPage` (`_seccionVacunasVisita()`, debajo de
+`containerBeneficiario()`) y en `ConfirmarDatos` (arriba del resumen de la
+vacuna a confirmar). Oculta si la lista está vacía (primera vacuna de la
+visita).
 
 ---
 

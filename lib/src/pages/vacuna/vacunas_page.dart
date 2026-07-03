@@ -221,6 +221,7 @@ class _VacunasPageState extends State<VacunasPage> {
                 const SizedBox(height: AppEspaciado.md),
                 containerBeneficiario(),
                 const SizedBox(height: AppEspaciado.sm),
+                _seccionVacunasVisita(),
                 if (beneficiarioService.existeBeneficiario)
                   VacunasCalendarioFiltradas(
                     resultado: clasificarBeneficiarioActual(),
@@ -682,6 +683,59 @@ class _VacunasPageState extends State<VacunasPage> {
       default:
         return codigo;
     }
+  }
+
+  /// Vacunas ya registradas con éxito en esta visita (ciclo persona). Vacío
+  /// hasta que se confirme la primera; se acumula en
+  /// `insertRegistroService.visitaRegistrosEstado` desde `ConfirmarDatos`.
+  Widget _seccionVacunasVisita() {
+    return ValueListenableBuilder<List<InsertRegistros>>(
+      valueListenable: insertRegistroService.visitaRegistrosEstado,
+      builder: (BuildContext context, visita, _) {
+        if (visita.isEmpty) return const SizedBox.shrink();
+        final cs = Theme.of(context).colorScheme;
+        final tt = Theme.of(context).textTheme;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
+          child: Container(
+            padding: const EdgeInsets.all(AppEspaciado.md),
+            decoration: BoxDecoration(
+              color: cs.primaryContainer.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(AppEspaciado.radioCampo),
+              border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Ya aplicadas en esta visita (${visita.length})',
+                  style: tt.labelSmall?.copyWith(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.4,
+                    color: cs.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: AppEspaciado.sm),
+                ...visita.map(
+                  (r) => Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      '${r.nombreVacuna ?? '—'} · ${r.nombreDosis ?? '—'}',
+                      style: tt.bodySmall?.copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: cs.onSurface,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget containerBeneficiario() {
