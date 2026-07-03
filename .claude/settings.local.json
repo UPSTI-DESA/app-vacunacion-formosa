@@ -33,7 +33,10 @@
       "Bash(flutter emulators *)",
       "Bash(flutter devices *)",
       "Bash(flutter run *)",
-      "Bash(open /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/ios/Runner.xcworkspace)"
+      "Bash(open /Users/emilianocaceres/Desktop/UPSTI/app-vacunacion-formosa/ios/Runner.xcworkspace)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(grep -iv \"non_constant_identifier_names\\\\|unused_local_variable\\\\|Analyzing\\\\|issues found\\\\|^$\")"
     ]
   }
 }

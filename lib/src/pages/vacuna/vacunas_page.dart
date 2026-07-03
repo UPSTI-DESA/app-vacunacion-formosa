@@ -210,8 +210,6 @@ class _VacunasPageState extends State<VacunasPage> {
                           funcion2: () => Navigator.of(context).pop(),
                           envioFuncion1: true,
                           funcion1: () {
-                            reiniciarCicloBeneficiario();
-
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(

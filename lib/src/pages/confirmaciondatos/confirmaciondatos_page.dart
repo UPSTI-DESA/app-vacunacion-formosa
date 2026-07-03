@@ -521,7 +521,6 @@ const SizedBox(width: AppEspaciado.md),
                   funcion2: () => Navigator.of(context).pop(),
                   envioFuncion1: true,
                   funcion1: () {
-                    reiniciarCicloBeneficiario();
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(

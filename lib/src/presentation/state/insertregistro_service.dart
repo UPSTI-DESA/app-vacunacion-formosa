@@ -14,8 +14,10 @@ class _InsertRegistroService {
   }
 
   void agregarFecha(DateTime fechaDeCarga) {
-    registroEstado.value = registroEstado.value!
-      ..fecha_aplicacion = fechaDeCarga.toString();
+    // ponytail: mutación in-place, misma referencia; el setter de Estado
+    // compara por identidad y no notifica solo. Forzar notifyListeners().
+    registroEstado.value!.fecha_aplicacion = fechaDeCarga.toString();
+    registroEstado.notificar();
   }
 
   void reiniciar() {
