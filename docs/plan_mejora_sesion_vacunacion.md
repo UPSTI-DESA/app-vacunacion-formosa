@@ -133,13 +133,19 @@ vacuna+dosis → botón «Continuar a confirmación» muestra la advertencia;
 
 ## Fase 7 — Fricciones UX del ciclo
 
-1. **«Cancelar registro» conserva a la persona**: hoy el único destino es
-   `BusquedaBeneficiario` con pérdida total (`vacunas_page.dart:220-227`).
-   Agregar opción «descartar esta vacuna» = `reiniciarCicloVacuna()` +
-   `VacunasPage` (primitiva ya existente).
-2. **Situación editable en `VacunasPage`**: reusar `SituacionBeneficiario`
-   (stateless, `situacion_beneficiario_widget.dart:16`) para corregir
-   embarazada/puérpera/personal de salud sin re-buscar.
+1. **«Cancelar registro» conserva a la persona** ✅ resuelta. El diálogo (antes
+   único destino `BusquedaBeneficiario` con pérdida total) pasa a tres
+   opciones: «Volver» (cancela el diálogo), «Salir y buscar otra persona»
+   (comportamiento anterior) y «Descartar esta vacuna» (`reiniciarCicloVacuna()`
+   + `VacunasPage`, conserva beneficiario/tutor de la visita).
+   `_mostrarDialogoCancelarRegistro()` en `vacunas_page.dart`, `AlertDialog`
+   nativo de 3 botones (no `DialogoAlerta`, que solo admite 2).
+2. **Situación editable en `VacunasPage`** ✅ resuelta. `_seccionSituacionEditable()`
+   reusa `SituacionBeneficiario` (stateless, `situacion_beneficiario_widget.dart:16`)
+   contra `situacionBeneficiarioService` directamente, debajo de
+   `containerBeneficiario()`. Antes la única forma de corregir
+   embarazada/puérpera/personal de salud una vez en `VacunasPage` era
+   cancelar el registro entero y re-buscar.
 3. **Sexo manual sin default** ✅ resuelta. Decisión: exigir elección
    explícita. `formulario_documento_widget.dart`: `_sexo` pasó de
    `String _sexo = 'F'` a `String? _sexo` (sin inicializar); `_onPresionarVerificar`
@@ -155,9 +161,13 @@ vacuna+dosis → botón «Continuar a confirmación» muestra la advertencia;
    `_mostrarBeneficiario` / `_mostrarTutor` arrancan en `true` (expandido)
    solo si `insertRegistroService.visitaRegistros` está vacía (1ª vacuna de
    la visita); si no, arrancan en `false` (colapsado, un toque los expande).
-5. **Etiqueta sexo desconocido**: fallback «Femenino»
-   (`busquedabeneficiario_page.dart:208-212`) → mostrar «Sin dato» cuando el
-   sexo no es M/F/X.
+5. **Etiqueta sexo desconocido** ✅ resuelta. El fallback «Femenino»
+   (`busquedabeneficiario_page.dart:208-212`) contradecía el bloque de
+   condición gestacional, que se ocultaba igual con sexo desconocido
+   (`sexoEsFemenino: sexo == 'F'`, línea 228). Ahora M/F/X muestran su
+   etiqueta y cualquier otro valor (`null`, vacío) muestra «Sin dato».
+
+Con esto, Fase 7 queda resuelta por completo.
 
 ## Fase 8 — Limpieza menor (independiente, cualquier momento)
 

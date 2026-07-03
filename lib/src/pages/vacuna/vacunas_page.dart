@@ -221,6 +221,7 @@ class _VacunasPageState extends State<VacunasPage> {
                 const SizedBox(height: AppEspaciado.md),
                 containerBeneficiario(),
                 const SizedBox(height: AppEspaciado.sm),
+                _seccionSituacionEditable(),
                 _seccionVacunasVisita(),
                 if (beneficiarioService.existeBeneficiario)
                   VacunasCalendarioFiltradas(
@@ -238,36 +239,7 @@ class _VacunasPageState extends State<VacunasPage> {
                     style: AppBotones.estiloOutlinedPeligro(cs),
                     icon: const Icon(Icons.cancel_outlined),
                     label: const Text('Cancelar registro'),
-                    onPressed: () {
-                      showDialog(
-                        context: _scaffoldKey.currentContext!,
-                        builder: (BuildContext context) => DialogoAlerta(
-                          tituloAlerta: 'Cancelar registro',
-                          descripcionAlerta:
-                              '¿Confirma cancelar? Se perderán los datos no guardados de esta vacuna.',
-                          textoBotonAlerta: 'Sí, cancelar',
-                          textoBotonAlerta2: 'Volver',
-                          icon: const Icon(
-                            Icons.warning_amber_rounded,
-                            size: 28,
-                          ),
-                          color: cs.error,
-                          envioFuncion2: true,
-                          funcion2: () => Navigator.of(context).pop(),
-                          envioFuncion1: true,
-                          funcion1: () {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const BusquedaBeneficiario(),
-                              ),
-                              (Route<dynamic> route) => false,
-                            );
-                          },
-                        ),
-                      );
-                    },
+                    onPressed: () => _mostrarDialogoCancelarRegistro(cs),
                   ),
                 ),
                 SizedBox(
@@ -278,6 +250,54 @@ class _VacunasPageState extends State<VacunasPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Diálogo de «Cancelar registro» con dos destinos distintos: descartar
+  /// solo la vacuna en curso (conserva beneficiario/tutor de la visita) o
+  /// salir del todo a buscar otra persona. Antes solo existía el segundo,
+  /// perdiendo la persona por cancelar una vacuna.
+  void _mostrarDialogoCancelarRegistro(ColorScheme cs) {
+    showDialog<void>(
+      context: _scaffoldKey.currentContext!,
+      builder: (BuildContext dialogCtx) => AlertDialog(
+        icon: Icon(Icons.warning_amber_rounded, color: cs.error, size: 28),
+        title: const Text('Cancelar registro'),
+        content: const Text(
+          '¿Qué querés hacer con los datos no guardados de esta vacuna?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogCtx).pop(),
+            child: const Text('Volver'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogCtx).pop();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const BusquedaBeneficiario(),
+                ),
+                (Route<dynamic> route) => false,
+              );
+            },
+            child: const Text('Salir y buscar otra persona'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(dialogCtx).pop();
+              reiniciarCicloVacuna();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const VacunasPage()),
+                (Route<dynamic> route) => false,
+              );
+            },
+            child: const Text('Descartar esta vacuna'),
+          ),
+        ],
       ),
     );
   }
@@ -683,6 +703,48 @@ class _VacunasPageState extends State<VacunasPage> {
       default:
         return codigo;
     }
+  }
+
+  /// Situación editable sin volver a buscar al beneficiario: antes solo se
+  /// fijaba en `BusquedaBeneficiario`/`EscanerDni` y no había forma de
+  /// corregirla si el operador se enteraba de la condición ya en `VacunasPage`
+  /// (única salida previa: cancelar el registro entero).
+  Widget _seccionSituacionEditable() {
+    final b = beneficiarioService.beneficiario;
+    if (b == null) return const SizedBox.shrink();
+    final sexoEsFemenino = b.sysdesa10_sexo == 'F';
+    return ValueListenableBuilder<CondicionGestacional?>(
+      valueListenable: situacionBeneficiarioService.condicionGestacionalEstado,
+      builder: (BuildContext context, condicion, _) {
+        return ValueListenableBuilder<bool>(
+          valueListenable: situacionBeneficiarioService.esPersonalDeSaludEstado,
+          builder: (BuildContext context, esPersonalDeSalud, _) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppEspaciado.sm),
+              child: Container(
+                padding: const EdgeInsets.all(AppEspaciado.md),
+                decoration: _decoracionTarjetaIdentidadVacunas(),
+                child: SituacionBeneficiario(
+                  sexoEsFemenino: sexoEsFemenino,
+                  condicion: condicion,
+                  esPersonalDeSalud: esPersonalDeSalud,
+                  onCondicionChanged: (c) =>
+                      situacionBeneficiarioService.cargarSituacion(
+                    condicionGestacional: c,
+                    esPersonalDeSalud: esPersonalDeSalud,
+                  ),
+                  onPersonalSaludChanged: (v) =>
+                      situacionBeneficiarioService.cargarSituacion(
+                    condicionGestacional: condicion,
+                    esPersonalDeSalud: v,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   /// Vacunas ya registradas con éxito en esta visita (ciclo persona). Vacío

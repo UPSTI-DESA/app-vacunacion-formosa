@@ -205,11 +205,16 @@ class _BusquedaBeneficiarioState extends State<BusquedaBeneficiario> {
   Widget _modoEscaneo(BuildContext context) {
     final b = beneficiarioService.beneficiario;
     final sexo = b?.sysdesa10_sexo;
+    // Antes el fallback era "Femenino" incluso con sexo desconocido, mientras
+    // el bloque de condición gestacional (sexoEsFemenino: sexo == 'F') se
+    // ocultaba igual: la etiqueta contradecía lo que mostraba la pantalla.
     final etiquetaSexo = sexo == 'M'
         ? 'Masculino'
-        : sexo == 'X'
-            ? 'No binario (X)'
-            : 'Femenino';
+        : sexo == 'F'
+            ? 'Femenino'
+            : sexo == 'X'
+                ? 'No binario (X)'
+                : 'Sin dato';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

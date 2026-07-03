@@ -95,6 +95,12 @@ transcripción literal de `docs/calendario_nacional_vacunacion_2026.md`
 (`calendario_2026.dart:196-286`). Se muestra en `VacunasPage` solo si hay
 beneficiario (`vacunas_page.dart:186-189`).
 
+Situación editable sin re-buscar: `_seccionSituacionEditable()` en
+`VacunasPage`, debajo de `containerBeneficiario()`, reusa
+`SituacionBeneficiario` contra `situacionBeneficiarioService` directamente
+(no hay copia local intermedia). Cambiarla recalcula el calendario en el
+siguiente build.
+
 ### 4. Registro — wizard de 8 pasos
 
 `containerPasos()` (`vacunas_page.dart:246-292`):
@@ -104,6 +110,10 @@ beneficiario (`vacunas_page.dart:186-189`).
   (`vacunas_page.dart:1199`, `1247-1248`, `1286-1287`, `1820-1821`).
 - El stepper solo permite navegar hacia atrás: guard `n <= pasoActual`
   (`vacunas_ui_helpers.dart:123`).
+- «Cancelar registro» (`_mostrarDialogoCancelarRegistro`, `vacunas_page.dart`):
+  tres destinos — «Volver» (cierra el diálogo), «Salir y buscar otra persona»
+  (`BusquedaBeneficiario`, pierde la persona) y «Descartar esta vacuna»
+  (`reiniciarCicloVacuna()` + `VacunasPage`, conserva beneficiario/tutor).
 - **Perfil heredado dentro de la visita**: si ya hay perfil elegido en una
   vacuna anterior de la misma persona (`perfilesVacunacionService`, ciclo
   persona), `_heredarPerfilDeLaVisita()` lo reutiliza y arranca directo en
@@ -182,7 +192,7 @@ modo prueba / pendientes de confirmación del back:
 ## Incoherencias conocidas
 
 Detalle, impacto y orden de resolución: `docs/plan_mejora_sesion_vacunacion.md`.
-Tachadas: ya resueltas (Fases 1-4 del plan).
+Tachadas: ya resueltas (Fases 1-7 del plan).
 
 1. ~~Historial de dosis en `estadosPorVacuna`: se borraba al elegir «otra
    vacuna, misma persona» aunque es dato de la persona.~~ Resuelto Fase 1
@@ -192,10 +202,12 @@ Tachadas: ya resueltas (Fases 1-4 del plan).
 3. ~~Situación fijada con sexo declarado, sin revalidar contra sexo del
    back.~~ Resuelto Fase 3.2 (`_construirRegistro` descarta condición si
    `sysdesa10_sexo != 'F'`).
-4. Situación no editable después de la búsqueda. Pendiente, Fase 7.2.
-5. Etiqueta de sexo con fallback «Femenino» ante sexo desconocido, con bloque
-   condición oculto (`busquedabeneficiario_page.dart:208-212` vs `:228`).
-   Pendiente, Fase 7.5.
+4. ~~Situación no editable después de la búsqueda.~~ Resuelto Fase 7.2
+   (`_seccionSituacionEditable()` en `VacunasPage`, reusa
+   `SituacionBeneficiario` contra `situacionBeneficiarioService`).
+5. ~~Etiqueta de sexo con fallback «Femenino» ante sexo desconocido, con
+   bloque condición oculto.~~ Resuelto Fase 7.5 (M/F/X muestran su etiqueta,
+   cualquier otro valor muestra «Sin dato»).
 6. ~~Perfil se re-consulta y re-selecciona en cada vacuna de la misma
    persona.~~ Resuelto Fase 4 (perfil en ciclo persona, heredado entre
    vacunas de la visita).
